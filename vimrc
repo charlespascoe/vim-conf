@@ -15,7 +15,9 @@ set nowrap
 autocmd BufWritePre * :%s/\s\+$//e " Removes trailing whitespace
 syntax enable
 
-highlight Pmenu ctermbg=52 ctermfg=255
+highlight Pmenu ctermfg=15 ctermbg=17
+highlight PmenuSel ctermfg=11 ctermbg=21
+highlight Search ctermbg=52
 
 set number
 
