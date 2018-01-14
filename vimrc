@@ -23,7 +23,3 @@ highlight Search ctermbg=52
 
 set number
 
-" Code Folding
-set nofoldenable
-set foldmethod=syntax
-map <Space> za
