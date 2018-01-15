@@ -18,6 +18,10 @@ set nowrap
 autocmd BufWritePre * :%s/\s\+$//e " Removes trailing whitespace
 syntax enable
 
+highlight Constant ctermfg=1
+highlight Statement ctermfg=3
+highlight Visual cterm=reverse ctermbg=black
+highlight SpellBad cterm=reverse ctermfg=9 ctermbg=15
 highlight Pmenu ctermfg=15 ctermbg=17
 highlight PmenuSel ctermfg=11 ctermbg=21
 highlight Search ctermbg=52
