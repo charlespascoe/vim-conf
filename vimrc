@@ -49,3 +49,5 @@ endfunction
 autocmd InsertEnter * call InsertModeChanged(v:insertmode)
 autocmd InsertLeave * call InsertModeChanged('')
 call InsertModeChanged('')
+
+command Q wqa
