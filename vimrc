@@ -4,6 +4,7 @@ let mapleader=","
 
 map t :tabnext<CR>
 map T :tabprev<CR>
+inoremap <C-z> <C-n>
 
 filetype plugin indent on
 
