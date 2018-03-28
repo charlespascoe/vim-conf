@@ -8,3 +8,4 @@ inoremap <buffer> <C-t> : <C-u>echohl TypeScriptDefinitionDescription <bar> echo
 nnoremap <buffer> <C-t> : <C-u>echohl TypeScriptDefinitionDescription <bar> echo tsuquyomi#hint() <bar> echohl None<CR>
 inoremap <buffer> <C-e> <Esc>:TsuRenameSymbol<CR>
 nnoremap <buffer> <C-e> <Esc>:TsuRenameSymbol<CR>
+nnoremap <buffer> <C-S-d> <Esc>:TsuDefinition<CR>
