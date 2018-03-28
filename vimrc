@@ -4,7 +4,22 @@ let mapleader=","
 
 map t :tabnext<CR>
 map T :tabprev<CR>
+
+" Map C-z to C-n (allows it to be overriden to C-x C-o - Omnicomplete - in
+" some files)
 inoremap <C-z> <C-n>
+
+" Set complete options
+setlocal completeopt=longest,menuone
+
+fun! ShouldAutocomplete()
+    return pumvisible() || !(strpart(getline('.'), 0, col('.')) =~ '^\s*$')
+endfun
+
+" Map tab to C-z (custom autocomplete) if autocomplete menu is open or there
+" is already text on the current line
+imap <expr> <Tab> ShouldAutocomplete() ? '<C-z>' : '<Tab>'
+
 inoremap <C-a> <Esc>:wa<CR>
 nnoremap <C-a> <Esc>:wa<CR>
 
@@ -17,6 +32,9 @@ set shiftround    " round indent to multiple of 'shiftwidth'
 set autoindent    " align the new line indent with the previous line
 set expandtab     " insert spaces when hitting TABs
 set nowrap
+set number
+set cursorline
+
 autocmd BufWritePre * :%s/\s\+$//e " Removes trailing whitespace
 syntax enable
 
@@ -27,10 +45,6 @@ highlight SpellBad cterm=reverse ctermfg=9 ctermbg=15
 highlight Pmenu ctermfg=15 ctermbg=17
 highlight PmenuSel ctermfg=11 ctermbg=21
 highlight Search ctermbg=52
-
-set number
-
-set cursorline
 highlight CursorLine cterm=none
 
 " Change line number colours to indicate mode
