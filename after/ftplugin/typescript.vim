@@ -15,7 +15,12 @@ fun! CustomComplete(findstart, base)
     if a:findstart
         return pos
     else
-        return split(system('~/.vim/after/ftplugin/findts.sh "' . substitute(a:base, '"', '', 'g') . '"'), '\n')
+        for module in split(system('~/.vim/after/ftplugin/findts.sh "' . substitute(a:base, '"', '', 'g') . '"'), '\n')
+            call complete_add({'word': module,'menu':'module'})
+        endfor
+
+        call tsuquyomi#complete(a:findstart, a:base)
+        return []
     endif
 endfun
 
