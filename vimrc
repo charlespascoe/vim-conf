@@ -19,6 +19,8 @@ endfun
 " Map tab to C-z (custom autocomplete) if autocomplete menu is open or there
 " is already text on the current line
 imap <expr> <Tab> ShouldAutocomplete() ? '<C-z>' : '<Tab>'
+imap <expr> <Up> pumvisible() ? '<C-p>' : '<Up>'
+imap <expr> <Down> pumvisible() ? '<C-n>' : '<Down>'
 
 inoremap <C-a> <Esc>:wa<CR>
 nnoremap <C-a> <Esc>:wa<CR>
