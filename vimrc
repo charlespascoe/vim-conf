@@ -13,7 +13,7 @@ inoremap <C-z> <C-n>
 setlocal completeopt=longest,menuone
 
 fun! ShouldAutocomplete()
-    return pumvisible() || !(strpart(getline('.'), 0, col('.')) =~ '^\s*$')
+    return pumvisible() || !(strpart(getline('.'), 0, col('.') - 1) =~ '^\s*$')
 endfun
 
 " Map tab to C-z (custom autocomplete) if autocomplete menu is open or there
