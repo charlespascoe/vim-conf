@@ -74,3 +74,4 @@ call InsertModeChanged('')
 
 command Q wqa
 command W w " I keep accidentally typing W instead of w
+cnoreabbrev T tabedit
