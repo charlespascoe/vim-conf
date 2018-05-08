@@ -5,6 +5,9 @@ let mapleader=","
 map t :tabnext<CR>
 map T :tabprev<CR>
 
+" Configure backspace behaviour
+set backspace=indent,eol,start
+
 " Map C-z to C-n (allows it to be overriden to C-x C-o - Omnicomplete - in
 " some files)
 inoremap <C-z> <C-n>
@@ -22,6 +25,7 @@ imap <expr> <Tab> ShouldAutocomplete() ? '<C-z>' : '<Tab>'
 imap <expr> <Up> pumvisible() ? '<C-p>' : '<Up>'
 imap <expr> <Down> pumvisible() ? '<C-n>' : '<Down>'
 
+" Ctrl-a saves all
 inoremap <C-a> <Esc>:wa<CR>
 nnoremap <C-a> <Esc>:wa<CR>
 
@@ -69,3 +73,4 @@ autocmd InsertLeave * call InsertModeChanged('')
 call InsertModeChanged('')
 
 command Q wqa
+command W w " I keep accidentally typing W instead of w
