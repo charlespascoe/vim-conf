@@ -84,3 +84,8 @@ fun! AppendSemicolon()
     execute 'normal! A;'
     call cursor(cur_line, cur_col)
 endfun
+
+" Airline config
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#show_buffers = 0
+let g:airline#extensions#tabline#show_splits = 0
