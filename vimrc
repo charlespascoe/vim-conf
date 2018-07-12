@@ -76,7 +76,7 @@ command Q wqa
 command W w " I keep accidentally typing W instead of w
 cnoreabbrev T tabedit
 
-inoremap <buffer> <C-e>; <Esc>:call AppendSemicolon()<CR>li
+inoremap <buffer> <C-y>; <Esc>:call AppendSemicolon()<CR>li
 
 fun! AppendSemicolon()
     let cur_col = col('.')
