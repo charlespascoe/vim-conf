@@ -1,0 +1,11 @@
+git://github.com/Quramy/tsuquyomi
+git://github.com/ensime/ensime-vim
+git://github.com/derekwyatt/vim-scala
+git://github.com/kopischke/vim-fetch
+git://github.com/ianks/vim-tsx
+git://github.com/Raimondi/delimitMate
+git://github.com/airblade/vim-gitgutter
+git://github.com/tpope/vim-fugitive
+git://github.com/leafgarland/typescript-vim
+git://github.com/vim-syntastic/syntastic
+git://github.com/vim-airline/vim-airline
