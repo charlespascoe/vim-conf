@@ -10,3 +10,4 @@ git://github.com/leafgarland/typescript-vim
 git://github.com/vim-syntastic/syntastic
 git://github.com/vim-airline/vim-airline
 git://github.com/ctrlpvim/ctrlp
+git://github.com/moll/vim-bbye

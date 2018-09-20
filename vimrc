@@ -5,8 +5,8 @@ let mapleader=","
 
 nmap t <Esc>:tabnext<CR>
 nmap T <Esc>:tabprev<CR>
-nmap b <Esc>:bnext<CR>
-nmap B <Esc>:bprev<CR>
+nmap bb <Esc>:b#<CR>
+nmap bq <Esc>:Bdelete<CR>
 
 nnoremap ; :
 
