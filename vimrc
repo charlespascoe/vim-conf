@@ -2,8 +2,12 @@ set nocompatible
 
 let mapleader=","
 
-map t :tabnext<CR>
-map T :tabprev<CR>
+nmap t <Esc>:tabnext<CR>
+nmap T <Esc>:tabprev<CR>
+nmap b <Esc>:bnext<CR>
+nmap B <Esc>:bprev<CR>
+
+nnoremap ; :
 
 " Configure backspace behaviour
 set backspace=indent,eol,start
@@ -40,6 +44,8 @@ set expandtab     " insert spaces when hitting TABs
 set nowrap
 set number
 set cursorline
+set showmatch
+set incsearch
 
 autocmd BufWritePre * :%s/\s\+$//e " Removes trailing whitespace
 syntax enable
@@ -87,5 +93,6 @@ endfun
 
 " Airline config
 let g:airline#extensions#tabline#enabled = 1
-let g:airline#extensions#tabline#show_buffers = 0
-let g:airline#extensions#tabline#show_splits = 0
+
+" CtrlP config
+let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files -co --exclude-standard']
