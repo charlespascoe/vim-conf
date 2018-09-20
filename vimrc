@@ -1,23 +1,12 @@
 set nocompatible
-set hidden
+filetype plugin indent on
 
 let mapleader=","
-
-nmap t <Esc>:tabnext<CR>
-nmap T <Esc>:tabprev<CR>
-nmap bb <Esc>:b#<CR>
-nmap bq <Esc>:Bdelete<CR>
 
 nnoremap ; :
 
 " Configure backspace behaviour
 set backspace=indent,eol,start
-
-" Ctrl-a saves all
-inoremap <C-a> <Esc>:wa<CR>
-nnoremap <C-a> <Esc>:wa<CR>
-
-filetype plugin indent on
 
 set shiftwidth=4  " operation >> indents 4 columns; << unindents 4 columns
 set tabstop=4     " a hard TAB displays as 4 columns
@@ -32,10 +21,8 @@ set showmatch
 set incsearch
 
 autocmd BufWritePre * :%s/\s\+$//e " Removes trailing whitespace
-syntax enable
 
-command Q wqa
-
+source ~/.vim-conf/buffer-management.vim
 source ~/.vim-conf/autocomplete.vim
 source ~/.vim-conf/colours.vim
 source ~/.vim-conf/plugin-config.vim

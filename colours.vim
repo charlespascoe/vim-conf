@@ -1,3 +1,5 @@
+syntax enable
+
 highlight Constant ctermfg=1
 highlight Statement ctermfg=3
 highlight Visual cterm=reverse ctermbg=black
