@@ -5,3 +5,9 @@ highlight CtrlPBufferPath ctermfg=15
 
 inoremap <silent> <C-@> <Esc>:CtrlPBuffer<CR>
 nnoremap <silent> <C-@> <Esc>:CtrlPBuffer<CR>
+
+" Ack
+let g:ackprg = 'ag --vimgrep'
+
+" delimitMate
+let delimitMate_expand_cr = 1

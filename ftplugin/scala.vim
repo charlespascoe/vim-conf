@@ -8,9 +8,38 @@ nmap <buffer> <leader>tI <Esc>:EnSuggestImport<CR>
 nmap <buffer> <leader>tO <Esc>:EnOrganiseImports<CR>
 nmap <buffer> <leader>tR <Esc>:EnRename<CR>
 nmap <buffer> <leader>tt <Esc>:EnType<CR>
-nmap <buffer> <leader>tT <Esc>:EnTypeCheck<CR>
+nmap <buffer> <leader>tc <Esc>:EnTypeCheck<CR>
+
+autocmd BufWritePost *.scala silent :EnTypeCheck
 
 " Expansions
 imap <buffer> <C-e>cc case class ()<Left><Left>
 imap <buffer> <C-e>o object  {<CR><CR>}<Esc><Up><Up>7li
 imap <buffer> <C-e>d def () = {<CR>}<Esc><Up>4li
+
+
+" Create file command
+if !exists('*NewScalaFileFunc')
+    fun! NewScalaFileFunc(type, fqn)
+        let l:project_root = FindProjectRoot(getcwd(), '.git')
+
+        if l:project_root == ""
+            echo "Can't find project root"
+        end
+
+        let l:components = split(a:fqn, '\.')
+        let l:package = l:components[:len(l:components) - 2]
+        let l:filename = l:components[len(l:components) - 1]
+        let l:package_dir = l:project_root.'/src/'.a:type.'/scala/'.join(l:package, '/')
+
+        call mkdir(l:package_dir, 'p')
+
+        let l:filepath = l:package_dir.'/'.l:filename.'.scala'
+
+        execute 'edit' l:filepath
+        call append(0, 'package '.join(l:package, '.'))
+    endf
+end
+
+command! -nargs=1 NewScalaFile :call NewScalaFileFunc('main', <f-args>)
+command! -nargs=1 NewScalaTestFile :call NewScalaFileFunc('test', <f-args>)

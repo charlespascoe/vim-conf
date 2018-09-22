@@ -5,6 +5,8 @@ let mapleader=","
 
 nnoremap ; :
 
+set wildignore+=*.class
+
 " Configure backspace behaviour
 set backspace=indent,eol,start
 
@@ -22,6 +24,7 @@ set incsearch
 
 autocmd BufWritePre * :%s/\s\+$//e " Removes trailing whitespace
 
+source ~/.vim-conf/utils.vim
 source ~/.vim-conf/buffer-management.vim
 source ~/.vim-conf/autocomplete.vim
 source ~/.vim-conf/colours.vim
