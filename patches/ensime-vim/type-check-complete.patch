@@ -1,0 +1,15 @@
+diff --git a/ensime_shared/protocol.py b/ensime_shared/protocol.py
+index 3cada02..87a5fd8 100644
+--- a/ensime_shared/protocol.py
++++ b/ensime_shared/protocol.py
+@@ -116,6 +116,10 @@ class ProtocolHandlerV1(ProtocolHandler):
+     def handle_debug_vm_error(self, call_id, payload):
+         self.editor.raw_message('Error. Check ensime-vim log for details.')
+ 
++    def handle_typecheck_complete(self, call_id, payload):
++        super().handle_typecheck_complete(call_id, payload)
++        self.editor._vim.command('call EnsimeTypeCheckComplete()')
++
+     def handle_false_response(self, call_id, payload):
+         call_options = self.call_options.get(call_id)
+         false_msg = call_options.get('false_resp_msg') if call_options else None

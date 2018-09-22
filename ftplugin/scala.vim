@@ -8,9 +8,9 @@ nmap <buffer> <leader>tI <Esc>:EnSuggestImport<CR>
 nmap <buffer> <leader>tO <Esc>:EnOrganiseImports<CR>
 nmap <buffer> <leader>tR <Esc>:EnRename<CR>
 nmap <buffer> <leader>tt <Esc>:EnType<CR>
-nmap <buffer> <leader>tc <Esc>:EnTypeCheck<CR>
+nmap <buffer> <leader>tc <Esc>:call EnsimeTypeCheck()<CR>
 
-autocmd BufWritePost *.scala silent :EnTypeCheck
+autocmd BufWritePost *.scala silent call EnsimeTypeCheck()
 
 " Expansions
 imap <buffer> <C-e>cc case class ()<Left><Left>
@@ -43,3 +43,26 @@ end
 
 command! -nargs=1 NewScalaFile :call NewScalaFileFunc('main', <f-args>)
 command! -nargs=1 NewScalaTestFile :call NewScalaFileFunc('test', <f-args>)
+
+" Ensime Type Checking improvements
+if !exists('g:ensime_type_check_progress')
+    let g:ensime_type_check_progress = ""
+    call airline#parts#define_accent('ensime_typecheck', 'yellow')
+    call airline#parts#define_function('ensime_typecheck', 'EnsimeTypeCheckProgress')
+    let g:airline_section_y = airline#section#create_right(['ensime_typecheck'])
+
+    fun! EnsimeTypeCheck()
+        let g:ensime_type_check_progress = "Checking..."
+        call airline#update_statusline()
+        EnTypeCheck
+    endfun
+
+    fun! EnsimeTypeCheckComplete()
+        let g:ensime_type_check_progress = ""
+        call airline#update_statusline()
+    endfun
+
+    fun! EnsimeTypeCheckProgress()
+        return g:ensime_type_check_progress
+    endfun
+endif
