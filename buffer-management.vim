@@ -3,8 +3,8 @@ set hidden
 nmap <silent> t <Esc>:tabnext<CR>
 nmap <silent> T <Esc>:tabprev<CR>
 nmap <silent> bb <Esc>:b#<CR>
-nmap <silent> bq <Esc>:call CloseBuffer()<CR>
-nmap <silent> bw <Esc>:w<CR>:call CloseBuffer()<CR>
+nmap <silent> bq <Esc>:call CloseBuffer() \| call SaveBuffers()<CR>
+nmap <silent> bw <Esc>:w<CR>:call CloseBuffer() \| call SaveBuffers()<CR>
 
 
 fun! CloseBuffer()
@@ -24,12 +24,6 @@ command! Q wqa
 
 " Project Buffers
 fun! ResumeBuffers()
-    let buff_count = len(getbufinfo({'buflisted':1}))
-
-    if !(buff_count == 1 && bufname(1) == '')
-        return
-    endif
-
     let proj_root = FindProjectRoot(getcwd(), '.proj_buffers')
 
     if proj_root == ''
@@ -38,13 +32,18 @@ fun! ResumeBuffers()
 
     let g:proj_buffers_file = proj_root.'/.proj_buffers'
 
+    if !filereadable(g:proj_buffers_file)
+        unlet g:proj_buffers_file
+        return
+    endif
+
     let proj_buffers = readfile(g:proj_buffers_file)
 
     execute 'cd '.proj_root
 
     for proj_buff in proj_buffers
         if filereadable(proj_buff)
-            execute 'edit '.proj_buff
+            execute 'edit '.fnameescape(proj_buff)
         endif
     endfor
 endfun
@@ -57,12 +56,26 @@ fun! SaveBuffers()
 
     let buffs = getbufinfo({'buflisted': 1})
     let buffs = map(buffs, 'v:val["name"]')
-    let buffs = filter(buffs, 'filereadable(v:val)')
     let buffs = map(buffs, 'fnamemodify(v:val, ":.")')
+    let buffs = filter(buffs, 'v:val != bufname("")')
+    let buffs = add(buffs, bufname(''))
+    let buffs = filter(buffs, 'filereadable(v:val)')
 
     call writefile(buffs, g:proj_buffers_file)
 endfun
 
+fun! InitBuffers()
+    let buff_count = len(getbufinfo({'buflisted':1}))
 
-autocmd VimEnter * call ResumeBuffers()
+    if !(buff_count == 1 && bufname(1) == '')
+        return
+    endif
+
+    call ResumeBuffers()
+endfun
+
+autocmd VimEnter * nested call InitBuffers()
+
 autocmd VimLeavePre * call SaveBuffers()
+
+autocmd BufCreate * call SaveBuffers()
