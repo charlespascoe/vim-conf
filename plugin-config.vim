@@ -11,3 +11,6 @@ let g:ackprg = 'ag --vimgrep'
 
 " delimitMate
 let delimitMate_expand_cr = 1
+
+" tsuquyomi
+let g:tsuquyomi_single_quote_import = 1
