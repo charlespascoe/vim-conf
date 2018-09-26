@@ -6,6 +6,11 @@ highlight CtrlPBufferPath ctermfg=15
 inoremap <silent> <C-@> <Esc>:CtrlPBuffer<CR>
 nnoremap <silent> <C-@> <Esc>:CtrlPBuffer<CR>
 
+" Airline
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#tab_min_count = 2
+let g:airline#extensions#tabline#show_buffers = 0
+
 " Ack
 let g:ackprg = 'ag --vimgrep'
 
