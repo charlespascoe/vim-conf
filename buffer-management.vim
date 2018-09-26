@@ -15,10 +15,8 @@ fun! CloseBuffer()
     en
 endf
 
-
-" Ctrl-a saves all
-inoremap <C-a> <Esc>:wa<CR>
-nnoremap <C-a> <Esc>:wa<CR>
+inoremap <C-s> <Esc>:wa<CR>
+nnoremap <C-s> <Esc>:wa<CR>
 
 command! Q wqa
 
