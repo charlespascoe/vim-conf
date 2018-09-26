@@ -1,7 +1,7 @@
 set hidden
 
-nmap <silent> t <Esc>:tabnext<CR>
-nmap <silent> T <Esc>:tabprev<CR>
+nmap <silent> <leader>t <Esc>:tabnext<CR>
+nmap <silent> <leader>T <Esc>:tabprev<CR>
 nmap <silent> bb <Esc>:b#<CR>
 nmap <silent> bq <Esc>:call CloseBuffer() \| call SaveBuffers()<CR>
 nmap <silent> bw <Esc>:w<CR>:call CloseBuffer() \| call SaveBuffers()<CR>
