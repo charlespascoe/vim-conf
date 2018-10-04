@@ -1,2 +1,1 @@
-syntax keyword Keyword override
-syntax keyword Keyword final
+syntax keyword Keyword override final implicit
