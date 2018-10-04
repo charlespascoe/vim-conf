@@ -10,7 +10,7 @@ nmap <buffer> <leader>tR <Esc>:EnRename<CR>
 nmap <buffer> <leader>tt <Esc>:EnType<CR>
 nmap <buffer> <leader>tc <Esc>:call EnsimeTypeCheck()<CR>
 
-autocmd BufWritePost *.scala silent call EnsimeTypeCheck()
+"autocmd BufWritePost *.scala silent call EnsimeTypeCheck()
 
 " Expansions
 imap <buffer> <C-e>cc case class ()<Left><Left>
@@ -60,6 +60,8 @@ if !exists('g:ensime_type_check_progress')
     fun! EnsimeTypeCheckComplete()
         let g:ensime_type_check_progress = ""
         call airline#update_statusline()
+        " Syntastic errors window
+        Errors
     endfun
 
     fun! EnsimeTypeCheckProgress()
