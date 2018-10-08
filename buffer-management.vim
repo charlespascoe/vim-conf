@@ -40,8 +40,12 @@ fun! ResumeBuffers()
     execute 'cd '.proj_root
 
     for proj_buff in proj_buffers
-        if filereadable(proj_buff)
-            execute 'edit '.fnameescape(proj_buff)
+        let f = substitute(proj_buff, ':[0-9]\+$', '', 'g')
+        let l = substitute(matchstr(proj_buff, ':[0-9]\+$'), '^:', '', 'g')
+        if filereadable(f)
+            execute 'edit '.fnameescape(f)
+            execute l
+            normal zz
         endif
     endfor
 endfun
@@ -53,11 +57,9 @@ fun! SaveBuffers()
     endif
 
     let buffs = getbufinfo({'buflisted': 1})
-    let buffs = map(buffs, 'v:val["name"]')
-    let buffs = map(buffs, 'fnamemodify(v:val, ":.")')
-    let buffs = filter(buffs, 'v:val != bufname("")')
-    let buffs = add(buffs, bufname(''))
-    let buffs = filter(buffs, 'filereadable(v:val)')
+    let buffs = filter(buffs, 'filereadable(v:val["name"]) && fnamemodify(v:val["name"], ":.") != bufname("")')
+    let buffs = map(buffs, 'fnamemodify(v:val["name"], ":.") . ":" . v:val["lnum"]')
+    let buffs = add(buffs, fnamemodify(bufname(''), ":.") . ":" . line('.'))
 
     call writefile(buffs, g:proj_buffers_file)
 endfun
