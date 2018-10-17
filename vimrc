@@ -22,7 +22,7 @@ set cursorline
 set showmatch
 set incsearch
 
-autocmd BufWritePre * :%s/\s\+$//e " Removes trailing whitespace
+command! Trim %s/\s\+$//e
 
 source ~/.vim-conf/utils.vim
 source ~/.vim-conf/buffer-management.vim
