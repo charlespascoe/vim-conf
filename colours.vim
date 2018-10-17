@@ -20,3 +20,9 @@ endfunction
 autocmd InsertEnter * call InsertModeChanged(v:insertmode)
 autocmd InsertLeave * call InsertModeChanged('')
 call InsertModeChanged('')
+
+" Trailing Whitespace
+highlight TrailingWhitespace ctermfg=7 ctermbg=1
+match TrailingWhitespace /\s\+$/
+au InsertEnter * match TrailingWhitespace /\s\+\%#\@<!$/
+au InsertLeave * match TrailingWhitespace /\s\+$/
