@@ -38,7 +38,7 @@ hi Search ctermbg=52
 hi CursorLine cterm=none
 
 " Colors for syntax highlighting
-hi Comment cterm=italic ctermfg=32
+hi Comment ctermfg=32
 hi Constant ctermfg=196
 hi Special ctermfg=75
 hi Identifier cterm=none ctermfg=43
