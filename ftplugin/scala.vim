@@ -2,20 +2,20 @@
 inoremap <buffer> <expr> <C-z> '<C-x><C-o>'
 
 " Type analysis commands
-nmap <buffer> <leader>td <Esc>:EnDeclaration<CR>
-nmap <buffer> <leader>tD <Esc><C-w>v<C-w><C-w>:EnDeclaration<CR>
-nmap <buffer> <leader>tI <Esc>:EnSuggestImport<CR>
-nmap <buffer> <leader>tO <Esc>:EnOrganiseImports<CR>
-nmap <buffer> <leader>tR <Esc>:EnRename<CR>
-nmap <buffer> <leader>tt <Esc>:EnType<CR>
-nmap <buffer> <leader>tc <Esc>:call EnsimeTypeCheck()<CR>
+nmap <buffer> td <Esc>:EnDeclaration<CR>
+nmap <buffer> tD <Esc><C-w>v<C-w><C-w>:EnDeclaration<CR>
+nmap <buffer> tI <Esc>:EnSuggestImport<CR>
+nmap <buffer> tO <Esc>:EnOrganiseImports<CR>
+nmap <buffer> tR <Esc>:EnRename<CR>
+nmap <buffer> tt <Esc>:EnType<CR>
+nmap <buffer> tc <Esc>:call EnsimeTypeCheck()<CR>
 
 "autocmd BufWritePost *.scala silent call EnsimeTypeCheck()
 
 " Expansions
-imap <buffer> <C-e>cc case class ()<Left><Left>
-imap <buffer> <C-e>o object  {<CR><CR>}<Esc><Up><Up>7li
-imap <buffer> <C-e>d def () = {<CR>}<Esc><Up>4li
+imap <buffer> <C-y>cc case class ()<Left><Left>
+imap <buffer> <C-y>o object  {<CR><CR>}<Esc><Up><Up>7li
+imap <buffer> <C-y>d def () = {<CR>}<Esc><Up>4li
 
 
 " Create file command
