@@ -20,6 +20,8 @@ imap <buffer> <C-y>d def () = {<CR>}<Esc><Up>4li
 
 " Create file command
 if !exists('*NewScalaFileFunc')
+    EnToggleFullType
+
     fun! NewScalaFileFunc(type, fqn)
         let l:project_root = FindProjectRoot(getcwd(), '.git')
 
