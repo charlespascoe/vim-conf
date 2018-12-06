@@ -23,4 +23,4 @@ function! XTermPasteBegin()
     return ""
 endfunction
 
-command -nargs=1 -complete=help Help tab help <args>
+command! -nargs=1 -complete=help Help tab help <args>
