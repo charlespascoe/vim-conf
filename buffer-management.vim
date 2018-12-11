@@ -1,10 +1,10 @@
 set hidden
 
-nmap <silent> <leader>t <Esc>:tabnext<CR>
-nmap <silent> <leader>T <Esc>:tabprev<CR>
-nmap <silent> bb <Esc>:b#<CR>
-nmap <silent> bq <Esc>:call CloseBuffer() \| call SaveBuffers()<CR>
-nmap <silent> bw <Esc>:w<CR>:call CloseBuffer() \| call SaveBuffers()<CR>
+nmap <silent> <leader>Tt <Esc>:tabnext<CR>
+nmap <silent> <leader>TT <Esc>:tabprev<CR>
+nmap <silent> <leader>bb <Esc>:b#<CR>
+nmap <silent> <leader>bq <Esc>:call CloseBuffer() \| call SaveBuffers()<CR>
+nmap <silent> <leader>bw <Esc>:w<CR>:call CloseBuffer() \| call SaveBuffers()<CR>
 
 
 fun! CloseBuffer()
@@ -14,6 +14,7 @@ fun! CloseBuffer()
         q
     en
 endf
+
 
 inoremap <C-s> <Esc>:wa<CR>
 nnoremap <C-s> <Esc>:wa<CR>

@@ -32,3 +32,15 @@ source ~/.vim-conf/plugin-config.vim
 source ~/.vim-conf/find.vim
 
 let g:netrw_ftp_cmd="ftp -p"
+
+" Experiments
+set relativenumber
+
+map <Up> <Nop>
+map <Down> <Nop>
+map <Left> <Nop>
+map <Right> <Nop>
+map! <Up> <Nop>
+map! <Down> <Nop>
+map! <Left> <Nop>
+map! <Right> <Nop>
