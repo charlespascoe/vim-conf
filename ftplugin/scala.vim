@@ -2,13 +2,13 @@
 inoremap <buffer> <expr> <C-z> '<C-x><C-o>'
 
 " Type analysis commands
-nmap <buffer> td <Esc>:EnDeclaration<CR>
-nmap <buffer> tD <Esc><C-w>v<C-w><C-w>:EnDeclaration<CR>
-nmap <buffer> tI <Esc>:EnSuggestImport<CR>
-nmap <buffer> tO <Esc>:EnOrganiseImports<CR>
-nmap <buffer> tR <Esc>:EnRename<CR>
-nmap <buffer> tt <Esc>:EnType<CR>
-nmap <buffer> tc <Esc>:call EnsimeTypeCheck()<CR>
+nmap <buffer> <leader>td <Esc>:EnDeclaration<CR>
+nmap <buffer> <leader>tD <Esc><C-w>v<C-w><C-w>:EnDeclaration<CR>
+nmap <buffer> <leader>tI <Esc>:EnSuggestImport<CR>
+nmap <buffer> <leader>tO <Esc>:EnOrganiseImports<CR>
+nmap <buffer> <leader>tR <Esc>:EnRename<CR>
+nmap <buffer> <leader>tt <Esc>:EnType<CR>
+nmap <buffer> <leader>tc <Esc>:call EnsimeTypeCheck()<CR>
 
 "autocmd BufWritePost *.scala silent call EnsimeTypeCheck()
 
