@@ -36,11 +36,7 @@ let g:netrw_ftp_cmd="ftp -p"
 " Experiments
 set relativenumber
 
-map <Up> <Nop>
-map <Down> <Nop>
-map <Left> <Nop>
-map <Right> <Nop>
-map! <Up> <Nop>
-map! <Down> <Nop>
-map! <Left> <Nop>
-map! <Right> <Nop>
+nmap <Up> <Nop>
+nmap <Down> <Nop>
+nmap <Left> <Nop>
+nmap <Right> <Nop>
