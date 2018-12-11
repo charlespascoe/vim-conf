@@ -30,3 +30,18 @@ match {
     $0
 }
 endsnippet
+
+
+snippet playcontroller "Play Controller Template"
+package $1
+
+import javax.inject._
+import play.api._
+import play.api.mvc._
+import scala.concurrent.ExecutionContext
+
+@Singleton
+class $2 @Inject()(cc: ControllerComponents)(implicit ec: ExecutionContext) extends AbstractController(cc) {
+  $0
+}
+endsnippet
