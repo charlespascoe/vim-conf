@@ -1,6 +1,6 @@
-" Map C-z to C-n (allows it to be overriden to C-x C-o - Omnicomplete - in
+" Map C-z to C-p (allows it to be overriden to C-x C-o - Omnicomplete - in
 " some files)
-inoremap <C-z> <C-n>
+inoremap <C-z> <C-p>
 
 " Set complete options
 setlocal completeopt=longest,menuone
