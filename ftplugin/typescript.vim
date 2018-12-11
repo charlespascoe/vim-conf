@@ -9,8 +9,3 @@ nmap <buffer> tI <Esc>:TsuImport<CR>
 nmap <buffer> tr <Esc>:TsuReferences<CR>
 nmap <buffer> tR <Esc>:TsuRenameSymbol<CR>
 nmap <buffer> tt <Esc>:echohl TypeScriptDefinitionDescription <bar> echo tsuquyomi#hint() <bar> echohl None<CR>
-
-" Expansions
-inoremap <buffer> <C-y>i import {  } from '';<Left><Left>
-inoremap <buffer> <C-y>b <Esc>^9li
-inoremap <buffer> <C-y>e const {  } = ;<Left>

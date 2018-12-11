@@ -1,0 +1,1 @@
+hi snipLeadingSpaces ctermbg=none

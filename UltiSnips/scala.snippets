@@ -1,0 +1,32 @@
+snippet cc "Case Class"
+case class $1($0)
+endsnippet
+
+snippet co "Case Object"
+case object $1 {
+  $0
+}
+endsnippet
+
+snippet o "Object"
+object $1 {
+  $0
+}
+endsnippet
+
+snippet p "package"
+package $0
+endsnippet
+
+snippet def "Method"
+def $1($2): $3 = {
+  $0
+}
+endsnippet
+
+snippet match "Match"
+match {
+  case $1 =>
+    $0
+}
+endsnippet

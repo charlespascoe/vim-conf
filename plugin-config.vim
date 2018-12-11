@@ -26,3 +26,9 @@ let delimitMate_expand_cr = 1
 
 " tsuquyomi
 let g:tsuquyomi_single_quote_import = 1
+
+" UtiliSnips
+let g:UltiSnipsExpandTrigger = "<c-y>"
+let g:UltiSnipsJumpForwardTrigger = "<Enter>"
+let g:UltiSnipsSnippetsDir = "~/.vim/UltiSnips/"
+nmap <leader>ue <Esc>:UltiSnipsEdit<CR>

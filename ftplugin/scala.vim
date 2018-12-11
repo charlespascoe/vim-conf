@@ -12,11 +12,6 @@ nmap <buffer> tc <Esc>:call EnsimeTypeCheck()<CR>
 
 "autocmd BufWritePost *.scala silent call EnsimeTypeCheck()
 
-" Expansions
-imap <buffer> <C-y>cc case class ()<Left><Left>
-imap <buffer> <C-y>o object  {<CR><CR>}<Esc><Up><Up>7li
-imap <buffer> <C-y>d def () = {<CR>}<Esc><Up>4li
-
 
 " Create file command
 if !exists('*NewScalaFileFunc')
