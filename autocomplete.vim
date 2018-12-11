@@ -14,4 +14,6 @@ endfun
 imap <expr> <Tab> ShouldAutocomplete() ? '<C-z>' : '<Tab>'
 imap <expr> <Up> pumvisible() ? '<C-p>' : '<Up>'
 imap <expr> <Down> pumvisible() ? '<C-n>' : '<Down>'
-imap <expr> <BS> pumvisible() ? (col('.') > 1 ? '<Esc>i<Right><BS>' : '<Esc>i<BS>') : '<BS>'
+
+" TODO: Fix
+"imap <expr> <BS> pumvisible() ? (col('.') > 1 ? '<Esc>i<Right><BS>' : '<Esc>i<BS>') : '<BS>'
