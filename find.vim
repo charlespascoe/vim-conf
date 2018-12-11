@@ -1,7 +1,5 @@
 if executable("ag")
     fun! Find(as_regex, term)
-        echom a:term
-
         let l:args = a:as_regex ? "" : " -Q"
         let l:pattern = "'".substitute(a:term, "'", "'\"'\"'", "g")."'"
         lgetexpr system("ag --vimgrep".l:args." -- ".l:pattern)
