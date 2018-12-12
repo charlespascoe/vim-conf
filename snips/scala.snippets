@@ -18,11 +18,20 @@ snippet p "package"
 package $0
 endsnippet
 
+
 snippet def "Method"
 def $1($2): $3 = {
   $0
 }
 endsnippet
+
+
+snippet odef "Override Method"
+override def $1($2): $3 = {
+  $0
+}
+endsnippet
+
 
 snippet match "Match"
 match {
