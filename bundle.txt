@@ -12,3 +12,4 @@ https://github.com/tpope/vim-fugitive
 https://github.com/vim-airline/vim-airline
 https://github.com/vim-syntastic/syntastic
 https://github.com/sirver/ultisnips
+https://github.com/ervandew/supertab

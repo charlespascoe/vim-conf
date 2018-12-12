@@ -1,5 +1,3 @@
-" Map C-z (custom autocomplete) to Omnicomplete
-inoremap <buffer> <expr> <C-z> '<C-x><C-o>'
 highlight TypeScriptDefinitionDescription ctermfg=46
 
 " Type analysis commands

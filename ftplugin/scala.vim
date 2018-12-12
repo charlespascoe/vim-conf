@@ -1,6 +1,3 @@
-" Map C-z (custom autocomplete) to Omnicomplete
-inoremap <buffer> <expr> <C-z> '<C-x><C-o>'
-
 " Type analysis commands
 nmap <buffer> <leader>td <Esc>:EnDeclaration<CR>
 nmap <buffer> <leader>tD <Esc><C-w>v<C-w><C-w>:EnDeclaration<CR>
@@ -9,8 +6,6 @@ nmap <buffer> <leader>tO <Esc>:EnOrganiseImports<CR>
 nmap <buffer> <leader>tR <Esc>:EnRename<CR>
 nmap <buffer> <leader>tt <Esc>:EnType<CR>
 nmap <buffer> <leader>tc <Esc>:call EnsimeTypeCheck()<CR>
-
-"autocmd BufWritePost *.scala silent call EnsimeTypeCheck()
 
 
 " Create file command
