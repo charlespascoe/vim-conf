@@ -33,3 +33,6 @@ let g:UltiSnipsJumpForwardTrigger = "<Enter>"
 let g:UltiSnipsSnippetsDir = "~/.vim/snips/"
 let g:UltiSnipsSnippetDirectories = ["snips"]
 nmap <leader>ue <Esc>:UltiSnipsEdit<CR>
+
+" Vim's netrw
+let g:netrw_ftp_cmd="ftp -p"   " passive mode by default
