@@ -10,8 +10,10 @@ https://github.com/moll/vim-bbye
 https://github.com/Quramy/tsuquyomi
 https://github.com/Raimondi/delimitMate
 https://github.com/sirver/ultisnips
+https://github.com/tpope/vim-commentary
 https://github.com/tpope/vim-fugitive
 https://github.com/tpope/vim-repeat
+https://github.com/tpope/vim-sleuth
 https://github.com/tpope/vim-surround
 https://github.com/tpope/vim-unimpaired
 https://github.com/vim-airline/vim-airline
