@@ -1,3 +1,7 @@
+" Map autocomplete trigger onto Omnicomplete
+inoremap <C-z> <C-x><C-o>
+
+
 highlight TypeScriptDefinitionDescription ctermfg=46
 
 " Type analysis commands

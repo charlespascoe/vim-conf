@@ -2,7 +2,6 @@ https://github.com/airblade/vim-gitgutter
 https://github.com/ctrlpvim/ctrlp.vim
 https://github.com/derekwyatt/vim-scala
 https://github.com/ensime/ensime-vim
-https://github.com/ervandew/supertab
 https://github.com/ianks/vim-tsx
 https://github.com/kopischke/vim-fetch
 https://github.com/leafgarland/typescript-vim

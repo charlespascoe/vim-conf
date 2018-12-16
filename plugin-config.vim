@@ -33,12 +33,3 @@ let g:UltiSnipsJumpForwardTrigger = "<Enter>"
 let g:UltiSnipsSnippetsDir = "~/.vim/snips/"
 let g:UltiSnipsSnippetDirectories = ["snips"]
 nmap <leader>ue <Esc>:UltiSnipsEdit<CR>
-
-" SuperTab
-let g:SuperTabLongestEnhanced = 1
-
-autocmd FileType *
-  \ if &omnifunc != '' |
-  \   call SuperTabChain(&omnifunc, "<c-p>") |
-  \   call SuperTabSetDefaultCompletionType("<c-x><c-u>") |
-  \ endif

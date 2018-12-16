@@ -1,3 +1,7 @@
+" Map autocomplete trigger onto Omnicomplete
+inoremap <C-z> <C-x><C-o>
+
+
 " Type analysis commands
 nmap <buffer> <leader>td <Esc>:EnDeclaration<CR>
 nmap <buffer> <leader>tD <Esc><C-w>v<C-w><C-w>:EnDeclaration<CR>
