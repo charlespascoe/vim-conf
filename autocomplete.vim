@@ -18,4 +18,4 @@ imap <expr> <Up> pumvisible() ? '<C-p>' : '<Up>'
 imap <expr> <Down> pumvisible() ? '<C-n>' : '<Down>'
 
 " Cancel autocomplete on backspace
-imap <expr> <BS> pumvisible() ? '<C-e><BS>' : '<BS>'
+imap <expr> <BS> pumvisible() ? '<C-e>' : '<BS>'
