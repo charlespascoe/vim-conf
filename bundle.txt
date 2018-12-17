@@ -9,6 +9,7 @@ https://github.com/moll/vim-bbye
 https://github.com/Quramy/tsuquyomi
 https://github.com/Raimondi/delimitMate
 https://github.com/sirver/ultisnips
+https://github.com/terryma/vim-smooth-scroll
 https://github.com/tpope/vim-commentary
 https://github.com/tpope/vim-fugitive
 https://github.com/tpope/vim-repeat
