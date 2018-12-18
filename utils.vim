@@ -32,3 +32,6 @@ map <leader>S <Esc>:echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") .
 
 " Trim trailing whitespace
 command! Trim %s/\s\+$//e
+
+" Jump to mark
+nmap <Leader>j `
