@@ -1,0 +1,122 @@
+snippet des "Object Destructuring"
+const { $0 } = $1;
+endsnippet
+
+
+snippet "clos?u?r?e?" "Closure" r
+(() => {
+  $0
+})();
+endsnippet
+
+
+snippet "aclos?u?r?e?" "Async Closure" r
+await (async () => {
+  $0
+})();
+endsnippet
+
+
+snippet l "lambda"
+($1) => $0
+endsnippet
+
+
+snippet lb "lambda with body"
+($1) => { $0 }
+endsnippet
+
+
+snippet cls "Class"
+class $1 {
+  $0
+}
+endsnippet
+
+
+snippet fun "Function"
+function $1($2) {
+  $0
+}
+endsnippet
+
+
+snippet scon "Constructor with Super call"
+constructor($1) {
+  super();
+  $0
+}
+endsnippet
+
+
+# Flow Control
+snippet if
+if ($1) {
+  $0
+}
+endsnippet
+
+
+snippet ife
+if ($1) {
+  $0
+} else {
+  
+}
+endsnippet
+
+
+snippet switch
+switch ($1) {
+  case $2:
+    $0
+    break;
+}
+endsnippet
+
+
+snippet case
+case $1:
+  $0
+  break;
+endsnippet
+
+
+snippet for
+for ($1) {
+  $0
+}
+endsnippet
+
+
+snippet 'forea?c?h?' "Foreach" r
+for (const $1 of $2) {
+  $0
+}
+endsnippet
+
+
+snippet fori
+for (let i = 0; i < $1; i++) {
+  $0
+}
+endsnippet
+
+
+snippet while
+while ($1) {
+  $0
+}
+endsnippet
+
+
+snippet dowhile
+do {
+  $0
+} while ($1);
+endsnippet
+
+
+snippet cons "Console Log"
+console.log($0);
+endsnippet

@@ -11,3 +11,4 @@ nmap <buffer> tI <Esc>:TsuImport<CR>
 nmap <buffer> tr <Esc>:TsuReferences<CR>
 nmap <buffer> tR <Esc>:TsuRenameSymbol<CR>
 nmap <buffer> tt <Esc>:echohl TypeScriptDefinitionDescription <bar> echo tsuquyomi#hint() <bar> echohl None<CR>
+execute "UltiSnipsAddFiletypes typescript.javascript"
