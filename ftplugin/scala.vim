@@ -1,5 +1,5 @@
 " Map autocomplete trigger onto Omnicomplete
-inoremap <C-z> <C-x><C-o>
+inoremap <buffer> <C-z> <C-x><C-o>
 
 
 " Type analysis commands
