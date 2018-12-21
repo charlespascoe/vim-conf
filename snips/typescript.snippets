@@ -1,12 +1,18 @@
 priority 1
 
 snippet "impo?r?t?" "Import" r
-import {  } from '$0';
+import { $0 } from '$1';
 endsnippet
 
 
 snippet fun "Function"
 function $1($2): $3 {
+  $0
+}
+endsnippet
+
+snippet ei "Export Interface"
+export interface $1 {
   $0
 }
 endsnippet
