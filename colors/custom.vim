@@ -36,6 +36,7 @@ hi Pmenu ctermfg=15 ctermbg=17
 hi PmenuSel ctermfg=11 ctermbg=21
 hi Search ctermbg=52
 hi CursorLine cterm=none
+hi Title cterm=bold ctermfg=99
 
 " Colors for syntax highlighting
 hi Comment ctermfg=32
