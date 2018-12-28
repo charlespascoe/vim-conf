@@ -22,7 +22,7 @@ autocmd InsertLeave * call InsertModeChanged('')
 call InsertModeChanged('')
 
 " Trailing Whitespace
-highlight TrailingWhitespace ctermfg=7 ctermbg=1
+highlight TrailingWhitespace ctermfg=1 ctermbg='NONE' cterm=underline
 match TrailingWhitespace /\s\+$/
 au InsertEnter * match TrailingWhitespace /\s\+\%#\@<!$/
 au InsertLeave * match TrailingWhitespace /\s\+$/
