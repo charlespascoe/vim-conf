@@ -11,8 +11,27 @@ function $1($2): $3 {
 }
 endsnippet
 
+
+snippet efun "Export Function"
+export function $1($2): $3 {
+  $0
+}
+endsnippet
+
+
 snippet ei "Export Interface"
 export interface $1 {
   $0
 }
+endsnippet
+
+
+snippet spec "Test Spec"
+import { expect } from 'chai';
+import 'mocha';
+
+
+describe('$1', () => {
+  $0
+});
 endsnippet

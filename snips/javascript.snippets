@@ -49,6 +49,25 @@ constructor($1) {
 endsnippet
 
 
+snippet cons "Console Log"
+console.log($0);
+endsnippet
+
+
+snippet it "Test"
+it('$1', () => {
+  $0
+});
+endsnippet
+
+
+snippet describe "Test collection"
+describe('$1', () => {
+  $0
+});
+endsnippet
+
+
 # Flow Control
 snippet if
 if ($1) {
@@ -114,9 +133,4 @@ snippet dowhile
 do {
   $0
 } while ($1);
-endsnippet
-
-
-snippet cons "Console Log"
-console.log($0);
 endsnippet
