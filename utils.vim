@@ -35,3 +35,6 @@ command! Trim %s/\s\+$//e
 
 " Jump to mark
 nmap <Leader>j `
+
+" TeX Filetype detection
+au BufNewFile,BufRead *.tex set filetype=tex
