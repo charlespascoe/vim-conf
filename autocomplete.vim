@@ -18,4 +18,7 @@ imap <expr> <Up> pumvisible() ? '<C-p>' : '<Up>'
 imap <expr> <Down> pumvisible() ? '<C-n>' : '<Down>'
 
 " Cancel autocomplete on backspace
-imap <expr> <BS> pumvisible() ? '<C-e>' : '<BS>'
+" (TODO: Fix delimitMate problem (this imap set before delimitMate does on
+" line 330, meaning it doesn't set its own binding. Need to find way of
+" setting after delimitMate)
+imap <expr> <buffer> <BS> pumvisible() ? '<C-e>' : '<Plug>delimitMateBS'
