@@ -38,3 +38,6 @@ nmap <Leader>j `
 
 " TeX Filetype detection
 au BufNewFile,BufRead *.tex set filetype=tex
+
+" Jump back to last position centres on cursor
+noremap `` ``zz

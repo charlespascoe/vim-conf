@@ -19,6 +19,27 @@ export function $1($2): $3 {
 endsnippet
 
 
+snippet afun "Async Function"
+async function $1($2): Promise<$3> {
+  $0
+}
+endsnippet
+
+
+snippet eafun "Export Async Function"
+export async function $1($2): Promise<$3> {
+  $0
+}
+endsnippet
+
+
+snippet ecls "Export Class"
+export class $1 {
+  $0
+}
+endsnippet
+
+
 snippet ei "Export Interface"
 export interface $1 {
   $0
@@ -34,4 +55,11 @@ import 'mocha';
 describe('$1', () => {
   $0
 });
+endsnippet
+
+
+snippet amain "Async Main"
+(async function main() {
+  $0
+})().catch((err: any) => console.log(err));
 endsnippet

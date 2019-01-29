@@ -17,6 +17,15 @@ fun! CloseBuffer()
 endf
 
 
+fun! CloseAllBuffers()
+    while len(getbufinfo({'buflisted':1})) > 0
+        Bdelete
+    endwhile
+
+    call SaveBuffers()
+endf
+
+
 inoremap <C-s> <Esc>:wa<CR>
 nnoremap <C-s> <Esc>:wa<CR>
 
@@ -81,3 +90,5 @@ autocmd VimEnter * nested call InitBuffers()
 autocmd VimLeavePre * call SaveBuffers()
 
 autocmd BufCreate * call SaveBuffers()
+
+command! TruncProjBuffers :call CloseAllBuffers()
