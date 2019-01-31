@@ -51,6 +51,6 @@ hi Todo ctermfg=0 ctermbg=3
 hi SpellBad cterm=reverse ctermfg=9 ctermbg=15
 
 " Diffs (e.g. Git)
-hi DiffAdd ctermfg=2
-hi DiffChange ctermfg=3
-hi DiffDelete ctermfg=1
+hi DiffAdd ctermfg=2 ctermbg=none
+hi DiffChange ctermfg=3 ctermbg=none
+hi DiffDelete ctermfg=1 ctermbg=none
