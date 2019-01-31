@@ -49,3 +49,8 @@ hi Ignore cterm=bold ctermfg=7
 hi Error cterm=bold ctermfg=7 ctermbg=1
 hi Todo ctermfg=0 ctermbg=3
 hi SpellBad cterm=reverse ctermfg=9 ctermbg=15
+
+" Diffs (e.g. Git)
+hi DiffAdd ctermfg=2
+hi DiffChange ctermfg=3
+hi DiffDelete ctermfg=1
