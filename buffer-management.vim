@@ -2,10 +2,10 @@ set hidden
 
 nmap <silent> <leader>Tt <Esc>:tabnext<CR>
 nmap <silent> <leader>TT <Esc>:tabprev<CR>
-nmap <silent> <leader>bb <Esc>:b#<CR>
+nmap <silent> <leader>bb <Esc>:b#<CR>zz
 nmap <silent> <leader>bq <Esc>:call CloseBuffer() \| call SaveBuffers()<CR>
 nmap <silent> <leader>bw <Esc>:w<CR>:call CloseBuffer() \| call SaveBuffers()<CR>
-nmap <silent> \| <Esc>:b#<CR>
+nmap <silent> \| <Esc>:b#<CR>zz
 
 
 fun! CloseBuffer()
