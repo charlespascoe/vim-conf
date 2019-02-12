@@ -41,3 +41,5 @@ au BufNewFile,BufRead *.tex set filetype=tex
 
 " Jump back to mark centres on cursor
 noremap <expr> ` printf('`%czz', getchar())
+
+noremap <leader>R <Esc>:s/<C-r><C-w>//g<Left><Left>
