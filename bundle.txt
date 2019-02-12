@@ -4,6 +4,7 @@ https://github.com/derekwyatt/vim-scala
 https://github.com/ensime/ensime-vim
 https://github.com/ianks/vim-tsx
 https://github.com/kopischke/vim-fetch
+https://github.com/kshenoy/vim-signature
 https://github.com/leafgarland/typescript-vim
 https://github.com/moll/vim-bbye
 https://github.com/Quramy/tsuquyomi
