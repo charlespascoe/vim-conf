@@ -23,7 +23,17 @@ function! XTermPasteBegin()
     return ""
 endfunction
 
+
+function! ShowHead()
+    let l = line('.')
+    Gvsplit HEAD:%
+    execute l
+    normal zz
+endfunction
+
 command! -nargs=1 -complete=help Help tab help <args>
+
+command! ShowHead call ShowHead()
 
 " Syntax highlighting debugging
 map <leader>S <Esc>:echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
