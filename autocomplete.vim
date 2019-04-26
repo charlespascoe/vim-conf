@@ -21,4 +21,4 @@ imap <expr> <Down> pumvisible() ? '<C-n>' : '<Down>'
 " (TODO: Fix delimitMate problem (this imap set before delimitMate does on
 " line 330, meaning it doesn't set its own binding. Need to find way of
 " setting after delimitMate)
-imap <expr> <buffer> <BS> pumvisible() ? '<C-e>' : '<Plug>delimitMateBS'
+autocmd BufRead * imap <expr> <buffer> <BS> pumvisible() ? '<C-e>' : '<Plug>delimitMateBS'
