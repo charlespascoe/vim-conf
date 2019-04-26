@@ -9,3 +9,8 @@ EE's
 Deserialisation
 deserialises
 TypeScript
+plaintext
+HMAC
+SHA
+ciphertext
+Base64
