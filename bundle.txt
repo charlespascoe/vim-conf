@@ -21,3 +21,4 @@ https://github.com/vim-airline/vim-airline
 https://github.com/christoomey/vim-sort-motion
 https://github.com/michaeljsmith/vim-indent-object
 https://github.com/vim-scripts/ReplaceWithRegister
+https://github.com/tpope/vim-obsession
