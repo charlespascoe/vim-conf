@@ -53,3 +53,5 @@ au BufNewFile,BufRead *.tex set filetype=tex
 noremap <expr> ` printf('`%czz', getchar())
 
 noremap <leader>R <Esc>:s/<C-r><C-w>//g<Left><Left>
+
+noremap <leader>i `iO
