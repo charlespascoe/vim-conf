@@ -19,7 +19,7 @@ nnoremap <silent> <C-@> <Esc>:CtrlPBuffer<CR>
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#tab_min_count = 2
 let g:airline#extensions#tabline#show_buffers = 0
-
+let g:airline#extensions#obsession#enabled = 1
 
 " delimitMate
 let delimitMate_expand_cr = 1
