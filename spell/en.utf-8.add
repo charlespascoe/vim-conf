@@ -14,3 +14,4 @@ HMAC
 SHA
 ciphertext
 Base64
+replaceability
