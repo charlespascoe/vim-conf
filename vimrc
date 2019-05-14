@@ -27,12 +27,6 @@ set relativenumber
 " Search configuration
 set incsearch
 
-" Disable arrow keys in normal mode (force hkjl)
-nmap <Up> <Nop>
-nmap <Down> <Nop>
-nmap <Left> <Nop>
-nmap <Right> <Nop>
-
 " Disable Page Up/Down
 map <PageUp> <Nop>
 map <PageDown> <Nop>
