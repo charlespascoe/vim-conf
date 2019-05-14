@@ -17,6 +17,9 @@ set expandtab     " insert spaces when hitting TABs
 set nowrap
 set nostartofline " when switching between buffers (and certain commands), preserve cursor column position
 
+" Reads config from first few lines of file
+set modeline
+
 " Line numbering
 set number
 set relativenumber
