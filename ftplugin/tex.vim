@@ -15,7 +15,7 @@ vmap <buffer> b c\textbf{<C-r>"}<Esc>
 
 setlocal textwidth=79
 
-fun! RewrapSelection(type)
+fun! Rewrap(type)
    if a:type ==# 'line'
       let startmark = getpos("'[")
       let endmark = getpos("']")
@@ -47,4 +47,20 @@ fun! RewrapSelection(type)
    endif
 endfun
 
-nnoremap gR :set operatorfunc=RewrapSelection<CR>g@
+nnoremap gR :set operatorfunc=Rewrap<CR>g@
+
+fun! FormatOperator(type)
+   if !exists('b:format') || b:format == ''
+      return
+   endif
+
+   if a:type ==# 'char'
+      exec 'normal!' '`[v`]c'.b:format."{\<C-r>\"}"
+   else
+      echom "FormatOperator: Unhandled type ".a:type
+   endif
+endfun
+
+nnoremap <Leader>fi :let b:format = '\textit' \| set operatorfunc=FormatOperator<CR>g@
+nnoremap <Leader>fb :let b:format = '\textbf' \| set operatorfunc=FormatOperator<CR>g@
+nnoremap <Leader>fm :let b:format = '\texttt' \| set operatorfunc=FormatOperator<CR>g@
