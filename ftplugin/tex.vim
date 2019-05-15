@@ -5,7 +5,13 @@ setlocal softtabstop=2
 setlocal spelllang=en_gb spell
 
 " Replaces quotes when copying from other documents
-command! Fix : %s/‘/`/ge | %s/’/'/ge | %s/“/``/ge | %s/”/''/ge | %s/—/---/ge | %s/"\([^"]\+\)"/``\1''/ge
+command! Fix :
+   \ %s/‘/`/ge |
+   \ %s/’/'/ge |
+   \ %s/“/``/ge |
+   \ %s/”/''/ge |
+   \ %s/—/---/ge |
+   \ %s/"\([^"]\+\)"/``\1''/ge
 
 vmap <buffer> m c\texttt{<C-r>"}<Esc>
 vmap <buffer> i c\textit{<C-r>"}<Esc>
@@ -49,7 +55,7 @@ endfun
 
 nnoremap gR :set operatorfunc=Rewrap<CR>g@
 
-fun! FormatOperator(type)
+fun! FormatOp(type)
    if !exists('b:format') || b:format == ''
       return
    endif
@@ -61,6 +67,6 @@ fun! FormatOperator(type)
    endif
 endfun
 
-nnoremap <Leader>fi :let b:format = '\textit' \| set operatorfunc=FormatOperator<CR>g@
-nnoremap <Leader>fb :let b:format = '\textbf' \| set operatorfunc=FormatOperator<CR>g@
-nnoremap <Leader>fm :let b:format = '\texttt' \| set operatorfunc=FormatOperator<CR>g@
+nnoremap <Leader>fi :let b:format = '\textit' \| set operatorfunc=FormatOp<CR>g@
+nnoremap <Leader>fb :let b:format = '\textbf' \| set operatorfunc=FormatOp<CR>g@
+nnoremap <Leader>fm :let b:format = '\texttt' \| set operatorfunc=FormatOp<CR>g@
