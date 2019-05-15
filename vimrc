@@ -27,6 +27,9 @@ set relativenumber
 " Search configuration
 set incsearch
 
+" Highlight the 81st column (for character limit)
+set colorcolumn=81
+
 " Disable Page Up/Down
 map <PageUp> <Nop>
 map <PageDown> <Nop>
