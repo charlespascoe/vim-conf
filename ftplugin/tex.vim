@@ -13,7 +13,7 @@ vmap <buffer> b c\textbf{<C-r>"}<Esc>
 
 " Text Wrapping
 
-setlocal textwidth=79
+setlocal textwidth=80
 
 fun! Rewrap(type)
    if a:type ==# 'line'
