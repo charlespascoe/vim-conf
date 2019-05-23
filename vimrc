@@ -28,7 +28,8 @@ set relativenumber
 set incsearch
 
 " Highlight the 81st column (for character limit)
-set colorcolumn=81
+" (&ma is true if the current buffer is modifiable)
+autocmd BufNewFile,BufRead * exec "setlocal colorcolumn=".(&ma ? "81" : "0")
 
 " Disable Page Up/Down
 map <PageUp> <Nop>
