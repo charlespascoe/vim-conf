@@ -9,6 +9,7 @@ set wildignore+=*.class
 set backspace=indent,eol,start
 
 " Default tab settings
+set tabstop=4     " a hard TAB displays as 4 columns
 set shiftround    " round indent to multiple of 'shiftwidth'
 set autoindent    " align the new line indent with the previous line
 set expandtab     " insert spaces when hitting TABs
