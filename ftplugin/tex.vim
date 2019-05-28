@@ -6,12 +6,12 @@ setlocal spelllang=en_gb spell
 
 " Replaces quotes when copying from other documents
 command! Fix :
-   \ %s/‘/`/ge |
-   \ %s/’/'/ge |
-   \ %s/“/``/ge |
-   \ %s/”/''/ge |
-   \ %s/—/---/ge |
-   \ %s/"\([^"]\+\)"/``\1''/ge
+    \ %s/‘/`/ge |
+    \ %s/’/'/ge |
+    \ %s/“/``/ge |
+    \ %s/”/''/ge |
+    \ %s/—/---/ge |
+    \ %s/"\([^"]\+\)"/``\1''/ge
 
 vmap <buffer> m c\texttt{<C-r>"}<Esc>
 vmap <buffer> i c\textit{<C-r>"}<Esc>
@@ -21,15 +21,15 @@ vmap <buffer> b c\textbf{<C-r>"}<Esc>
 setlocal textwidth=80
 
 fun! FormatOp(type)
-   if !exists('b:format') || b:format == ''
-      return
-   endif
+    if !exists('b:format') || b:format == ''
+        return
+    endif
 
-   if a:type ==# 'char'
-      exec 'normal!' '`[v`]c'.b:format."{\<C-r>\"}"
-   else
-      echom "FormatOperator: Unhandled type ".a:type
-   endif
+    if a:type ==# 'char'
+        exec 'normal!' '`[v`]c'.b:format."{\<C-r>\"}"
+    else
+        echom "FormatOperator: Unhandled type ".a:type
+    endif
 endfun
 
 nnoremap <Leader>fi :let b:format = '\textit' \| set operatorfunc=FormatOp<CR>g@
