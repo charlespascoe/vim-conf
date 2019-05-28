@@ -52,6 +52,32 @@ au BufNewFile,BufRead *.tex set filetype=tex
 " Jump back to mark centres on cursor
 noremap <expr> ` printf('`%czz', getchar())
 
+
 noremap <leader>R <Esc>:s/<C-r><C-w>//g<Left><Left>
 
 noremap <leader>i `iO
+
+" Comma-separated line spread
+
+fun! CommaSpread(type)
+    if a:type ==# 'char'
+        " Put the contents of the object on its own line and add trailing comma
+        " (NOTE: Relies on plugin to move closing parens/braces to new line)
+        exec 'normal' "`[v`]c\<Enter>,\<Esc>P"
+        let startLine = line('.')
+        " Put each item on its own line
+        s/\s*,\s*/,\r/g
+        " Delete the extra blank line caused by the trailing comma
+        exec 'normal' 'dd'
+        let endLine = line('.')
+
+        " Fix indentation of new lines
+        let lines = 1 + (endLine - startLine)
+        exec startLine
+        exec 'normal' '='.lines.'='
+    else
+        echom "CommaSpread: Unhandled type ".a:type
+    endif
+endfun
+
+nnoremap gS :set operatorfunc=CommaSpread<CR>g@
