@@ -1,4 +1,5 @@
 https://github.com/airblade/vim-gitgutter
+https://github.com/christoomey/vim-sort-motion
 https://github.com/ctrlpvim/ctrlp.vim
 https://github.com/derekwyatt/vim-scala
 https://github.com/ensime/ensime-vim
@@ -6,6 +7,7 @@ https://github.com/ianks/vim-tsx
 https://github.com/kopischke/vim-fetch
 https://github.com/kshenoy/vim-signature
 https://github.com/leafgarland/typescript-vim
+https://github.com/michaeljsmith/vim-indent-object
 https://github.com/moll/vim-bbye
 https://github.com/Quramy/tsuquyomi
 https://github.com/Raimondi/delimitMate
@@ -13,12 +15,10 @@ https://github.com/sirver/ultisnips
 https://github.com/terryma/vim-smooth-scroll
 https://github.com/tpope/vim-commentary
 https://github.com/tpope/vim-fugitive
+https://github.com/tpope/vim-obsession
 https://github.com/tpope/vim-repeat
 https://github.com/tpope/vim-sleuth
 https://github.com/tpope/vim-surround
 https://github.com/tpope/vim-unimpaired
 https://github.com/vim-airline/vim-airline
-https://github.com/christoomey/vim-sort-motion
-https://github.com/michaeljsmith/vim-indent-object
 https://github.com/vim-scripts/ReplaceWithRegister
-https://github.com/tpope/vim-obsession
