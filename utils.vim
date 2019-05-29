@@ -57,27 +57,34 @@ noremap <leader>R <Esc>:s/<C-r><C-w>//g<Left><Left>
 
 noremap <leader>i `iO
 
-" Comma-separated line spread
+" Line spread
+let g:line_spread_append_last = 0
 
-fun! CommaSpread(type)
+fun! TrimItem(index, text)
+    return trim(a:text)
+endfun
+
+fun! SpreadAcrossLines(splitChar, input)
+    let items = map(split(a:input, a:splitChar), function("TrimItem"))
+    let lines = join(items, a:splitChar."\n")
+
+    if g:line_spread_append_last
+        let lines .= a:splitChar
+    endif
+
+    return lines
+endfun
+
+fun! SeparatorSpread(type)
     if a:type ==# 'char'
-        " Put the contents of the object on its own line and add trailing comma
-        " (NOTE: Relies on delimitMate to move closing parens/braces to new line)
-        exec 'normal' "`[v`]c\<Enter>,\<Esc>P"
-        let startLine = line('.')
-        " Put each item on its own line
-        s/\s*,\s*/,\r/g
-        " Delete the extra blank line caused by the trailing comma
-        exec 'normal' 'dd'
-        let endLine = line('.')
-
-        " Fix indentation of new lines
-        let lines = 1 + (endLine - startLine)
-        exec startLine
-        exec 'normal' '='.lines.'='
+        let char = printf('%c', getchar())
+        exec 'normal!' "`[v`]c\<Enter>\<Up>"
+        let lines = split(SpreadAcrossLines(char, @"), "\n")
+        call append(line('.'), lines)
+        exec 'normal!' "\<Down>=".len(lines)."="
     else
         echom "CommaSpread: Unhandled type ".a:type
     endif
 endfun
 
-nnoremap gS :set operatorfunc=CommaSpread<CR>g@
+nnoremap gS :set operatorfunc=SeparatorSpread<CR>g@
