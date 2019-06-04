@@ -64,12 +64,18 @@ fun! TrimItem(index, text)
     return trim(a:text)
 endfun
 
-fun! SpreadAcrossLines(splitChar, input)
-    let items = map(split(a:input, a:splitChar), function("TrimItem"))
-    let lines = join(items, a:splitChar."\n")
+fun! SpreadAcrossLines(charCode, input)
+    if a:charCode == 13
+        return a:input
+    endif
+
+    let splitChar = printf('%c', a:charCode)
+
+    let items = map(split(a:input, splitChar), function("TrimItem"))
+    let lines = join(items, splitChar."\n")
 
     if g:line_spread_append_last
-        let lines .= a:splitChar
+        let lines .= splitChar
     endif
 
     return lines
@@ -77,9 +83,9 @@ endfun
 
 fun! SeparatorSpread(type)
     if a:type ==# 'char'
-        let char = printf('%c', getchar())
+        let charCode = getchar()
         exec 'normal!' "`[v`]c\<Enter>\<Up>"
-        let lines = split(SpreadAcrossLines(char, @"), "\n")
+        let lines = split(SpreadAcrossLines(charCode, @"), "\n")
         call append(line('.'), lines)
         exec 'normal!' "\<Down>=".len(lines)."="
     else
