@@ -27,6 +27,7 @@ set relativenumber
 
 " Search configuration
 set incsearch
+set nowrapscan    " prevents wrapping around to top of file when searching
 
 " Highlight the 81st column (for character limit)
 " (&ma is true if the current buffer is modifiable)
