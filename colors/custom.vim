@@ -44,6 +44,7 @@ hi Special ctermfg=75
 hi Identifier cterm=none ctermfg=43
 hi Statement ctermfg=220
 hi PreProc ctermfg=99
+hi StorageClass ctermfg=34
 hi Type ctermfg=48
 hi Ignore cterm=bold ctermfg=7
 hi Error cterm=bold ctermfg=7 ctermbg=1
