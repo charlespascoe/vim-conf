@@ -38,7 +38,7 @@ hi CursorLine cterm=none
 hi Title cterm=bold ctermfg=99
 
 " Colors for syntax highlighting
-hi Comment ctermfg=32
+hi Comment ctermfg=32 ctermbg=234
 hi Constant ctermfg=196
 hi Special ctermfg=75
 hi Identifier cterm=none ctermfg=43
