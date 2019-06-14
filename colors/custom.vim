@@ -6,8 +6,6 @@ endif
 
 let colors_name = "custom"
 
-"hi Normal guibg=PeachPuff guifg=Black
-
 hi SpecialKey ctermfg=4
 hi NonText cterm=bold ctermfg=4
 hi Directory ctermfg=4
@@ -38,7 +36,7 @@ hi CursorLine cterm=none
 hi Title cterm=bold ctermfg=99
 
 " Colors for syntax highlighting
-hi Comment ctermfg=32 ctermbg=234
+hi Comment ctermfg=32 ctermbg=235
 hi Constant ctermfg=196
 hi Special ctermfg=75
 hi Identifier cterm=none ctermfg=43
