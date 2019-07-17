@@ -1,7 +1,7 @@
 set nocompatible
 filetype plugin indent on
 
-let mapleader="\\"
+let mapleader=" "
 
 set wildignore+=*.class
 
