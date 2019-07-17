@@ -17,6 +17,7 @@ endf
 
 inoremap <C-s> <Esc>:wa<CR>
 nnoremap <C-s> <Esc>:wa<CR>
+nnoremap <C-q> <Esc>:q<CR>
 
 command! Q wqa
 
