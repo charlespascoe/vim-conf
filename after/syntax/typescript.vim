@@ -37,3 +37,6 @@ highlight link typescriptFuncKeyword Identifier
 
 " Parens etc.
 highlight typescriptParens ctermfg=39
+
+syntax match shebang /^#!.*$/
+highlight link shebang Comment

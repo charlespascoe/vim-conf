@@ -46,3 +46,6 @@ highlight link javaScriptValue Constant
 
 " Parens etc.
 highlight javaScriptParens ctermfg=39
+
+syntax match shebang /^#!.*$/
+highlight link shebang Comment
