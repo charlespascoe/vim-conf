@@ -25,3 +25,6 @@ command! CloseAll :bufdo bdelete
 
 " Make it easier to close multiple buffers
 nnoremap <leader>lsd :ls<cr>:bd<space>
+
+" Always open quickfix at the bottom (full width)
+autocmd filetype qf wincmd J
