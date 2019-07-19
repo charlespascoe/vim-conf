@@ -22,3 +22,6 @@ nnoremap <C-q> <Esc>:q<CR>
 command! Q wqa
 
 command! CloseAll :bufdo bdelete
+
+" Make it easier to close multiple buffers
+nnoremap <leader>lsd :ls<cr>:bd<space>
