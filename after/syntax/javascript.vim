@@ -17,7 +17,7 @@ highlight link StorageClass Statement
 
 " Assignment and Operators
 syntax match jsAssignment /=/
-syntax match jsOperators /\(<\|>\)=\|\(=\|!\)==\?\|!\|+\|-\|\*\|%\|&\||/
+syntax match jsOperators /<\|>\|<<\|>>\|\(<\|>\)=\|\(=\|!\)==\?\|!\|+\|-\|\*\|%\|&\||/
 syntax match jsSeparators /:\|\.\|,\|;\|=>/
 highlight jsAssignment ctermfg=202
 highlight jsOperators ctermfg=214
