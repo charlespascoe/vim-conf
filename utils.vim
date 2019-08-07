@@ -51,6 +51,9 @@ au BufNewFile,BufRead *.tex set filetype=tex
 " Jump back to mark centres on cursor
 nnoremap <expr> ` printf('`%czz', getchar())
 
+" Format JSON
+command! FormatJson %!python -m json.tool
+
 
 noremap <leader>R <Esc>:s/<C-r><C-w>//g<Left><Left>
 
