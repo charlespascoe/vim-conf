@@ -1,3 +1,40 @@
 snippet 'impo?r?t?' "Import" r
 import "$0"
 endsnippet
+
+snippet 'func?' "Function" r
+func $1($2) $3 {
+	$0
+}
+endsnippet
+
+snippet testfile
+import (
+	"github.com/stretchr/testify/assert"
+	"testing"
+)
+
+$0
+endsnippet
+
+snippet test "Test Function"
+func Test$1(t *testing.T) {
+	$0
+}
+endsnippet
+
+snippet Test "Test Function with Template"
+func Test$1(t *testing.T) {
+	assert := assert.New(t)
+
+	result := $0
+}
+endsnippet
+
+snippet 'benc?h?' "Benchmark Function" r
+func Benchmark$1(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		$0
+	}
+}
+endsnippet
