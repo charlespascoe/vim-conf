@@ -8,6 +8,24 @@ func $1($2) $3 {
 }
 endsnippet
 
+global !p
+def get_last_method_type():
+	vim.command("let b:go_last_method_type = exists('b:go_last_method_type') ? b:go_last_method_type : ' '")
+	return vim.eval("b:go_last_method_type")
+
+def set_last_method_type(name):
+	vim.command("let b:go_last_method_type = '%s'"% name)
+	return name
+endglobal
+
+snippet 'meth?o?d?' "Method" r
+func (${1:`!p snip.rv = get_last_method_type()`}) $2($3) $4 {
+	$0
+}`!p set_last_method_type(t[1])`
+endsnippet
+
+### TESTING ###
+
 snippet testfile
 import (
 	"github.com/stretchr/testify/assert"
