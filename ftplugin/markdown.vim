@@ -1,13 +1,23 @@
 setlocal spell
 setlocal wrap
-
+setlocal textwdith=80
 
 imap <expr> <buffer> <Tab> ShouldIndentBullet() ? '<Esc>>>^i<Right><Right>' : '<Tab>'
 imap <expr> <buffer> <S-Tab> ShouldIndentBullet() ? '<Esc><<^i<Right><Right>' : '<Tab>'
 
-" Convert selected text to a link
-vmap <buffer> l c[<C-r>"]()<Left>
-
 fun! ShouldIndentBullet()
-   return strpart(getline('.'), col('.') - 3, 1) == '-'
+    return strpart(getline('.'), col('.') - 3, 1) == '-'
 endfun
+
+" Convert selected text to a link
+vmap <buffer> <leader>fl c[<C-r>"](<C-r>")<Left><Esc><Space>fLi)
+
+fun! FormatLinkSlug(type)
+    if a:type ==# 'char'
+	exec 'normal!' "`[v`]c\<C-r>='#'.join(split(tolower(@\"), '[^a-z0-9]\\+'), '-')\<Enter>"
+    else
+        echom "FormatLinkSlug: Unhandled type ".a:type
+    endif
+endfun
+
+nnoremap <buffer> <leader>fL :set operatorfunc=FormatLinkSlug<CR>g@
