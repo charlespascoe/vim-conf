@@ -35,13 +35,13 @@ import (
 $0
 endsnippet
 
-snippet test "Test Function"
+snippet '^test' "Test Function" r
 func Test$1(t *testing.T) {
 	$0
 }
 endsnippet
 
-snippet Test "Test Function with Template"
+snippet '^Test' "Test Function with Template" r
 func Test$1(t *testing.T) {
 	assert := assert.New(t)
 
