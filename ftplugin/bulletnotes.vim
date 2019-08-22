@@ -104,9 +104,9 @@ onoremap <silent> <buffer> ab :<C-u>call MarkBullet(0)<CR>
 onoremap <silent> <buffer> aB :<C-u>call MarkBullet(1)<CR>
 
 fun! GetIndentOfLine(lnum)
-   "if a:lnum < 1
-   "   return 0
-   "endif
+   if a:lnum < 1
+      return 0
+   endif
 
    return len(matchstr(getline(a:lnum), '^\s*'))
 endfun
@@ -138,6 +138,26 @@ fun! BnGetIndent(lnum)
    endif
 endfun
 
+fun! BnGetIndent2(lnum)
+   echom a:lnum
+   let bulletPattern =  '^\s*[-*.] '
+
+   let m = matchstr(getline(a:lnum), bulletPattern)
+
+   if m != ''
+      let ind = GetIndentOfLine(a:lnum)
+      return float2nr(floor(ind / 4) * 4)
+   endif
+
+   let m = matchstr(getline(a:lnum - 1), bulletPattern)
+
+   if m != ''
+      return GetIndentOfLine(a:lnum - 1) + 2
+   endif
+
+   return GetIndentOfLine(a:lnum - 1)
+endfun
+
 fun! GetBulletType(lnum, default)
    let startline = FindBulletStart(a:lnum, 1)
 
@@ -149,13 +169,15 @@ fun! GetBulletType(lnum, default)
    endif
 endfun
 
+" TODO: Tab/Shift-Tab at beginning of bullet to shift indentation
+" TODO: Type different bullet at root of bullet to change it
+" TODO: Fix indentexpr
 
-"inoremap <silent> <buffer> <expr> <CR> "\<CR>\<Left>\<Left>".GetBulletType(line('.'), '-')
-"."\<Right>\<Right>\<BS>\<Space>"
 
-"set indentexpr="30"
+inoremap <silent> <buffer> <expr> <CR> "\<CR>\<Left>\<Left>".GetBulletType(line('.'), '-')."\<Right>\<Right>\<BS>\<Space>"
+nmap <silent> <buffer> <expr> o "o\<Left>\<Left>".GetBulletType(line('.'), '-')."\<Right>\<Right>\<BS>\<Space>"
 
-nmap <silent> <buffer> >ab >abgv=
-nmap <silent> <buffer> <ab <abgv=
-nmap <silent> <buffer> >aB >aBgv=
-nmap <silent> <buffer> <aB <aBgv=
+nmap <silent> <buffer> >ab >abgv=:call repeat#set('>ab', v:count)<CR>
+nmap <silent> <buffer> <ab <abgv=:call repeat#set('<ab', v:count)<CR>
+nmap <silent> <buffer> >aB >aBgv=:call repeat#set('>aB', v:count)<CR>
+nmap <silent> <buffer> <aB <aBgv=:call repeat#set('<aB', v:count)<CR>
