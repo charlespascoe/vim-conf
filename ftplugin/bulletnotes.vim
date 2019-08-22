@@ -43,7 +43,6 @@ fun! FindBulletEnd(startline, subitems)
    let lstr = getline(a:startline)
    " +1 for the symbol, +1 for the space
    let indent = len(matchstr(lstr, '^\s*')) + 2
-   "echom 'Indent: '.indent
    let lnum = a:startline + 1
 
    let pattern = '^\s\{'.indent.'\}'
@@ -51,10 +50,6 @@ fun! FindBulletEnd(startline, subitems)
    if !a:subitems
       let pattern = pattern.'[^ ]'
    endif
-
-   " echom '"'.getline(lnum).'"'
-   " echom '"'.pattern.'"'
-   " echom '"'.matchstr(getline(lnum), pattern).'"'
 
    " TODO: Check before end of file
    while matchstr(getline(lnum), pattern) != ''
@@ -113,32 +108,6 @@ endfun
 
 
 fun! BnGetIndent(lnum)
-   echom "test"
-   let lstr = getline(a:lnum)
-
-   echom 'SOMETHING'
-
-   let m = matchstr(lstr, '^\s*[-*.] ')
-
-   if m == ''
-      echom 'NO MATCH'
-      let startline = FindBulletStart(a:lnum - 1, 0)
-
-      if startline == -1
-	 return GetIndentOfLine(a:lnum - 1)
-      else
-	 return GetIndentOfLine(startline) + 2
-      endif
-   else
-      echom 'MATCH'
-      let ind = GetIndentOfLine(a:lnum)
-      echom "'".matchstr(getline(a:lnum), '^\s*')."'"
-      echom "INDENT ".ind
-      return float2nr(floor(ind / 4) * 4)
-   endif
-endfun
-
-fun! BnGetIndent2(lnum)
    echom a:lnum
    let bulletPattern =  '^\s*[-*.] '
 
@@ -169,9 +138,9 @@ fun! GetBulletType(lnum, default)
    endif
 endfun
 
-" TODO: Tab/Shift-Tab at beginning of bullet to shift indentation
+" TODO: Tab/Shift-Tab at beginning of bullet to shift indentation (sort of
+" done)
 " TODO: Type different bullet at root of bullet to change it
-" TODO: Fix indentexpr
 
 
 inoremap <silent> <buffer> <expr> <CR> "\<CR>\<Left>\<Left>".GetBulletType(line('.'), '-')."\<Right>\<Right>\<BS>\<Space>"
@@ -181,3 +150,18 @@ nmap <silent> <buffer> >ab >abgv=:call repeat#set('>ab', v:count)<CR>
 nmap <silent> <buffer> <ab <abgv=:call repeat#set('<ab', v:count)<CR>
 nmap <silent> <buffer> >aB >aBgv=:call repeat#set('>aB', v:count)<CR>
 nmap <silent> <buffer> <aB <aBgv=:call repeat#set('<aB', v:count)<CR>
+
+inoremap <silent> <expr> <buffer> - IsAtStartOfBullet() ? '<BS><BS>-<Space>' : '-'
+inoremap <silent> <expr> <buffer> * IsAtStartOfBullet() ? '<BS><BS>*<Space>' : '*'
+inoremap <silent> <expr> <buffer> . IsAtStartOfBullet() ? '<BS><BS>.<Space>' : '.'
+
+imap <silent> <expr> <buffer> <Tab> IsAtStartOfBullet() ? '<Esc>>>^i<Right><Right>' : '<Tab>'
+imap <silent> <expr> <buffer> <S-Tab> IsAtStartOfBullet() ? '<Esc><<^i<Right><Right>' : '<Tab>'
+"inoremap <expr> <buffer> <Tab> ShouldIndentBullet() ? '<Esc>>aBi' : '<Tab>'
+"inoremap <silent> <expr> <buffer> <S-Tab> ShouldIndentBullet() ? '<Esc><aBi' : '<Tab>'
+
+fun! IsAtStartOfBullet()
+    return strpart(getline('.'), 0, col('.') - 1) =~ '^\s*[-*.] $'
+endfun
+
+set indentexpr=BnGetIndent(v:lnum)
