@@ -1,18 +1,38 @@
-syntax match leadingWhitespace /^\s\+/ contained
-syntax match noteBullet /^\(\s\{4\}\)*-/
-syntax match taskBullet /^\(\s\{4\}\)*\*/ contained
-syntax match processedTaskBullet /^\(\s\{4\}\)*\./ contained
+" Leading Whitespace (for consistent multi-line highlighting)
 
-syntax region task start=/^\(\s\{4\}\)*\*\s\+/hs=e+1 end=/^\s*$\|^\(\s\{4\}\)*[-*.]/me=s-1 contains=taskBullet,leadingWhitespace
-syntax region processedTask start=/^\(\s\{4\}\)*\.\s\+/hs=e+1 end=/^\s*$\|^\(\s\{4\}\)*[-*.]/me=s-1 contains=processedTaskBullet,leadingWhitespace
+syntax match LeadingWhitespace /^\s\+/ contained
 
-highlight leadingWhitespace cterm=none
+highlight LeadingWhitespace cterm=none
 
-highlight noteBullet ctermfg=220 cterm=bold
+" Note Bullets
 
-"highlight taskBullet ctermfg=46 cterm=bold
-highlight taskBullet ctermfg=196 cterm=bold
-highlight task ctermfg=208
+syntax match NoteBullet /^\(\s\{4\}\)*-/
 
-highlight processedTask ctermfg=243 cterm=italic
-highlight processedTaskBullet ctermfg=25 cterm=bold
+highlight NoteBullet ctermfg=220 cterm=bold
+
+" Task Bullets
+
+syntax match TaskBullet /^\(\s\{4\}\)*\*/ contained
+syntax region Task start=/^\(\s\{4\}\)*\*\s\+/hs=e+1 end=/^\s*$\|^\(\s\{4\}\)*[-*.]/me=s-1 contains=TaskBullet,LeadingWhitespace,@Metatext
+
+highlight TaskBullet ctermfg=196 cterm=bold
+highlight Task ctermfg=208
+
+" Processed Task Bullets
+
+syntax match ProcessedTaskBullet /^\(\s\{4\}\)*\./ contained
+syntax region ProcessedTask start=/^\(\s\{4\}\)*\.\s\+/hs=e+1 end=/^\s*$\|^\(\s\{4\}\)*[-*.]/me=s-1 contains=ProcessedTaskBullet,LeadingWhitespace,@Metatext
+
+highlight ProcessedTask ctermfg=243 cterm=italic
+highlight ProcessedTaskBullet ctermfg=25 cterm=bold
+
+" Metatext (annotations to text that add meaning, e.g. tags)
+
+syntax match Tag /#[a-zA-Z0-9_\-]\+/
+syntax match Reference /&[a-zA-Z0-9_\-]\+\(\/[a-zA-Z0-9_\-]\+\)*/
+syntax match NotePointer /@[a-zA-Z0-9_\-]\+\(\/[a-zA-Z0-9_\-]\+\)*/
+syntax cluster Metatext contains=Tag,Reference,NotePointer
+
+highlight Tag ctermfg=226
+highlight Reference ctermfg=40
+highlight NotePointer ctermfg=51
