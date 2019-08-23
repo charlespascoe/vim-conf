@@ -4,6 +4,10 @@ setlocal tabstop=4     " a hard TAB displays as 4 columns
 setlocal softtabstop=4 " insert/delete 4 spaces when hitting a TAB/BACKSPACE"
 setlocal textwidth=80
 
+" TODO: Tab/Shift-Tab at beginning of bullet to shift indentation (sort of done)
+" TODO: Type different bullet at root of bullet to change it
+" TODO: Allow arbitrary bullet definitions (do syntax later)
+
 set debug="msg"
 
 " Automatically updates formatting (wrapping) as text is changed
@@ -138,9 +142,6 @@ fun! GetBulletType(lnum, default)
    endif
 endfun
 
-" TODO: Tab/Shift-Tab at beginning of bullet to shift indentation (sort of
-" done)
-" TODO: Type different bullet at root of bullet to change it
 
 
 inoremap <silent> <buffer> <expr> <CR> "\<CR>\<Left>\<Left>".GetBulletType(line('.'), '-')."\<Right>\<Right>\<BS>\<Space>"
@@ -165,3 +166,110 @@ fun! IsAtStartOfBullet()
 endfun
 
 set indentexpr=BnGetIndent(v:lnum)
+
+let s:pathSegmentPattern = '[a-zA-Z0-9_\-.]\+'
+let s:pathPattern = s:pathSegmentPattern.'\(\/'.s:pathSegmentPattern.'\)*'
+
+if !exists('g:bn_project_loaded')
+   let g:bn_project_loaded = 0
+endif
+
+
+if !exists('g:bn_functions_loaded')
+   let g:bn_functions_loaded = 0
+endif
+
+if !g:bn_functions_loaded
+   fun ResolveFile(targetDescriptor, ext)
+      let m = matchlist(a:targetDescriptor, '^\([@&]\)\('.s:pathPattern.'\)')
+
+      if len(m) == 0
+	 return ''
+      endif
+
+      let type = m[1]
+      let p = m[2]
+
+      let parents = []
+
+      if type == '&'
+	 let parents = ['ref']
+      elseif type == '@'
+	 let parents = ['inbox', 'archive']
+      endif
+
+      for parent in parents
+	 if filereadable(parent.'/'.p.a:ext)
+	    return parent.'/'.p.a:ext
+	 endif
+      endfor
+
+      return ''
+   endfun
+
+   fun OpenFile(targetDescriptor)
+
+      let path = ResolveFile(a:targetDescriptor, '.bn')
+
+      if path != ''
+	 exec 'e '.path
+	 return
+      endif
+
+      let path = ResolveFile(a:targetDescriptor, '')
+
+      if path != ''
+	 silent call job_start("xdg-open '".shellescape(path)."'")
+	 return
+      endif
+
+      echoerr 'Not found: '.a:targetDescriptor
+   endfun
+
+   nnoremap <silent> <buffer> <leader>ft :Find <C-r><C-a><CR>
+   " TODO: Make this much more robust (e.g. what if the WORD has a single
+   " quote?)
+   nnoremap <silent> <buffer> <leader>gf :call OpenFile('<C-r><C-a>')<CR>
+
+   fun GetDate()
+      return trim(system('date +"%y%m%d-%H%M"'))
+   endfun
+
+   fun SanitiseNoteName(name)
+      let result = substitute(a:name, '\s\+', '_', 'g')
+      let result = substitute(result, '[^a-zA-Z0-9_\-.]', '', 'g')
+      return result
+   endfun
+
+   fun NewInboxItem(...)
+      if a:0 == 0
+	 exec 'e inbox/'.GetDate().'.bn'
+	 exec 'normal i- '
+      else
+	 exec 'e inbox/'.GetDate().'-'.SanitiseNoteName(a:1).'.bn'
+	 set paste
+	 exec 'normal i:: '.a:1." ::\<CR>\<CR>- "
+	 set nopaste
+	 startinsert!
+      endif
+   endfun
+
+   fun LoadProjectCommands()
+      command! -nargs=? Inbox call NewInboxItem(<f-args>)
+   endfun
+
+   let bn_functions_loaded = 1
+endif
+
+if !g:bn_project_loaded
+   let s:root = FindProjectRoot(getcwd(), '.bnproj')
+
+   if s:root != ''
+      exec "cd ".fnameescape(s:root)
+      let g:bn_project_loaded = 1
+   endif
+endif
+
+if g:bn_project_loaded
+   call LoadProjectCommands()
+endif
