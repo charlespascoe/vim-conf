@@ -1,6 +1,6 @@
 " Title
 
-syntax match NoteTitle /^::.*::/
+syntax match NoteTitle /^::.*::/ contains=Tag
 
 highlight link NoteTitle Title
 
