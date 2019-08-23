@@ -6,15 +6,7 @@ if !exists('g:bn_project_loaded')
 endif
 
 " TODO: Tab/Shift-Tab at beginning of bullet to shift indentation (sort of done)
-" TODO: Type different bullet at root of bullet to change it
 " TODO: Allow arbitrary bullet definitions (do syntax later)
-
-
-" Automatically updates formatting (wrapping) as text is changed
-"setlocal formatoptions+=a
-"setlocal formatoptions+=2
-
-au BufRead,BufNew *.bn call bulletnotes#InitBuffer()
 
 set debug="msg"
 fun bulletnotes#InitBuffer()
@@ -248,16 +240,26 @@ fun bulletnotes#SanitiseNoteName(name)
    return result
 endfun
 
+
 fun bulletnotes#NewInboxItem(...)
-   " TODO: Handle the case when the file exists
    if a:0 == 0
-      exec 'e inbox/'.bulletnotes#GetDate().'.bn'
-      exec 'normal i- '
+      let path = 'inbox/'.bulletnotes#GetDate().'.bn'
+
+      exec 'e '.path
+      if !filereadable(path)
+	 " File doesn't exist - add template text
+	 exec 'normal i- '
+      endif
    else
-      exec 'e inbox/'.bulletnotes#GetDate().'-'.bulletnotes#SanitiseNoteName(a:1).'.bn'
-      set paste
-      exec 'normal i:: '.a:1." ::\<CR>\<CR>- "
-      set nopaste
+      let path = 'inbox/'.bulletnotes#GetDate().'-'.bulletnotes#SanitiseNoteName(a:1).'.bn'
+      exec 'e '.path
+
+      if !filereadable(path)
+	 set paste
+	 " File doesn't exist - add template text
+	 exec 'normal i:: '.a:1." ::\<CR>\<CR>- "
+	 set nopaste
+      endif
    endif
    startinsert!
 endfun
@@ -269,7 +271,6 @@ fun bulletnotes#StartsWith(prefix, str)
 
    return a:prefix ==# strpart(a:str, 0, len(a:prefix))
 endfun
-
 
 fun bulletnotes#Complete(findstart, base)
    if a:findstart
