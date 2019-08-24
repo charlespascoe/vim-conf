@@ -342,7 +342,6 @@ fun bulletnotes#Complete(findstart, base)
     let type = a:base[0]
 
     if type == '#'
-        " TODO: Correct pattern
         " TODO: Order by frequency?
         let tags = split(system("ag --nofilename -o '#[a-zA-Z0-9_-]+'"), "\n\\+")
         let g:__bn_match = a:base
