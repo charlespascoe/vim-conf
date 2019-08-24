@@ -10,6 +10,13 @@ if [ "$#" -eq 0 ]; then
     exit 1
 fi
 
+function ec() {
+    local colour="$1"
+    local message="$2"
+
+    echo -e '\033[38;5;'"$colour"'m'"$message"'\033[0m'
+}
+
 case $1 in
     inbox)
         if [ "$#" -lt 2 ] || [ "$#" -gt 3 ]; then
@@ -17,18 +24,21 @@ case $1 in
             exit 1
         fi
 
-        local proj="$2"
+        proj="$2"
 
         if [ ! -d "$BN_HOME/$proj" ]; then
-            echo "Project not found: $proj"
+            ec 196 "Project not found: $proj"
             exit 1
         fi
 
+        export BN_PROJ=1
+
         # TODO: Handle uncommited changes before pushing
-        export BN_PROJ=1 && \
         cd "$BN_HOME/$proj" && \
+        ec 45 "Pulling latest changes..." && \
         git pull --rebase && \
         vim -c "Inbox $3" && \
+        ec 45 "\nPushing changes..." && \
         git push
 
         exit $?
@@ -42,16 +52,17 @@ case $1 in
             exit 1
         fi
 
-        local proj="$2"
+        proj="$2"
 
         if [ ! -d "$BN_HOME/$proj" ]; then
-            echo "Project not found: $proj"
+            ec 196 "Project not found: $proj"
             exit 1
         fi
 
+        export BN_PROJ=1
+
         # TODO: Handle uncommited changes before pushing
-        export BN_PROJ=1 && \
-        cd '$BN_HOME/$proj' && \
+        cd "$BN_HOME/$proj" && \
         git pull --rebase && \
         source ~/.bash_aliases && \
         vs && \
@@ -68,10 +79,10 @@ case $1 in
             exit 1
         fi
 
-        local proj="$2"
+        proj="$2"
 
         if [ -d "$BN_HOME/$proj" ]; then
-            echo "Project '$proj' already exists"
+            ec 196 "Project '$proj' already exists"
             exit 1
         fi
 
@@ -81,16 +92,27 @@ case $1 in
             exit
         fi
 
+        ec 220 "\nCreating empty project directory..." && \
         mkdir "$BN_HOME/$proj" && \
         cd "$BN_HOME/$proj" && \
-        git init && \
         mkdir inbox archive ref future && \
         touch {inbox,archive,ref,future}/.keep && \
         touch .bnproj && \
+
+        ec 220 "\nInitialising git repo..." && \
+        git init && \
+
+        ec 220 "\nCommitting empty project..." && \
         git add --all && \
         git commit -m 'Initial Commit' && \
+
+        ec 220 "\nCreating remote repo on GitHub..." && \
         hub create -p "bulletnotes-$proj" && \
-        git push -u origin master
+
+        ec 220 "\nPushing to remote repo..." && \
+        git push -u origin master && \
+
+        ec 46 "\nDone!\n"
 
         exit $?
 
@@ -103,14 +125,14 @@ case $1 in
             exit 1
         fi
 
-        local proj="$2"
+        proj="$2"
 
         if [ -d "$BN_HOME/$proj" ]; then
             echo "Project '$proj' already exists"
             exit 1
         fi
 
-        cd $BN_HOME && \
+        cd "$BN_HOME" && \
         hub clone 'bulletnotes-$proj' '$proj'
 
         exit $?
