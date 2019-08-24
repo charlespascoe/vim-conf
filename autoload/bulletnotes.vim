@@ -116,7 +116,7 @@ fun bulletnotes#FindBulletStart(lnum, strict)
 
     if m == ''
         if a:lnum == 1
-	    return -1
+            return -1
         else
             return bulletnotes#FindBulletStart(a:lnum - 1, a:strict)
         endif
@@ -285,7 +285,7 @@ fun bulletnotes#NewInboxItem(...)
 
         exec 'e '.path
         if !filereadable(path)
-	 " File doesn't exist - add template text
+            " File doesn't exist - add template text
             exec 'normal i- '
         endif
     else
@@ -457,4 +457,3 @@ fun bulletnotes#Sync()
 
     call bulletnotes#Push()
 endfun
-
