@@ -1,0 +1,151 @@
+#!/bin/bash
+
+if [ -z "$BN_HOME" ] || [ ! -d "$BN_HOME" ]; then
+    echo "BN_HOME not set or not a directory"
+    exit 1
+fi
+
+if [ "$#" -eq 0 ]; then
+    echo "Usage: bn COMMAND"
+    exit 1
+fi
+
+function ec() {
+    local colour="$1"
+    local message="$2"
+
+    echo -e '\033[38;5;'"$colour"'m'"$message"'\033[0m'
+}
+
+case $1 in
+    inbox)
+        if [ "$#" -lt 2 ] || [ "$#" -gt 3 ]; then
+            echo "Usage: bn inbox PROJECT [TITLE]"
+            exit 1
+        fi
+
+        proj="$2"
+
+        if [ ! -d "$BN_HOME/$proj" ]; then
+            ec 196 "Project not found: $proj"
+            exit 1
+        fi
+
+        export BN_PROJ=1
+
+        # TODO: Handle uncommited changes before pushing
+        cd "$BN_HOME/$proj" && \
+        ec 45 "Pulling latest changes..." && \
+        git pull --rebase && \
+        vim -c "Inbox $3" && \
+        ec 45 "\nPushing changes..." && \
+        git push
+
+        exit $?
+
+        ;;
+
+
+    vs)
+        if [ "$#" -ne 2 ]; then
+            echo "Usage: bn vs PROJECT"
+            exit 1
+        fi
+
+        proj="$2"
+
+        if [ ! -d "$BN_HOME/$proj" ]; then
+            ec 196 "Project not found: $proj"
+            exit 1
+        fi
+
+        export BN_PROJ=1
+
+        # TODO: Handle uncommited changes before pushing
+        cd "$BN_HOME/$proj" && \
+        git pull --rebase && \
+        source ~/.bash_aliases && \
+        vs && \
+        git push
+
+        exit $?
+
+        ;;
+
+
+    newproj)
+        if [ "$#" -ne 2 ]; then
+            echo  "Usage: bn newproj PROJECT"
+            exit 1
+        fi
+
+        proj="$2"
+
+        if [ -d "$BN_HOME/$proj" ]; then
+            ec 196 "Project '$proj' already exists"
+            exit 1
+        fi
+
+        read -p "Are you sure you want to create the project $proj? " confirm
+
+        if [ "$confirm" != 'y' ]; then
+            exit
+        fi
+
+        ec 220 "\nCreating empty project directory..." && \
+        mkdir "$BN_HOME/$proj" && \
+        cd "$BN_HOME/$proj" && \
+        mkdir inbox archive ref future && \
+        touch {inbox,archive,ref,future}/.keep && \
+        touch .bnproj && \
+
+        ec 220 "\nInitialising git repo..." && \
+        git init && \
+
+        ec 220 "\nCommitting empty project..." && \
+        git add --all && \
+        git commit -m 'Initial Commit' && \
+
+        ec 220 "\nCreating remote repo on GitHub..." && \
+        hub create -p "bulletnotes-$proj" && \
+
+        ec 220 "\nPushing to remote repo..." && \
+        git push -u origin master && \
+
+        ec 46 "\nDone!\n"
+
+        exit $?
+
+        ;;
+
+
+    clone)
+        if [ "$#" -ne 2 ]; then
+            echo  "Usage: bn clone PROJECT"
+            exit 1
+        fi
+
+        proj="$2"
+
+        if [ -d "$BN_HOME/$proj" ]; then
+            echo "Project '$proj' already exists"
+            exit 1
+        fi
+
+        cd "$BN_HOME" && \
+        hub clone 'bulletnotes-$proj' '$proj'
+
+        exit $?
+
+        ;;
+
+
+    *)
+
+        echo "Unknown command: $1"
+        exit 1
+
+        ;;
+
+esac
+

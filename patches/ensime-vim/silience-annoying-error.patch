@@ -1,0 +1,14 @@
+diff --git a/autoload/ensime.vim b/autoload/ensime.vim
+index 23522fb..5b2ffdb 100644
+--- a/autoload/ensime.vim
++++ b/autoload/ensime.vim
+@@ -182,7 +182,8 @@ except:
+   vim.command('let g:__error = ' + json.dumps(str(sys.exc_info()[0]) + ':' + str(sys.exc_info()[1])))
+ PY
+     if exists('g:__error')
+-      throw g:__error
++        "throw g:__error
++        return 0
+     endif
+     let res = g:__result
+     unlet g:__result

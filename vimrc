@@ -46,3 +46,4 @@ source ~/.vim-conf/autocomplete.vim
 source ~/.vim-conf/colours.vim
 source ~/.vim-conf/plugin-config.vim
 source ~/.vim-conf/find.vim
+source ~/.vim-conf/bulletnotes.vim
