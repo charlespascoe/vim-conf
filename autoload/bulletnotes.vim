@@ -64,6 +64,8 @@ endfun
 fun bulletnotes#InitProjectBuffer()
     nmap <buffer> <leader>p <Esc>:BnPush<CR>
     nmap <buffer> <leader>s <Esc>:BnSync<CR>
+
+    command! -nargs=+ -complete=file Move call bulletnotes#MoveFile(<f-args>)
 endfun
 
 fun bulletnotes#InitProject()
@@ -219,6 +221,7 @@ fun bulletnotes#IsAtStartOfBullet()
 endfun
 
 fun bulletnotes#ResolveFile(target_descriptor, ext)
+    " TODO: Prevent escaping the project directory (e.g. "../" or "/")
     let m = matchlist(a:target_descriptor, '^\([@&]\)\('.s:path_pattern.'\)')
 
     if len(m) == 0
@@ -450,4 +453,104 @@ fun bulletnotes#Sync()
     echo "Pulled changes"
 
     call bulletnotes#Push()
+endfun
+
+
+fun s:PathToPointer(path)
+    let pointer = substitute(a:path, '\.bn$', '', '')
+
+    if bulletnotes#StartsWith('ref/', pointer)
+        let pointer = '&'.substitute(pointer, '^ref/', '', '')
+    else
+        let pointer = '@'.pointer
+    endif
+
+    return pointer
+endfun
+
+
+fun s:RevertToHead()
+    call system('git reset --hard HEAD')
+endfun
+
+
+fun bulletnotes#MoveFile(from, to)
+    if !g:bn_project_loaded
+        call s:Warning("Project not loaded - refusing to move file")
+        return
+    endif
+
+    let from = a:from
+    let to = a:to
+
+    if !filereadable(getcwd()."/".from)
+        call s:Error("Source file not found: ".from)
+        return
+    endif
+
+    if isdirectory(getcwd()."/".to)
+        let filename = matchstr(from, '[^/]\+$')
+        let to .= filename
+    endif
+
+    if filereadable(getcwd()."/".to)
+        call s:Error("Destination file already exists: ".to)
+        return
+    endif
+
+    if matchstr(a:from, '^'.s:path_pattern.'$') == ''
+        echoerr "Invalid 'from' path: ".from
+        echoerr s:path_pattern
+        return
+    endif
+
+    if matchstr(a:to, '^'.s:path_pattern.'$') == ''
+        echoerr "Invalid 'to' path: ".to
+        return
+    endif
+
+    wa
+    call bulletnotes#WaitForCommit()
+
+    let output = system('git mv '.fnameescape(from).' '.fnameescape(to))
+
+    if v:shell_error != 0
+        echoerr "Move failed (exit ".v:shell_error.")"
+        echoerr output
+        call s:RevertToHead()
+        return
+    endif
+
+    let from_pointer = s:PathToPointer(from)
+    let to_pointer = s:PathToPointer(to)
+
+    " TODO: Maybe make this independent of ag?
+    let cmd  = "ag -lQ ".shellescape(from_pointer)
+    let cmd .= " | xargs sed -i -e "
+    let cmd .= "'s|".from_pointer."|".substitute(to_pointer, '&', '\\&', 'g')."|g'"
+
+    let output = system(cmd)
+
+    if v:shell_error != 0
+        echoerr "Replace pointer failed (exit ".v:shell_error.")"
+        echoerr output
+        call s:RevertToHead()
+        return
+    endif
+
+    sleep 100m
+
+    !git diff --word-diff
+
+    " TODO: Ask for Confirmation
+
+    let commit_msg = "Move ".from." to ".to
+    let output = system("git add --all && git commit -m ".shellescape(commit_msg))
+
+    if v:shell_error != 0
+        echoerr "Commit failed (exit ".v:shell_error.")"
+        echoerr output
+        call s:RevertToHead()
+        return
+    endif
 endfun
