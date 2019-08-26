@@ -51,9 +51,9 @@ fun bulletnotes#InitBuffer()
     imap <silent> <expr> <buffer> <Tab> bulletnotes#IsAtStartOfBullet() ? '<Esc>>>^i<Right><Right>' : '<C-z>'
     imap <silent> <expr> <buffer> <S-Tab> bulletnotes#IsAtStartOfBullet() ? '<Esc><<^i<Right><Right>' : '<S-Tab>'
 
-    nnoremap <silent> <buffer> <leader>ft :Find <C-r><C-a><CR>
+    nnoremap <silent> <buffer> <leader>t :Find <C-r><C-a><CR>
     " TODO: Make this much more robust (e.g. what if the WORD has a single quote?)
-    nnoremap <silent> <buffer> <leader>gf :call bulletnotes#OpenFile('<C-r><C-a>')<CR>
+    nnoremap <silent> <buffer> <leader>f :call bulletnotes#OpenFile('<C-r><C-a>')<CR>
 
     setlocal indentexpr=bulletnotes#BnGetIndent(v:lnum)
 
