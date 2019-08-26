@@ -12,6 +12,9 @@ endif
 set debug="msg"
 
 
+let s:edit_file_extensions = ['.adoc', '.md', '.txt']
+
+
 fun s:Warning(msg)
     echohl WarningMsg
     echom "[bulletnotes]" a:msg
@@ -264,6 +267,13 @@ fun bulletnotes#OpenFile(target_descriptor)
     let path = bulletnotes#ResolveFile(a:target_descriptor, '')
 
     if path != ''
+        for extension in s:edit_file_extensions
+            if bulletnotes#EndsWith(extension, path)
+                exec 'e '.path
+                return
+            endif
+        endfor
+
         call job_start(['xdg-open', path])
         return
     endif
@@ -315,6 +325,15 @@ fun bulletnotes#StartsWith(prefix, str)
     endif
 
     return a:prefix ==# strpart(a:str, 0, len(a:prefix))
+endfun
+
+
+fun bulletnotes#EndsWith(suffix, str)
+    if len(a:str) < len(a:suffix)
+        return 0
+    endif
+
+    return a:suffix ==# strpart(a:str, len(a:str) - len(a:suffix), len(a:suffix))
 endfun
 
 
