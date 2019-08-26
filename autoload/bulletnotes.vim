@@ -371,8 +371,10 @@ fun bulletnotes#Complete(findstart, base)
     return []
 endfun
 
+
 fun bulletnotes#Commit()
     if !g:bn_project_loaded
+        call s:Warning("Can't commit when not in a project")
         return
     endif
 
