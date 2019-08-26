@@ -63,9 +63,11 @@ case $1 in
 
         # TODO: Handle uncommited changes before pushing
         cd "$BN_HOME/$proj" && \
+        ec 45 "Pulling latest changes..." && \
         git pull --rebase && \
         source ~/.bash_aliases && \
         vs && \
+        ec 45 "\nPushing changes..." && \
         git push
 
         exit $?
