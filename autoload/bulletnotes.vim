@@ -505,7 +505,7 @@ fun bulletnotes#MoveFile(from, to)
     endif
 
     if isdirectory(getcwd()."/".to)
-        let filename = matchstr(from, '[^/]\+$')
+        let filename = fnamemodify(from, ':t')
         let to .= filename
     endif
 
