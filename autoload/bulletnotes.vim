@@ -229,21 +229,15 @@ fun bulletnotes#ResolveFile(target_descriptor, ext)
     endif
 
     let type = m[1]
-    let p = m[2]
-
-    let parents = []
+    let path = m[2].a:ext
 
     if type == '&'
-        let parents = ['ref']
-    elseif type == '@'
-        let parents = ['inbox', 'archive']
+        let path = 'ref/'.path
     endif
 
-    for parent in parents
-        if filereadable(parent.'/'.p.a:ext)
-            return parent.'/'.p.a:ext
-        endif
-    endfor
+    if filereadable(path)
+        return path
+    endif
 
     return ''
 endfun
