@@ -339,12 +339,14 @@ fun bulletnotes#Complete(findstart, base)
         let tags = split(system("ag --nofilename -o '#[a-zA-Z0-9_-]+'"), "\n\\+")
         let g:__bn_match = a:base
         call filter(tags, 'bulletnotes#StartsWith(g:__bn_match, v:val)')
+        call sort(tags)
         unlet g:__bn_match
         return tags
     endif
 
     if type == '&'
-        let files = split(system("find ref/ -type f -not -name '*.swp'"))
+        let files = split(system("ag -l"))
+        call filter(files, "bulletnotes#StartsWith('ref/', v:val)")
         call map(files, "substitute(v:val, '^ref/', '', '')")
         call map(files, "'&'.substitute(v:val, '.bn$', '', '')")
         let g:__bn_match = a:base
@@ -355,9 +357,8 @@ fun bulletnotes#Complete(findstart, base)
     endif
 
     if type == '@'
-        " TODO: Maybe optimise this code
-        let files = split(system("find . -type f -not -name '*.swp'"))
-        call map(files, "substitute(v:val, '^\./', '', '')")
+        " TODO: Maybe don't depend on ag?
+        let files = split(system("ag -l"))
         call filter(files, "!bulletnotes#StartsWith('ref/', v:val)")
         call map(files, "'@'.substitute(v:val, '.bn$', '', '')")
         let g:__bn_match = a:base
