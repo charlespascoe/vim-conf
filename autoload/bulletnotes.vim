@@ -61,12 +61,12 @@ fun bulletnotes#InitBuffer()
     setlocal omnifunc=bulletnotes#Complete
 endfun
 
-fun bulletnotes#InitProjectBuffer()
-    nmap <buffer> <leader>p <Esc>:BnPush<CR>
-    nmap <buffer> <leader>s <Esc>:BnSync<CR>
 
-    command! -nargs=+ -complete=file Move call bulletnotes#MoveFile(<f-args>)
+fun bulletnotes#InitProjectBuffer()
+    nmap <buffer> <leader>p <Esc>:Push<CR>
+    nmap <buffer> <leader>s <Esc>:Sync<CR>
 endfun
+
 
 fun bulletnotes#InitProject()
     if g:bn_project_loaded
@@ -84,9 +84,10 @@ fun bulletnotes#InitProject()
     endif
 
     command! -nargs=? Inbox call bulletnotes#NewInboxItem(<f-args>)
+    command! -nargs=+ -complete=file Move call bulletnotes#MoveFile(<f-args>)
 
-    command! BnPush call bulletnotes#Push()
-    command! BnSync call bulletnotes#Sync()
+    command! Push call bulletnotes#Push()
+    command! Sync call bulletnotes#Sync()
 
     au BufWritePost *.bn call bulletnotes#Commit()
     au VimLeave *.bn call bulletnotes#WaitForCommit()
