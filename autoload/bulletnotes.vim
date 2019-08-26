@@ -95,6 +95,7 @@ fun bulletnotes#InitProject()
     au BufRead,BufNew *.bn call bulletnotes#InitProjectBuffer()
 endfun
 
+
 fun bulletnotes#FindBulletStart(lnum, strict)
     let lstr = getline(a:lnum)
 
@@ -123,6 +124,7 @@ fun bulletnotes#FindBulletStart(lnum, strict)
     endif
 endfun
 
+
 fun bulletnotes#FindBulletEnd(startline, subitems)
     let lstr = getline(a:startline)
     " +1 for the symbol, +1 for the space
@@ -143,6 +145,7 @@ fun bulletnotes#FindBulletEnd(startline, subitems)
     return lnum - 1
 endfun
 
+
 fun bulletnotes#FindBullet(subitems)
     let startline = bulletnotes#FindBulletStart(line('.'), 1)
 
@@ -157,6 +160,7 @@ fun bulletnotes#FindBullet(subitems)
         \ "endline": endline
     \ }
 endfun
+
 
 fun bulletnotes#MarkBullet(subitems)
     let bullet = bulletnotes#FindBullet(a:subitems)
@@ -179,6 +183,7 @@ fun bulletnotes#MarkBullet(subitems)
     call setpos(".", end)
 endfun
 
+
 fun bulletnotes#GetIndentOfLine(lnum)
     if a:lnum < 1
         return 0
@@ -186,6 +191,7 @@ fun bulletnotes#GetIndentOfLine(lnum)
 
     return len(matchstr(getline(a:lnum), '^\s*'))
 endfun
+
 
 fun bulletnotes#BnGetIndent(lnum)
     let bulletPattern =  '^\s*[-*.] '
@@ -206,6 +212,7 @@ fun bulletnotes#BnGetIndent(lnum)
     return bulletnotes#GetIndentOfLine(a:lnum - 1)
 endfun
 
+
 fun bulletnotes#GetBulletType(lnum, default)
     let startline = bulletnotes#FindBulletStart(a:lnum, 1)
 
@@ -217,9 +224,11 @@ fun bulletnotes#GetBulletType(lnum, default)
     endif
 endfun
 
+
 fun bulletnotes#IsAtStartOfBullet()
     return strpart(getline('.'), 0, col('.') - 1) =~ '^\s*[-*.] $'
 endfun
+
 
 fun bulletnotes#ResolveFile(target_descriptor, ext)
     " TODO: Prevent escaping the project directory (e.g. "../" or "/")
@@ -243,6 +252,7 @@ fun bulletnotes#ResolveFile(target_descriptor, ext)
     return ''
 endfun
 
+
 fun bulletnotes#OpenFile(target_descriptor)
     let path = bulletnotes#ResolveFile(a:target_descriptor, '.bn')
 
@@ -261,9 +271,11 @@ fun bulletnotes#OpenFile(target_descriptor)
     echoerr 'Not found: '.a:target_descriptor
 endfun
 
+
 fun bulletnotes#GetDate()
     return trim(system('date +"%y%m%d-%H%M"'))
 endfun
+
 
 fun bulletnotes#SanitiseNoteName(name)
     let result = substitute(a:name, '\s\+', '_', 'g')
@@ -296,6 +308,7 @@ fun bulletnotes#NewInboxItem(...)
     startinsert!
 endfun
 
+
 fun bulletnotes#StartsWith(prefix, str)
     if len(a:str) < len(a:prefix)
         return 0
@@ -303,6 +316,7 @@ fun bulletnotes#StartsWith(prefix, str)
 
     return a:prefix ==# strpart(a:str, 0, len(a:prefix))
 endfun
+
 
 fun bulletnotes#Complete(findstart, base)
     if a:findstart
@@ -421,6 +435,7 @@ fun bulletnotes#WaitForCommit()
     endif
 endfun
 
+
 fun bulletnotes#Push()
     call bulletnotes#WaitForCommit()
 
@@ -435,6 +450,7 @@ fun bulletnotes#Push()
         echoerr output
     endif
 endfun
+
 
 fun bulletnotes#Sync()
     wa
