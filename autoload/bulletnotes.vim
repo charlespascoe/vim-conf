@@ -55,7 +55,7 @@ fun bulletnotes#InitBuffer()
     " TODO: Make this much more robust (e.g. what if the WORD has a single quote?)
     nnoremap <silent> <buffer> <leader>f :call bulletnotes#OpenFile('<C-r><C-a>')<CR>
 
-    setlocal indentexpr=bulletnotes#BnGetIndent(v:lnum)
+    setlocal indentexpr=bulletnotes#GetIndent(v:lnum)
 
     inoremap <buffer> <C-z> <C-x><C-o>
     setlocal omnifunc=bulletnotes#Complete
@@ -193,7 +193,7 @@ fun bulletnotes#GetIndentOfLine(lnum)
 endfun
 
 
-fun bulletnotes#BnGetIndent(lnum)
+fun bulletnotes#GetIndent(lnum)
     let bulletPattern =  '^\s*[-*.] '
 
     let m = matchstr(getline(a:lnum), bulletPattern)
