@@ -8,11 +8,6 @@ endif
 " TODO: Tab/Shift-Tab at beginning of bullet to shift indentation (sort of done)
 " TODO: Allow arbitrary bullet definitions (do syntax later)
 
-let s:other_dirs = [
-    \    'inbox',
-    \    'archive',
-    \    'future'
-    \]
 
 set debug="msg"
 
@@ -362,10 +357,10 @@ fun bulletnotes#Complete(findstart, base)
     endif
 
     if type == '@'
-        " TODO: Properly escape directories (maybe use array for arguments?)
-        let dirs = join(s:other_dirs, ' ')
-        let files = split(system("find ".dirs." -type f -not -name '*.swp'"))
-        call map(files, "substitute(v:val, '^[^/]*/', '', '')")
+        " TODO: Maybe optimise this code
+        let files = split(system("find . -type f -not -name '*.swp'"))
+        call map(files, "substitute(v:val, '^\./', '', '')")
+        call filter(files, "!bulletnotes#StartsWith('ref/', v:val)")
         call map(files, "'@'.substitute(v:val, '.bn$', '', '')")
         let g:__bn_match = a:base
         call filter(files, 'bulletnotes#StartsWith(g:__bn_match, v:val)')
