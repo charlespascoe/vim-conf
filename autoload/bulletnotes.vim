@@ -68,6 +68,9 @@ endfun
 fun bulletnotes#InitProjectBuffer()
     nmap <buffer> <leader>p <Esc>:Push<CR>
     nmap <buffer> <leader>s <Esc>:Sync<CR>
+
+    " TODO: Make this use spelllang and maybe a configurable encoding scheme
+    setlocal spellfile=spell/en.utf-8.add,~/.vim/spell/en.utf-8.add
 endfun
 
 
