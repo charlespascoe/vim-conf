@@ -14,6 +14,7 @@ set debug="msg"
 
 let s:edit_file_extensions = ['.adoc', '.md', '.txt']
 
+let s:important_words_file = 'important-words.txt'
 
 fun s:Warning(msg)
     echohl WarningMsg
@@ -31,7 +32,7 @@ endfun
 
 fun bulletnotes#InitBuffer()
     setlocal shiftwidth=4  " operation >> indents 4 columns; << unindents 4 columns
-    setlocal tabstop=4      " a hard TAB displays as 4 columns
+    setlocal tabstop=4     " a hard TAB displays as 4 columns
     setlocal softtabstop=4 " insert/delete 4 spaces when hitting a TAB/BACKSPACE"
     setlocal textwidth=80
     setlocal formatoptions=t
@@ -54,6 +55,8 @@ fun bulletnotes#InitBuffer()
     imap <silent> <expr> <buffer> <Tab> bulletnotes#IsAtStartOfBullet() ? '<Esc>>>^i<Right><Right>' : '<C-z>'
     imap <silent> <expr> <buffer> <S-Tab> bulletnotes#IsAtStartOfBullet() ? '<Esc><<^i<Right><Right>' : '<S-Tab>'
 
+    nmap <silent> <buffer> <leader>i :call bulletnotes#ToggleImportantWord(expand('<cword>'))<CR>
+
     nnoremap <silent> <buffer> <leader>t :Find <C-r><C-a><CR>
     " TODO: Make this much more robust (e.g. what if the WORD has a single quote?)
     nnoremap <silent> <buffer> <leader>f :call bulletnotes#OpenFile('<C-r><C-a>')<CR>
@@ -71,6 +74,11 @@ fun bulletnotes#InitProjectBuffer()
 
     " TODO: Make this use spelllang and maybe a configurable encoding scheme
     setlocal spellfile=spell/en.utf-8.add,~/.vim/spell/en.utf-8.add
+
+    if filereadable(s:important_words_file)
+        let words = readfile(s:important_words_file)
+        exec 'syntax keyword Important' join(words)
+    endif
 endfun
 
 
@@ -591,4 +599,34 @@ fun bulletnotes#MoveFile(from, to)
         call s:RevertToHead()
         return
     endif
+endfun
+
+
+fun bulletnotes#ToggleImportantWord(word)
+    if !g:bn_project_loaded
+        return
+    endif
+
+    if a:word == ''
+        return
+    endif
+
+    let important_words = []
+
+    if filereadable(s:important_words_file)
+        let important_words = readfile(s:important_words_file)
+    endif
+
+    let idx = index(important_words, a:word)
+
+    if idx < 0
+        call add(important_words, a:word)
+    else
+        call filter(important_words, 'v:val != a:word')
+    endif
+
+    call writefile(important_words, s:important_words_file)
+
+    exec 'syntax clear Important'
+    exec 'syntax keyword Important' join(important_words)
 endfun

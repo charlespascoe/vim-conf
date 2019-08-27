@@ -10,6 +10,9 @@ syntax match LeadingWhitespace /^\s\+/ contained
 
 highlight LeadingWhitespace cterm=none
 
+" Important Words (defined in vimscript)
+highlight Important cterm=bold
+
 " Note Bullets
 
 syntax match NoteBullet /^\(\s\{4\}\)*-/
@@ -37,7 +40,7 @@ highlight ProcessedTaskBullet ctermfg=25 cterm=bold
 syntax match Tag /#[a-zA-Z0-9_\-]\+/
 syntax match Reference /&[a-zA-Z0-9_\-.]\+\(\/[a-zA-Z0-9_\-.]\+\)*/
 syntax match NotePointer /@[a-zA-Z0-9_\-.]\+\(\/[a-zA-Z0-9_\-.]\+\)*/
-syntax cluster Metatext contains=Tag,Reference,NotePointer
+syntax cluster Metatext contains=Tag,Reference,NotePointer,Important
 
 highlight Tag ctermfg=226 cterm=bold
 highlight Reference ctermfg=40
