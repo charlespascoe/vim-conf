@@ -135,7 +135,7 @@ case $1 in
         fi
 
         cd "$BN_HOME" && \
-        hub clone 'bulletnotes-$proj' '$proj'
+        hub clone "bulletnotes-$proj" "$proj"
 
         exit $?
 
