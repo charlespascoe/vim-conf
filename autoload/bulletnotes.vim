@@ -40,7 +40,7 @@ fun bulletnotes#InitBuffer()
     onoremap <silent> <buffer> ab :<C-u>call bulletnotes#MarkBullet(0)<CR>
     onoremap <silent> <buffer> aB :<C-u>call bulletnotes#MarkBullet(1)<CR>
 
-    inoremap <silent> <buffer> <expr> <CR> "\<CR>\<Left>\<Left>".bulletnotes#GetBulletType(line('.'), '-')."\<Right>\<Right>\<BS>\<Space>"
+    imap <silent> <buffer> <expr> <CR> bulletnotes#IsAtStartOfBullet() ? "\<C-o>[\<Space>" : "\<CR>\<Left>\<Left>".bulletnotes#GetBulletType(line('.'), '-')."\<Right>\<Right>\<BS>\<Space>"
     nmap <silent> <buffer> <expr> o "o\<Left>\<Left>".bulletnotes#GetBulletType(line('.'), '-')."\<Right>\<Right>\<BS>\<Space>"
 
     nmap <silent> <buffer> >ab >abgv=:call repeat#set('>ab', v:count)<CR>
