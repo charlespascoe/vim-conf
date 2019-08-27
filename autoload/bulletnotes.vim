@@ -63,7 +63,7 @@ fun bulletnotes#InitBuffer()
 
     setlocal indentexpr=bulletnotes#GetIndent(v:lnum)
 
-    inoremap <buffer> <C-z> <C-x><C-o>
+    inoremap <silent> <buffer> <expr> <C-z> bulletnotes#CanOmniComplete() ? "<C-x><C-o>" : "<C-x><C-k>"
     setlocal omnifunc=bulletnotes#Complete
 endfun
 
@@ -345,6 +345,19 @@ fun bulletnotes#EndsWith(suffix, str)
     endif
 
     return a:suffix ==# strpart(a:str, len(a:str) - len(a:suffix), len(a:suffix))
+endfun
+
+
+fun bulletnotes#CanOmniComplete()
+    if !g:bn_project_loaded
+        return 0
+    endif
+
+    let lstr = strpart(getline('.'), 0, col('.') - 1)
+
+    let metatext = matchstr(lstr, '[#@&][^ ]*$')
+
+    return metatext != ''
 endfun
 
 
