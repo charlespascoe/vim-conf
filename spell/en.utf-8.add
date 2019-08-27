@@ -16,3 +16,6 @@ ciphertext
 Base64
 replaceability
 scrypt
+Config
+config
+UUID
