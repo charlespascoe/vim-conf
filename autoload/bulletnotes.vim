@@ -99,6 +99,7 @@ fun bulletnotes#InitProject()
     command! -nargs=? Inbox call bulletnotes#NewInboxItem(<f-args>)
     command! -nargs=+ -complete=file Move call bulletnotes#MoveFile(<f-args>)
 
+    command! Commit call bulletnotes#Commit()
     command! Push call bulletnotes#Push()
     command! Sync call bulletnotes#Sync()
 
