@@ -17,6 +17,11 @@ function ec() {
     echo -e '\033[38;5;'"$colour"'m'"$message"'\033[0m'
 }
 
+
+# Enabled extended globbing for f?vs matching
+shopt -s extglob
+
+
 case $1 in
     inbox)
         if [ "$#" -lt 2 ] || [ "$#" -gt 3 ]; then
@@ -72,7 +77,7 @@ case $1 in
 
         ;;
 
-    vs)
+    ?(f)vs)
         if [ "$#" -ne 2 ]; then
             echo "Usage: bn vs PROJECT"
             exit 1
@@ -92,7 +97,7 @@ case $1 in
         ec 45 "Pulling latest changes..." && \
         git pull --rebase && \
         source ~/.bash_aliases && \
-        vs && \
+        $1 && \
         ec 45 "\nPushing changes..." && \
         git push
 
