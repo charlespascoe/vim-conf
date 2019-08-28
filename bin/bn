@@ -97,8 +97,8 @@ case $1 in
         ec 220 "\nCreating empty project directory..." && \
         mkdir "$BN_HOME/$proj" && \
         cd "$BN_HOME/$proj" && \
-        mkdir inbox archive ref future && \
-        touch {inbox,archive,ref,future}/.keep && \
+        mkdir inbox ref && \
+        touch {inbox,ref}/.keep && \
         touch .bnproj && \
 
         ec 220 "\nInitialising git repo..." && \
