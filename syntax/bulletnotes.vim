@@ -39,9 +39,9 @@ highlight ProcessedTaskBullet ctermfg=25 cterm=bold
 
 syntax match Tag /#[a-zA-Z0-9_\-]\+/ contains=@NoSpell
 syntax match Reference /&[a-zA-Z0-9_\-.]\+\(\/[a-zA-Z0-9_\-.]\+\)*/ contains=@NoSpell
-syntax match NotePointer /@[a-zA-Z0-9_\-.]\+\(\/[a-zA-Z0-9_\-.]\+\)*/ contains=@NoSpell
-syntax cluster Metatext contains=Tag,Reference,NotePointer,Important
+syntax match Pointer /@[a-zA-Z0-9_\-.]\+\(\/[a-zA-Z0-9_\-.]\+\)*/ contains=@NoSpell
+syntax cluster Metatext contains=Tag,Reference,Pointer,Important
 
 highlight Tag ctermfg=226 cterm=bold
 highlight Reference ctermfg=40
-highlight NotePointer ctermfg=51
+highlight Pointer ctermfg=51
