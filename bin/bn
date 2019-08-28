@@ -79,7 +79,7 @@ case $1 in
 
     ?(f)vs)
         if [ "$#" -ne 2 ]; then
-            echo "Usage: bn vs PROJECT"
+            echo "Usage: bn $1 PROJECT"
             exit 1
         fi
 
