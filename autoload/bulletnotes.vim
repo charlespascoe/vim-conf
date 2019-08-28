@@ -540,8 +540,8 @@ fun bulletnotes#MoveFile(from, to)
         return
     endif
 
-    let from = a:from
-    let to = a:to
+    let from = trim(a:from)
+    let to = trim(a:to)
 
     if !filereadable(getcwd()."/".from)
         call s:Error("Source file not found: ".from)
@@ -558,13 +558,13 @@ fun bulletnotes#MoveFile(from, to)
         return
     endif
 
-    if matchstr(a:from, '^'.s:path_pattern.'$') == ''
+    if matchstr(from, '^'.s:path_pattern.'$') == ''
         echoerr "Invalid 'from' path: ".from
         echoerr s:path_pattern
         return
     endif
 
-    if matchstr(a:to, '^'.s:path_pattern.'$') == ''
+    if matchstr(to, '^'.s:path_pattern.'$') == ''
         echoerr "Invalid 'to' path: ".to
         return
     endif
