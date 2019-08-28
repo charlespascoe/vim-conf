@@ -37,9 +37,9 @@ highlight ProcessedTaskBullet ctermfg=25 cterm=bold
 
 " Metatext (annotations to text that add meaning, e.g. tags)
 
-syntax match Tag /#[a-zA-Z0-9_\-]\+/
-syntax match Reference /&[a-zA-Z0-9_\-.]\+\(\/[a-zA-Z0-9_\-.]\+\)*/
-syntax match NotePointer /@[a-zA-Z0-9_\-.]\+\(\/[a-zA-Z0-9_\-.]\+\)*/
+syntax match Tag /#[a-zA-Z0-9_\-]\+/ contains=@NoSpell
+syntax match Reference /&[a-zA-Z0-9_\-.]\+\(\/[a-zA-Z0-9_\-.]\+\)*/ contains=@NoSpell
+syntax match NotePointer /@[a-zA-Z0-9_\-.]\+\(\/[a-zA-Z0-9_\-.]\+\)*/ contains=@NoSpell
 syntax cluster Metatext contains=Tag,Reference,NotePointer,Important
 
 highlight Tag ctermfg=226 cterm=bold
