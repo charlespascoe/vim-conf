@@ -586,7 +586,7 @@ fun bulletnotes#MoveFile(from, to)
 
     " TODO: Maybe make this independent of ag?
     let cmd  = "ag -lQ ".shellescape(from_pointer)
-    let cmd .= " | xargs sed -i -e "
+    let cmd .= " | xargs --no-run-if-empty sed -i -e "
     let cmd .= "'s|".from_pointer."|".substitute(to_pointer, '&', '\\&', 'g')."|g'"
 
     let output = system(cmd)
