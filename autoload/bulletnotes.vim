@@ -97,6 +97,7 @@ fun bulletnotes#InitProject()
     endif
 
     command! -nargs=? Inbox call bulletnotes#NewInboxItem(<f-args>)
+    command! Journal call bulletnotes#OpenJournal()
     command! -nargs=+ -complete=file Move call bulletnotes#MoveFile(<f-args>)
 
     command! Commit call bulletnotes#Commit()
@@ -642,4 +643,129 @@ fun bulletnotes#ToggleImportantWord(word)
 
     exec 'syntax clear Important'
     exec 'syntax keyword Important' join(important_words)
+endfun
+
+
+fun s:GetLineCount()
+    return py3eval('len(vim.current.buffer)')
+endfun
+
+
+fun bulletnotes#FindHeading(start_line)
+    let linecount = s:GetLineCount()
+    let lnum = a:start_line
+
+    while lnum <= linecount
+        let line = getline(lnum)
+
+        let m = matchlist(line, '^::\(.*\)::\s*$')
+
+        if len(m) != 0
+            return [lnum, trim(m[1])]
+        endif
+
+        let lnum += 1
+    endwhile
+
+    return []
+endfun
+
+
+fun s:FindLastNonblankLine(startline)
+    let lnum = a:startline
+
+    while lnum > 0
+        let line = getline(lnum)
+
+        if trim(line) != ''
+            return lnum
+        endif
+
+        let lnum -= 1
+    endwhile
+
+    return 0
+endfun
+
+
+fun bulletnotes#OpenJournal()
+    e journal.bn
+
+    let currentdate = trim(system("date +'%F %A'"))
+
+    " Find the first heading
+    let h = bulletnotes#FindHeading(1)
+
+    if len(h) > 0
+        " Found first heading
+        let lnum = h[0]
+        let heading = h[1]
+
+        " If the first heading is equal to the current date,
+        " then just carry on under this heading
+        if heading ==# currentdate
+            " lastline will hold the line number of the last non-blank line
+            " under this heading
+            let lastline = 0
+
+            " Look for next heading
+            let nh = bulletnotes#FindHeading(lnum + 1)
+
+            if len(nh) > 0
+                " Find last non-blank line before next heading
+                let lastline = s:FindLastNonblankLine(nh[0] - 1)
+            endif
+
+            if lastline == 0
+                " If no heading found, must be only heading; find last
+                " non-blank line of file
+                let lastline = s:FindLastNonblankLine(s:GetLineCount())
+            endif
+
+            if lastline == 0
+                " This should never happen, but just in case, set it to the
+                " heading line
+                let lastline = lnum
+            endif
+
+            " Move cursor to line
+            let pos = getpos('.')
+            let pos[1] = lastline
+            call setpos('.', pos)
+
+            " Append new bullet
+            setlocal paste
+            exec "normal!" "o- "
+            setlocal nopaste
+
+            " Start editing
+            startinsert!
+
+            return
+        endif
+    endif
+
+    let linecount = s:GetLineCount()
+
+    let cmd = "gg"
+
+    if linecount == 1
+        let cmd .= "i"
+    else
+        let cmd .= "O"
+    endif
+
+    let cmd .= ":: ".currentdate." ::\<CR>\<CR>- "
+
+    if linecount > 1
+        let cmd .= "\<CR>\<CR>\<Up>\<Up>"
+    endif
+
+    " Insert new heading and bullet
+    setlocal paste
+    exec "normal!" cmd
+    setlocal nopaste
+
+    " Start editing
+    startinsert!
 endfun

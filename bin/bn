@@ -45,6 +45,32 @@ case $1 in
 
         ;;
 
+    journal)
+        if [ "$#" -ne 2 ]; then
+            echo "Usage: bn journal PROJECT"
+            exit 1
+        fi
+
+        proj="$2"
+
+        if [ ! -d "$BN_HOME/$proj" ]; then
+            ec 196 "Project not found: $proj"
+            exit 1
+        fi
+
+        export BN_PROJ=1
+
+        # TODO: Handle uncommited changes before pushing
+        cd "$BN_HOME/$proj" && \
+        ec 45 "Pulling latest changes..." && \
+        git pull --rebase && \
+        vim -c "Journal" && \
+        ec 45 "\nPushing changes..." && \
+        git push
+
+        exit $?
+
+        ;;
 
     vs)
         if [ "$#" -ne 2 ]; then

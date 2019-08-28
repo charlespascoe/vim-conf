@@ -11,20 +11,14 @@ function __bn_complete() {
     fi
 
     if [ "$COMP_CWORD" -eq 1 ]; then
-        COMPREPLY=( $(compgen -W 'clone inbox newproj vs' -- "${COMP_WORDS[COMP_CWORD]}") )
+        COMPREPLY=( $(compgen -W 'clone inbox journal newproj vs' -- "${COMP_WORDS[COMP_CWORD]}") )
         return
     fi
 
     local projects="$(find "$BN_HOME" -maxdepth 1 -mindepth 1 -type d -printf '%f ')"
 
     case "${COMP_WORDS[1]}" in
-        inbox)
-            if [ "$COMP_CWORD" -eq 2 ]; then
-                COMPREPLY=( $(compgen -W "$projects" -- "${COMP_WORDS[COMP_CWORD]}") )
-            fi
-            ;;
-
-        vs)
+        inbox|journal|vs)
             if [ "$COMP_CWORD" -eq 2 ]; then
                 COMPREPLY=( $(compgen -W "$projects" -- "${COMP_WORDS[COMP_CWORD]}") )
             fi
