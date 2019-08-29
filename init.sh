@@ -11,7 +11,7 @@ function __bn_complete() {
     fi
 
     if [ "$COMP_CWORD" -eq 1 ]; then
-        COMPREPLY=( $(compgen -W 'clone fvs inbox journal newproj vs' -- "${COMP_WORDS[COMP_CWORD]}") )
+        COMPREPLY=( $(compgen -W 'clone fvs inbox journal ls newproj vs' -- "${COMP_WORDS[COMP_CWORD]}") )
         return
     fi
 
@@ -23,6 +23,9 @@ function __bn_complete() {
                 COMPREPLY=( $(compgen -W "$projects" -- "${COMP_WORDS[COMP_CWORD]}") )
             fi
             ;;
+
+        ls)
+            COMPREPLY=( $(compgen -W "remote" -- "${COMP_WORDS[COMP_CWORD]}") )
     esac
 }
 
