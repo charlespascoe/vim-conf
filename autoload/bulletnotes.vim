@@ -245,20 +245,15 @@ fun bulletnotes#IsAtStartOfBullet()
 endfun
 
 
-fun bulletnotes#ResolveFile(target_descriptor, ext)
+fun bulletnotes#ResolveFile(pointer, ext)
     " TODO: Prevent escaping the project directory (e.g. "../" or "/")
-    let m = matchlist(a:target_descriptor, '^\([@&]\)\('.s:path_pattern.'\)')
+    let m = matchlist(a:pointer, '^&\('.s:path_pattern.'\)')
 
     if len(m) == 0
         return ''
     endif
 
-    let type = m[1]
-    let path = m[2].a:ext
-
-    if type == '&'
-        let path = 'ref/'.path
-    endif
+    let path = m[1].a:ext
 
     if filereadable(path)
         return path
@@ -268,15 +263,15 @@ fun bulletnotes#ResolveFile(target_descriptor, ext)
 endfun
 
 
-fun bulletnotes#OpenFile(target_descriptor)
-    let path = bulletnotes#ResolveFile(a:target_descriptor, '.bn')
+fun bulletnotes#OpenFile(pointer)
+    let path = bulletnotes#ResolveFile(a:pointer, '.bn')
 
     if path != ''
         exec 'e '.path
         return
     endif
 
-    let path = bulletnotes#ResolveFile(a:target_descriptor, '')
+    let path = bulletnotes#ResolveFile(a:pointer, '')
 
     if path != ''
         for extension in s:edit_file_extensions
@@ -290,7 +285,7 @@ fun bulletnotes#OpenFile(target_descriptor)
         return
     endif
 
-    echoerr 'Not found: '.a:target_descriptor
+    echoerr 'Not found: '.a:pointer
 endfun
 
 
@@ -371,7 +366,7 @@ fun bulletnotes#Complete(findstart, base)
 
         let lstr = strpart(getline('.'), 0, col('.') - 1)
 
-        let metatext = matchstr(lstr, '[#@&][^ ]*$')
+        let metatext = matchstr(lstr, '[#&][^ ]*$')
 
         if metatext == ''
             " Cancel completion
@@ -403,22 +398,9 @@ fun bulletnotes#Complete(findstart, base)
     endif
 
     if type == '&'
-        let files = split(system("ag -l"))
-        call filter(files, "bulletnotes#StartsWith('ref/', v:val)")
-        call map(files, "substitute(v:val, '^ref/', '', '')")
-        call map(files, "'&'.substitute(v:val, '.bn$', '', '')")
-        let g:__bn_match = a:base
-        call filter(files, 'bulletnotes#StartsWith(g:__bn_match, v:val)')
-        unlet g:__bn_match
-        call sort(files)
-        return files
-    endif
-
-    if type == '@'
         " TODO: Maybe don't depend on ag?
-        let files = split(system("ag -l"))
-        call filter(files, "!bulletnotes#StartsWith('ref/', v:val)")
-        call map(files, "'@'.substitute(v:val, '.bn$', '', '')")
+        let files = split(system("ag -l --ignore-dir spell"))
+        call map(files, "'&'.substitute(v:val, '.bn$', '', '')")
         let g:__bn_match = a:base
         call filter(files, 'bulletnotes#StartsWith(g:__bn_match, v:val)')
         unlet g:__bn_match
