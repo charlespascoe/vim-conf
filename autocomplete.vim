@@ -3,7 +3,7 @@
 inoremap <C-z> <C-p>
 
 " Set complete options
-setlocal completeopt=longest,menuone
+setlocal completeopt=longest,menu
 
 fun! ShouldAutocomplete()
     return pumvisible() || !(strpart(getline('.'), 0, col('.') - 1) =~ '^\s*$')
