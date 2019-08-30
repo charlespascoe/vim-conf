@@ -1,4 +1,4 @@
-let s:path_segment_pattern = '[a-zA-Z0-9_\-.]\+'
+let s:path_segment_pattern = '[a-zA-Z0-9_\-.:]\+'
 let s:path_pattern = s:path_segment_pattern.'\(\/'.s:path_segment_pattern.'\)*'
 
 if !exists('g:bn_project_loaded')
@@ -499,15 +499,7 @@ endfun
 
 
 fun s:PathToPointer(path)
-    let pointer = substitute(a:path, '\.bn$', '', '')
-
-    if bulletnotes#StartsWith('ref/', pointer)
-        let pointer = '&'.substitute(pointer, '^ref/', '', '')
-    else
-        let pointer = '@'.pointer
-    endif
-
-    return pointer
+    return '&'.substitute(a:path, '\.bn$', '', '')
 endfun
 
 
@@ -522,8 +514,8 @@ fun bulletnotes#MoveFile(from, to)
         return
     endif
 
-    let from = trim(a:from)
-    let to = trim(a:to)
+    let from = substitute(trim(a:from), '^&', '', '')
+    let to = substitute(trim(a:to), '^&', '', '')
 
     if !filereadable(getcwd()."/".from)
         call s:Error("Source file not found: ".from)
