@@ -290,7 +290,7 @@ endfun
 
 
 fun bulletnotes#GetDate()
-    return trim(system('date +"%y%m%d-%H%M"'))
+    return trim(system('date +"%y.%m.%d-%H:%M"'))
 endfun
 
 
@@ -311,7 +311,7 @@ fun bulletnotes#NewInboxItem(...)
             exec 'normal i- '
         endif
     else
-        let path = 'inbox/'.bulletnotes#GetDate().'-'.bulletnotes#SanitiseNoteName(a:1).'.bn'
+        let path = 'inbox/'.bulletnotes#GetDate().'_'.bulletnotes#SanitiseNoteName(a:1).'.bn'
         exec 'e '.path
 
         if !filereadable(path)

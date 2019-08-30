@@ -37,13 +37,27 @@ highlight ProcessedTaskBullet ctermfg=25 cterm=bold
 
 " Metatext (annotations to text that add meaning, e.g. tags)
 syntax match Tag /#[a-zA-Z0-9_\-]\+/ contains=@NoSpell
-syntax match Pointer /&[a-zA-Z0-9_\-.]\+\(\/[a-zA-Z0-9_\-.]\+\)*/ contains=@NoSpell
-syntax match RefPointer /&ref\/\?[a-zA-Z0-9_\-.]*\(\/[a-zA-Z0-9_\-.]\+\)*/ contains=@NoSpell
+syntax match Pointer /&[a-zA-Z0-9_\-.:]\+\(\/[a-zA-Z0-9_\-.:]\+\)*/ contains=@NoSpell,DateTimeStamp
+syntax match RefPointer /&ref\/\?[a-zA-Z0-9_\-.:]*\(\/[a-zA-Z0-9_\-.:]\+\)*/ contains=@NoSpell,DateTimeStamp
 syntax cluster Metatext contains=Tag,Pointer,RefPointer
 
 highlight Tag ctermfg=226 cterm=bold
 highlight Pointer ctermfg=39
 highlight RefPointer ctermfg=40
+
+" Timestamps
+
+syntax match DateComponent /\d\d/ contained
+syntax match Date /\d\d\.\d\d\.\d\d/ contained contains=DateComponent
+syntax match TimeComponent /\d\d/ contained
+syntax match Time /\d\d:\d\d/ contained contains=TimeComponent
+syntax match DateTimeStamp /\d\d\.\d\d\.\d\d-\d\d:\d\d/ contained contains=Date,Time
+
+highlight DateComponent ctermfg=49
+highlight Date ctermfg=220
+highlight TimeComponent ctermfg=40
+highlight Time ctermfg=220
+highlight DateTimeStamp ctermfg=220
 
 " Text Styles
 
