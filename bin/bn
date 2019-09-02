@@ -77,7 +77,7 @@ case $1 in
 
         ;;
 
-    ?(f)vs)
+    fvs|vs)
         if [ "$#" -ne 2 ]; then
             echo "Usage: bn $1 PROJECT"
             exit 1
