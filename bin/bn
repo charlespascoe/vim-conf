@@ -181,7 +181,7 @@ case $1 in
         fi
 
         if [ -z $2 ]; then
-            find "$BN_HOME" -maxdepth 1 -mindepth 1 -type d -printf '%f\n'
+            find "$BN_HOME" -maxdepth 1 -mindepth 1 -type d -printf '%f\n' | sort
             exit
         fi
 
