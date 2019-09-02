@@ -296,6 +296,11 @@ fun bulletnotes#OpenFile(pointer)
 endfun
 
 
+fun bulletnotes#GetFriendlyDate()
+    return trim(system("date +'%F %A'"))
+endfun
+
+
 fun bulletnotes#GetDate()
     return trim(system('date +"%y.%m.%d-%H:%M"'))
 endfun
@@ -672,7 +677,7 @@ endfun
 fun bulletnotes#OpenJournal()
     e journal.bn
 
-    let currentdate = trim(system("date +'%F %A'"))
+    let currentdate = bulletnotes#GetFriendlyDate()
 
     " Find the first heading
     let h = bulletnotes#FindHeading(1)
