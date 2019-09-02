@@ -1,6 +1,6 @@
 " Title
 
-syntax match NoteTitle /^::: .* :::/ contains=Tag
+syntax match NoteTitle /^## .* ##/ contains=Tag
 
 highlight NoteTitle cterm=bold,underline ctermfg=135
 

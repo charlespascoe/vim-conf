@@ -324,7 +324,7 @@ fun bulletnotes#NewInboxItem(...)
         if !filereadable(path)
             " File doesn't exist - add template text
             set paste
-            exec "normal i::: ".a:1." :::\<CR>\<CR>- "
+            exec "normal i## ".a:1." ##\<CR>\<CR>- "
             set nopaste
         endif
     endif
