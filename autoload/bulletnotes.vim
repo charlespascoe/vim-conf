@@ -1,6 +1,10 @@
 let s:path_segment_pattern = '[a-zA-Z0-9_\-.:]\+'
 let s:path_pattern = s:path_segment_pattern.'\(\/'.s:path_segment_pattern.'\)*'
 
+let s:bullets = ['-', '*', '+', '?', '.']
+
+let s:bullet_set = '['.join(s:bullets, '').']'
+
 if !exists('g:bn_project_loaded')
     let g:bn_project_loaded = 0
 endif
@@ -48,15 +52,18 @@ fun bulletnotes#InitBuffer()
     nmap <silent> <buffer> >aB >aBgv=:call repeat#set('>aB', v:count)<CR>
     nmap <silent> <buffer> <aB <aBgv=:call repeat#set('<aB', v:count)<CR>
 
-    inoremap <silent> <expr> <buffer> - bulletnotes#IsAtStartOfBullet() ? '<BS><BS>-<Space>' : '-'
-    inoremap <silent> <expr> <buffer> * bulletnotes#IsAtStartOfBullet() ? '<BS><BS>*<Space>' : '*'
-    inoremap <silent> <expr> <buffer> . bulletnotes#IsAtStartOfBullet() ? '<BS><BS>.<Space>' : '.'
+    for bullet in s:bullets
+        let cmd = "inoremap <silent> <expr> <buffer> ".bullet
+        let cmd .= " bulletnotes#IsAtStartOfBullet() ? '<BS><BS>".bullet."<Space>' : '".bullet."'"
+        exec cmd
+    endfor
 
     imap <silent> <expr> <buffer> <Tab> bulletnotes#IsAtStartOfBullet() ? '<Esc>>>^i<Right><Right>' : '<C-z>'
     imap <silent> <expr> <buffer> <S-Tab> bulletnotes#IsAtStartOfBullet() ? '<Esc><<^i<Right><Right>' : '<S-Tab>'
 
     nmap <silent> <buffer> <leader>i :call bulletnotes#ToggleImportantWord(expand('<cword>'))<CR>
 
+    nnoremap <silent> <buffer> <leader>gl "zyi]:call system('open '.shellescape(@z))<CR>
     nnoremap <silent> <buffer> <leader>t :Find <C-r><C-a><CR>
     nnoremap <silent> <buffer> <leader>f :call bulletnotes#OpenFile(expand('<cWORD>'))<CR>
 
@@ -124,7 +131,7 @@ fun bulletnotes#FindBulletStart(lnum, strict)
         let pattern .= '\{4\}'
     endif
 
-    let pattern .= '\)*[-*.]'
+    let pattern .= '\)*'.s:bullet_set
 
     let m = matchstr(lstr, pattern)
 
@@ -209,7 +216,7 @@ endfun
 
 
 fun bulletnotes#GetIndent(lnum)
-    let bulletPattern =  '^\s*[-*.] '
+    let bulletPattern =  '^\s*'.s:bullet_set.' '
 
     let m = matchstr(getline(a:lnum), bulletPattern)
 
@@ -241,7 +248,7 @@ endfun
 
 
 fun bulletnotes#IsAtStartOfBullet()
-    return strpart(getline('.'), 0, col('.') - 1) =~ '^\s*[-*.] $'
+    return strpart(getline('.'), 0, col('.') - 1) =~ '^\s*'.s:bullet_set.' $'
 endfun
 
 
@@ -315,9 +322,9 @@ fun bulletnotes#NewInboxItem(...)
         exec 'e '.path
 
         if !filereadable(path)
-            set paste
             " File doesn't exist - add template text
-            exec "normal i:: ".a:1." ::\<CR>\<CR>- "
+            set paste
+            exec "normal i::: ".a:1." :::\<CR>\<CR>- "
             set nopaste
         endif
     endif
@@ -632,7 +639,7 @@ fun bulletnotes#FindHeading(start_line)
     while lnum <= linecount
         let line = getline(lnum)
 
-        let m = matchlist(line, '^::\(.*\)::\s*$')
+        let m = matchlist(line, '^:: \(.*\) ::\s*$')
 
         if len(m) != 0
             return [lnum, trim(m[1])]
