@@ -435,7 +435,9 @@ fun bulletnotes#Commit()
         return
     endif
 
-    call bulletnotes#WaitForCommit()
+    if exists('s:commit_job') && job_status(s:commit_job) ==# 'run'
+        return
+    endif
 
     let options = {
         \    "exit_cb": "bulletnotes#CommitComplete",
@@ -446,7 +448,7 @@ fun bulletnotes#Commit()
     let s:commit_output = ''
     " TODO: Handle the case where there are no changes (it causes git commit
     " to error)
-    let s:commit_job = job_start(['/bin/bash', '-c', 'git add --all && git commit -m "Edit"'], options)
+    let s:commit_job = job_start(['/bin/bash', '-c', 'sleep 0.25 && git add --all && git commit -m "Edit"'], options)
 endfun
 
 
