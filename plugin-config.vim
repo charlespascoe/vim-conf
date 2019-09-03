@@ -11,6 +11,7 @@ endif
 
 highlight CtrlPBufferHid ctermfg=123
 highlight CtrlPBufferPath ctermfg=15
+highlight CtrlPPrtBase ctermfg=32
 
 inoremap <silent> <C-@> <Esc>:CtrlPBuffer<CR>
 nnoremap <silent> <C-@> <Esc>:CtrlPBuffer<CR>
