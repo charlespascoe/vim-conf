@@ -24,8 +24,19 @@ function __bn_complete() {
             fi
             ;;
 
+        clone)
+            touch "$BN_HOME/remotes_cache"
+            remotes="$(xargs -a "$BN_HOME/remotes_cache" echo -n)"
+
+            COMPREPLY=( $(compgen -W "$remotes" -- "${COMP_WORDS[COMP_CWORD]}") )
+
+            ;;
+
+
         ls)
             COMPREPLY=( $(compgen -W "remote" -- "${COMP_WORDS[COMP_CWORD]}") )
+
+            ;;
     esac
 }
 
