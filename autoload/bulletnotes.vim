@@ -15,7 +15,6 @@ endif
 
 set debug="msg"
 
-
 let s:edit_file_extensions = ['.adoc', '.md', '.txt']
 
 let s:important_words_file = 'important-words.txt'
@@ -102,6 +101,20 @@ fun bulletnotes#InitProject()
         call s:Error("Can't find project root")
         return
     endif
+
+    let g:bn_proj_name = ''
+
+    if filereadable('.bn_proj_name')
+        let lines = readfile('.bn_proj_name')
+
+        if len(lines) > 0
+            let g:bn_proj_name = lines[0]
+        endif
+    endif
+
+    py3file ~/.vim-conf/bulletnotes.py
+
+    command! ProcessTasks call bulletnotes#ProcessTasks()
 
     command! -nargs=? Inbox call bulletnotes#NewInboxItem(<f-args>)
     command! Journal call bulletnotes#OpenJournal()
@@ -755,4 +768,11 @@ fun bulletnotes#OpenJournal()
 
     " Start editing
     startinsert!
+endfun
+
+
+fun bulletnotes#ProcessTasks()
+    python3 export_tasks()
+
+    %s/^\(\(\s\{4\}\)*\)\* /\1+ /
 endfun
