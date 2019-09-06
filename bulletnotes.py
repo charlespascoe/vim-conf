@@ -177,3 +177,12 @@ def export_tasks():
     taskpaper_key = upload_to_skvs(skvs_payload)
 
     send_push_notification('Tasks', 'Import to %s' % (proj or 'Inbox'), taskpaper_key)
+
+
+def check_project_exists():
+    proj = vim.eval('exists("g:bn_proj_name") ? g:bn_proj_name : ""')
+
+    if proj == '':
+        raise Exception('No project set')
+
+    send_push_notification('CheckProject', 'Check "%s" exists' % proj, proj)

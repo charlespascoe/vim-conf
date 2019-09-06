@@ -115,6 +115,7 @@ fun bulletnotes#InitProject()
     py3file ~/.vim-conf/bulletnotes.py
 
     command! ProcessTasks call bulletnotes#ProcessTasks()
+    command! CheckProjectExists call bulletnotes#CheckProjectExists()
 
     command! -nargs=? Inbox call bulletnotes#NewInboxItem(<f-args>)
     command! Journal call bulletnotes#OpenJournal()
@@ -124,8 +125,8 @@ fun bulletnotes#InitProject()
     command! Push call bulletnotes#Push()
     command! Sync call bulletnotes#Sync()
 
-    au BufWritePost *.bn call bulletnotes#Commit()
-    au VimLeave *.bn call bulletnotes#WaitForCommit()
+    au BufWritePost * call bulletnotes#Commit()
+    au VimLeave * call bulletnotes#WaitForCommit()
 
     au BufRead,BufNew *.bn call bulletnotes#InitProjectBuffer()
 endfun
@@ -775,4 +776,14 @@ fun bulletnotes#ProcessTasks()
     python3 export_tasks()
 
     %s/^\(\(\s\{4\}\)*\)\* /\1+ /
+endfun
+
+
+fun bulletnotes#CheckProjectExists()
+    if !exists('g:bn_proj_name') || g:bn_proj_name == ''
+        s:Error('No Project name set')
+        return
+    endif
+
+    python3 check_project_exists()
 endfun
