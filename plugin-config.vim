@@ -26,7 +26,7 @@ let g:airline#extensions#obsession#enabled = 1
 let delimitMate_expand_cr = 1
 
 " NERDTree
-nmap <C-n> :NERDTreeToggle<CR>
+nmap <C-n> :NERDTreeToggle \| NERDTreeRefreshRoot<CR>
 let NERDTreeWinSize = 48
 
 " tsuquyomi
