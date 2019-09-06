@@ -443,11 +443,17 @@ endfun
 fun bulletnotes#Commit(...)
     let commit_msg = 'Edit'
 
-    if a:0 > 0
-        if type(a:1) == v:t_string
-            let commit_msg = shellescape(a:1)
+    let sync = 0
+
+    if a:0 > 0 && a:1 ==# 'sync'
+        let sync = 1
+    endif
+
+    if a:0 > 1
+        if type(a:2) == v:t_string
+            let commit_msg = shellescape(a:2)
         else
-            echoerr 'Commit message must be a string (got'.type(a:1).')'
+            echoerr 'Commit message must be a string (got'.type(a:2).')'
             return
         endif
     endif
@@ -466,15 +472,20 @@ fun bulletnotes#Commit(...)
         return
     endif
 
-    let options = {
-        \    "exit_cb": "bulletnotes#CommitComplete",
-        \    "callback": "bulletnotes#CommitOutput",
-        \    "timeout": 5000
-        \}
+    let commit_cmd = 'git add --all && (git diff-index --quiet HEAD || git commit -m '.commit_msg.')'
 
-    let commit_cmd = 'sleep 0.25 && git add --all && (git diff-index --quiet HEAD || git commit -m '.commit_msg.')'
-    let s:commit_output = ''
-    let s:commit_job = job_start(['/bin/bash', '-c', commit_cmd], options)
+    if sync
+        return system(commit_cmd)
+    else
+        let options = {
+            \    "exit_cb": "bulletnotes#CommitComplete",
+            \    "callback": "bulletnotes#CommitOutput",
+            \    "timeout": 5000
+            \}
+
+        let s:commit_output = ''
+        let s:commit_job = job_start(['/bin/bash', '-c', 'sleep 0.25 && '.commit_cmd], options)
+    endif
 endfun
 
 
@@ -823,24 +834,29 @@ fun bulletnotes#DeleteFile(...)
         return
     endif
 
-    wa
+    noautocmd wa
+    let output = bulletnotes#Commit('sync')
 
-    call bulletnotes#WaitForCommit()
+    if v:shell_error != 0
+        echoerr 'Failed to save files (exit code '.v:shell_error.')'
+        echoerr output
+        return
+    endif
 
     call system('git rm '.shellescape(file))
 
     if v:shell_error != 0
-        s:Error('git rm failed with exit code '.v:shell_error)
+        echoerr 'git rm failed (exit code '.v:shell_error.')'
         return
     endif
 
-    call bulletnotes#Commit('Delete '.file)
-
     if is_buffer
-        call bulletnotes#WaitForCommit()
+        call bulletnotes#Commit('sync', 'Delete '.file)
         " TODO: Maybe allow this to be configured rather than explicitly using
         " this plugin?
         Bdelete!
+    else
+        call bulletnotes#Commit('async', 'Delete '.file)
     endif
 
     " NERDTree Doesn't always refresh immediately
