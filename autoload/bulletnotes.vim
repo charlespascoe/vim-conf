@@ -119,7 +119,9 @@ fun bulletnotes#InitProject()
 
     command! -nargs=? Inbox call bulletnotes#NewInboxItem(<f-args>)
     command! Journal call bulletnotes#OpenJournal()
+
     command! -nargs=+ -complete=file Move call bulletnotes#MoveFile(<f-args>)
+    command! -nargs=? -complete=file Delete call bulletnotes#DeleteFile(<f-args>)
 
     command! Commit call bulletnotes#Commit()
     command! Push call bulletnotes#Push()
@@ -797,4 +799,51 @@ fun bulletnotes#CheckProjectExists()
     endif
 
     python3 check_project_exists()
+endfun
+
+
+fun bulletnotes#DeleteFile(...)
+    let file = ''
+    let is_buffer = 0
+
+    if a:0 == 0
+        if @% == ''
+            s:Error('No file open')
+            return
+        endif
+
+        let file = @%
+        let is_buffer = 1
+    else
+        let file = a:1
+    endif
+
+    if !filereadable(file)
+        s:Error('File not found: '.file)
+        return
+    endif
+
+    wa
+
+    call bulletnotes#WaitForCommit()
+
+    call system('git rm '.shellescape(file))
+
+    if v:shell_error != 0
+        s:Error('git rm failed with exit code '.v:shell_error)
+        return
+    endif
+
+    call bulletnotes#Commit('Delete '.file)
+
+    if is_buffer
+        call bulletnotes#WaitForCommit()
+        " TODO: Maybe allow this to be configured rather than explicitly using
+        " this plugin?
+        Bdelete!
+    endif
+
+    " NERDTree Doesn't always refresh immediately
+    " TODO: Generalise this (maybe custom autocmd event?)
+    NERDTreeRefreshRoot
 endfun
