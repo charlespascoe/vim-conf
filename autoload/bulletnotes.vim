@@ -619,12 +619,16 @@ fun bulletnotes#MoveFile(from, to)
 
     let bufnum = bufnr(from)
 
+    if bufnum >= 0 && bufnum == bufnr('')
+        exec 'noautocmd saveas!' fnameescape(to)
+
+        " Vim creates a new buffer for the old filename
+        let bufnum = bufnr(from)
+    endif
+
+    " Delete the old buffer
     if bufnum >= 0
-        if bufnum == bufnr('')
-            exec 'noautocmd saveas!' fnameescape(to)
-        else
-            exec 'bdelete!' bufnum
-        endif
+        exec 'Bwipeout!' bufnum
     endif
 
     let from_pointer = s:PathToPointer(from)
@@ -872,13 +876,14 @@ fun bulletnotes#DeleteFile(...)
         return
     endif
 
-    if is_buffer
-        call bulletnotes#Commit('sync', 'Delete '.file)
+    call bulletnotes#Commit(is_buffer ? 'sync' : 'async', 'Delete '.file)
+
+    let bufnum = bufnr(file)
+
+    if bufnum >= 0
         " TODO: Maybe allow this to be configured rather than explicitly using
         " this plugin?
-        Bdelete!
-    else
-        call bulletnotes#Commit('async', 'Delete '.file)
+        exec 'Bwipeout!' bufnum
     endif
 
     " NERDTree Doesn't always refresh immediately
