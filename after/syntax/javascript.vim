@@ -4,7 +4,7 @@ syntax region interpolatedString start="`" end="`" skip="\\`" contains=interpola
 highlight def link interpolatedString String
 highlight def link interpolatedStringValue Special
 
-syntax region regexp start='/' end='/[gi]*' skip='\\/'
+syntax region regexp start='/[^*]' end='/[gi]*' skip='\\/'
 highlight link regexp Constant
 
 syntax match comment /\/\/.*$/
