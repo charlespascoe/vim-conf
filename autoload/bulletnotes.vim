@@ -594,16 +594,32 @@ fun bulletnotes#MoveFile(from, to)
         return
     endif
 
-    wa
-    call bulletnotes#WaitForCommit()
+    noautocmd wa
+    let output = bulletnotes#Commit('sync')
 
-    let output = system('git mv '.fnameescape(from).' '.fnameescape(to))
+    if v:shell_error != 0
+        echoerr "Failed to commit changes (exit code ".v:shell_error.")"
+        echoerr output
+        return
+    endif
+
+    let output = system('git mv '.shellescape(from).' '.shellescape(to))
 
     if v:shell_error != 0
         echoerr "Move failed (exit ".v:shell_error.")"
         echoerr output
         call s:RevertToHead()
         return
+    endif
+
+    let bufnum = bufnr(from)
+
+    if bufnum >= 0
+        if bufnum == bufnr('')
+            exec 'noautocmd saveas!' fnameescape(to)
+        else
+            exec 'bdelete!' bufnum
+        endif
     endif
 
     let from_pointer = s:PathToPointer(from)
@@ -630,7 +646,8 @@ fun bulletnotes#MoveFile(from, to)
     " TODO: Ask for Confirmation
 
     let commit_msg = "Move ".from." to ".to
-    let output = system("git add --all && git commit -m ".shellescape(commit_msg))
+
+    let output = bulletnotes#Commit('sync', commit_msg)
 
     if v:shell_error != 0
         echoerr "Commit failed (exit ".v:shell_error.")"
