@@ -438,7 +438,18 @@ fun bulletnotes#Complete(findstart, base)
 endfun
 
 
-fun bulletnotes#Commit()
+fun bulletnotes#Commit(...)
+    let commit_msg = 'Edit'
+
+    if a:0 > 0
+        if type(a:1) == v:t_string
+            let commit_msg = shellescape(a:1)
+        else
+            echoerr 'Commit message must be a string (got'.type(a:1).')'
+            return
+        endif
+    endif
+
     if !g:bn_project_loaded
         call s:Warning("Can't commit when not in a project")
         return
@@ -459,7 +470,7 @@ fun bulletnotes#Commit()
         \    "timeout": 5000
         \}
 
-    let commit_cmd = 'sleep 0.25 && git add --all && (git diff-index --quiet HEAD || git commit -m "Edit")'
+    let commit_cmd = 'sleep 0.25 && git add --all && (git diff-index --quiet HEAD || git commit -m '.commit_msg.')'
     let s:commit_output = ''
     let s:commit_job = job_start(['/bin/bash', '-c', commit_cmd], options)
 endfun
