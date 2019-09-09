@@ -10,4 +10,5 @@ nmap <buffer> <leader>tR <Plug>(go-rename)
 nmap <buffer> <leader>tT <C-w>v<C-w><C-w><Plug>(go-alternate-edit)
 nmap <buffer> <leader>tI <Plug>(go-import)
 nmap <buffer> <leader>tf $ca" ()<Left><CR><C-r>"
+nmap <buffer> <leader>e <Plug>(go-iferr)
 nnoremap <buffer> <leader>i `iO""<Left>
