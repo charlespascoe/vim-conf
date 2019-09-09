@@ -6,7 +6,7 @@ syntax match ContactTitle /^@@ .* @@/
 
 highlight NoteTitle cterm=bold,underline ctermfg=135
 highlight Subtitle cterm=underline ctermfg=140
-highlight ContactTitle ctermfg=51
+highlight ContactTitle cterm=underline ctermfg=51
 
 
 " Leading Whitespace (for consistent multi-line highlighting)
