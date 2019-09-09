@@ -1,12 +1,13 @@
 " Title
 
 syntax match NoteTitle /^## .* ##/ contains=Tag
+syntax match Subtitle /^:: .* ::/ contains=Tag
+syntax match ContactTitle /^@@ .* @@/
 
 highlight NoteTitle cterm=bold,underline ctermfg=135
-
-syntax match Subtitle /^:: .* ::/ contains=Tag
-
 highlight Subtitle cterm=underline ctermfg=140
+highlight ContactTitle ctermfg=51
+
 
 " Leading Whitespace (for consistent multi-line highlighting)
 
@@ -63,12 +64,21 @@ syntax match Tag /#[a-zA-Z0-9_\-]\+/ contains=@NoSpell
 syntax match Pointer /&[a-zA-Z0-9_\-.:]\+\(\/[a-zA-Z0-9_\-.:]\+\)*/ contains=@NoSpell,DateTimeStamp
 syntax match RefPointer /&ref\/\?[a-zA-Z0-9_\-.:]*\(\/[a-zA-Z0-9_\-.:]\+\)*/ contains=@NoSpell,DateTimeStamp
 syntax match Link /\(^\|\s\)\[[^\]]\+\]\(\s\|$\)/ contains=@NoSpell
-syntax cluster Metatext contains=Tag,Pointer,RefPointer,Link
+syntax match Contact /@[a-zA-Z\-._]+/
+syntax cluster Metatext contains=Tag,Pointer,RefPointer,Link,Contact
 
 highlight Tag ctermfg=226 cterm=bold
 highlight Pointer ctermfg=39
 highlight RefPointer ctermfg=40
 highlight Link ctermfg=37
+highlight Contact ctermfg=51
+
+" Contact Fields
+syntax match FieldName /[A-Za-z]\+:/ contained
+syntax match EmailField /^- Email: .*/ contains=NoteBullet,FieldName,@NoSpell
+
+highlight FieldName ctermfg=39
+highlight link EmailField Link
 
 " Timestamps
 

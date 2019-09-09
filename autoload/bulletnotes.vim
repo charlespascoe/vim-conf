@@ -125,6 +125,8 @@ fun bulletnotes#InitProject()
     command! -nargs=? Inbox call bulletnotes#NewInboxItem(<f-args>)
     command! Journal call bulletnotes#OpenJournal()
 
+    command! -nargs=1 AddContact call bulletnotes#AddContact(<f-args>)
+
     command! -nargs=+ -complete=file Move call bulletnotes#MoveFile(<f-args>)
     command! -nargs=? -complete=file Delete call bulletnotes#DeleteFile(<f-args>)
 
@@ -327,7 +329,7 @@ fun bulletnotes#GetDate()
 endfun
 
 
-fun bulletnotes#SanitiseNoteName(name)
+fun bulletnotes#SanitiseText(name)
     let result = substitute(a:name, '\s\+', '_', 'g')
     let result = substitute(result, '[^a-zA-Z0-9_\-.]', '', 'g')
     return result
@@ -344,7 +346,7 @@ fun bulletnotes#NewInboxItem(...)
             exec 'normal i- '
         endif
     else
-        let path = 'inbox/'.bulletnotes#GetDate().'_'.bulletnotes#SanitiseNoteName(a:1).'.bn'
+        let path = 'inbox/'.bulletnotes#GetDate().'_'.bulletnotes#SanitiseText(a:1).'.bn'
         exec 'e '.path
 
         if !filereadable(path)
@@ -889,4 +891,34 @@ fun bulletnotes#DeleteFile(...)
     " NERDTree Doesn't always refresh immediately
     " TODO: Generalise this (maybe custom autocmd event?)
     NERDTreeRefreshRoot
+endfun
+
+
+fun bulletnotes#AddContact(name)
+    let contact_name = bulletnotes#SanitiseText(a:name)
+
+    if !g:bn_project_loaded
+        call s:Error('Project not loaded')
+        return
+    endif
+
+    " TODO: Check to see if the buffer is already open
+    " and just navigate to it if it is
+    e contacts.bn
+
+    " TODO: Check if contact already exists
+
+    let linecount = s:GetLineCount()
+
+    let cmd = "normal! "
+
+    if linecount == 1
+        let cmd .= "ggi## Contacts ##\<Esc>"
+    endif
+
+    let cmd .= "Go\<CR>@@ ".contact_name." @@\<CR>- Email: "
+
+    exec cmd
+
+    startinsert!
 endfun
