@@ -1,3 +1,6 @@
+" Settings
+setlocal conceallevel=3
+
 " Title
 
 syntax match NoteTitle /^## .* ##/ contains=Tag
@@ -63,7 +66,8 @@ highlight AnsweredQuestion ctermfg=243
 syntax match Tag /#[a-zA-Z0-9_\-]\+/ contains=@NoSpell
 syntax match Pointer /&[a-zA-Z0-9_\-.:]\+\(\/[a-zA-Z0-9_\-.:]\+\)*/ contains=@NoSpell,DateTimeStamp
 syntax match RefPointer /&ref\/\?[a-zA-Z0-9_\-.:]*\(\/[a-zA-Z0-9_\-.:]\+\)*/ contains=@NoSpell,DateTimeStamp
-syntax match Link /\(^\|\s\)\[[^\]]\+\]\(\s\|$\)/ contains=@NoSpell
+syntax match Link /\(^\|\s\)\[[^\]]\+\]\(\s\|$\)/ contains=@NoSpell,LinkEnds keepend
+syntax match LinkEnds /\(\[\|\]\)/ conceal contained
 syntax match Contact /@[a-zA-Z\-._]\+/
 syntax cluster Metatext contains=Tag,Pointer,RefPointer,Link,Contact
 
@@ -71,6 +75,7 @@ highlight Tag ctermfg=226 cterm=bold
 highlight Pointer ctermfg=39
 highlight RefPointer ctermfg=40
 highlight Link ctermfg=37
+highlight link LinkEnds Link
 highlight Contact ctermfg=51
 
 " Contact Fields
@@ -96,7 +101,9 @@ highlight DateTimeStamp ctermfg=220
 
 " Text Styles
 
-syntax region Highlight start='`' end='`'
+syntax region Highlight start='`' end='`' contains=HighlightMark keepend
+syntax match HighlightMark /`/ conceal contained
 syntax cluster TextStyle contains=Highlight,Important
 
 highlight Highlight ctermfg=50 cterm=bold
+highlight link HighlightMark Highlight
