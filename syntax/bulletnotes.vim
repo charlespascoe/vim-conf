@@ -64,7 +64,7 @@ syntax match Tag /#[a-zA-Z0-9_\-]\+/ contains=@NoSpell
 syntax match Pointer /&[a-zA-Z0-9_\-.:]\+\(\/[a-zA-Z0-9_\-.:]\+\)*/ contains=@NoSpell,DateTimeStamp
 syntax match RefPointer /&ref\/\?[a-zA-Z0-9_\-.:]*\(\/[a-zA-Z0-9_\-.:]\+\)*/ contains=@NoSpell,DateTimeStamp
 syntax match Link /\(^\|\s\)\[[^\]]\+\]\(\s\|$\)/ contains=@NoSpell
-syntax match Contact /@[a-zA-Z\-._]+/
+syntax match Contact /@[a-zA-Z\-._]\+/
 syntax cluster Metatext contains=Tag,Pointer,RefPointer,Link,Contact
 
 highlight Tag ctermfg=226 cterm=bold

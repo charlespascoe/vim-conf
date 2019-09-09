@@ -70,6 +70,7 @@ fun bulletnotes#InitBuffer()
     nnoremap <silent> <buffer> <leader>gl "zyi]:call system('open '.shellescape(@z))<CR>
     nnoremap <silent> <buffer> <leader>t :Find <C-r><C-a><CR>
     nnoremap <silent> <buffer> <leader>f :call bulletnotes#OpenFile(expand('<cWORD>'))<CR>
+    nnoremap <silent> <buffer> <leader>c :call bulletnotes#ViewContact(substitute(expand('<cWORD>'), '^@', '', ''))<CR>
 
     setlocal indentexpr=bulletnotes#GetIndent(v:lnum)
 
@@ -401,7 +402,7 @@ fun bulletnotes#Complete(findstart, base)
 
         let lstr = strpart(getline('.'), 0, col('.') - 1)
 
-        let metatext = matchstr(lstr, '[#&][^ ]*$')
+        let metatext = matchstr(lstr, '[#&@][^ ]*$')
 
         if metatext == ''
             " Cancel completion
@@ -441,6 +442,16 @@ fun bulletnotes#Complete(findstart, base)
         unlet g:__bn_match
         call sort(files)
         return files
+    endif
+
+    if type == '@'
+        let contacts = split(system("ag --silent -o '@@ .* @@' contacts.bn"), '\n')
+        call map(contacts, '"@".trim(substitute(v:val, "@@", "", "g"))')
+        let g:__bn_match = a:base
+        call filter(contacts, 'bulletnotes#StartsWith(g:__bn_match, v:val)')
+        call sort(contacts)
+        unlet g:__bn_match
+        return contacts
     endif
 
     return []
@@ -921,4 +932,23 @@ fun bulletnotes#AddContact(name)
     exec cmd
 
     startinsert!
+endfun
+
+
+fun bulletnotes#FindContact(name)
+    let name = bulletnotes#SanitiseText(a:name)
+
+    return matchstr(system('ag --silent "@@\\s*'.name.'\\s*@@" contacts.bn'), '^\d\+')
+endfun
+
+
+fun bulletnotes#ViewContact(name)
+    let line = bulletnotes#FindContact(a:name)
+
+    if line == ''
+        call s:Error("Can't find contact: ".a:name)
+    else
+        " TODO: Check if the file is already open
+        exec 'e contacts.bn:'.line
+    endif
 endfun
