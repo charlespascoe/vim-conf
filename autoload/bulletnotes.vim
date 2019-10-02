@@ -86,6 +86,10 @@ fun bulletnotes#InitProjectBuffer()
     " TODO: Make this use spelllang and maybe a configurable encoding scheme
     setlocal spellfile=spell/en.utf-8.add,~/.vim/spell/en.utf-8.add
 
+    " Disable git gutter - it just gets annoying because changes get commited
+    " on save
+    GitGutterBufferDisable
+
     if filereadable(s:important_words_file)
         let words = readfile(s:important_words_file)
         exec 'syntax keyword Important' join(words)
