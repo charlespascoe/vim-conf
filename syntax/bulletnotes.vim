@@ -80,10 +80,10 @@ highlight Contact ctermfg=51
 
 " Contact Fields
 syntax match FieldName /[A-Za-z]\+:/ contained
-syntax match EmailField /^- Email: .*/ contains=NoteBullet,FieldName,@NoSpell
+syntax match Field /^- \(Email\|Name\|Role\): .*/ contains=NoteBullet,FieldName,@NoSpell
 
 highlight FieldName ctermfg=39
-highlight link EmailField Link
+highlight link Field Link
 
 " Timestamps
 
