@@ -343,7 +343,7 @@ endfun
 
 fun bulletnotes#NewInboxItem(...)
     if a:0 == 0
-        let path = 'inbox/'.bulletnotes#GetDate().'.bn'
+        let path = 'inbox/'.trim(system('date +"%y-%m-%d_%H:%M"')).'.bn'
 
         exec 'e '.path
         if !filereadable(path)
@@ -351,7 +351,7 @@ fun bulletnotes#NewInboxItem(...)
             exec 'normal i- '
         endif
     else
-        let path = 'inbox/'.bulletnotes#GetDate().'_'.bulletnotes#SanitiseText(a:1).'.bn'
+        let path = 'inbox/'.trim(system('date +"%y-%m-%d"')).'_'.bulletnotes#SanitiseText(a:1).'.bn'
         exec 'e '.path
 
         if !filereadable(path)
