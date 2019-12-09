@@ -26,6 +26,24 @@ func (${1:`!p snip.rv = get_last_method_type()`}) $2($3) $4 {
 }`!p set_last_method_type(t[1])`
 endsnippet
 
+snippet han
+func(res http.ResponseWriter, req *http.Request) {
+	$0
+}
+endsnippet
+
+snippet ehan
+func(res http.ResponseWriter, req *http.Request) error {
+	$0
+}
+endsnippet
+
+snippet forr
+for ${1:_}, $2 := range $3 {
+	$0
+}
+endsnippet
+
 ### TESTING ###
 
 snippet testfile
