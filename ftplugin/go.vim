@@ -2,8 +2,8 @@
 inoremap <buffer> <C-z> <C-x><C-o>
 
 nmap <buffer> <leader>tt <Plug>(go-info)
-nmap <buffer> <leader>td <Plug>(go-doc)
-nmap <buffer> <leader>tD <Plug>(go-def)
+nmap <buffer> <leader>td <Plug>(go-def)
+nmap <buffer> <leader>tD <Plug>(go-doc)
 nmap <buffer> <leader>tr <Plug>(go-referrers)
 nmap <buffer> <leader>tc <Plug>(go-coverage-toggle)
 nmap <buffer> <leader>tR <Plug>(go-rename)
