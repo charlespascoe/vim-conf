@@ -64,8 +64,8 @@ highlight AnsweredQuestion ctermfg=243
 " Metatext (annotations to text that add meaning, e.g. tags)
 
 syntax match Tag /#[a-zA-Z0-9_\-]\+/ contains=@NoSpell
-syntax match Pointer /&[a-zA-Z0-9_\-.:]\+\(\/[a-zA-Z0-9_\-.:]\+\)*/ contains=@NoSpell,DateTimeStamp
-syntax match RefPointer /&ref\/\?[a-zA-Z0-9_\-.:]*\(\/[a-zA-Z0-9_\-.:]\+\)*/ contains=@NoSpell,DateTimeStamp
+syntax match Pointer /&[a-zA-Z0-9_\-.:]\+\(\/[a-zA-Z0-9_\-.:]\+\)*/ contains=@NoSpell
+syntax match RefPointer /&ref\/\?[a-zA-Z0-9_\-.:]*\(\/[a-zA-Z0-9_\-.:]\+\)*/ contains=@NoSpell
 syntax match Link /\(^\|\s\)\[[^\]]\+\]\(\s\|$\)/ contains=@NoSpell,LinkEnds keepend
 syntax match LinkEnds /\(\[\|\]\)/ conceal contained
 syntax match Contact /@[a-zA-Z\-._]\+/
@@ -84,20 +84,6 @@ syntax match Field /^- \(Email\|Name\|Role\): .*/ contains=NoteBullet,FieldName,
 
 highlight FieldName ctermfg=39
 highlight link Field Link
-
-" Timestamps
-
-syntax match DateComponent /\d\d/ contained
-syntax match Date /\d\d\.\d\d\.\d\d/ contained contains=DateComponent
-syntax match TimeComponent /\d\d/ contained
-syntax match Time /\d\d:\d\d/ contained contains=TimeComponent
-syntax match DateTimeStamp /\d\d\.\d\d\.\d\d-\d\d:\d\d/ contained contains=Date,Time
-
-highlight DateComponent ctermfg=49
-highlight Date ctermfg=220
-highlight TimeComponent ctermfg=40
-highlight Time ctermfg=220
-highlight DateTimeStamp ctermfg=220
 
 " Text Styles
 
