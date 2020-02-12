@@ -21,6 +21,8 @@ inoremap <C-s> <Esc>:keepjumps wa<CR>
 nnoremap <C-s> <Esc>:keepjumps wa<CR>
 nnoremap <C-q> <Esc>:q<CR>
 
+nnoremap <silent> ZX <Esc>:wqa<CR>
+
 command! Q wqa
 
 command! CloseAll :bufdo bdelete
