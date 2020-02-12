@@ -53,6 +53,10 @@ nnoremap <F8> g+
 nnoremap <silent> <leader>j  :<c-u>execute 'move +'. v:count1<cr>
 nnoremap <silent> <leader>k  :<c-u>execute 'move -1-'. v:count1<cr>
 
+" Edit macros
+
+nnoremap <leader>m  :<c-u><c-r><c-r>='let @'. v:register .' = '. string(getreg(v:register))<cr>
+
 " External files
 source ~/.vim-conf/utils.vim
 source ~/.vim-conf/buffer-management.vim
