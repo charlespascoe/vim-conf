@@ -10,6 +10,7 @@ https://github.com/kshenoy/vim-signature
 https://github.com/leafgarland/typescript-vim
 https://github.com/michaeljsmith/vim-indent-object
 https://github.com/moll/vim-bbye
+https://github.com/pangloss/vim-javascript
 https://github.com/Quramy/tsuquyomi
 https://github.com/Raimondi/delimitMate
 https://github.com/scrooloose/nerdtree
@@ -26,4 +27,3 @@ https://github.com/tpope/vim-surround
 https://github.com/tpope/vim-unimpaired
 https://github.com/vim-airline/vim-airline
 https://github.com/vim-scripts/ReplaceWithRegister
-https://github.com/pangloss/vim-javascript
