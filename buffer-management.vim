@@ -15,8 +15,10 @@ fun! CloseBuffer()
     en
 endf
 
-inoremap <C-s> <Esc>:wa<CR>
-nnoremap <C-s> <Esc>:wa<CR>
+" keepjumps leaves `` etc. unchanged during the command;
+" useful for plugins (like vim-go) that do stuff like this on change
+inoremap <C-s> <Esc>:keepjumps wa<CR>
+nnoremap <C-s> <Esc>:keepjumps wa<CR>
 nnoremap <C-q> <Esc>:q<CR>
 
 command! Q wqa
