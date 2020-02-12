@@ -3,6 +3,8 @@ filetype plugin indent on
 
 let mapleader=" "
 
+packadd! matchit
+
 set wildignore+=*.class
 
 " Configure backspace behaviour
