@@ -48,6 +48,11 @@ set spelllang=en_gb
 nnoremap <F5> g-
 nnoremap <F8> g+
 
+" Move a single line
+
+nnoremap <silent> <leader>j  :<c-u>execute 'move +'. v:count1<cr>
+nnoremap <silent> <leader>k  :<c-u>execute 'move -1-'. v:count1<cr>
+
 " External files
 source ~/.vim-conf/utils.vim
 source ~/.vim-conf/buffer-management.vim
