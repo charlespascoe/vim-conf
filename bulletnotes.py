@@ -109,11 +109,13 @@ def export_tasks(bullets):
     except Exception as ex:
         raise Exception('No Project ID found')
 
-    doc = bulletnotes.parse_doc(vim.current.buffer[:], bullets)
+    doc = bulletnotes.parse_doc(vim.current.buffer, bullets)
 
-    task_bullets = doc.find_all(lambda bullet : bullet.bullet_type == '*')
-
-    new_tasks = [bullet_to_new_task(bullet) for bullet in task_bullets]
+    new_tasks = [
+        bullet_to_new_task(bullet)
+        for bullet in doc.walk()
+        if bullet.bullet_type == '*'
+    ]
 
     req(
         'POST',

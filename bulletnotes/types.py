@@ -41,12 +41,11 @@ class Bullet:
             'subbullets': [bullet.to_dict() for bullet in self.subbullets],
         }
 
-    def find_all(self, predicate):
-        if predicate(self):
-            yield self
+    def walk(self):
+        yield self
 
         for bullet in self.subbullets:
-            yield from bullet.find_all(predicate)
+            yield from bullet.walk()
 
     def __str__(self):
         result = [f'{self.bullet_type} {self.content}']
@@ -91,10 +90,10 @@ class Section:
             ],
         }
 
-    def find_all(self, predicate):
+    def walk(self):
         for item in self.contents:
             if isinstance(item, Bullet):
-                yield from item.find_all(predicate)
+                yield from item.walk()
 
 
 class Document:
@@ -115,6 +114,6 @@ class Document:
             'sections': [section.to_dict() for section in self.sections],
         }
 
-    def find_all(self, predicate):
+    def walk(self):
         for section in self.sections:
-            yield from section.find_all(predicate)
+            yield from section.walk()
