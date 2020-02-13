@@ -4,9 +4,10 @@ def append_bullet(contents, bullet):
 
     last_item = contents[-1]
 
-    if type(last_item) is str or last_item.indent >= bullet.indent:
-        # Either previous item was text, or it's a bullet with greater indent
-        # So just append the bullet
+    if not isinstance(last_item, SubbulletContainer):
+        return contents + [bullet]
+
+    if isinstance(last_item, Bullet) and last_item.indent >= bullet.indent:
         return contents + [bullet]
 
     last_item.append_bullet(bullet)
@@ -14,7 +15,20 @@ def append_bullet(contents, bullet):
     return contents
 
 
-class Bullet:
+class SubbulletContainer:
+    def append_bullet(self, bullet):
+        raise Exception('Not Implemented')
+
+    def find_all(self, predicate):
+        raise Exception('Not Implemented')
+
+
+class DictSerialisable:
+    def to_dict(self):
+        raise Exception('Not Implemented')
+
+
+class Bullet(SubbulletContainer):
     def __init__(self, bullet_type, indent, content, subbullets=[]):
         self.bullet_type = bullet_type
         self.indent = indent
@@ -61,7 +75,7 @@ class Bullet:
         return '\n'.join(result)
 
 
-class Section:
+class Section(SubbulletContainer):
     def __init__(self, title = '', contents = []):
         self.title = title
         self.contents = contents
@@ -88,6 +102,7 @@ class Section:
             'contents': [
                 item if type(item) is str else item.to_dict()
                 for item in self.contents
+                if isinstance(item, DictSerialisable) or isinstance(item, str)
             ],
         }
 
@@ -112,9 +127,10 @@ class Document:
     def to_dict(self):
         return {
             'title': self.title,
-            'sections': [section.to_dict() for section in self.sections],
+            'sections': [section.to_dict() for section in self.sections if isinstance(section, DictSerialisable)],
         }
 
     def find_all(self, predicate):
         for section in self.sections:
-            yield from section.find_all(predicate)
+            if isinstance(section, SubbulletContainer):
+                yield from section.find_all(predicate)

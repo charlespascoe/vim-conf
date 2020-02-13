@@ -118,3 +118,90 @@ def parse_bullet(lines, start_line, bullet_regexp):
         indent_level,
         ' '.join(contents),
     ), pos
+
+bullet_regexp = re.compile('^((\\s{4})*)([' + bullets_to_char_set(bullet_types) + ']) ')
+
+
+class SectionHandler:
+    def __init__(self, bullet_regexp):
+        self.bullet_regexp = bullet_regexp
+
+    def parse(self, lines, start):
+        subtitle_match = subtitle_regexp.match(lines[start])
+
+        if not subtitle_match:
+            return None
+    
+        section_title = subtitle_match.group(1).strip()
+
+        pos = start + 1
+        cur_text = ''
+        contents = []
+
+        while pos < len(lines):
+            line = lines[pos]
+
+            if bullet_regexp.match(line):
+                if not isempty(cur_text):
+                    cur_section.contents.append(cur_text.strip())
+                    cur_text = ''
+
+                bullet, new_pos = parse_bullet(lines, pos, bullet_regexp)
+
+                cur_section.append_bullet(bullet)
+
+                pos = new_pos
+
+                continue
+
+            if not isempty(line):
+                cur_text += ' ' + line.strip()
+            elif not isempty(cur_text):
+                cur_section.contents.append(cur_text.strip())
+                cur_text = ''
+
+            pos += 1
+
+        if not isempty(cur_text):
+            cur_section.contents.append(cur_text.strip())
+            cur_text = ''
+
+        if not cur_section.is_empty():
+            sections.append(cur_section)
+
+
+
+
+class Parser:
+    def __init__(self, bullet_types, handlers):
+        self.bullet_types = bullet_types
+        self.bullet_regexp = re.compile('^((\\s{4})*)([' + bullets_to_char_set(bullet_types) + ']) ')
+        self.handlers = handlers
+
+    def parse_doc(lines):
+        title = ''
+        pos = 0
+        contents = []
+
+        if len(lines) > 0:
+            title_match = title_regexp.match(lines[0])
+
+            if title_match:
+                title = title_match.group(1).strip()
+
+            pos += 1
+
+        while pos < len(lines):
+            for handler in self.handlers:
+                result = handler(lines, pos)
+
+                if result is not None:
+                    item, new_pos = result
+                    contents.append(item)
+                    pos = new_pos
+                    break
+            else:
+                pos += 1
+
+        return Document(title, contents)
+
