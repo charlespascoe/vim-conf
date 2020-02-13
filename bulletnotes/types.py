@@ -46,8 +46,7 @@ class Bullet:
             yield self
 
         for bullet in self.subbullets:
-            for found in bullet.find_all(predicate):
-                yield found
+            yield from bullet.find_all(predicate)
 
     def __str__(self):
         result = [f'{self.bullet_type} {self.content}']
@@ -95,8 +94,7 @@ class Section:
     def find_all(self, predicate):
         for item in self.contents:
             if isinstance(item, Bullet):
-                for found in item.find_all(predicate):
-                    yield found
+                yield from item.find_all(predicate)
 
 
 class Document:
@@ -119,5 +117,4 @@ class Document:
 
     def find_all(self, predicate):
         for section in self.sections:
-            for found in section.find_all(predicate):
-                yield found
+            yield from section.find_all(predicate)

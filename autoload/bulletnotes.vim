@@ -76,6 +76,8 @@ fun bulletnotes#InitBuffer()
 
     inoremap <silent> <buffer> <expr> <C-z> bulletnotes#CanOmniComplete() ? "<C-x><C-o>" : "<C-x><C-k>"
     setlocal omnifunc=bulletnotes#Complete
+
+    call bulletnotes#ImportPythonUtils()
 endfun
 
 
@@ -94,6 +96,11 @@ fun bulletnotes#InitProjectBuffer()
         let words = readfile(s:important_words_file)
         exec 'syntax keyword Important' join(words)
     endif
+endfun
+
+
+fun bulletnotes#ImportPythonUtils()
+    py3file ~/.vim-conf/bulletnotes/load.py
 endfun
 
 
@@ -122,6 +129,7 @@ fun bulletnotes#InitProject()
         endif
     endif
 
+    call bulletnotes#ImportPythonUtils()
     py3file ~/.vim-conf/bulletnotes.py
 
     command! ProcessTasks call bulletnotes#ProcessTasks()

@@ -10,16 +10,11 @@ def isempty(s):
     return s == '' or s.isspace()
 
 
-def normalise_bullets(bullets):
-    return ''.join({bullet for bullet in bullets if not isempty(bullet)})
-
-
 def bullets_to_char_set(bullets):
     return ''.join('\\' + bullet for bullet in bullets)
 
 
 def parse_doc(lines, bullet_types):
-    # TODO: Escape bullet types
     bullet_regexp = re.compile('^((\\s{4})*)([' + bullets_to_char_set(bullet_types) + ']) ')
 
     pos = 0

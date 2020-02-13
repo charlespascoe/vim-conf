@@ -1,6 +1,6 @@
-from types import Bullet
 import json
 import sys
+from load import bulletnotes
 
 
 def main():
@@ -9,7 +9,7 @@ def main():
     if type(bullet_array) != list:
         raise Exception('Expected array input')
 
-    bullets = [Bullet.from_dict(d) for d in bullet_array]
+    bullets = [bulletnotes.Bullet.from_dict(d) for d in bullet_array]
 
     flattened = [
         {

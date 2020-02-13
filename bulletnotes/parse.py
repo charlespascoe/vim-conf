@@ -1,7 +1,11 @@
 import sys
 import argparse
 import json
-from parser import parse_doc
+from load import bulletnotes
+
+
+def normalise_bullets(bullets):
+    return ''.join({bullet for bullet in bullets if not bullet.isspace()})
 
 
 def main():
@@ -12,7 +16,7 @@ def main():
 
     lines = [line.rstrip() for line in sys.stdin.readlines()]
 
-    doc = parse_doc(lines, normalise_bullets(args.bullets))
+    doc = bulletnotes.parse_doc(lines, normalise_bullets(args.bullets))
 
     json.dump(doc.to_dict(), sys.stdout)
 

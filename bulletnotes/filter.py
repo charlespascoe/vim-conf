@@ -1,7 +1,7 @@
 import argparse
 import sys
 import json
-from types import Document
+from load import bulletnotes
 
 
 def main():
@@ -15,7 +15,7 @@ def main():
 
     doc_dict = json.load(sys.stdin)
 
-    doc = Document.from_dict(doc_dict)
+    doc = bulletnotes.Document.from_dict(doc_dict)
 
     tasks = doc.find_all(lambda bullet : bullet.bullet_type in types)
 
