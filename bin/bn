@@ -142,8 +142,14 @@ case $1 in
         ec 220 "\nCreating remote repo on GitHub..." && \
         hub create -p "bulletnotes-$proj" && \
 
-        ec 220 "\nPushing to remote repo..." && \
+        ec 220 "\nPushing master branch to remote repo..." && \
         git push -u origin master && \
+
+        ec 220 "\nCreating content branch..." && \
+        git checkout -b content && \
+
+        ec 220 "\nPushing content branch to remote repo..." && \
+        git push -u origin content && \
 
         ec 46 "\nDone!\n"
 
@@ -166,7 +172,8 @@ case $1 in
         fi
 
         cd "$BN_HOME" && \
-        hub clone "bulletnotes-$proj" "$proj"
+        hub clone "bulletnotes-$proj" "$proj" && \
+        git checkout content
 
         exit $?
 
