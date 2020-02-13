@@ -1,7 +1,7 @@
 import argparse
 import sys
 import json
-from bulletnotetypes import Document
+from types import Document
 
 
 def main():

@@ -1,4 +1,4 @@
-from bulletnotetypes import Bullet
+from types import Bullet
 import json
 import sys
 

@@ -1,8 +1,5 @@
-import sys
 import re
-import json
-import argparse
-from bulletnotetypes import Document, Section, Bullet
+from .types import Document, Section, Bullet
 
 
 title_regexp = re.compile('^##([^#]+)##')
@@ -21,7 +18,7 @@ def bullets_to_char_set(bullets):
     return ''.join('\\' + bullet for bullet in bullets)
 
 
-def parse_bulletnote_doc(lines, bullet_types):
+def parse_doc(lines, bullet_types):
     # TODO: Escape bullet types
     bullet_regexp = re.compile('^((\\s{4})*)([' + bullets_to_char_set(bullet_types) + ']) ')
 
@@ -126,20 +123,3 @@ def parse_bullet(lines, start_line, bullet_regexp):
         indent_level,
         ' '.join(contents),
     ), pos
-
-
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('bullets', metavar='BULLETS', help='A string containing all bullet types')
-
-    args = parser.parse_args()
-
-    lines = [line.rstrip() for line in sys.stdin.readlines()]
-
-    doc = parse_bulletnote_doc(lines, normalise_bullets(args.bullets))
-
-    json.dump(doc.to_dict(), sys.stdout)
-
-
-if __name__ == '__main__':
-    main()
