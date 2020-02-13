@@ -119,26 +119,15 @@ fun bulletnotes#InitProject()
         return
     endif
 
-    let g:bn_proj_name = ''
-
-    if filereadable('.bn_proj_name')
-        let lines = readfile('.bn_proj_name')
-
-        if len(lines) > 0
-            let g:bn_proj_name = lines[0]
-        endif
-    endif
-
     call bulletnotes#ImportPythonUtils()
     py3file ~/.vim-conf/bulletnotes.py
 
     command! ProcessTasks call bulletnotes#ProcessTasks()
-    command! CheckProjectExists call bulletnotes#CheckProjectExists()
 
     command! -nargs=? Inbox call bulletnotes#NewInboxItem(<f-args>)
     command! Journal call bulletnotes#OpenJournal()
 
-    command! -nargs=1 AddContact call bulletnotes#AddContact(<f-args>)
+    command! AddContact call bulletnotes#AddContact()
 
     command! -nargs=+ -complete=file Move call bulletnotes#MoveFile(<f-args>)
     command! -nargs=? -complete=file Delete call bulletnotes#DeleteFile(<f-args>)
@@ -151,6 +140,10 @@ fun bulletnotes#InitProject()
     au VimLeave * call bulletnotes#WaitForCommit()
 
     au BufRead,BufNew *.bn call bulletnotes#InitProjectBuffer()
+
+    if exists('g:UltiSnipsSnippetDirectories')
+        call add(g:UltiSnipsSnippetDirectories, fnamemodify('snips', ':p'))
+    endif
 endfun
 
 
@@ -854,16 +847,6 @@ fun bulletnotes#ProcessTasks()
 endfun
 
 
-fun bulletnotes#CheckProjectExists()
-    if !exists('g:bn_proj_name') || g:bn_proj_name == ''
-        s:Error('No Project name set')
-        return
-    endif
-
-    python3 check_project_exists()
-endfun
-
-
 fun bulletnotes#DeleteFile(...)
     let file = ''
     let is_buffer = 0
@@ -917,9 +900,7 @@ fun bulletnotes#DeleteFile(...)
 endfun
 
 
-fun bulletnotes#AddContact(name)
-    let contact_name = bulletnotes#SanitiseText(a:name)
-
+fun bulletnotes#AddContact()
     if !g:bn_project_loaded
         call s:Error('Project not loaded')
         return
@@ -939,7 +920,7 @@ fun bulletnotes#AddContact(name)
         let cmd .= "ggi## Contacts ##\<Esc>"
     endif
 
-    let cmd .= "Go\<CR>@@ ".contact_name." @@\<CR>- Email: "
+    let cmd .= "Go\<CR>"
 
     exec cmd
 
