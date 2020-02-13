@@ -848,7 +848,7 @@ endfun
 
 
 fun bulletnotes#ProcessTasks()
-    python3 export_tasks()
+    python3 export_tasks(vim.eval('s:bullets'))
 
     %s/^\(\(\s\{4\}\)*\)\* /\1+ /
 endfun
