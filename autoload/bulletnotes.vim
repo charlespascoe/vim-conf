@@ -78,6 +78,8 @@ fun bulletnotes#InitBuffer()
     setlocal omnifunc=bulletnotes#Complete
 
     call bulletnotes#ImportPythonUtils()
+
+    command! DeleteDoneTasks let @/='^\(\s{4}\)*+' | let @a='ndaB@a' | normal gg@a
 endfun
 
 
