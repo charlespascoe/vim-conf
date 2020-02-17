@@ -173,6 +173,7 @@ case $1 in
 
         cd "$BN_HOME" && \
         hub clone "bulletnotes-$proj" "$proj" && \
+        cd "$proj" && \
         git checkout content
 
         exit $?
