@@ -134,6 +134,7 @@ case $1 in
 
         ec 220 "\nInitialising git repo..." && \
         git init && \
+        rm -f .git/hooks/* && \
 
         ec 220 "\nCommitting empty project..." && \
         git add --all && \
@@ -174,6 +175,7 @@ case $1 in
         cd "$BN_HOME" && \
         hub clone "bulletnotes-$proj" "$proj" && \
         cd "$proj" && \
+        rm -f .git/hooks/* && \
         git checkout "$proj"
 
         exit $?
