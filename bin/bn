@@ -112,7 +112,7 @@ case $1 in
             exit 1
         fi
 
-        proj="$2"
+        proj="$(echo -n "$2" | tr ' ' '-' | tr '[:upper:]' '[:lower:]' | tr -dc '[:alnum:]-')"
 
         if [ -d "$BN_HOME/$proj" ]; then
             ec 196 "Project '$proj' already exists"
@@ -146,10 +146,10 @@ case $1 in
         git push -u origin master && \
 
         ec 220 "\nCreating content branch..." && \
-        git checkout -b content && \
+        git checkout -b "$proj" && \
 
         ec 220 "\nPushing content branch to remote repo..." && \
-        git push -u origin content && \
+        git push -u origin "$proj" && \
 
         ec 46 "\nDone!\n"
 
@@ -174,7 +174,7 @@ case $1 in
         cd "$BN_HOME" && \
         hub clone "bulletnotes-$proj" "$proj" && \
         cd "$proj" && \
-        git checkout content
+        git checkout "$proj"
 
         exit $?
 
