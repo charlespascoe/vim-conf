@@ -32,11 +32,12 @@ fun s:Error(msg)
     echohl None
 endfun
 
-
 "fun s:AnyUnsavedChanges()
 "    return len(filter(map(getbufinfo(), 'v:val.changed'), 'v:val'))
 "endfun
 
+
+" Init {{{
 
 fun bulletnotes#InitBuffer()
     setlocal shiftwidth=4  " operation >> indents 4 columns; << unindents 4 columns
@@ -147,6 +148,8 @@ fun bulletnotes#InitProject()
         call add(g:UltiSnipsSnippetDirectories, fnamemodify('snips', ':p'))
     endif
 endfun
+
+" Init }}}
 
 
 fun bulletnotes#FindBulletStart(lnum, strict)
@@ -387,6 +390,8 @@ fun bulletnotes#EndsWith(suffix, str)
 endfun
 
 
+" Completion {{{
+
 fun bulletnotes#CanOmniComplete()
     if !g:bn_project_loaded
         return 0
@@ -464,6 +469,9 @@ fun bulletnotes#Complete(findstart, base)
     return []
 endfun
 
+" Completion }}}
+
+" Commit {{{
 
 fun bulletnotes#Commit(...)
     let commit_msg = 'Edit'
@@ -537,6 +545,9 @@ fun bulletnotes#WaitForCommit()
     endif
 endfun
 
+" Commit }}}
+
+" Remote Sync {{{
 
 fun bulletnotes#Push()
     call bulletnotes#WaitForCommit()
@@ -573,6 +584,71 @@ fun bulletnotes#Sync()
     call bulletnotes#Push()
 endfun
 
+fun bulletnotes#SetModifiable(val)
+    let buffers = filter(range(1, bufnr('$')), 'bufexists(v:val)')
+
+    for b in buffers
+        call setbufvar(b, '&modifiable', a:val)
+    endfor
+
+endfun
+
+
+fun bulletnotes#RemoteSync()
+    call bulletnotes#WaitForCommit()
+
+    if !g:bn_project_loaded
+        call s:Warning("Not in a project")
+        return
+    endif
+
+    if exists('s:remote_sync_job') && job_status(s:remote_sync_job) ==# 'run'
+        return
+    endif
+
+    augroup BulletnotesModifiable
+        autocmd!
+        autocmd BufRead,BufNew * set nomodifiable
+    augroup END
+
+    call bulletnotes#SetModifiable(0)
+
+    let remote_sync_cmd = 'git pull --rebase && git push'
+
+    let options = {
+        \    "exit_cb": "bulletnotes#RemoteSyncComplete",
+        \    "callback": "bulletnotes#RemoteSyncOutput",
+        \    "timeout": 10000
+        \}
+
+    echom 'Starting Remote Sync...'
+    let s:remote_sync_output = ''
+    let s:remote_sync_job = job_start(['/bin/bash', '-c', remote_sync_cmd], options)
+endfun
+
+
+fun bulletnotes#RemoteSyncOutput(job, output)
+    let s:remote_sync_output .= a:output
+endfun
+
+
+fun bulletnotes#RemoteSyncComplete(job, exit_code)
+    if a:exit_code != 0
+        echoerr "Sync failed (exit ".a:exit_code.")"
+        echoerr s:remote_sync_output
+        return
+    endif
+
+    echom 'Remote Sync Successful'
+
+    augroup BulletnotesModifiable
+        autocmd!
+    augroup END
+
+    call bulletnotes#SetModifiable(1)
+endfun
+
+" Remote Sync }}}
 
 fun s:PathToPointer(path)
     return '&'.substitute(a:path, '\.bn$', '', '')
@@ -581,109 +657,6 @@ endfun
 
 fun s:RevertToHead()
     call system('git reset --hard HEAD')
-endfun
-
-
-fun bulletnotes#MoveFile(from, to)
-    if !g:bn_project_loaded
-        call s:Warning("Project not loaded - refusing to move file")
-        return
-    endif
-
-    let from = substitute(trim(a:from), '^&', '', '')
-    let to = substitute(trim(a:to), '^&', '', '')
-
-    if !filereadable(getcwd()."/".from)
-        call s:Error("Source file not found: ".from)
-        return
-    endif
-
-    if isdirectory(getcwd()."/".to)
-        let filename = fnamemodify(from, ':t')
-        let to .= filename
-    endif
-
-    if filereadable(getcwd()."/".to)
-        call s:Error("Destination file already exists: ".to)
-        return
-    endif
-
-    if matchstr(from, '^'.s:path_pattern.'$') == ''
-        echoerr "Invalid 'from' path: ".from
-        echoerr s:path_pattern
-        return
-    endif
-
-    if matchstr(to, '^'.s:path_pattern.'$') == ''
-        echoerr "Invalid 'to' path: ".to
-        return
-    endif
-
-    noautocmd wa
-    let output = bulletnotes#Commit('sync')
-
-    if v:shell_error != 0
-        echoerr "Failed to commit changes (exit code ".v:shell_error.")"
-        echoerr output
-        return
-    endif
-
-    let output = system('git mv '.shellescape(from).' '.shellescape(to))
-
-    if v:shell_error != 0
-        echoerr "Move failed (exit ".v:shell_error.")"
-        echoerr output
-        call s:RevertToHead()
-        return
-    endif
-
-    let bufnum = bufnr(from)
-
-    if bufnum >= 0 && bufnum == bufnr('')
-        exec 'noautocmd saveas!' fnameescape(to)
-
-        " Vim creates a new buffer for the old filename
-        let bufnum = bufnr(from)
-    endif
-
-    " Delete the old buffer
-    if bufnum >= 0
-        exec 'Bwipeout!' bufnum
-    endif
-
-    let from_pointer = s:PathToPointer(from)
-    let to_pointer = s:PathToPointer(to)
-
-    " TODO: Maybe make this independent of ag?
-    let cmd  = "ag -lQ ".shellescape(from_pointer)
-    let cmd .= " | xargs --no-run-if-empty sed -i -e "
-    let cmd .= "'s|".from_pointer."|".substitute(to_pointer, '&', '\\&', 'g')."|g'"
-
-    let output = system(cmd)
-
-    if v:shell_error != 0
-        echoerr "Replace pointer failed (exit ".v:shell_error.")"
-        echoerr output
-        call s:RevertToHead()
-        return
-    endif
-
-    sleep 100m
-
-    !git diff --word-diff
-
-    " TODO: Ask for Confirmation
-
-    let commit_msg = "Move ".from." to ".to
-
-    let output = bulletnotes#Commit('sync', commit_msg)
-
-    if v:shell_error != 0
-        echoerr "Commit failed (exit ".v:shell_error.")"
-        echoerr output
-        call s:RevertToHead()
-        return
-    endif
 endfun
 
 
@@ -848,6 +821,109 @@ fun bulletnotes#ProcessTasks()
     %s/^\(\(\s\{4\}\)*\)\* /\1+ /
 endfun
 
+" File Manipulation {{{
+fun bulletnotes#MoveFile(from, to)
+    if !g:bn_project_loaded
+        call s:Warning("Project not loaded - refusing to move file")
+        return
+    endif
+
+    let from = substitute(trim(a:from), '^&', '', '')
+    let to = substitute(trim(a:to), '^&', '', '')
+
+    if !filereadable(getcwd()."/".from)
+        call s:Error("Source file not found: ".from)
+        return
+    endif
+
+    if isdirectory(getcwd()."/".to)
+        let filename = fnamemodify(from, ':t')
+        let to .= filename
+    endif
+
+    if filereadable(getcwd()."/".to)
+        call s:Error("Destination file already exists: ".to)
+        return
+    endif
+
+    if matchstr(from, '^'.s:path_pattern.'$') == ''
+        echoerr "Invalid 'from' path: ".from
+        echoerr s:path_pattern
+        return
+    endif
+
+    if matchstr(to, '^'.s:path_pattern.'$') == ''
+        echoerr "Invalid 'to' path: ".to
+        return
+    endif
+
+    noautocmd wa
+    let output = bulletnotes#Commit('sync')
+
+    if v:shell_error != 0
+        echoerr "Failed to commit changes (exit code ".v:shell_error.")"
+        echoerr output
+        return
+    endif
+
+    let output = system('git mv '.shellescape(from).' '.shellescape(to))
+
+    if v:shell_error != 0
+        echoerr "Move failed (exit ".v:shell_error.")"
+        echoerr output
+        call s:RevertToHead()
+        return
+    endif
+
+    let bufnum = bufnr(from)
+
+    if bufnum >= 0 && bufnum == bufnr('')
+        exec 'noautocmd saveas!' fnameescape(to)
+
+        " Vim creates a new buffer for the old filename
+        let bufnum = bufnr(from)
+    endif
+
+    " Delete the old buffer
+    if bufnum >= 0
+        exec 'Bwipeout!' bufnum
+    endif
+
+    let from_pointer = s:PathToPointer(from)
+    let to_pointer = s:PathToPointer(to)
+
+    " TODO: Maybe make this independent of ag?
+    let cmd  = "ag -lQ ".shellescape(from_pointer)
+    let cmd .= " | xargs --no-run-if-empty sed -i -e "
+    let cmd .= "'s|".from_pointer."|".substitute(to_pointer, '&', '\\&', 'g')."|g'"
+
+    let output = system(cmd)
+
+    if v:shell_error != 0
+        echoerr "Replace pointer failed (exit ".v:shell_error.")"
+        echoerr output
+        call s:RevertToHead()
+        return
+    endif
+
+    sleep 100m
+
+    !git diff --word-diff
+
+    " TODO: Ask for Confirmation
+
+    let commit_msg = "Move ".from." to ".to
+
+    let output = bulletnotes#Commit('sync', commit_msg)
+
+    if v:shell_error != 0
+        echoerr "Commit failed (exit ".v:shell_error.")"
+        echoerr output
+        call s:RevertToHead()
+        return
+    endif
+endfun
+
 
 fun bulletnotes#DeleteFile(...)
     let file = ''
@@ -900,7 +976,7 @@ fun bulletnotes#DeleteFile(...)
     " TODO: Generalise this (maybe custom autocmd event?)
     NERDTreeRefreshRoot
 endfun
-
+" File Manipulation }}}
 
 fun bulletnotes#AddContact()
     if !g:bn_project_loaded
