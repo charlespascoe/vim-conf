@@ -24,8 +24,8 @@ hi Visual cterm=reverse ctermbg=black
 hi VisualNOS cterm=bold,underline,underline
 hi WarningMsg ctermfg=1
 hi WildMenu ctermfg=0 ctermbg=3
-hi Folded ctermfg=4 ctermbg=7
-hi FoldColumn ctermfg=4 ctermbg=7
+hi Folded ctermbg=236 ctermfg=248
+hi FoldColumn ctermbg=236 ctermfg=248
 hi DiffAdd ctermbg=4
 hi DiffChange ctermbg=5
 hi DiffDelete cterm=bold ctermfg=4 ctermbg=6
@@ -34,6 +34,7 @@ hi Pmenu ctermfg=15 ctermbg=17
 hi PmenuSel ctermfg=11 ctermbg=21
 hi CursorLine cterm=none
 hi Title cterm=bold ctermfg=99
+hi VertSplit cterm=none ctermbg=240 ctermfg=235
 
 " Colors for syntax highlighting
 hi Comment ctermfg=32 ctermbg=235
