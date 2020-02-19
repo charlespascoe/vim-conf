@@ -34,7 +34,7 @@ hi Pmenu ctermfg=15 ctermbg=17
 hi PmenuSel ctermfg=11 ctermbg=21
 hi CursorLine cterm=none
 hi Title cterm=bold ctermfg=99
-hi VertSplit cterm=none ctermbg=240 ctermfg=235
+hi VertSplit cterm=none ctermbg=none ctermfg=255
 
 " Colors for syntax highlighting
 hi Comment ctermfg=32 ctermbg=235

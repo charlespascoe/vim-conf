@@ -57,6 +57,10 @@ nnoremap <silent> <leader>k  :<c-u>execute 'move -1-'. v:count1<cr>
 
 nnoremap <leader>m  :<c-u><c-r><c-r>='let @'. v:register .' = '. string(getreg(v:register))<cr>
 
+" Vertical Split
+
+set fillchars+=vert:▌
+
 " External files
 source ~/.vim-conf/utils.vim
 source ~/.vim-conf/buffer-management.vim
