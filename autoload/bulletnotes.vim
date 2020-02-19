@@ -40,11 +40,14 @@ endfun
 " Init {{{
 
 fun bulletnotes#InitBuffer()
+    " TODO: Move the contents of this function into ftplugin
+
     setlocal shiftwidth=4  " operation >> indents 4 columns; << unindents 4 columns
     setlocal tabstop=4     " a hard TAB displays as 4 columns
     setlocal softtabstop=4 " insert/delete 4 spaces when hitting a TAB/BACKSPACE"
     setlocal textwidth=80
     setlocal formatoptions=t
+    setlocal autoread      " Used to update files after a remote sync
 
     onoremap <silent> <buffer> ab :<C-u>call bulletnotes#MarkBullet(0)<CR>
     onoremap <silent> <buffer> aB :<C-u>call bulletnotes#MarkBullet(1)<CR>
@@ -129,6 +132,8 @@ fun bulletnotes#InitProject()
 
     command! -nargs=? Inbox call bulletnotes#NewInboxItem(<f-args>)
     command! Journal call bulletnotes#OpenJournal()
+    command! RemoteSync call bulletnotes#RemoteSync(1)
+    command! RemoteSyncSilent call bulletnotes#RemoteSync(0)
 
     command! AddContact call bulletnotes#AddContact()
 
@@ -596,7 +601,8 @@ fun bulletnotes#SetModifiable(val)
 endfun
 
 
-fun bulletnotes#RemoteSync()
+fun bulletnotes#RemoteSync(showmsg)
+    wa
     call bulletnotes#WaitForCommit()
 
     if !g:bn_project_loaded
@@ -623,7 +629,10 @@ fun bulletnotes#RemoteSync()
         \    "timeout": 10000
         \}
 
-    echom 'Starting Remote Sync...'
+    if a:showmsg
+        echom 'Starting Remote Sync...'
+    endif
+
     let s:remote_sync_output = ''
     let s:remote_sync_job = job_start(['/bin/bash', '-c', remote_sync_cmd], options)
 endfun
@@ -635,6 +644,9 @@ endfun
 
 
 fun bulletnotes#RemoteSyncComplete(job, exit_code)
+    " Relies on autoread to update all buffers
+    checktime
+
     if a:exit_code != 0
         echoerr "Sync failed (exit ".a:exit_code.")"
         echoerr s:remote_sync_output

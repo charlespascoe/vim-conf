@@ -17,6 +17,15 @@ function ec() {
     echo -e '\033[38;5;'"$colour"'m'"$message"'\033[0m'
 }
 
+function push() {
+    local diff="$(git diff $1 origin/$1)"
+
+    if [ -n "$diff" ]; then
+        ec 45 "\nPushing changes..."
+        git push
+    fi
+}
+
 
 # Enabled extended globbing for f?vs matching
 shopt -s extglob
@@ -43,8 +52,7 @@ case $1 in
         ec 45 "Pulling latest changes..." && \
         git pull --rebase && \
         vim -c "Inbox $3" && \
-        ec 45 "\nPushing changes..." && \
-        git push
+        push "$proj"
 
         exit $?
 
@@ -70,8 +78,7 @@ case $1 in
         ec 45 "Pulling latest changes..." && \
         git pull --rebase && \
         vim -c "Journal" && \
-        ec 45 "\nPushing changes..." && \
-        git push
+        push "$proj"
 
         exit $?
 
@@ -93,13 +100,14 @@ case $1 in
         export BN_PROJ=1
 
         # TODO: Handle uncommited changes before pushing
+        # TODO: Conditionally push based on commits
+        #ec 45 "Pulling latest changes..." && \
+        #git pull --rebase && \
         cd "$BN_HOME/$proj" && \
-        ec 45 "Pulling latest changes..." && \
-        git pull --rebase && \
         source ~/.bash_aliases && \
-        $1 && \
-        ec 45 "\nPushing changes..." && \
-        git push
+        $1 -c 'RemoteSyncSilent' && \
+        #$1 && \
+        push "$proj"
 
         exit $?
 
