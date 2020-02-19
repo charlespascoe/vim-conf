@@ -83,3 +83,5 @@ let g:go_highlight_structs = 1
 let g:go_highlight_types = 1
 let g:go_highlight_variable_assignments = 1
 let g:go_highlight_variable_declarations = 1
+" Formatting interfers with jumps and folds; just do it manually
+let g:go_fmt_autosave = 0
