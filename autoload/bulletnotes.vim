@@ -347,6 +347,7 @@ fun bulletnotes#SanitiseText(name)
 endfun
 
 
+" Inbox {{{
 fun bulletnotes#NewInboxItem(...)
     if a:0 == 0
         let path = 'inbox/'.trim(system('date +"%Y-%m-%d_%H:%M"')).'.bn'
@@ -370,6 +371,7 @@ fun bulletnotes#NewInboxItem(...)
 
     startinsert!
 endfun
+" }}} Inbox
 
 
 fun bulletnotes#StartsWith(prefix, str)
@@ -731,7 +733,7 @@ fun s:FindLastNonblankLine(startline)
     return 0
 endfun
 
-
+" Journal {{{
 fun bulletnotes#OpenJournal()
     e journal.bn
 
@@ -813,6 +815,7 @@ fun bulletnotes#OpenJournal()
     " Start editing
     startinsert!
 endfun
+" }}} Journal
 
 
 fun bulletnotes#ProcessTasks()
@@ -976,7 +979,9 @@ fun bulletnotes#DeleteFile(...)
     " TODO: Generalise this (maybe custom autocmd event?)
     NERDTreeRefreshRoot
 endfun
-" File Manipulation }}}
+" }}} File Manipulation
+
+" Contacts {{{
 
 fun bulletnotes#AddContact()
     if !g:bn_project_loaded
@@ -1023,3 +1028,4 @@ fun bulletnotes#ViewContact(name)
         exec 'e contacts.bn:'.line
     endif
 endfun
+" }}} Contacts
