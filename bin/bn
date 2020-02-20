@@ -105,8 +105,7 @@ case $1 in
         #git pull --rebase && \
         cd "$BN_HOME/$proj" && \
         source ~/.bash_aliases && \
-        $1 -c 'RemoteSyncSilent' && \
-        #$1 && \
+        $1 -c 'BulletnotesAsyncStart' && \
         push "$proj"
 
         exit $?

@@ -15,6 +15,7 @@ endif
 
 set debug="msg"
 
+
 let s:edit_file_extensions = ['.adoc', '.md', '.txt']
 
 let s:important_words_file = 'important-words.txt'
@@ -132,8 +133,8 @@ fun bulletnotes#InitProject()
 
     command! -nargs=? Inbox call bulletnotes#NewInboxItem(<f-args>)
     command! Journal call bulletnotes#OpenJournal()
-    command! RemoteSync call bulletnotes#RemoteSync(1)
-    command! RemoteSyncSilent call bulletnotes#RemoteSync(0)
+    command! RemoteSync call bulletnotes#RemoteSync(1, 1)
+    command! BulletnotesAsyncStart call bulletnotes#RemoteSync(0, 0)
 
     command! AddContact call bulletnotes#AddContact()
 
@@ -601,7 +602,7 @@ fun bulletnotes#SetModifiable(val)
 endfun
 
 
-fun bulletnotes#RemoteSync(showmsg)
+fun bulletnotes#RemoteSync(showmsg, push)
     wa
     call bulletnotes#WaitForCommit()
 
@@ -621,7 +622,11 @@ fun bulletnotes#RemoteSync(showmsg)
 
     call bulletnotes#SetModifiable(0)
 
-    let remote_sync_cmd = 'git pull --rebase && git push'
+    let remote_sync_cmd = 'git pull --rebase'
+
+    if a:push
+        let remote_sync_cmd .= '&& git push'
+    endif
 
     let options = {
         \    "exit_cb": "bulletnotes#RemoteSyncComplete",
@@ -630,7 +635,7 @@ fun bulletnotes#RemoteSync(showmsg)
         \}
 
     if a:showmsg
-        echom 'Starting Remote Sync...'
+        echom 'Performing Remote Sync, please wait...'
     endif
 
     let s:remote_sync_output = ''
