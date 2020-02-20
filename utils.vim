@@ -45,19 +45,31 @@ map <leader>S <Esc>:echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") .
 " Trim trailing whitespace
 command! Trim %s/\s\+$//e
 
-" TeX Filetype detection
-au BufNewFile,BufRead *.tex set filetype=tex
-
 " Jump back to mark centres on cursor
 nnoremap <expr> ` printf('`%czz', getchar())
+
+" Jump to imports marker
+
+noremap <leader>i `iO
 
 " Format JSON
 command! FormatJson %!python -m json.tool
 
-
 noremap <leader>R <Esc>:s/<C-r><C-w>//g<Left><Left>
 
-noremap <leader>i `iO
+" Undo/Redo Convenience Shortcuts
+
+nnoremap <F5> g-
+nnoremap <F8> g+
+
+" Move a single line
+
+nnoremap <silent> <leader>j  :<c-u>execute 'move +'. v:count1<cr>
+nnoremap <silent> <leader>k  :<c-u>execute 'move -1-'. v:count1<cr>
+
+" Edit macros
+
+nnoremap <leader>m :<c-u><c-r><c-r>='let @'. v:register .' = '. string(getreg(v:register))<cr>
 
 " Line spread
 let g:line_spread_append_last = 0
