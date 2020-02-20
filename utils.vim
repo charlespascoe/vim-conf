@@ -108,3 +108,16 @@ fun! SeparatorSpread(type)
 endfun
 
 nnoremap gS :set operatorfunc=SeparatorSpread<CR>g@
+
+" Quick Search
+
+fun! QuickSearchMap(key, pattern)
+    " TODO: Properly escape inputs
+    exec "nnoremap <buffer> <leader>s".a:key." /".a:pattern."<CR>zz"
+    exec "nnoremap <buffer> <leader>S".a:key." ?".a:pattern."<CR>zz"
+endfun
+
+" Normalise search operators (always center)
+
+nnoremap n nzz
+nnoremap N Nzz

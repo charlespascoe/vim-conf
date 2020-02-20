@@ -12,3 +12,8 @@ nmap <buffer> <leader>tI <Plug>(go-import)
 nmap <buffer> <leader>tf $ca" ()<Left><CR><C-r>"
 nmap <buffer> <leader>e <Plug>(go-iferr)
 nnoremap <buffer> <leader>i `iO""<Left>
+
+
+call QuickSearchMap('f', 'func')
+call QuickSearchMap('t', 'type')
+call QuickSearchMap('s', 'struct')
