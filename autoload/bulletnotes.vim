@@ -146,7 +146,7 @@ fun bulletnotes#InitProject()
     command! Sync call bulletnotes#Sync()
 
     au BufWritePost * call bulletnotes#Commit()
-    au VimLeave * call bulletnotes#WaitForCommit()
+    au VimLeave * call bulletnotes#WaitForJobs()
 
     au BufRead,BufNew *.bn call bulletnotes#InitProjectBuffer()
 
@@ -551,6 +551,23 @@ fun bulletnotes#WaitForCommit()
             sleep 100m
         endwhile
     endif
+endfun
+
+
+fun bulletnotes#WaitForRemoteSync()
+    if exists('s:remote_sync_job') && job_status(s:remote_sync_job) ==# 'run'
+        echo "Waiting for remote sync to finish..."
+
+        while job_status(s:remote_sync_job) == 'run'
+            sleep 100m
+        endwhile
+    endif
+endfun
+
+
+fun bulletnotes#WaitForJobs()
+    call bulletnotes#WaitForCommit()
+    call bulletnotes#WaitForRemoteSync()
 endfun
 
 " Commit }}}
