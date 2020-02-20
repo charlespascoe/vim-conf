@@ -35,10 +35,12 @@ endsnippet
 snippet ehan
 func(res http.ResponseWriter, req *http.Request) error {
 	$0
+
+	return nil
 }
 endsnippet
 
-snippet forr
+snippet fore
 for ${1:_}, $2 := range $3 {
 	$0
 }
