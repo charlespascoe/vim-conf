@@ -4,6 +4,7 @@ https://github.com/ctrlpvim/ctrlp.vim
 https://github.com/derekwyatt/vim-scala
 https://github.com/ensime/ensime-vim
 https://github.com/fatih/vim-go
+https://github.com/habamax/vim-asciidoctor
 https://github.com/ianks/vim-tsx
 https://github.com/kopischke/vim-fetch
 https://github.com/kshenoy/vim-signature
