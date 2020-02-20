@@ -959,6 +959,10 @@ fun bulletnotes#MoveFile(from, to)
         call s:RevertToHead()
         return
     endif
+
+    " NERDTree Doesn't always refresh immediately
+    " TODO: Generalise this (maybe custom autocmd event?)
+    NERDTreeRefreshRoot
 endfun
 
 
