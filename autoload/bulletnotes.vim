@@ -56,8 +56,8 @@ fun bulletnotes#InitBuffer()
     imap <silent> <buffer> <expr> <CR> bulletnotes#IsAtStartOfBullet() ? "\<C-o>[\<Space>" : "\<CR>\<Left>\<Left>".bulletnotes#GetBulletType(line('.'), '-')."\<Right>\<Right>\<BS>\<Space>"
     nmap <silent> <buffer> <expr> o "o\<Left>\<Left>".bulletnotes#GetBulletType(line('.'), '-')."\<Right>\<Right>\<BS>\<Space>"
 
-    nmap <silent> <buffer> >ab >abgv=:call repeat#set('>ab', v:count)<CR>
-    nmap <silent> <buffer> <ab <abgv=:call repeat#set('<ab', v:count)<CR>
+    nmap <silent> <buffer> >ab >abgvgw'<^:call repeat#set('>ab', v:count)<CR>
+    nmap <silent> <buffer> <ab <abgvgw'<^:call repeat#set('<ab', v:count)<CR>
     nmap <silent> <buffer> >aB >aBgv=:call repeat#set('>aB', v:count)<CR>
     nmap <silent> <buffer> <aB <aBgv=:call repeat#set('<aB', v:count)<CR>
 
