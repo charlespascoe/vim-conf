@@ -64,8 +64,10 @@ highlight AnsweredQuestion ctermfg=243
 " Metatext (annotations to text that add meaning, e.g. tags)
 
 syntax match Tag /#[a-zA-Z0-9_\-]\+/ contains=@NoSpell
-syntax match Pointer /&[a-zA-Z0-9_\-.:]\+\(\/[a-zA-Z0-9_\-.:]\+\)*/ contains=@NoSpell
-syntax match RefPointer /&ref\/\?[a-zA-Z0-9_\-.:]*\(\/[a-zA-Z0-9_\-.:]\+\)*/ contains=@NoSpell
+syntax match Pointer /&[a-zA-Z0-9_\-.:]\+\(\/[a-zA-Z0-9_\-.:]\+\)*/ contains=@NoSpell,PointerMarker
+syntax match RefPointer /&ref\/\?[a-zA-Z0-9_\-.:]*\(\/[a-zA-Z0-9_\-.:]\+\)*/ contains=@NoSpell,RefPointerMarker
+syntax match PointerMarker /&/ conceal contained
+syntax match RefPointerMarker /&/ conceal contained
 syntax match Link /\(^\|\s\)\[[^\]]\+\]\(\s\|$\)/ contains=@NoSpell,LinkEnds keepend
 syntax match LinkEnds /\(\[\|\]\)/ conceal contained
 syntax match Contact /@[a-zA-Z\-._]\+/
@@ -73,7 +75,9 @@ syntax cluster Metatext contains=Tag,Pointer,RefPointer,Link,Contact
 
 highlight Tag ctermfg=226 cterm=bold
 highlight Pointer ctermfg=39
+highlight link PointerMarker Pointer
 highlight RefPointer ctermfg=40
+highlight link RefPointerMarker RefPointer
 highlight Link ctermfg=37
 highlight link LinkEnds Link
 highlight Contact ctermfg=51
