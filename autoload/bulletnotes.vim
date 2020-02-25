@@ -148,7 +148,7 @@ fun bulletnotes#InitProject()
     au BufWritePost * call bulletnotes#Commit()
     au VimLeave * call bulletnotes#WaitForJobs()
 
-    au BufRead,BufNew *.bn call bulletnotes#InitProjectBuffer()
+    au BufRead,BufNewFile *.bn call bulletnotes#InitProjectBuffer()
 
     if exists('g:UltiSnipsSnippetDirectories')
         call add(g:UltiSnipsSnippetDirectories, fnamemodify('snips', ':p'))
@@ -634,7 +634,7 @@ fun bulletnotes#RemoteSync(showmsg, push)
 
     augroup BulletnotesModifiable
         autocmd!
-        autocmd BufRead,BufNew * set nomodifiable
+        autocmd BufRead,BufNewFile * set nomodifiable
     augroup END
 
     call bulletnotes#SetModifiable(0)
