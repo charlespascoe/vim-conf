@@ -49,6 +49,8 @@ hi Ignore cterm=bold ctermfg=7
 hi Error cterm=bold ctermfg=7 ctermbg=1
 hi Todo ctermfg=0 ctermbg=3
 hi SpellBad cterm=none ctermfg=15 ctermbg=88
+hi SpellCap cterm=none ctermfg=15 ctermbg=12
+hi SpellRare cterm=none ctermfg=15 ctermbg=13
 hi SpellLocal cterm=none ctermfg=15 ctermbg=33
 
 hi ColorColumn ctermbg=236
