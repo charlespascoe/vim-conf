@@ -5,6 +5,10 @@ let mapleader=" "
 
 packadd! matchit
 
+" Enable lazy redraw (waits until mappings/macros have finished before
+" redrawing, speeds up macros and prevents flashing)
+set lazyredraw
+
 set wildignore+=*.class
 
 " Configure backspace behaviour
