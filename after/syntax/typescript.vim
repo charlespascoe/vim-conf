@@ -23,7 +23,7 @@ highlight link typeName Type
 highlight typeDeclarationName ctermfg=none
 
 " Functions
-syntax match functionCall /[a-z$][a-zA-Z$0-9_-]*(/me=e-1
+syntax match functionCall /[a-z$][a-zA-Z$0-9_-]*\((\|<\)/me=e-1
 highlight functionCall ctermfg=123
 
 syntax match tsFunctionName /[a-z$][a-zA-Z$0-9_-]*(/me=e-1
@@ -32,7 +32,7 @@ syntax match tsFunctionCall /[a-z$][a-zA-Z$0-9_-]*(/me=e-1
 highlight tsFunctionCall ctermfg=123
 
 syntax clear typescriptFuncKeyword
-syntax match typescriptFuncKeyword /function\s\+/ nextgroup=tsFunctionName
+syntax match typescriptFuncKeyword /function\*\?\s\+/ nextgroup=tsFunctionName
 highlight link typescriptFuncKeyword Identifier
 
 " Parens etc.
