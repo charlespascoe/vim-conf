@@ -41,15 +41,17 @@ autocmd BufNewFile,BufRead * exec "setlocal colorcolumn=".(&ma ? "81" : "0")
 map <PageUp> <Nop>
 map <PageDown> <Nop>
 
+" Set spell correction language
 set spelllang=en_gb
 
-" Vertical Split
-
+" Custom vertical split char
 set fillchars+=vert:▌
 
-" Folding
-
+" Folding using markers ({{{ and }}} by default)
 set foldmethod=marker
+
+" Enable mouse control (useful for scrolling)
+set mouse=a
 
 " External files
 source ~/.vim-conf/utils.vim
