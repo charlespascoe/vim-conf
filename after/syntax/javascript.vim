@@ -6,6 +6,7 @@ hi link jsDestructuringBraces jsBrackets
 hi jsOperator ctermfg=214
 hi jsFuncCall ctermfg=123
 hi link jsGlobalObjects Type
+hi link jsGlobalNodeObjects Type
 hi link jsArrowFunction jsFuncParens
 hi link jsFunction Identifier
 hi jsFuncName ctermfg=none
