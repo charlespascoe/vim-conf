@@ -10,11 +10,12 @@ nmap <buffer> <leader>tR <Plug>(go-rename)
 nmap <buffer> <leader>tT <C-w>v<C-w><C-w><Plug>(go-alternate-edit)
 nmap <buffer> <leader>tI <Plug>(go-import)
 nmap <buffer> <leader>tf $ca" ()<Left><CR><C-r>"
+nmap <buffer> <leader>tb <Plug>(go-build)
+nmap <silent> <buffer> <leader>tf <Esc>:GoFmt<CR>
 nmap <buffer> <leader>e <Plug>(go-iferr)
 nnoremap <buffer> <leader>i `iO""<Left>
 
 setlocal completeopt=menu
-
 
 call QuickSearchMap('f', 'func')
 call QuickSearchMap('t', 'type')
