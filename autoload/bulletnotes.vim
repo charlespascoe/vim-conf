@@ -67,8 +67,8 @@ fun bulletnotes#InitBuffer()
         exec cmd
     endfor
 
-    imap <silent> <expr> <buffer> <Tab> bulletnotes#IsAtStartOfBullet() ? '<Esc>>>^i<Right><Right>' : '<C-z>'
-    imap <silent> <expr> <buffer> <S-Tab> bulletnotes#IsAtStartOfBullet() ? '<Esc><<^i<Right><Right>' : '<S-Tab>'
+    imap <silent> <expr> <buffer> <Tab> bulletnotes#IsAtStartOfBullet() ? '<Esc>>ab^i<Right><Right>' : (ShouldAutocomplete() ? '<C-z>' : '<Tab>')
+    imap <silent> <expr> <buffer> <S-Tab> bulletnotes#IsAtStartOfBullet() ? '<Esc><ab^i<Right><Right>' : '<S-Tab>'
 
     nmap <silent> <buffer> <leader>i :call bulletnotes#ToggleImportantWord(expand('<cword>'))<CR>
 
@@ -79,7 +79,7 @@ fun bulletnotes#InitBuffer()
 
     setlocal indentexpr=bulletnotes#GetIndent(v:lnum)
 
-    inoremap <silent> <buffer> <expr> <C-z> bulletnotes#CanOmniComplete() ? "<C-x><C-o>" : "<C-x><C-k>"
+    inoremap <silent> <buffer> <expr> <C-z> bulletnotes#CanOmniComplete() ? "<C-x><C-o>" : "<C-p>"
     setlocal omnifunc=bulletnotes#Complete
 
     call bulletnotes#ImportPythonUtils()
