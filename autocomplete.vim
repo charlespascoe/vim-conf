@@ -3,8 +3,7 @@
 inoremap <C-z> <C-p>
 
 " Set complete options
-set completeopt=longest,menu
-" Had to remove longest because gopls is interfering with it
+set completeopt=longest,menu,preview
 
 fun! ShouldAutocomplete()
     return pumvisible() || !(strpart(getline('.'), 0, col('.') - 1) =~ '^\s*$')
