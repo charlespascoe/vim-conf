@@ -1,1 +1,1 @@
-au BufNew,BufRead Jenkinsfile set ft=groovy
+au BufNewFile,BufRead Jenkinsfile setlocal ft=groovy
