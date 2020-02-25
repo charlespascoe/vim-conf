@@ -82,3 +82,16 @@ export enum $1 {
   $0
 }
 endsnippet
+
+snippet router "Express Router Function"
+import { Router } from 'express';
+
+
+export function $1Router(): Router {
+  const router = Router();
+
+	$0
+
+  return router;
+}
+endsnippet
