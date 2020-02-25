@@ -13,6 +13,8 @@ nmap <buffer> <leader>tf $ca" ()<Left><CR><C-r>"
 nmap <buffer> <leader>e <Plug>(go-iferr)
 nnoremap <buffer> <leader>i `iO""<Left>
 
+setlocal completeopt=menu
+
 
 call QuickSearchMap('f', 'func')
 call QuickSearchMap('t', 'type')
