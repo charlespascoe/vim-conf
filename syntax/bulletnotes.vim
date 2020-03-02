@@ -3,14 +3,21 @@ setlocal conceallevel=3
 
 " Title
 
-syntax match NoteTitle /^## .* ##/ contains=Tag
-syntax match Subtitle /^:: .* ::/ contains=Tag
-syntax match ContactTitle /^@@ .* @@/
+syntax match NoteTitle /^## .* ##/ contains=Tag,TitleEnd
+syntax match Subtitle /^:: .* ::/ contains=Tag,SubtitleEnd
+syntax match ContactTitle /^@@ .* @@/ contains=ContactTitleEnd
+
+syntax match TitleEnd /\s*##\s*/ conceal contained
+syntax match SubtitleEnd /\s*::\s*/ conceal contained
+syntax match ContactTitleEnd /\s*@@\s*/ conceal contained
 
 highlight NoteTitle cterm=bold,underline ctermfg=135
 highlight Subtitle cterm=underline ctermfg=140
 highlight ContactTitle cterm=underline ctermfg=51
 
+highlight link TitleEnd NoteTitle
+highlight link SubtitleEnd Subtitle
+highlight link ContactTitleEnd ContactTitle
 
 " Leading Whitespace (for consistent multi-line highlighting)
 
