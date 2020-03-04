@@ -54,10 +54,15 @@ fun bulletnotes#InitBuffer()
     imap <silent> <buffer> <expr> <CR> bulletnotes#IsAtStartOfBullet() ? "\<C-o>[\<Space>" : "\<CR>\<Left>\<Left>".bulletnotes#GetBulletType(line('.'), '-')."\<Right>\<Right>\<BS>\<Space>"
     nmap <silent> <buffer> <expr> o "o\<Left>\<Left>".bulletnotes#GetBulletType(line('.'), '-')."\<Right>\<Right>\<BS>\<Space>"
 
+    " TODO: Investigate better alternatives
+    " Maybe try tweaking indentexpr or similar?
     nmap <silent> <buffer> >ab >abgvgw'<^:call repeat#set('>ab', v:count)<CR>
     nmap <silent> <buffer> <ab <abgvgw'<^:call repeat#set('<ab', v:count)<CR>
     nmap <silent> <buffer> >aB >aBgv=:call repeat#set('>aB', v:count)<CR>
     nmap <silent> <buffer> <aB <aBgv=:call repeat#set('<aB', v:count)<CR>
+
+    vmap <silent> <buffer> > >gv=:call repeat#set('gv>gv=', v:count)<CR>
+    vmap <silent> <buffer> < <gv=:call repeat#set('gv<gv=', v:count)<CR>
 
     for bullet in s:bullets
         let cmd = "inoremap <silent> <expr> <buffer> ".bullet
