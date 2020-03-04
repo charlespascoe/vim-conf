@@ -54,6 +54,8 @@ fun bulletnotes#InitBuffer()
     imap <silent> <buffer> <expr> <CR> bulletnotes#IsAtStartOfBullet() ? "\<C-o>[\<Space>" : "\<CR>\<Left>\<Left>".bulletnotes#GetBulletType(line('.'), '-')."\<Right>\<Right>\<BS>\<Space>"
     nmap <silent> <buffer> <expr> o "o\<Left>\<Left>".bulletnotes#GetBulletType(line('.'), '-')."\<Right>\<Right>\<BS>\<Space>"
 
+    imap <buffer> <expr> <space> getline('.')[col('.') - 2] == '.' ? '<space><space>' : '<space>'
+
     " TODO: Investigate better alternatives
     " Maybe try tweaking indentexpr or similar?
     nmap <silent> <buffer> >ab >abgvgw'<^:call repeat#set('>ab', v:count)<CR>
