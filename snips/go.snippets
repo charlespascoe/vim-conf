@@ -4,7 +4,7 @@ import (
 )
 endsnippet
 
-snippet 'func?' "Function" r
+snippet 'fun' "Function" r
 func $1($2) $3 {
 	$0
 }
@@ -77,4 +77,15 @@ func Benchmark$1(b *testing.B) {
 		$0
 	}
 }
+endsnippet
+
+snippet lock "Lock"
+$1.Lock()
+defer $1.Unlock()$0
+endsnippet
+
+snippet go "Goroutine of an anonymous function"
+go func() {
+	$0
+}()
 endsnippet
