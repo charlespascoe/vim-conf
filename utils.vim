@@ -121,3 +121,13 @@ endfun
 
 nnoremap n nzz
 nnoremap N Nzz
+
+" Confirm Spell Good
+
+fun! ConfirmSpellGood()
+    let l:word = expand('<cword>')
+    let l:conf = input("Make '".l:word."' a good word? [y/N] ")
+    return l:conf == 'y'
+endfun
+
+nnoremap <expr> <silent> zg ConfirmSpellGood() ? 'zg' : ''
