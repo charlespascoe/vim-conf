@@ -7,7 +7,7 @@ nmap <buffer> <leader>tD <Plug>(go-doc)
 nmap <buffer> <leader>tr <Plug>(go-referrers)
 nmap <buffer> <leader>tc <Plug>(go-coverage-toggle)
 nmap <buffer> <leader>tR <Plug>(go-rename)
-nmap <buffer> <leader>tT <C-w>v<C-w><C-w><Plug>(go-alternate-edit)
+nmap <buffer> <leader>tT <Plug>(go-test)
 nmap <buffer> <leader>tI <Plug>(go-import)
 nmap <buffer> <leader>tf $ca" ()<Left><CR><C-r>"
 nmap <buffer> <leader>tb <Plug>(go-build)
