@@ -18,8 +18,6 @@ set debug="msg"
 
 let s:edit_file_extensions = ['.adoc', '.md', '.txt']
 
-let s:important_words_file = 'important-words.txt'
-
 fun s:Warning(msg)
     echohl WarningMsg
     echom "[bulletnotes]" a:msg
@@ -98,11 +96,6 @@ fun bulletnotes#InitProjectBuffer()
     " Disable git gutter - it just gets annoying because changes get commited
     " on save
     GitGutterBufferDisable
-
-    if filereadable(s:important_words_file)
-        let words = readfile(s:important_words_file)
-        exec 'syntax keyword Important' join(words)
-    endif
 endfun
 
 
@@ -693,36 +686,6 @@ endfun
 
 fun s:RevertToHead()
     call system('git reset --hard HEAD')
-endfun
-
-
-fun bulletnotes#ToggleImportantWord(word)
-    if !g:bn_project_loaded
-        return
-    endif
-
-    if a:word == ''
-        return
-    endif
-
-    let important_words = []
-
-    if filereadable(s:important_words_file)
-        let important_words = readfile(s:important_words_file)
-    endif
-
-    let idx = index(important_words, a:word)
-
-    if idx < 0
-        call add(important_words, a:word)
-    else
-        call filter(important_words, 'v:val != a:word')
-    endif
-
-    call writefile(important_words, s:important_words_file)
-
-    exec 'syntax clear Important'
-    exec 'syntax keyword Important' join(important_words)
 endfun
 
 
