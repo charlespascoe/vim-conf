@@ -71,9 +71,9 @@ fun bulletnotes#InitBuffer()
     nmap <silent> <buffer> <leader>i :call bulletnotes#ToggleImportantWord(expand('<cword>'))<CR>
 
     nnoremap <silent> <buffer> <leader>gl "zyi]:call system('open '.shellescape(@z))<CR>
-    nnoremap <silent> <buffer> <leader>t :Find <C-r><C-a><CR>
-    nnoremap <silent> <buffer> <leader>f :call bulletnotes#OpenFile(expand('<cWORD>'))<CR>
-    nnoremap <silent> <buffer> <leader>c :call bulletnotes#ViewContact(substitute(expand('<cWORD>'), '^@', '', ''))<CR>
+    nnoremap <silent> <buffer> <leader>gt :Find <C-r><C-a><CR>
+    nnoremap <silent> <buffer> <leader>gf :call bulletnotes#OpenFile(expand('<cWORD>'))<CR>
+    nnoremap <silent> <buffer> <leader>gc :call bulletnotes#ViewContact(substitute(expand('<cWORD>'), '^@', '', ''))<CR>
 
     setlocal indentexpr=bulletnotes#GetIndent(v:lnum)
 
