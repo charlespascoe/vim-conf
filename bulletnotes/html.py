@@ -5,6 +5,7 @@ emphasis_regex = re.compile('`([^`]+)`')
 tag_regex = re.compile(r'#([a-zA-Z0-9_\-]+)')
 contact_regex = re.compile(r'(?<!\w)@([a-zA-Z0-9_\-.]+)')
 link_regex = re.compile(r'(?<!\w)\[([^"\]]+)\](?!\w)')
+ref_regex = re.compile(r'&([a-zA-Z0-9_\-.:]+(/[a-zA-Z0-9_\-.:]+)*)')
 
 
 def escape_html(text):
@@ -109,10 +110,13 @@ class BulletsFormatter:
 contact_style = {
     'color': 'blue',
     'font-weight': 'bold',
-    'text-decoration': 'underline',
 }
 
-contact_sub_pattern = f'<span style="{format_style(contact_style)}">\\1</span>'
+
+def contact_format(contact_match):
+    contact = contact_match.group(1).replace('_', ' ')
+    style = format_style(contact_style)
+    return f'<span style="{style}">{contact}</span>'
 
 
 class TextFormatter:
@@ -124,12 +128,9 @@ class TextFormatter:
         return TextFormatter([
             lambda s : emphasis_regex.sub(r'<b>\1</b>', s),
             lambda s : tag_regex.sub(r'<i>\1</i>', s),
-            lambda s : (
-                contact_regex
-                    .sub(contact_sub_pattern, s)
-                    .replace('_', ' ')
-            ),
+            lambda s : contact_regex.sub(contact_format, s),
             lambda s : link_regex.sub(r'<a href="\1" target="_blank">\1</a>', s),
+            lambda s : ref_regex.sub(r'<span style="color: red">\1</span>', s),
         ])
 
     def extend(self, *transforms):
@@ -154,6 +155,7 @@ class SectionFormatter:
         self.heading_style = heading_style
         self.bullets_formatter = bullets_formatter
         self.text_formatter = text_formatter
+        self.append_br_to_paragraphs = False
 
     @staticmethod
     def default():
@@ -175,6 +177,9 @@ class SectionFormatter:
             if type(item) is str:
                 formatted_text = self.text_formatter.to_html(item)
                 output.append(f'<p>{formatted_text}</p>')
+
+                if self.append_br_to_paragraphs:
+                    output.append('<br/>')
             else:
                 output.append(self.bullets_formatter.to_html(item))
 
@@ -186,13 +191,22 @@ class DocumentFormatter:
         self.header_style = header_style
         self.section_formatter = section_formatter
         self.text_formatter = text_formatter or section_formatter.text_formatter
+        self.global_styles = {}
 
     @staticmethod
     def default():
-        return DocumentFormatter(
+        df = DocumentFormatter(
             None,
             SectionFormatter.default(),
         )
+
+        df.global_styles = {
+            'body': {
+                'font-family': 'Arial'
+            }
+        }
+
+        return df
 
     def to_html(self, document):
         output = []
@@ -205,7 +219,14 @@ class DocumentFormatter:
 
         return ''.join(output)
 
+    def format_global_styles(self):
+        return ' '.join(
+            f'{selector} {{ {format_style(style)} }}'
+            for selector, style in self.global_styles.items()
+        )
+
     def to_full_html(self, document):
         inner_html = self.to_html(document)
+        global_styles = self.format_global_styles()
 
-        return f'<html><head></head><body>{inner_html}</body></html>'
+        return f'<html><head><style>{global_styles}</style></head><body>{inner_html}</body></html>'

@@ -61,9 +61,9 @@ class Bullet:
 
 
 class Section:
-    def __init__(self, title = '', contents = []):
+    def __init__(self, title = '', contents = None):
         self.title = title
-        self.contents = contents
+        self.contents = contents or []
 
     @staticmethod
     def from_dict(d):

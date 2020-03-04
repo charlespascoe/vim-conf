@@ -83,6 +83,8 @@ fun bulletnotes#InitBuffer()
     call bulletnotes#ImportPythonUtils()
 
     command! DeleteDoneTasks let @/='^\(\s{4}\)*+' | let @a='ndaB@a' | normal gg@a
+
+    command! ExportHtml python3 export_html(vim.eval('s:bullets'))
 endfun
 
 
