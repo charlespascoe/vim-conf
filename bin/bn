@@ -119,6 +119,11 @@ case $1 in
             exit 1
         fi
 
+        if [ -z "$BN_NEW_REMOTE" ] || [ ! -x "$BN_NEW_REMOTE" ]; then
+            echo "BN_NEW_REMOTE not set to the path of an executable program"
+            exit 1
+        fi
+
         proj="$(echo -n "$2" | tr ' ' '-' | tr '[:upper:]' '[:lower:]' | tr -dc '[:alnum:]-')"
 
         if [ -d "$BN_HOME/$proj" ]; then
@@ -141,22 +146,18 @@ case $1 in
 
         ec 220 "\nInitialising git repo..." && \
         git init && \
+        git checkout -b "$proj"
         rm -f .git/hooks/* && \
 
         ec 220 "\nCommitting empty project..." && \
         git add --all && \
         git commit -m 'Initial Commit' && \
 
-        ec 220 "\nCreating remote repo on GitHub..." && \
-        hub create -p "bulletnotes-$proj" && \
+        ec 220 "\nCreating remote repo..." && \
+        remote="$($BN_NEW_REMOTE "$proj")" && \
+        git remote add origin "$remote" && \
 
-        ec 220 "\nPushing master branch to remote repo..." && \
-        git push -u origin master && \
-
-        ec 220 "\nCreating content branch..." && \
-        git checkout -b "$proj" && \
-
-        ec 220 "\nPushing content branch to remote repo..." && \
+        ec 220 "\nPushing to remote repo..." && \
         git push -u origin "$proj" && \
 
         ec 46 "\nDone!\n"
@@ -172,6 +173,11 @@ case $1 in
             exit 1
         fi
 
+        if [ -z "$BN_GET_REMOTE" ] || [ ! -x "$BN_GET_REMOTE" ]; then
+            echo "BN_GET_REMOTE not set to the path of an executable program"
+            exit 1
+        fi
+
         proj="$2"
 
         if [ -d "$BN_HOME/$proj" ]; then
@@ -180,7 +186,7 @@ case $1 in
         fi
 
         cd "$BN_HOME" && \
-        hub clone "bulletnotes-$proj" "$proj" && \
+        git clone "$($BN_GET_REMOTE "$proj")" "$proj" && \
         cd "$proj" && \
         rm -f .git/hooks/* && \
         git checkout "$proj"
@@ -191,10 +197,12 @@ case $1 in
 
     ls)
         if [ "$2" == "remote" ]; then
-            curl -s https://api.github.com/user/repos?visibility=private \
-                -H "Authorization: token $(grep 'oauth_token:' ~/.config/hub | egrep -o '[a-f0-9]+$')" \
-            | node -p '((stdin) => (o = JSON.parse(stdin), o.filter(r => !r.archived).map(r => r.name).filter(n => /^bulletnotes-/.test(n)).map(n => n.substr(12)).join("\n")))(fs.readFileSync(0, "utf-8"))' \
-            | tee "$BN_HOME/remotes_cache"
+            if [ -z "$BN_LS_REMOTE" ] || [ ! -x "$BN_LS_REMOTE" ]; then
+                echo "BN_LS_REMOTE not set to the path of an executable program"
+                exit 1
+            fi
+
+            $BN_LS_REMOTE | tee "$BN_HOME/remotes_cache"
             exit
         fi
 
