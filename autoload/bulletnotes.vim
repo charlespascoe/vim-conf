@@ -31,6 +31,15 @@ fun s:Error(msg)
     echohl None
 endfun
 
+fun LocateBullets(type)
+    if index(s:bullet_set, a:type[0]) < 0
+        echoerr 'Invalid bullet: '.a:type[0]
+        return
+    end
+
+    exec 'FindReg ^(\s{4})*\'.a:type
+endfun
+
 "fun s:AnyUnsavedChanges()
 "    return len(filter(map(getbufinfo(), 'v:val.changed'), 'v:val'))
 "endfun
@@ -92,6 +101,8 @@ fun bulletnotes#InitBuffer()
     command! DeleteDoneTasks let @/='^\(\s{4}\)*+' | let @a='ndaB@a' | normal gg@a
 
     command! ExportHtml python3 export_html(vim.eval('s:bullets'))
+
+    command! -buffer -nargs=1 FindBullet FindReg ^(\s{4})*\<args>
 endfun
 
 
