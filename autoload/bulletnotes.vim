@@ -62,8 +62,10 @@ fun bulletnotes#InitBuffer()
     onoremap <silent> <buffer> ab :<C-u>call bulletnotes#MarkBullet(0)<CR>
     onoremap <silent> <buffer> aB :<C-u>call bulletnotes#MarkBullet(1)<CR>
 
-    imap <silent> <buffer> <expr> <CR> bulletnotes#IsAtStartOfBullet() ? "\<C-o>[\<Space>" : "\<CR>\<Left>\<Left>".bulletnotes#GetBulletType(line('.'), '-')."\<Right>\<Right>\<BS>\<Space>"
-    nmap <silent> <buffer> <expr> o "o\<Left>\<Left>".bulletnotes#GetBulletType(line('.'), '-')."\<Right>\<Right>\<BS>\<Space>"
+    " Insert previous bullet when creating a new line
+    imap <silent> <buffer> <expr> <CR> HandleI_CR()
+    nmap <silent> <buffer> <expr> o HandleN_o('o')
+    nmap <silent> <buffer> <expr> O HandleN_o('O')
 
     imap <buffer> <expr> <space> getline('.')[col('.') - 2] == '.' ? '<space><space>' : '<space>'
 
@@ -178,6 +180,29 @@ endfun
 
 " Init }}}
 
+fun! HandleI_CR()
+    if bulletnotes#IsAtStartOfBullet()
+        return "\<C-o>[\<Space>"
+    end
+
+    let l:btype = bulletnotes#GetBulletType(line('.'), '')
+
+    if l:btype == ''
+        return "\<CR>"
+    end
+
+    return "\<CR>\<Left>\<Left>".l:btype."\<Right>\<Right>\<BS>\<Space>"
+endfun
+
+fun! HandleN_o(o)
+    let l:btype = bulletnotes#GetBulletType(line('.'), '')
+
+    if l:btype == ''
+        return a:o
+    end
+
+    return a:o."\<Left>\<Left>".l:btype."\<Right>\<Right>\<BS>\<Space>"
+endfun
 
 fun bulletnotes#FindBulletStart(lnum, strict)
     let lstr = getline(a:lnum)
