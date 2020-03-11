@@ -25,9 +25,6 @@ syntax match LeadingWhitespace /^\s\+/ contained
 
 highlight LeadingWhitespace cterm=none
 
-" Important Words (defined in vimscript)
-highlight Important cterm=bold
-
 " Note Bullets
 
 syntax match NoteBullet /^\(\s\{4\}\)*-/
@@ -72,22 +69,20 @@ highlight AnsweredQuestion ctermfg=243
 
 syntax match Tag /#[a-zA-Z0-9_\-]\+/ contains=@NoSpell
 syntax match Pointer /&[a-zA-Z0-9_\-.:]\+\(\/[a-zA-Z0-9_\-.:]\+\)*/ contains=@NoSpell,PointerMarker
-syntax match RefPointer /&ref\/\?[a-zA-Z0-9_\-.:]*\(\/[a-zA-Z0-9_\-.:]\+\)*/ contains=@NoSpell,RefPointerMarker
 syntax match PointerMarker /&/ conceal contained
-syntax match RefPointerMarker /&/ conceal contained
 syntax match Link /\(^\|\s\)\[[^\]]\+\]\(\s\|$\)/ contains=@NoSpell,LinkEnds keepend
 syntax match LinkEnds /\(\[\|\]\)/ conceal contained
-syntax match Contact /@[a-zA-Z\-._]\+/
-syntax cluster Metatext contains=Tag,Pointer,RefPointer,Link,Contact
+syntax match Contact /@[a-zA-Z\-._]\+/ contains=ContactMarker
+syntax cluster Metatext contains=Tag,Pointer,Link,Contact
+syntax match ContactMarker /@/ conceal contained
 
 highlight Tag ctermfg=226 cterm=bold
-highlight Pointer ctermfg=39
+highlight Pointer ctermfg=40
 highlight link PointerMarker Pointer
-highlight RefPointer ctermfg=40
-highlight link RefPointerMarker RefPointer
-highlight Link ctermfg=37
+highlight Link ctermfg=42
 highlight link LinkEnds Link
-highlight Contact ctermfg=51
+highlight Contact ctermfg=39
+highlight link ContactMarker Contact
 
 " Contact Fields
 syntax match FieldName /[A-Za-z]\+:/ contained
@@ -100,7 +95,8 @@ highlight link Field Link
 
 syntax region Highlight start='`' end='`' contains=HighlightMark keepend
 syntax match HighlightMark /`/ conceal contained
-syntax cluster TextStyle contains=Highlight,Important
+" Using a cluster makes it easier to add new styles in future (or add user-defined styles)
+syntax cluster TextStyle contains=Highlight
 
-highlight Highlight ctermfg=50 cterm=bold
+highlight Highlight ctermfg=49 cterm=bold
 highlight link HighlightMark Highlight
