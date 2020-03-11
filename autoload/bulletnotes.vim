@@ -67,7 +67,8 @@ fun bulletnotes#InitBuffer()
     nmap <silent> <buffer> <expr> o HandleN_o('o')
     nmap <silent> <buffer> <expr> O HandleN_o('O')
 
-    imap <buffer> <expr> <space> getline('.')[col('.') - 2] == '.' ? '<space><space>' : '<space>'
+    " Double space after full stop
+    "imap <buffer> <expr> <space> getline('.')[col('.') - 2] == '.' ? '<space><space>' : '<space>'
 
     " TODO: Investigate better alternatives
     " Maybe try tweaking indentexpr or similar?
