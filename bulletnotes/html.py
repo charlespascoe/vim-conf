@@ -119,6 +119,11 @@ def contact_format(contact_match):
     return f'<span style="{style}">{contact}</span>'
 
 
+def tag_format(tag_match):
+    tag = tag_match.group(1).replace('_', ' ')
+    return f'<b>{tag}</b>'
+
+
 class TextFormatter:
     def __init__(self, transforms):
         self.transforms = transforms
@@ -127,7 +132,7 @@ class TextFormatter:
     def default():
         return TextFormatter([
             lambda s : emphasis_regex.sub(r'<b>\1</b>', s),
-            lambda s : tag_regex.sub(r'<i>\1</i>', s),
+            lambda s : tag_regex.sub(tag_format, s),
             lambda s : contact_regex.sub(contact_format, s),
             lambda s : link_regex.sub(r'<a href="\1" target="_blank">\1</a>', s),
             lambda s : ref_regex.sub(r'<span style="color: red">\1</span>', s),
