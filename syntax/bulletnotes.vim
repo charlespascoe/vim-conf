@@ -1,5 +1,5 @@
 " Settings
-setlocal conceallevel=3
+"setlocal conceallevel=3
 
 " Title
 
