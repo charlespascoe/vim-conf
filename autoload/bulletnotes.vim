@@ -5,6 +5,8 @@ let s:bullets = ['-', '*', '+', '?', '.']
 
 let s:bullet_set = '['.join(s:bullets, '').']'
 
+let s:pyutils_loaded = 0
+
 if !exists('g:bn_project_loaded')
     let g:bn_project_loaded = 0
 endif
@@ -120,7 +122,14 @@ endfun
 
 
 fun bulletnotes#ImportPythonUtils()
-    py3file ~/.vim-conf/bulletnotes/load.py
+    if !s:pyutils_loaded
+        " The main bulletnotes library
+        py3file ~/.vim-conf/bulletnotes/load.py
+        " My custom functionality
+        py3file ~/.vim-conf/bulletnotes.py
+
+        let s:pyutils_loaded = 1
+    end
 endfun
 
 
@@ -140,7 +149,6 @@ fun bulletnotes#InitProject()
     endif
 
     call bulletnotes#ImportPythonUtils()
-    py3file ~/.vim-conf/bulletnotes.py
 
     command! ProcessTasks call bulletnotes#ProcessTasks()
 
