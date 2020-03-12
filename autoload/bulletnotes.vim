@@ -107,7 +107,10 @@ fun bulletnotes#InitBuffer()
 
     command! ExportHtml python3 export_html(vim.eval('s:bullets'))
 
-    command! -buffer -nargs=1 FindBullet FindReg ^(\s{4})*\<args>
+    " \K Resets the match start, used here to remove the leading whitespace
+    " from the match (could also use (?=...) positive look-ahead to ignore
+    " trailing part of match)
+    command! -buffer -nargs=1 FindBullet FindReg ^(\s{4})*\K\<args>
 endfun
 
 
