@@ -20,3 +20,27 @@ setlocal completeopt=menu
 call QuickSearchMap('f', 'func')
 call QuickSearchMap('t', 'type')
 call QuickSearchMap('s', 'struct')
+
+
+fun! AddImport()
+    let l:pos = getpos('.')
+
+    normal gg
+
+    let l:import_line = search('^import\s\+($')
+
+    if l:import_line != 0
+        normal $
+        let l:end_import_line =  searchpair('(', '', ')')
+
+        if l:end_import_line != 0
+            normal O""
+            startinsert
+            return
+        end
+    end
+
+    call setpos('.', l:pos)
+endfun
+
+map <silent> <buffer> <leader>i <Esc>:call AddImport()<CR>
