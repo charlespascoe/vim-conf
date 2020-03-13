@@ -91,7 +91,7 @@ class BulletsFormatter:
 
         bf.register('-', None)
         bf.register('*+', {'color': 'green'}, lambda s : f'<b>AP:</b> {s}')
-        bf.register('?.', {'color': '#FF5722'})
+        bf.register('?<', {'color': '#FF5722'})
         bf.register('>', {'color': 'initial', 'font-weight': 'bold'})
 
         return bf

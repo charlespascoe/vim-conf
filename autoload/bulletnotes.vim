@@ -1,7 +1,7 @@
 let s:path_segment_pattern = '[a-zA-Z0-9_\-.:]\+'
 let s:path_pattern = s:path_segment_pattern.'\(\/'.s:path_segment_pattern.'\)*'
 
-let s:bullets = ['-', '*', '+', '?', '.', '>']
+let s:bullets = ['-', '*', '+', '?', '<', '>']
 
 let s:bullet_set = '['.join(s:bullets, '').']'
 
