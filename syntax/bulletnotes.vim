@@ -88,7 +88,7 @@ highlight Pointer ctermfg=40
 highlight link PointerMarker Pointer
 highlight Link ctermfg=42
 highlight link LinkEnds Link
-highlight Contact ctermfg=39
+highlight Contact cterm=bold ctermfg=39
 highlight link ContactMarker Contact
 
 " Contact Fields
@@ -105,5 +105,5 @@ syntax match HighlightMark /`/ conceal contained
 " Using a cluster makes it easier to add new styles in future (or add user-defined styles)
 syntax cluster TextStyle contains=Highlight
 
-highlight Highlight ctermfg=49 cterm=bold
+highlight Highlight ctermfg=51 cterm=bold
 highlight link HighlightMark Highlight
