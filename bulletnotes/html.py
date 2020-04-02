@@ -48,7 +48,7 @@ class BulletFormatter:
             self.bullets_formatter.to_html(b) for b in bullet.subbullets
         )
 
-        return f'<ul style="{format_style(BulletFormatter.list_style)}">{subbullets_html}</ul>'
+        return f'{self.bullets_formatter.build_ul()}{subbullets_html}</ul>'
 
     def build_style(self):
         if self.style:
@@ -61,11 +61,6 @@ BulletFormatter.default_style = {
     'color': 'initial',
     'font-weight': 'initial',
     'background-color': 'initial',
-}
-
-BulletFormatter.list_style = {
-    'margin': '0',
-    'margin-bottom': '5px',
 }
 
 
@@ -106,6 +101,15 @@ class BulletsFormatter:
         formatter = self.formatters[bullet.bullet_type]
 
         return formatter.to_html(bullet)
+
+    def build_ul(self):
+        return f'<ul style="{format_style(BulletsFormatter.list_style)}">'
+
+
+BulletsFormatter.list_style = {
+    'margin': '0',
+    'margin-bottom': '5px',
+}
 
 
 contact_style = {
@@ -179,15 +183,29 @@ class SectionFormatter:
             formatted_title = self.text_formatter.to_html(section.title)
             output.append(f'<h2 style="{format_style(self.heading_style)}">{formatted_title}</h2>')
 
+        in_ul = False
+
         for item in section.contents:
             if type(item) is str:
+                if in_ul:
+                    output.append('</ul>')
+                    in_ul = False
+
                 formatted_text = self.text_formatter.to_html(item)
                 output.append(f'<p>{formatted_text}</p>')
 
                 if self.append_br_to_paragraphs:
                     output.append('<br/>')
             else:
+                if not in_ul:
+                    output.append(self.bullets_formatter.build_ul())
+                    in_ul = True
+
                 output.append(self.bullets_formatter.to_html(item))
+
+        if in_ul:
+            output.append('</ul>')
+            in_ul = False
 
         return ''.join(output)
 
