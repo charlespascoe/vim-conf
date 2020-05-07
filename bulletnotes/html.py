@@ -29,7 +29,15 @@ def format_style(style):
 
 class BulletFormatter:
     def __init__(self, style, bullets_formatter, text_formatter):
-        self.style = style
+        self.style = {}
+
+        for key, value in BulletFormatter.default_style.items():
+            self.style[key] = value
+
+        if style is not None:
+            for key, value in style.items():
+                self.style[key] = value
+
         self.bullets_formatter = bullets_formatter
         self.text_formatter = text_formatter
 
