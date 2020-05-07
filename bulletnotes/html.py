@@ -5,12 +5,13 @@ emphasis_regex = re.compile('`([^`]+)`')
 tag_regex = re.compile(r'#([a-zA-Z0-9_\-]+)')
 contact_regex = re.compile(r'(?<!\w)@([a-zA-Z0-9_\-.]+)')
 link_regex = re.compile(r'(?<!\w)\[([^"\]]+)\](?!\w)')
-ref_regex = re.compile(r'&([a-zA-Z0-9_\-.:]+(/[a-zA-Z0-9_\-.:]+)*)')
+ref_regex = re.compile(r'&amp;([a-zA-Z0-9_\-.:]+(/[a-zA-Z0-9_\-.:]+)*)')
 
 
 def escape_html(text):
     return (
         text
+            .replace('&', '&amp;')
             .replace('<', '&lt;')
             .replace('>', '&gt;')
     )
