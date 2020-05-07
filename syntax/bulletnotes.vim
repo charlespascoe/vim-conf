@@ -70,7 +70,7 @@ syntax match AnswerBullet /^\(\s\{4\}\)*>/ contained
 syntax region Answer start=/^\(\s\{4\}\)*>\s\+/hs=e+1 end=/^\s*$\|^\(\s\{4\}\)*[-*+?<>]/me=s-1 contains=AnswerBullet,LeadingWhitespace,@Metatext,@TextStyle
 
 highlight AnswerBullet ctermfg=70 cterm=bold
-highlight Answer cterm=bold
+highlight Answer ctermfg=194 cterm=italic
 
 " Metatext (annotations to text that add meaning, e.g. tags)
 
