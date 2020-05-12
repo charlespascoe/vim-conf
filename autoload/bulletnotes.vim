@@ -82,7 +82,7 @@ fun bulletnotes#InitBuffer()
 
     for bullet in s:bullets
         let cmd = "inoremap <silent> <expr> <buffer> ".bullet
-        let cmd .= " bulletnotes#IsAtStartOfBullet() ? '<BS><BS>".bullet."<Space>' : '".bullet."'"
+        let cmd .= " bulletnotes#IsAtStartOfBullet() ? '<Left><BS>".bullet."<Right>' : '".bullet."'"
         exec cmd
     endfor
 
