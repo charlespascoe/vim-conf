@@ -117,6 +117,9 @@ endfun
 nnoremap n nzz
 nnoremap N Nzz
 
+" Make Y consistent with C and D
+nnoremap Y y$
+
 " Confirm Spell Good
 
 fun! ConfirmSpellGood()
