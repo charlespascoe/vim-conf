@@ -57,11 +57,6 @@ command! FormatJson %!python -m json.tool
 
 noremap <leader>R <Esc>:s/<C-r><C-w>//g<Left><Left>
 
-" Undo/Redo Convenience Shortcuts
-
-nnoremap <F5> g-
-nnoremap <F8> g+
-
 " Move a single line
 
 nnoremap <silent> <leader>j  :<c-u>execute 'move +'. v:count1<cr>
