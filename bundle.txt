@@ -17,7 +17,6 @@ https://github.com/Quramy/tsuquyomi
 https://github.com/Raimondi/delimitMate
 https://github.com/scrooloose/nerdtree
 https://github.com/sirver/ultisnips
-https://github.com/terryma/vim-smooth-scroll
 https://github.com/tommcdo/vim-exchange
 https://github.com/tommcdo/vim-ninja-feet
 https://github.com/tpope/vim-commentary

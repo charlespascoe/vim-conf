@@ -58,12 +58,6 @@ nmap <leader>ue <Esc>:UltiSnipsEdit<CR>
 " Vim's netrw
 let g:netrw_ftp_cmd="ftp -p"   " passive mode by default
 
-" Smooth Scroll
-noremap <silent> <C-u> :call smooth_scroll#up(&scroll, 8, 1)<CR>
-noremap <silent> <C-d> :call smooth_scroll#down(&scroll, 8, 1)<CR>
-noremap <silent> <C-b> :call smooth_scroll#up(&scroll*2, 8, 1)<CR>
-noremap <silent> <C-f> :call smooth_scroll#down(&scroll*2, 8, 1)<CR>
-
 " vim-sort-motion
 let g:sort_motion_flags = "i"
 
