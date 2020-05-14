@@ -69,6 +69,7 @@ class BulletFormatter:
 BulletFormatter.default_style = {
     'color': 'initial',
     'font-weight': 'initial',
+    'font-style': 'initial',
     'background-color': 'initial',
 }
 
@@ -236,7 +237,8 @@ class DocumentFormatter:
 
         df.global_styles = {
             'body': {
-                'font-family': 'Arial'
+                'font-family': 'Arial',
+                'font-size': '12px',
             }
         }
 
