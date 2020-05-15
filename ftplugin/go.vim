@@ -13,7 +13,6 @@ nmap <buffer> <leader>tf $ca" ()<Left><CR><C-r>"
 nmap <buffer> <leader>tb <Plug>(go-build)
 nmap <silent> <buffer> <leader>tF <Esc>:GoFmt<CR>
 nmap <buffer> <leader>e <Plug>(go-iferr)
-nnoremap <buffer> <leader>i `iO""<Left>
 
 setlocal completeopt=menu
 
@@ -43,4 +42,4 @@ fun! AddImport()
     call setpos('.', l:pos)
 endfun
 
-map <silent> <buffer> <leader>i <Esc>:call AddImport()<CR>
+nmap <silent> <buffer> <leader>i <Esc>:call AddImport()<CR>
