@@ -117,6 +117,9 @@ endfun
 nnoremap n nzz
 nnoremap N Nzz
 
+nnoremap * *zz
+nnoremap # #zz
+
 " Make Y consistent with C and D
 nnoremap Y y$
 
