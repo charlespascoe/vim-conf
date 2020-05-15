@@ -10,6 +10,12 @@ func $1($2) $3 {
 }
 endsnippet
 
+snippet defer
+defer func() {
+	$0
+}()
+endsnippet
+
 global !p
 def get_last_method_type():
 	vim.command("let b:go_last_method_type = exists('b:go_last_method_type') ? b:go_last_method_type : ' '")
@@ -40,10 +46,94 @@ func(res http.ResponseWriter, req *http.Request) error {
 }
 endsnippet
 
+snippet for
+for $1{
+	$0
+}
+endsnippet
+
+snippet fori
+for i := ${1:0}; i < $2; i++ {
+	$0
+}
+endsnippet
+
 snippet fore
 for ${1:_}, $2 := range $3 {
 	$0
 }
+endsnippet
+
+snippet drain
+for _ = range $0 { }
+endsnippet
+
+snippet err
+if err != nil {
+	return$1 fmt.Errorf("$0: %s", err)
+}
+endsnippet
+
+snippet s "Struct"
+type $1 struct {
+	$0
+}
+endsnippet
+
+snippet sel "Select"
+select {
+case $1:
+	$0
+}
+endsnippet
+
+snippet recover "Recover"
+defer func() {
+	if r := recover(); r != nil {
+		$0
+	}
+}()
+endsnippet
+
+snippet j "JSON field"
+$1 ${0:T} \`json:"`!p snip.rv = "" if len(t[1]) == 0 else t[1][0].lower() + t[1][1:]`"\`
+endsnippet
+
+snippet chan "Channel with deferred close"
+$1 := make(chan $0)
+defer close($1)
+endsnippet
+
+snippet lock "Lock"
+$1.Lock()
+defer $1.Unlock()$0
+endsnippet
+
+snippet go "Goroutine of an anonymous function"
+go func() {
+	$0
+}()
+endsnippet
+
+snippet if
+if $1 {
+	$0
+}
+endsnippet
+
+snippet ife
+if $1 {
+	$0
+} else {
+	
+}
+endsnippet
+
+## GIN ROUTES ##
+snippet '\.(GET|POST|PUT|DELETE)' "Gin Route" r
+.`!p snip.rv = match.group(1)`("$1", func(c *gin.Context) {
+	$0
+})
 endsnippet
 
 ### TESTING ###
@@ -77,15 +167,4 @@ func Benchmark$1(b *testing.B) {
 		$0
 	}
 }
-endsnippet
-
-snippet lock "Lock"
-$1.Lock()
-defer $1.Unlock()$0
-endsnippet
-
-snippet go "Goroutine of an anonymous function"
-go func() {
-	$0
-}()
 endsnippet
