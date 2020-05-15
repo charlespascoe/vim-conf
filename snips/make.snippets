@@ -2,8 +2,10 @@ snippet go "Go Makefile Template"
 BINARY_NAME=$0
 BINARY_LINUX=$(BINARY_NAME)-linux
 
-## : Same as 'make submodule download build', recommended after checking out
-all: submodule download build
+.PHONY: all help build linux test benchmark clean run submodule download goversion
+
+## : Same as 'make goversion download build', recommended after checking out
+all: goversion download build
 
 ## help: Prints this help
 help:
@@ -36,11 +38,33 @@ run:
 	go build -o $(BINARY_NAME) -v ./...
 	./$(BINARY_NAME)
 
-## submodule: Initialises/updates submodules
-submodule:
-	git submodule update --init --recursive
-
 ## download: Download dependencies
 download:
 	go mod download
+
+## fmt: Run go fmt on all source files
+fmt:
+	go fmt
+
+## goversion: Checks go 1.12 or later is installed
+goversion:
+	@if [ -z "$$(which go)" ]; then \
+		echo "go either not installed or not in PATH"; \
+		exit 1; \
+	fi
+	@minor="$$(go version | egrep -o 'go1.([0-9]+)' | egrep -o '[0-9]+$$')"; \
+	if [ -z "$$minor" ]; then \
+		echo "Could not determine Go version (1.12 or above required)"; \
+		exit 1; \
+	fi; \
+	if [ $$minor -lt 12 ]; then \
+		echo "Go version 1.12 or above required (version 1.$$minor installed)"; \
+		exit 1; \
+	fi
+endsnippet
+
+snippet submodules
+## submodule: Initialises/updates submodules
+submodule:
+	git submodule update --init --recursive
 endsnippet
