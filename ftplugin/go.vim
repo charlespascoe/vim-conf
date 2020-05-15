@@ -11,7 +11,7 @@ nmap <buffer> <leader>tT <Plug>(go-test)
 nmap <buffer> <leader>tI <Plug>(go-import)
 nmap <buffer> <leader>tf $ca" ()<Left><CR><C-r>"
 nmap <buffer> <leader>tb <Plug>(go-build)
-nmap <silent> <buffer> <leader>tf <Esc>:GoFmt<CR>
+nmap <silent> <buffer> <leader>tF <Esc>:GoFmt<CR>
 nmap <buffer> <leader>e <Plug>(go-iferr)
 nnoremap <buffer> <leader>i `iO""<Left>
 
