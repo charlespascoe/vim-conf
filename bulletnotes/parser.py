@@ -2,8 +2,8 @@ import re
 from .types import Document, Section, Bullet
 
 
-title_regexp = re.compile('^##([^#]+)##')
-subtitle_regexp = re.compile('^::([^:]+)::')
+title_regexp = re.compile('^##(.+)##')
+subtitle_regexp = re.compile('^::(.+)::')
 
 
 def isempty(s):
