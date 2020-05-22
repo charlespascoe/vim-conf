@@ -1,0 +1,30 @@
+snippet $ "Reference"
+$ref: '#/components/schemas/$0'
+endsnippet
+
+snippet res "Responses"
+'${1:200}':
+  description: ${2:Ok}
+  content:
+    application/json:
+      schema:
+        allOf:
+          - $ref: '#/components/schemas/$3'
+          - type: object
+            required:
+              - $0
+endsnippet
+
+snippet req "Request Body"
+requestBody:
+  description: $1
+  required: true
+  content:
+    application/json:
+      schema:
+        allOf:
+          - $ref: '#/components/schemas/$2'
+          - type: object
+            required:
+              - $0
+endsnippet
