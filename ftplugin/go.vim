@@ -43,3 +43,6 @@ fun! AddImport()
 endfun
 
 nmap <silent> <buffer> <leader>i <Esc>:call AddImport()<CR>
+
+setlocal listchars=tab:│\  list
+hi SpecialKey ctermfg=236
