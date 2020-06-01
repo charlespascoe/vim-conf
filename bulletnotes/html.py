@@ -238,7 +238,7 @@ class DocumentFormatter:
         df.global_styles = {
             'body': {
                 'font-family': 'Arial',
-                'font-size': '12px',
+                'font-size': '1em',
             }
         }
 
