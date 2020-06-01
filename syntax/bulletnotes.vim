@@ -63,7 +63,7 @@ syntax region AnsweredQuestion start=/^\(\s\{4\}\)*<\s\+/hs=e+1 end=/^\s*$\|^\(\
 
 "highlight AnsweredQuestionBullet ctermfg=25 cterm=bold
 highlight AnsweredQuestionBullet ctermfg=196 cterm=bold
-highlight AnsweredQuestion ctermfg=243
+highlight AnsweredQuestion cterm=bold,italic
 
 " Answer Bullets
 syntax match AnswerBullet /^\(\s\{4\}\)*>/ contained
