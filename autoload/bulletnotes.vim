@@ -378,7 +378,7 @@ fun bulletnotes#OpenFile(pointer)
             endif
         endfor
 
-        call job_start(['xdg-open', path])
+        call job_start(['open', path])
         return
     endif
 
