@@ -49,7 +49,7 @@ map <PageDown> <Nop>
 set spelllang=en_gb
 
 " Custom vertical split char
-set fillchars+=vert:▌
+set fillchars+=vert:¦
 
 " Folding using markers ({{{ and }}} by default)
 set foldmethod=marker
