@@ -57,6 +57,11 @@ set foldmethod=marker
 " Enable mouse control (useful for scrolling)
 set mouse=a
 
+" Set options to improve syntax highlighing performance
+set nocursorcolumn
+syntax sync minlines=256
+set re=1
+
 " External files
 source ~/.vim-conf/utils.vim
 source ~/.vim-conf/buffer-management.vim
