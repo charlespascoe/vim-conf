@@ -70,7 +70,19 @@ endsnippet
 
 snippet err
 if err != nil {
-	return$1 fmt.Errorf("$0: %s", err)
+	return$1 fmt.Errorf("$2: %s", err)
+}
+endsnippet
+
+snippet ierr
+if err := $1; err != nil {
+	return$2 fmt.Errorf("$3: %s", err)
+}
+endsnippet
+
+snippet respErr
+if respErr := checkResponse("$1", resp, err); respErr != nil {
+	return$2 respErr
 }
 endsnippet
 
@@ -96,7 +108,11 @@ defer func() {
 endsnippet
 
 snippet j "JSON field"
-$1 ${0:T} \`json:"`!p snip.rv = "" if len(t[1]) == 0 else t[1][0].lower() + t[1][1:]`"\`
+$1 ${2:T} \`json:"${3:`!p snip.rv = "" if len(t[1]) == 0 else t[1][0].lower() + t[1][1:]`}"\`
+endsnippet
+
+snippet y "YAML field"
+$1 ${2:T} \`yaml:"${3:`!p snip.rv = "" if len(t[1]) == 0 else t[1][0].lower() + t[1][1:]`}"\`
 endsnippet
 
 snippet chan "Channel with deferred close"
@@ -127,6 +143,14 @@ if $1 {
 } else {
 	
 }
+endsnippet
+
+snippet ap "Append to slice"
+$1 = append($1, $0)
+endsnippet
+
+snippet spf "Sprintf"
+fmt.Sprintf("$1", $0)
 endsnippet
 
 ## GIN ROUTES ##
