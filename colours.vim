@@ -4,7 +4,7 @@ colorscheme custom
 
 " Change line number colours to indicate mode
 function! InsertModeChanged(mode)
-   if a:mode == 'i'
+    if a:mode == 'i'
         highlight LineNr ctermfg=45
         highlight CursorLineNr ctermfg=33
     elseif a:mode == 'r'
