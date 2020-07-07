@@ -51,9 +51,6 @@ set spelllang=en_gb
 " Custom vertical split char
 set fillchars+=vert:¦
 
-" Folding using markers ({{{ and }}} by default)
-set foldmethod=marker
-
 " Enable mouse control (useful for scrolling)
 set mouse=a
 
