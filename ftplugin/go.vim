@@ -14,12 +14,9 @@ nmap <buffer> <leader>tb <Plug>(go-build)
 nmap <silent> <buffer> <leader>tF <Esc>:GoFmt<CR>
 nmap <buffer> <leader>e <Plug>(go-iferr)
 
-setlocal completeopt=menu
-
 call QuickSearchMap('f', 'func')
 call QuickSearchMap('t', 'type')
 call QuickSearchMap('s', 'struct')
-
 
 fun! AddImport()
     let l:pos = getpos('.')

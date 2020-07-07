@@ -78,7 +78,7 @@ let g:go_fmt_autosave = 0
 
 let g:go_gopls_matcher = 'caseSensitive'
 let g:go_gopls_complete_unimported = v:false
-let g:go_gopls_deep_completion = v:true
+let g:go_gopls_deep_completion = v:false
 
 " indentLine
 let g:indentLine_fileType = ['yaml']
