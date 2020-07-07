@@ -72,8 +72,13 @@ let g:go_highlight_types = 1
 let g:go_highlight_variable_assignments = 1
 let g:go_highlight_variable_declarations = 1
 let g:go_highlight_trailing_whitespace_error = 0
+
 " Formatting interfers with jumps and folds; just do it manually
 let g:go_fmt_autosave = 0
+
+let g:go_gopls_matcher = 'caseSensitive'
+let g:go_gopls_complete_unimported = v:false
+let g:go_gopls_deep_completion = v:true
 
 " indentLine
 let g:indentLine_fileType = ['yaml']
