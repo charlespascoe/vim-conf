@@ -59,6 +59,9 @@ set nocursorcolumn
 syntax sync minlines=256
 set re=1
 
+" Disable folding (interferes with vim-go)
+set nofoldenable
+
 " External files
 source ~/.vim-conf/utils.vim
 source ~/.vim-conf/buffer-management.vim
