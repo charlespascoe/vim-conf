@@ -35,8 +35,6 @@ command! -nargs=1 -complete=help Help tab help <args>
 
 command! ShowHead call ShowHead()
 
-command! FormatJson %!python -m json.tool
-
 " Syntax highlighting debugging
 map <leader>S <Esc>:echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
 \ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
