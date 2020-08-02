@@ -112,11 +112,11 @@ fun! QuickSearchMap(key, pattern)
     exec "nnoremap <buffer> <leader>S".a:key." ?".a:pattern."<CR>zz"
 endfun
 
+" Make n and N move through location list when open
+nnoremap <expr> n get(getloclist(0, {'winid':0}), 'winid', 0) ? '<Esc>:lnext<CR>zz' : 'nzz'
+nnoremap <expr> N get(getloclist(0, {'winid':0}), 'winid', 0) ? '<Esc>:lprev<CR>zz' : 'Nzz'
+
 " Normalise search operators (always center)
-
-nnoremap n nzz
-nnoremap N Nzz
-
 nnoremap * *zz
 nnoremap # #zz
 
