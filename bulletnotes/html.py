@@ -177,6 +177,9 @@ class SectionFormatter:
         self.bullets_formatter = bullets_formatter
         self.text_formatter = text_formatter
         self.append_br_to_paragraphs = False
+        self.heading_style = {
+            'font-size': '1.2em'
+        }
 
     @staticmethod
     def default():
