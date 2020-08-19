@@ -2,18 +2,27 @@ snippet go "Go Makefile Template"
 BINARY_NAME=$0
 BINARY_LINUX=$(BINARY_NAME)-linux
 
+# List of subpackages (source folders). Used for fmt and vet. Space separated. Example:
+# SUBPACKAGES=package1 package2 package3
+SUBPACKAGES=
+
 .PHONY: all
-## : Same as 'make goversion download build', recommended after checking out
-all: goversion download build
+## : Same as 'make goversion init download build', recommended after checking out
+all: goversion init download build
 
 .PHONY: help
 ## help: Prints this help
 help:
 	@sed -ne 's/^##/make/p' $(MAKEFILE_LIST) | column -c2 -t -s ':'
 
+.PHONY: init
+## init: Sets up the working directory for development, including git hooks
+init:
+	ln -sf ../../.hooks/pre-commit .git/hooks/pre-commit
+
 .PHONY: build
 ## build: Builds binary for current OS
-build: clean
+build:
 	go build -o $(BINARY_NAME) -v
 
 .PHONY: linux
@@ -24,7 +33,7 @@ linux: clean
 .PHONY: test
 ## test: Run tests
 test:
-	go test -v ./...
+	go test ./...
 
 .PHONY: benchmark
 ## benchmark: Run tests and run benchmarks
@@ -40,8 +49,7 @@ clean:
 
 .PHONY: run
 ## run: Builds and executes the program
-run:
-	go build -o $(BINARY_NAME) -v ./...
+run: build
 	./$(BINARY_NAME)
 
 .PHONY: download
@@ -52,12 +60,36 @@ download:
 .PHONY: fmt
 ## fmt: Run go fmt on all source files
 fmt:
-	go fmt
+	go fmt .
+	@echo $(SUBPACKAGES) "\c" | xargs -iX -d ' ' --verbose go fmt ./X
 
 .PHONY: vet
 ## vet: Run go vet on all source files
 vet:
-	go vet
+	go vet .
+	@echo $(SUBPACKAGES) "\c" | xargs -iX -d ' ' --verbose go vet ./X
+
+.PHONY: fmtchk
+## fmtchk: Checks code formatting, exits with non-zero exit code if there are formatting issues.
+fmtchk:
+	@packages=(. $(SUBPACKAGES)); \
+	issues=""; \
+	for p in $${packages[@]}; do \
+		echo gofmt -l $$p/'*.go'; \
+		i="$$(gofmt -l $$p/*.go)"; \
+		if [ -n "$$i" ]; then \
+			issues="$$issues\n$$i"; \
+		fi; \
+	done; \
+	if [ -n "$$issues" ]; then \
+		echo "ERROR: Formatting issues in the following files:$$issues"; \
+		echo "Run 'make fmt' and stage the changes before attempting to commit."; \
+		exit 1; \
+	fi
+
+.PHONY: chk
+## chk: Runs all checks, exits with non-zero exit code if there are any issues.
+chk: fmtchk vet test
 
 .PHONY: goversion
 ## goversion: Checks go 1.12 or later is installed
