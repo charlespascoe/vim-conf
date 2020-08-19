@@ -14,10 +14,11 @@ nmap <buffer> <leader>tb <Plug>(go-build)
 nmap <silent> <buffer> <leader>tF <Esc>:GoFmt<CR>
 
 
-call QuickSearchMap('f', 'func')
-call QuickSearchMap('t', 'type')
-call QuickSearchMap('s', 'struct')
-nmap <silent> <buffer> <leader>sm :<C-u>call FindMethods()<CR>
+call QuickSearchMap('f', 'Functions', '\<func\>')
+call QuickSearchMap('t', 'Types', '^type\>')
+call QuickSearchMap('s', 'Structs', '\<struct\>')
+call QuickSearchMap('m', 'Methods', '^func ([^)]\+) [a-zA-Z]\+(.*)')
+call QuickSearchMap('T', 'Tests', '^func Test')
 
 fun! AddImport()
     let l:pos = getpos('.')
@@ -45,9 +46,3 @@ nmap <silent> <buffer> <leader>i <Esc>:call AddImport()<CR>
 setlocal listchars=tab:│\  list
 
 hi SpecialKey ctermfg=236
-
-fun! FindMethods()
-    lvimgrep /^func ([^)]\+) [a-zA-Z]\+(.*)/ %
-    call setloclist(0, [], 'a', {'title': 'Methods'})
-    lopen
-endfun

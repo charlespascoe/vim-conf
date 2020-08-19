@@ -103,11 +103,8 @@ endfun
 nnoremap gS :set operatorfunc=SeparatorSpread<CR>g@
 
 " Quick Search
-
-fun! QuickSearchMap(key, pattern)
-    " TODO: Properly escape inputs
-    exec "nnoremap <buffer> <leader>s".a:key." /".a:pattern."<CR>zz"
-    exec "nnoremap <buffer> <leader>S".a:key." ?".a:pattern."<CR>zz"
+fun! QuickSearchMap(key, title, pattern)
+    exec "nnoremap <silent> <buffer> <leader>s".a:key." :lvimgrep /".a:pattern."/ % \\| call setloclist(0, [], 'a', {'title': '".a:title."'}) \\| lopen<CR><CR>zz"
 endfun
 
 " Make n and N move through location list when open
