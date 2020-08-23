@@ -135,14 +135,6 @@ defer func() {
 }()
 endsnippet
 
-snippet j "JSON field"
-$1 ${2:T} \`json:"${3:`!p snip.rv = "" if len(t[1]) == 0 else t[1][0].lower() + t[1][1:]`}"\`
-endsnippet
-
-snippet y "YAML field"
-$1 ${2:T} \`yaml:"${3:`!p snip.rv = "" if len(t[1]) == 0 else t[1][0].lower() + t[1][1:]`}"\`
-endsnippet
-
 snippet chan "Channel with deferred close"
 $1 := make(chan $0)
 defer close($1)
