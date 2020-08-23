@@ -74,11 +74,11 @@ fun bulletnotes#InitBuffer()
     " Maybe try tweaking indentexpr or similar?
     nmap <silent> <buffer> >ab >abgvgw'<^:call repeat#set('>ab', v:count)<CR>
     nmap <silent> <buffer> <ab <abgvgw'<^:call repeat#set('<ab', v:count)<CR>
-    nmap <silent> <buffer> >aB >aBgv=:call repeat#set('>aB', v:count)<CR>
-    nmap <silent> <buffer> <aB <aBgv=:call repeat#set('<aB', v:count)<CR>
+    nmap <silent> <buffer> >aB >aBgvgq^:call repeat#set('>aB', v:count)<CR>
+    nmap <silent> <buffer> <aB <aBgvgq^:call repeat#set('<aB', v:count)<CR>
 
-    vmap <silent> <buffer> > >gv=:call repeat#set('gv>gv=', v:count)<CR>
-    vmap <silent> <buffer> < <gv=:call repeat#set('gv<gv=', v:count)<CR>
+    vmap <silent> <buffer> > >gvgq
+    vmap <silent> <buffer> < <gvgq
 
     for bullet in s:bullets
         let cmd = "inoremap <silent> <expr> <buffer> ".bullet
@@ -97,6 +97,7 @@ fun bulletnotes#InitBuffer()
     nnoremap <silent> <buffer> <leader>gc :call bulletnotes#ViewContact(substitute(expand('<cWORD>'), '^@', '', ''))<CR>
 
     setlocal indentexpr=bulletnotes#GetIndent(v:lnum)
+    setlocal formatexpr=bulletnotes#Format(v:lnum,v:lnum+v:count-1)
 
     inoremap <silent> <buffer> <expr> <C-z> bulletnotes#CanOmniComplete() ? "<C-x><C-o>" : "<C-p>"
     setlocal omnifunc=bulletnotes#Complete
@@ -186,51 +187,51 @@ endfun
 " Init }}}
 
 fun! HandleI_CR()
+    let startline = bulletnotes#FindBulletStart(line('.'))
+
+    if startline == -1
+        return "\<CR>"
+    endif
+
     if bulletnotes#IsAtStartOfBullet()
         return "\<C-o>[\<Space>"
     end
 
-    let l:btype = bulletnotes#GetBulletType(line('.'), '')
+    let prefix = matchstr(getline(startline), '^\s*[^\s]')
 
-    if l:btype == ''
-        return "\<CR>"
-    end
-
-    return "\<CR>\<Left>\<Left>".l:btype."\<Right>\<Right>\<BS>\<Space>"
+    return "\<CR>".prefix.' '
 endfun
 
 fun! HandleN_o(o)
-    let l:btype = bulletnotes#GetBulletType(line('.'), '')
+    let startline = bulletnotes#FindBulletStart(line('.'))
 
-    if l:btype == ''
+    if startline == -1
         return a:o
-    end
+    endif
 
-    return a:o."\<Left>\<Left>".l:btype."\<Right>\<Right>\<BS>\<Space>"
+    let prefix = matchstr(getline(startline), '^\s*[^\s]')
+
+    return a:o.prefix.' '
 endfun
 
-fun bulletnotes#FindBulletStart(lnum, strict)
+fun bulletnotes#FindBulletStart(lnum)
+    if a:lnum > line('$') || a:lnum < 1
+        return -1
+    endif
+
     let lstr = getline(a:lnum)
 
     if match(lstr, '^\s*$') != -1
         return -1
     endif
 
-    let pattern = '^\(\s'
-
-    if a:strict
-        let pattern .= '\{4\}'
-    endif
-
-    let pattern .= '\)*'.s:bullet_set
-
-    let m = matchstr(lstr, pattern)
+    let m = matchstr(lstr, '^\(\s\{4\}\)*'.s:bullet_set.' ')
 
     if m == ''
         if a:lnum == 1
             return -1
         else
-            return bulletnotes#FindBulletStart(a:lnum - 1, a:strict)
+            return bulletnotes#FindBulletStart(a:lnum - 1)
         endif
     else
         return a:lnum
@@ -238,45 +239,32 @@ fun bulletnotes#FindBulletStart(lnum, strict)
 endfun
 
 
-fun bulletnotes#FindBulletEnd(startline, subitems)
-    let lstr = getline(a:startline)
-    " +1 for the symbol, +1 for the space
-    let indent = len(matchstr(lstr, '^\s*')) + 2
-    let lnum = a:startline + 1
+fun bulletnotes#FindBullet(lnum, subitems)
+    let start = bulletnotes#FindBulletStart(a:lnum)
 
-    let pattern = '^\s\{'.indent.'\}'
-
-    if !a:subitems
-        let pattern = pattern.'[^ ]'
+    if start < 1
+        return v:none
     endif
 
-    " TODO: Check before end of file
-    while matchstr(getline(lnum), pattern) != ''
-        let lnum = lnum + 1
-    endwhile
+    let start = start - 1
 
-    return lnum - 1
-endfun
-
-
-fun bulletnotes#FindBullet(subitems)
-    let startline = bulletnotes#FindBulletStart(line('.'), 1)
-
-    if startline == -1
-        return {}
+    if a:subitems
+        let bullet = py3eval('find_bullet_and_children(vim.current.buffer, '.start.', vim.eval("s:bullets"))')
+    else
+        let bullet = py3eval('find_bullet(vim.current.buffer, '.start.', vim.eval("s:bullets"))')
     endif
 
-    let endline = bulletnotes#FindBulletEnd(startline, a:subitems)
+    if !empty(bullet)
+        let bullet['startline'] = bullet['startline'] + 1
+        let bullet['endline'] = bullet['endline'] + 1
+    endif
 
-    return {
-        \ "startline": startline,
-        \ "endline": endline
-    \ }
+    return bullet
 endfun
 
 
 fun bulletnotes#MarkBullet(subitems)
-    let bullet = bulletnotes#FindBullet(a:subitems)
+    let bullet = bulletnotes#FindBullet(line('.'), a:subitems)
 
     if empty(bullet)
         call s:Warning("Can't find bullet")
@@ -307,27 +295,44 @@ endfun
 
 
 fun bulletnotes#GetIndent(lnum)
-    let bulletPattern =  '^\s*'.s:bullet_set.' '
+    let bullet = bulletnotes#FindBullet(a:lnum, 0)
 
-    let m = matchstr(getline(a:lnum), bulletPattern)
-
-    if m != ''
-        let ind = bulletnotes#GetIndentOfLine(a:lnum)
-        return float2nr(floor(ind / 4) * 4)
+    if empty(bullet)
+        return 0
     endif
 
-    let m = matchstr(getline(a:lnum - 1), bulletPattern)
-
-    if m != ''
-        return bulletnotes#GetIndentOfLine(a:lnum - 1) + 2
+    if a:lnum == bullet['startline']
+        return bullet['indent'] * 4
+    else
+        return bullet['indent'] * 4 + 2
     endif
-
-    return bulletnotes#GetIndentOfLine(a:lnum - 1)
 endfun
 
+fun bulletnotes#Format(start, end)
+    let pos = getpos('.')
+
+    let i = a:start
+    let stop = a:end
+
+    while i <= a:end
+        let b = bulletnotes#FindBullet(i, 0)
+
+        if !empty(b)
+            call setpos('.', [0, b['startline'], 1, 0])
+            execute 'normal' 'gwab'
+            let bNew = bulletnotes#FindBullet(b['startline'], 0)
+            let stop = stop + bNew['endline'] - b['endline']
+            let i = bNew['endline'] + 1
+        else
+            let i = i + 1
+        endif
+    endwhile
+
+    call setpos('.', pos)
+endfun
 
 fun bulletnotes#GetBulletType(lnum, default)
-    let startline = bulletnotes#FindBulletStart(a:lnum, 1)
+    let startline = bulletnotes#FindBulletStart(a:lnum)
 
     if startline == -1
         return a:default
