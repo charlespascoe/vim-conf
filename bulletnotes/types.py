@@ -94,6 +94,8 @@ class Section:
         for item in self.contents:
             if isinstance(item, Bullet):
                 yield from item.walk()
+            else:
+                yield item
 
 
 class Document:
