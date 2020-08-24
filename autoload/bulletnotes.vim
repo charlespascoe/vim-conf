@@ -530,8 +530,8 @@ fun bulletnotes#Complete(findstart, base)
     endif
 
     if type == '&'
-        " TODO: Maybe don't depend on ag?
-        let files = split(system("ag -l --ignore-dir spell"))
+        " Requires shell=bash
+        let files = systemlist('git ls-files | egrep -v "(^|/)\.[^/]+$" | grep -v "^spell/" | grep -v "^snips/"')
         call map(files, "'&'.substitute(v:val, '.bn$', '', '')")
         let g:__bn_match = a:base
         call filter(files, 'bulletnotes#StartsWith(g:__bn_match, v:val)')
