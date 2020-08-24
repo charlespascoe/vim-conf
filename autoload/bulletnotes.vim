@@ -323,12 +323,18 @@ fun bulletnotes#GetIndent(lnum)
 endfun
 
 fun bulletnotes#Format(start, end)
+    if mode() == 'i'
+        " Don't use this function for formatting in insert mode; it
+        " interferes with text wrapping while typing
+        return 1
+    endif
+
     let pos = getpos('.')
 
     let i = a:start
     let stop = a:end
 
-    while i <= a:end
+    while i <= stop
         let b = bulletnotes#FindBullet(i, 0)
 
         if !empty(b)
