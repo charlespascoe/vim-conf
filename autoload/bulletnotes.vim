@@ -199,7 +199,10 @@ fun! HandleI_CR()
 
     let prefix = matchstr(getline(startline), '^\s*[^\s]')
 
-    return "\<CR>".prefix.' '
+    set pastetoggle=<Esc>[201~
+    set paste
+
+    return "\<CR>".prefix." \<Esc>[201~"
 endfun
 
 fun! HandleN_o(o)
@@ -211,7 +214,10 @@ fun! HandleN_o(o)
 
     let prefix = matchstr(getline(startline), '^\s*[^\s]')
 
-    return a:o.prefix.' '
+    set pastetoggle=<Esc>[201~
+    set paste
+
+    return a:o.prefix." \<Esc>[201~"
 endfun
 
 fun bulletnotes#FindBulletStart(lnum)
@@ -298,7 +304,15 @@ fun bulletnotes#GetIndent(lnum)
     let bullet = bulletnotes#FindBullet(a:lnum, 0)
 
     if empty(bullet)
-        return 0
+        " FindBullet() only looks for bullets on the current line; if this is
+        " a new line for an existing bullet, then look for the bullet that
+        " ends on the previous line, if any
+        let bullet = bulletnotes#FindBullet(a:lnum-1, 0)
+
+        if empty(bullet)
+            " No preceding bullet - just use indent of previous line
+            return bulletnotes#GetIndentOfLine(a:lnum-1)
+        endif
     endif
 
     if a:lnum == bullet['startline']
