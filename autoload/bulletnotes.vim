@@ -197,7 +197,10 @@ fun! HandleI_CR()
 
     let prefix = matchstr(getline(startline), '^\s*[^\s]')
 
-    return "\<CR>".prefix.' '
+    set pastetoggle=<Esc>[201~
+    set paste
+
+    return "\<CR>".prefix." \<Esc>[201~"
 endfun
 
 fun! HandleN_o(o)
@@ -209,7 +212,10 @@ fun! HandleN_o(o)
 
     let prefix = matchstr(getline(startline), '^\s*[^\s]')
 
-    return a:o.prefix.' '
+    set pastetoggle=<Esc>[201~
+    set paste
+
+    return a:o.prefix." \<Esc>[201~"
 endfun
 
 fun bulletnotes#FindBulletStart(lnum)
@@ -296,7 +302,15 @@ fun bulletnotes#GetIndent(lnum)
     let bullet = bulletnotes#FindBullet(a:lnum, 0)
 
     if empty(bullet)
-        return 0
+        " FindBullet() only looks for bullets on the current line; if this is
+        " a new line for an existing bullet, then look for the bullet that
+        " ends on the previous line, if any
+        let bullet = bulletnotes#FindBullet(a:lnum-1, 0)
+
+        if empty(bullet)
+            " No preceding bullet - just use indent of previous line
+            return bulletnotes#GetIndentOfLine(a:lnum-1)
+        endif
     endif
 
     if a:lnum == bullet['startline']
@@ -307,12 +321,18 @@ fun bulletnotes#GetIndent(lnum)
 endfun
 
 fun bulletnotes#Format(start, end)
+    if mode() == 'i'
+        " Don't use this function for formatting in insert mode; it
+        " interferes with text wrapping while typing
+        return 1
+    endif
+
     let pos = getpos('.')
 
     let i = a:start
     let stop = a:end
 
-    while i <= a:end
+    while i <= stop
         let b = bulletnotes#FindBullet(i, 0)
 
         if !empty(b)
@@ -508,8 +528,8 @@ fun bulletnotes#Complete(findstart, base)
     endif
 
     if type == '&'
-        " TODO: Maybe don't depend on ag?
-        let files = split(system("ag -l --ignore-dir spell"))
+        " Requires shell=bash
+        let files = systemlist('git ls-files | egrep -v "(^|/)\.[^/]+$" | grep -v "^spell/" | grep -v "^snips/"')
         call map(files, "'&'.substitute(v:val, '.bn$', '', '')")
         let g:__bn_match = a:base
         call filter(files, 'bulletnotes#StartsWith(g:__bn_match, v:val)')
