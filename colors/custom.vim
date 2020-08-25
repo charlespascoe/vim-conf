@@ -26,10 +26,6 @@ hi WarningMsg ctermfg=1
 hi WildMenu ctermfg=0 ctermbg=3
 hi Folded ctermbg=236 ctermfg=248
 hi FoldColumn ctermbg=236 ctermfg=248
-hi DiffAdd ctermbg=4
-hi DiffChange ctermbg=5
-hi DiffDelete cterm=bold ctermfg=4 ctermbg=6
-hi DiffText cterm=bold ctermbg=1
 hi Pmenu ctermfg=15 ctermbg=17
 hi PmenuSel ctermfg=11 ctermbg=21
 hi CursorLine cterm=none
@@ -59,3 +55,4 @@ hi ColorColumn ctermbg=236
 hi DiffAdd ctermfg=2 ctermbg=none
 hi DiffChange ctermfg=3 ctermbg=none
 hi DiffDelete ctermfg=1 ctermbg=none
+hi DiffText cterm=bold ctermbg=1
