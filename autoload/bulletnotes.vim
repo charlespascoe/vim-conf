@@ -89,8 +89,6 @@ fun bulletnotes#InitBuffer()
     imap <silent> <expr> <buffer> <Tab> bulletnotes#IsAtStartOfBullet() ? '<Esc>>ab^i<Right><Right>' : (ShouldAutocomplete() ? '<C-z>' : '<Tab>')
     imap <silent> <expr> <buffer> <S-Tab> bulletnotes#IsAtStartOfBullet() ? '<Esc><ab^i<Right><Right>' : '<S-Tab>'
 
-    nmap <silent> <buffer> <leader>i :call bulletnotes#ToggleImportantWord(expand('<cword>'))<CR>
-
     nnoremap <silent> <buffer> <leader>gl "zyi]:call system('open '.shellescape(@z))<CR>
     nnoremap <silent> <buffer> <leader>gt :Find <C-r><C-a><CR>
     nnoremap <silent> <buffer> <leader>gf :call bulletnotes#OpenFile(expand('<cWORD>'))<CR>
