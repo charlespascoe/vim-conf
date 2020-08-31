@@ -49,7 +49,7 @@ hi SpellCap cterm=none ctermfg=15 ctermbg=12
 hi SpellRare cterm=none ctermfg=15 ctermbg=13
 hi SpellLocal cterm=none ctermfg=15 ctermbg=33
 
-hi ColorColumn ctermbg=233
+hi ColorColumn ctermbg=234
 
 " Diffs (e.g. Git)
 hi DiffAdd ctermfg=2 ctermbg=none
