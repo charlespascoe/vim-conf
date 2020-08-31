@@ -1,5 +1,6 @@
-let s:path_segment_pattern = '[a-zA-Z0-9_\-.:]\+'
+let s:path_segment_pattern = '[a-zA-Z0-9_\-.]\+'
 let s:path_pattern = s:path_segment_pattern.'\(\/'.s:path_segment_pattern.'\)*'
+let s:anchor_pattern = '[a-zA-Z0-9]\+'
 
 let s:bullets = ['-', '*', '+', '?', '<', '>', '#']
 
@@ -124,6 +125,8 @@ fun bulletnotes#InitProjectBuffer()
     " Disable git gutter - it just gets annoying because changes get commited
     " on save
     GitGutterBufferDisable
+
+    imap <buffer> <expr> <C-a> bulletnotes#InsertAnchor()
 endfun
 
 
@@ -366,35 +369,64 @@ fun bulletnotes#IsAtStartOfBullet()
 endfun
 
 
-fun bulletnotes#ResolveFile(pointer, ext)
-    " TODO: Prevent escaping the project directory (e.g. "../" or "/")
-    let m = matchlist(a:pointer, '^&\('.s:path_pattern.'\)')
+fun bulletnotes#ResolvePointer(pointer)
+    let m = matchstr(a:pointer, '&\(:'.s:anchor_pattern.'\|'.s:path_pattern.'\)')
 
     if len(m) == 0
-        return ''
+        return []
     endif
 
-    let path = m[1].a:ext
+    if m =~ '^&:'
+        let anchor = m[2:]
+
+        let files = systemlist("ag --vimgrep -G '".'\.bn$'."' -sQ ':".anchor.":'")
+
+        if len(files) == 0
+            return []
+        endif
+
+        if len(files) > 1
+            exec 'Find :'.anchor.':'
+            return [v:none]
+        endif
+
+        let location = matchlist(files[0], '^\(.*\.bn\):\([0-9]\+\):\([0-9]\+\)')
+
+        return location[1:3]
+    endif
+
+    " Remove ampersand
+    let path = m[1:]
+
+    if filereadable(path.'.bn')
+        return [path.'.bn']
+    endif
 
     if filereadable(path)
-        return path
+        return [path]
     endif
 
-    return ''
+    return []
 endfun
 
 
 fun bulletnotes#OpenFile(pointer)
-    let path = bulletnotes#ResolveFile(a:pointer, '.bn')
+    let location = bulletnotes#ResolvePointer(a:pointer)
 
-    if path != ''
-        exec 'e '.path
-        return
-    endif
+    if len(location) == 1
+        if location[0] == v:none
+            " Found more than one location for an anchor - opened the location
+            " list
+            return
+        endif
 
-    let path = bulletnotes#ResolveFile(a:pointer, '')
+        let path = location[0]
 
-    if path != ''
+        if bulletnotes#EndsWith('.bn', path)
+            exec 'e '.path
+            return
+        endif
+
         for extension in s:edit_file_extensions
             if bulletnotes#EndsWith(extension, path)
                 exec 'e '.path
@@ -406,7 +438,59 @@ fun bulletnotes#OpenFile(pointer)
         return
     endif
 
+    if len(location) == 3
+        let locbuf = bufnr(location[0])
+
+        if locbuf == -1
+            " File not open yet, so open it
+            exec 'e +keepjumps\ normal\ '.location[1].'G'.location[2].'|zz' location[0]
+            return
+        endif
+
+        if locbuf != bufnr('')
+            " File is open in a buffer, so switch to the open buffer
+            exec 'b +keepjumps\ normal\ '.location[1].'G'.location[2].'|zz' locbuf
+            return
+        endif
+
+        " Navigating within the same open buffer
+        exec 'normal' location[1].'G'.location[2].'|zz'
+        return
+    endif
+
     echoerr 'Not found: '.a:pointer
+endfun
+
+
+fun bulletnotes#GenerateAnchor()
+    let length = 4
+    let attemps = 0
+
+    while 1
+        let id = py3eval('gen_anchor_id('.length.')')
+
+        let location = bulletnotes#ResolvePointer('&:'.id)
+
+        if len(location) == 0
+            return id
+        endif
+
+        let attempts += 1
+
+        if attempts >= 20
+            let length += 1
+            let attempts = 0
+        endif
+    endwhile
+endfun
+
+
+fun bulletnotes#InsertAnchor()
+    let id = bulletnotes#GenerateAnchor()
+
+    let @" = '&:'.id
+
+    return ':'.id.':'
 endfun
 
 

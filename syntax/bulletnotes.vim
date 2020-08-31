@@ -82,12 +82,16 @@ highlight CommentItem ctermfg=117 ctermbg=235 cterm=italic
 " Metatext (annotations to text that add meaning, e.g. tags)
 
 syntax match Tag /#[a-zA-Z0-9_\-]\+/ contains=@NoSpell
-syntax match Pointer /&[a-zA-Z0-9_\-.:]\+\(\/[a-zA-Z0-9_\-.:]\+\)*/ contains=@NoSpell,PointerMarker
+syntax match Pointer /&[a-zA-Z0-9_\-.]\+\(\/[a-zA-Z0-9_\-.]\+\)*/ contains=@NoSpell,PointerMarker
 syntax match PointerMarker /&/ conceal contained
+syntax match AnchorPointer /&:[a-zA-Z0-9]\+/ contains=@NoSpell,AnchorPointerMarker
+syntax match AnchorPointerMarker /&:/ conceal contained
 syntax match Link /\(^\|\s\)\[[^\]]\+\]\(\s\|$\)/ contains=@NoSpell,LinkEnds keepend
 syntax match LinkEnds /\(\[\|\]\)/ conceal contained
 syntax match Contact /@[a-zA-Z\-._]\+/ contains=ContactMarker
-syntax cluster Metatext contains=Tag,Pointer,Link,Contact
+syntax match Anchor /:[a-zA-Z0-9]\+:/ contains=@NoSpell,AnchorMarker
+syntax match AnchorMarker /:/ conceal contained
+syntax cluster Metatext contains=Tag,Pointer,Link,Contact,Anchor
 syntax match ContactMarker /@/ conceal contained
 
 highlight Tag ctermfg=226 cterm=bold
@@ -97,6 +101,11 @@ highlight Link ctermfg=42
 highlight link LinkEnds Link
 highlight Contact cterm=bold ctermfg=39
 highlight link ContactMarker Contact
+
+highlight Anchor ctermfg=0 ctermbg=32
+highlight link AnchorMarker Anchor
+highlight link AnchorPointer Pointer
+highlight link AnchorPointerMarker AnchorPointer
 
 " Contact Fields
 syntax match FieldName /[A-Za-z]\+:/ contained

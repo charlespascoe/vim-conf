@@ -1,6 +1,7 @@
 import vim
 import tempfile
 import webbrowser
+import random
 import re
 
 def bullets_to_char_set(bullets):
@@ -9,6 +10,13 @@ def bullets_to_char_set(bullets):
 
 def isempty(s):
     return s == '' or s.isspace()
+
+
+anchor_charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+
+
+def gen_anchor_id(length):
+    return ''.join(random.choice(anchor_charset) for i in range(length))
 
 
 def export_html(bullets, firstline, lastline):
