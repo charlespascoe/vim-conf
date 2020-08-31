@@ -115,6 +115,9 @@ nnoremap <expr> N get(getloclist(0, {'winid':0}), 'winid', 0) ? '<Esc>:lprev<CR>
 nnoremap * *zz
 nnoremap # #zz
 
+nnoremap <C-o> <C-o>zz
+nnoremap <C-i> <C-i>zz
+
 " Make Y consistent with C and D
 nnoremap Y y$
 
