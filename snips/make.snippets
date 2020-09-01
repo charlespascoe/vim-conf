@@ -1,6 +1,7 @@
 snippet go "Go Makefile Template"
 BINARY_NAME=$0
 BINARY_LINUX=$(BINARY_NAME)-linux
+SHELL=/bin/bash
 
 # List of subpackages (source folders). Used for fmt and vet. Space separated. Example:
 # SUBPACKAGES=package1 package2 package3
@@ -27,12 +28,12 @@ build:
 
 .PHONY: linux
 ## linux: Builds Linux-compatible binary
-linux: clean
+linux:
 	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o $(BINARY_LINUX) -v
 
 .PHONY: test
-## test: Run tests
-test:
+## test: Check formatting, vet code, and run tests
+test: fmtchk vet
 	go test ./...
 
 .PHONY: benchmark
@@ -61,13 +62,13 @@ download:
 ## fmt: Run go fmt on all source files
 fmt:
 	go fmt .
-	@echo $(SUBPACKAGES) "\c" | xargs -iX -d ' ' --verbose go fmt ./X
+	@echo -n $(SUBPACKAGES) | xargs -iX -d ' ' --verbose go fmt ./X
 
 .PHONY: vet
 ## vet: Run go vet on all source files
 vet:
 	go vet .
-	@echo $(SUBPACKAGES) "\c" | xargs -iX -d ' ' --verbose go vet ./X
+	@echo -n $(SUBPACKAGES) | xargs -iX -d ' ' --verbose go vet ./X
 
 .PHONY: fmtchk
 ## fmtchk: Checks code formatting, exits with non-zero exit code if there are formatting issues.
@@ -87,10 +88,6 @@ fmtchk:
 		exit 1; \
 	fi
 
-.PHONY: chk
-## chk: Runs all checks, exits with non-zero exit code if there are any issues.
-chk: fmtchk vet test
-
 .PHONY: goversion
 ## goversion: Checks go 1.12 or later is installed
 goversion:
@@ -109,9 +106,23 @@ goversion:
 	fi
 endsnippet
 
-snippet submodules
+snippet submodule
 .PHONY: submodule
 ## submodule: Initialises/updates submodules
 submodule:
 	git submodule update --init --recursive
+endsnippet
+
+snippet docker
+.PHONY: docker
+## docker: Builds a docker image; set TAGS variable to the space-separated list of tags
+docker: linux
+	@mv $BINARY_LINUX docker/; \
+	tags=($${TAGS:-snapshot}); \
+	opts=""; \
+	for t in $${tags[@]}; do \
+		opts="$$opts -t $BINARY_NAME:$$t"; \
+	done; \
+	echo docker build docker/ $$opts; \
+	docker build docker/ $$opts
 endsnippet
