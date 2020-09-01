@@ -1,0 +1,95 @@
+snippet go
+#!groovy
+
+@Library('common-functions@v2') _
+
+properties([
+    disableConcurrentBuilds(),
+    gitLabConnection('VE Redside Gitlab'),
+    buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '7', numToKeepStr: '21')),
+])
+
+def NEXUS_REPOSITORY = 'https://agile.nat.bt.com/nexus/repository/APP13273_VEXPOSURE_raw_hosted'
+// Where in the Nexus and Docker repos all the artefacts/images should go
+def ARTEFACTS_PATH = '$1'
+// Path to file to upload
+def LOCAL_ARTEFACT_PATH = '$1'
+// Name prefix of uploaded artefact
+def ARTEFACT_NAME = '$1'
+
+gitlabBuilds(builds: ['build', 'test', 'documentation', 'docker build', 'publish to nexus']) {
+    node('generic-swarm-jnlp') {
+        def scmVars = checkout scm
+
+        stage('Build') {
+            gitlabCommitStatus('build') {
+                sh """
+                export HTTP_PROXY=http://cloudproxy-t.nat.bt.com:8080
+                export HTTPS_PROXY=http://cloudproxy-t.nat.bt.com:8080
+                go version
+                make
+                """
+            }
+        }
+
+        stage('Test') {
+            gitlabCommitStatus('test') {
+                sh """
+                export HTTP_PROXY=http://cloudproxy-t.nat.bt.com:8080
+                export HTTPS_PROXY=http://cloudproxy-t.nat.bt.com:8080
+                make test
+                """
+            }
+        }
+
+        stage('Documentation') {
+            gitlabCommitStatus('documentation') {
+                docker.withServer(env.DOCKER_HOST, 'docker-api-certs') {
+                    catchError {
+                        buildAsciiDoc('./docs', './build/docs')
+
+                        // Only publish docs on master
+                        if (scmVars.GIT_BRANCH == 'master') {
+                            sh "rsync -avh --no-o --no-g --exclude '.asciidoctor' ./build/docs/ /home/jenkins/shared/docs/$ARTEFACTS_PATH --delete"
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Build and push Docker image') {
+            gitlabCommitStatus("docker build") {
+                retry(3) {
+                    docker.withServer(env.DOCKER_HOST, 'docker-api-certs') {
+                        docker.withRegistry('https://registry.docker.nat.bt.com', 'bt-docker-registry-user') {
+                            withCredentials([string(credentialsId: 'agile-ve-npm-auth-token', variable: 'AUTH_TOKEN')]) {
+                                sh "cp $LOCAL_ARTEFACT_PATH docker/"
+                                buildAndPush("registry.docker.nat.bt.com/ve/$ARTEFACTS_PATH", scmVars, ['docker/'])
+                            }
+                        }
+                    }
+                }
+
+                cleanUpDockerImages(repository: "ve/$ARTEFACTS_PATH", credentialsId: 'bt-docker-registry-admin')
+            }
+        }
+
+        stage('Publish to Nexus') {
+            gitlabCommitStatus('publish to nexus') {
+                withCredentials([usernameColonPassword(credentialsId: 'bt-nexus-user', variable: 'NEXUS_CREDENTIALS')]) {
+                    def tag = getBuildGitTag(scmVars)
+                    def directory = tag ? 'releases' : 'snapshots'
+                    def version = tag ?: scmVars.GIT_BRANCH.replace('/', '-')
+                    def nexusPath = "$ARTEFACTS_PATH/$directory/$ARTEFACT_NAME-$version"
+
+                    sh "curl -f -u \"$NEXUS_CREDENTIALS\" --upload-file \"$LOCAL_ARTEFACT_PATH\" \"$NEXUS_REPOSITORY/$nexusPath\""
+                }
+            }
+        }
+
+        step([$class                : 'Mailer',
+            notifyEveryUnstableBuild: true,
+            recipients              : 'charles.pascoe@bt.com'])
+    }
+}
+endsnippet
