@@ -51,6 +51,9 @@ set spelllang=en_gb
 " Custom vertical split char
 set fillchars+=vert:¦
 
+" Custom indent marker
+set listchars=tab:│\  list
+
 " Enable mouse control (useful for scrolling)
 set mouse=a
 
