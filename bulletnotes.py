@@ -3,6 +3,9 @@ import tempfile
 import webbrowser
 import random
 import re
+import subprocess
+import os
+
 
 def bullets_to_char_set(bullets):
     return ''.join('\\' + bullet for bullet in bullets)
@@ -26,7 +29,6 @@ def export_html(bullets, firstline, lastline):
     doc = bulletnotes.parse_doc(vim.current.buffer[firstline-1:lastline], bullets)
 
     doc_formatter = bulletnotes.html.DocumentFormatter.default()
-    doc_formatter.section_formatter.append_br_to_paragraphs = True
 
     html = doc_formatter.to_full_html(doc)
 
@@ -37,6 +39,32 @@ def export_html(bullets, firstline, lastline):
     webbrowser.open_new('file://' + path)
 
     print('Exported to temporary file: ' + path)
+
+def export_to_clipboard(bullets, firstline, lastline):
+    if not vim.current.buffer.name.endswith('.bn'):
+        raise Exception('Not a Bulletnotes file')
+
+    doc = bulletnotes.parse_doc(vim.current.buffer[firstline-1:lastline], bullets)
+
+    doc_formatter = bulletnotes.html.DocumentFormatter.default()
+
+    html = doc_formatter.to_full_html(doc)
+
+    # macOS only
+    p = subprocess.Popen(
+        ['textutil', '-format', 'html', '-convert', 'rtf', '-stdin', '-stdout'],
+        stdout=subprocess.PIPE,
+        stdin=subprocess.PIPE,
+    )
+
+    p.stdin.write(html.encode('utf-8'))
+    p.stdin.close()
+
+    rtf = p.stdout.read()
+    p.wait()
+
+    with os.popen('pbcopy -Prefer rtf', 'w') as copy:
+        copy.write(rtf.decode('utf-8'))
 
 
 def word_count(bullets, firstline, lastline):

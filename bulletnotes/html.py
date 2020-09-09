@@ -199,18 +199,24 @@ class SectionFormatter:
 
         in_ul = False
 
+        previous_was_para = False
+
         for item in section.contents:
+            if previous_was_para and self.append_br_to_paragraphs:
+                output.append('<br/>')
+
             if type(item) is str:
+                previous_was_para = True
+
                 if in_ul:
                     output.append('</ul>')
                     in_ul = False
 
                 formatted_text = self.text_formatter.to_html(item)
                 output.append(f'<p>{formatted_text}</p>')
-
-                if self.append_br_to_paragraphs:
-                    output.append('<br/>')
             else:
+                previous_was_para = False
+
                 if not in_ul:
                     output.append(self.bullets_formatter.build_ul())
                     in_ul = True
@@ -241,7 +247,8 @@ class DocumentFormatter:
         df.global_styles = {
             'body': {
                 'font-family': 'Arial',
-                'font-size': '1em',
+                # NOTE: May need to have different values for each platform
+                'font-size': '16px',
             }
         }
 

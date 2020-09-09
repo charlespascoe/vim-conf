@@ -106,6 +106,7 @@ fun bulletnotes#InitBuffer()
     command! DeleteDoneTasks let @/='^\(\s{4}\)*+' | let @a='ndaB@a' | normal gg@a
 
     command! -buffer -range=% ExportHtml python3 export_html(vim.eval('s:bullets'), <line1>, <line2>)
+    command! -buffer -range=% ExportToClipboard python3 export_to_clipboard(vim.eval('s:bullets'), <line1>, <line2>)
     command! -buffer -range=% WordCount python3 print(word_count(vim.eval('s:bullets'), <line1>, <line2>))
 
     " \K Resets the match start, used here to remove the leading whitespace
