@@ -62,6 +62,8 @@ fun bulletnotes#InitBuffer()
 
     onoremap <silent> <buffer> ab :<C-u>call bulletnotes#MarkBullet(0)<CR>
     onoremap <silent> <buffer> aB :<C-u>call bulletnotes#MarkBullet(1)<CR>
+    vnoremap <silent> <buffer> ab :<C-u>call bulletnotes#MarkBullet(0)<CR>
+    vnoremap <silent> <buffer> aB :<C-u>call bulletnotes#MarkBullet(1)<CR>
 
     " Insert previous bullet when creating a new line
     imap <silent> <buffer> <expr> <CR> HandleI_CR()
