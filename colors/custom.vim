@@ -6,7 +6,7 @@ endif
 
 let colors_name = "custom"
 
-hi SpecialKey ctermfg=4
+hi SpecialKey ctermfg=236
 hi NonText cterm=bold ctermfg=4
 hi Directory ctermfg=4
 hi ErrorMsg cterm=bold ctermfg=7 ctermbg=1

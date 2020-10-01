@@ -83,5 +83,8 @@ let g:go_gopls_deep_completion = v:false
 let g:go_rename_command = 'gopls'
 
 " indentLine
-let g:indentLine_fileType = ['yaml']
+let g:indentLine_fileType = ['yaml', 'javascript', 'typescript']
 let g:indentLine_showFirstIndentLevel = 1
+let g:indentLine_char = '│'
+let g:indentLine_first_char = '│'
+let g:indentLine_color_term = 236
