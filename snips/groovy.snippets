@@ -13,7 +13,7 @@ def NEXUS_REPOSITORY = 'https://agile.nat.bt.com/nexus/repository/APP13273_VEXPO
 // Where in the Nexus and Docker repos all the artefacts/images should go
 def ARTEFACTS_PATH = '$1'
 // Path to file to upload
-def LOCAL_ARTEFACT_PATH = '$1'
+def LOCAL_ARTEFACT_PATH = '$1-linux'
 // Name prefix of uploaded artefact
 def ARTEFACT_NAME = '$1'
 
@@ -27,7 +27,7 @@ gitlabBuilds(builds: ['build', 'test', 'documentation', 'docker build', 'publish
                 export HTTP_PROXY=http://cloudproxy-t.nat.bt.com:8080
                 export HTTPS_PROXY=http://cloudproxy-t.nat.bt.com:8080
                 go version
-                make
+                make && make linux
                 """
             }
         }
