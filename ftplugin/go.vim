@@ -19,6 +19,7 @@ call QuickSearchMap('t', 'Types', '^type\>')
 call QuickSearchMap('s', 'Structs', '\<struct\>')
 call QuickSearchMap('m', 'Methods', '^func ([^)]\+) [a-zA-Z]\+(.*)')
 call QuickSearchMap('T', 'Tests', '^func Test')
+call QuickSearchMap('R', 'Routes', '\.\(HEAD\\|GET\\|POST\\|PUT\\|PATCH\\|DELETE\)(')
 
 fun! AddImport()
     let l:pos = getpos('.')
