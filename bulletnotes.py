@@ -40,11 +40,18 @@ def export_html(bullets, firstline, lastline):
 
     print('Exported to temporary file: ' + path)
 
-def export_to_clipboard(bullets, firstline, lastline):
+def export_to_clipboard(bullets, firstline, lastline, rtf):
     if not vim.current.buffer.name.endswith('.bn'):
         raise Exception('Not a Bulletnotes file')
 
     doc = bulletnotes.parse_doc(vim.current.buffer[firstline-1:lastline], bullets)
+
+    if not rtf:
+        # macOS only
+        with os.popen('pbcopy -Prefer txt', 'w') as copy:
+            copy.write(str(doc))
+
+        return
 
     doc_formatter = bulletnotes.html.DocumentFormatter.default()
 
@@ -52,7 +59,7 @@ def export_to_clipboard(bullets, firstline, lastline):
 
     # macOS only
     p = subprocess.Popen(
-        ['textutil', '-format', 'html', '-convert', 'rtf', '-stdin', '-stdout'],
+        ['textutil', '-format', 'html', '-inputencoding', 'utf-8', '-convert', 'rtf', '-stdin', '-stdout'],
         stdout=subprocess.PIPE,
         stdin=subprocess.PIPE,
     )

@@ -97,6 +97,30 @@ class Section:
             else:
                 yield item
 
+    def __str__(self):
+        result = ''
+
+        if len(self.title) > 0:
+            result += f':: {self.title} ::\n\n'
+
+        prev_was_bullet = False
+
+        for item in self.contents:
+            if isinstance(item, Bullet):
+                result += str(item) + '\n'
+                prev_was_bullet = True
+            else:
+                if prev_was_bullet:
+                    result += '\n'
+
+                result += str(item) + '\n\n'
+                prev_was_bullet = False
+
+        if prev_was_bullet:
+            result += '\n'
+
+        return result
+
 
 class Document:
     def __init__(self, title, sections):
@@ -119,3 +143,14 @@ class Document:
     def walk(self):
         for section in self.sections:
             yield from section.walk()
+
+    def __str__(self):
+        result = ''
+
+        if len(self.title) > 0:
+            result += f'## {self.title} ##\n\n'
+
+        for section in self.sections:
+            result += str(section) + '\n'
+
+        return result.strip()
