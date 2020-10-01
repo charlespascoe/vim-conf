@@ -91,7 +91,7 @@ syntax match LinkEnds /\(\[\|\]\)/ conceal contained
 syntax match Contact /@[a-zA-Z\-._]\+/ contains=ContactMarker
 syntax match Anchor /:[a-zA-Z0-9]\+:/ contains=@NoSpell,AnchorMarker
 syntax match AnchorMarker /:/ conceal contained
-syntax cluster Metatext contains=Tag,Pointer,Link,Contact,Anchor
+syntax cluster Metatext contains=Tag,Pointer,Link,Contact,Anchor,AnchorPointer
 syntax match ContactMarker /@/ conceal contained
 
 highlight Tag ctermfg=226 cterm=bold
@@ -102,7 +102,7 @@ highlight link LinkEnds Link
 highlight Contact cterm=bold ctermfg=39
 highlight link ContactMarker Contact
 
-highlight Anchor ctermfg=0 ctermbg=32
+highlight Anchor ctermfg=0 ctermbg=24
 highlight link AnchorMarker Anchor
 highlight link AnchorPointer Pointer
 highlight link AnchorPointerMarker AnchorPointer
