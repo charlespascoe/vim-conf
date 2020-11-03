@@ -6,6 +6,7 @@ tag_regex = re.compile(r'#([a-zA-Z0-9_\-]+)')
 contact_regex = re.compile(r'(?<!\w)@([a-zA-Z0-9_\-.]+)')
 link_regex = re.compile(r'(?<!\w)\[([^"\]]+)\](?!\w)')
 ref_regex = re.compile(r'&amp;([a-zA-Z0-9_\-.:]+(/[a-zA-Z0-9_\-.:]+)*)')
+monospace_regex = re.compile(r'\{((\\\}|\\\{|[^}])*)\}')
 
 
 def escape_html(text):
@@ -152,6 +153,10 @@ class TextFormatter:
             lambda s : contact_regex.sub(contact_format, s),
             lambda s : link_regex.sub(r'<a href="\1" target="_blank">\1</a>', s),
             lambda s : ref_regex.sub(r'<span style="color: red">\1</span>', s),
+            lambda s : monospace_regex
+                .sub(r'<span style="font-family: monospace">\1</span>', s)
+                .replace('\\{', '{')
+                .replace('\\}', '}'),
         ])
 
     def extend(self, *transforms):
