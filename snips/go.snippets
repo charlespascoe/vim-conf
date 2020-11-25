@@ -26,7 +26,7 @@ def set_last_method_type(name):
 	return name
 endglobal
 
-snippet 'meth?o?d?' "Method" r
+snippet '^meth?o?d?' "Method" r
 func (${1:`!p snip.rv = get_last_method_type()`}) $2($3) $4 {
 	$0
 }`!p set_last_method_type(t[1])`
@@ -60,6 +60,12 @@ endsnippet
 
 snippet fore
 for ${1:_}, $2 := range $3 {
+	$0
+}
+endsnippet
+
+snippet forc
+for $1 := range $2 {
 	$0
 }
 endsnippet
@@ -105,6 +111,20 @@ endsnippet
 snippet respErr
 if respErr := checkResponse("$1", resp, err); respErr != nil {
 	return$2 respErr
+}
+endsnippet
+
+snippet checkResponse
+func checkResponse(desc string, resp *resty.Response, err error) error {
+	if err != nil {
+		return fmt.Errorf("request to %s failed: %s", desc, err)
+	}
+
+	if !resp.IsSuccess() {
+		return fmt.Errorf("failed to %s: %s (%s)", desc, resp.Status(), resp.String())
+	}
+
+	return nil
 }
 endsnippet
 
@@ -180,6 +200,113 @@ snippet '\.(GET|POST|PUT|DELETE)' "Gin Route" r
 })
 endsnippet
 
+## FILES ##
+
+snippet '^mainfile' "Main File" r
+package main
+
+import (
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
+	"gopkg.in/natefinch/lumberjack.v2"
+	"os"
+)
+
+func main() {
+	logFile := os.Getenv("LOG_FILE")
+
+	if logFile != "" {
+		log.Logger = log.Output(&lumberjack.Logger{
+			Filename: logFile,
+			MaxAge:   30,
+		})
+	} else {
+		log.Logger = log.Output(zerolog.ConsoleWriter{
+			Out:        os.Stderr,
+			TimeFormat: "15:04:05",
+		})
+	}
+
+	log.Info().
+		Msgf("$1 Starting - Version %s (PID %d)", Version, os.Getpid())
+
+	$0
+}
+endsnippet
+
+snippet loadconfigs
+func LoadConfig() (*Config, error) {
+	// Read
+	configPathsStr := os.Getenv("CONFIG_FILES")
+
+	if configPathsStr == "" {
+		return nil, errors.New("CONFIG_FILES must be set")
+	}
+
+	configPaths := make([]string, 0)
+
+	for _, configPath := range strings.Split(configPathsStr, ":") {
+		if path.IsAbs(configPath) {
+			configPaths = append(configPaths, configPath)
+			continue
+		}
+
+		absConfigPath, err := filepath.Abs(configPath)
+
+		if err != nil {
+			log.Debug().
+				Err(err).
+				Msgf("Failed to resolve the absolute path for '%s'", configPath)
+
+			configPaths = append(configPaths, configPath)
+		} else {
+			configPaths = append(configPaths, absConfigPath)
+		}
+	}
+
+	log.Info().
+		Msgf("Attempting to load node config from:\n  %s", strings.Join(configPaths, "\n  "))
+
+	mergedData := make([]byte, 0)
+
+	for _, configPath := range configPaths {
+		data, err := ioutil.ReadFile(configPath)
+
+		if err != nil {
+			return nil, fmt.Errorf("failed to read config from '%s': %s", configPath, err)
+		}
+
+		// Ignore the parsed result, just check for errors
+		if err := yaml.Unmarshal(data, &Config{}); err != nil {
+			return nil, fmt.Errorf("failed to parse config from '%s': %s", configPath, err)
+		}
+
+		// Append newline in case the previous file didn't include a trailing newline
+		mergedData = append(mergedData, []byte("\n")...)
+		mergedData = append(mergedData, data...)
+	}
+
+	// Parse
+	config := &Config{}
+
+	if err := yaml.Unmarshal(mergedData, config); err != nil {
+		return nil, fmt.Errorf("failed to parse merged config: %s", err)
+	}
+
+	// Validate
+	err := config.Validate()
+
+	if err != nil {
+		return nil, fmt.Errorf("invalid config: %s", err)
+	}
+
+	log.Debug().
+		Msg("Successfully loaded config")
+
+	return config, nil
+}
+endsnippet
+
 ### TESTING ###
 
 snippet testfile
@@ -238,7 +365,7 @@ snippet '^Test' "Test Function with Template" r
 func Test$1(t *testing.T) {
 	assert := assert.New(t)
 
-	result := $0
+	$0
 }
 endsnippet
 
