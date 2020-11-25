@@ -79,11 +79,11 @@ fmtchk:
 		echo gofmt -l $$p/'*.go'; \
 		i="$$(gofmt -l $$p/*.go)"; \
 		if [ -n "$$i" ]; then \
-			issues="$$issues\n$$i"; \
+			issues="$$issues\n  $$i"; \
 		fi; \
 	done; \
 	if [ -n "$$issues" ]; then \
-		echo "ERROR: Formatting issues in the following files:$$issues"; \
+		echo -e "ERROR: Formatting issues in the following files:$$issues"; \
 		echo "Run 'make fmt' and stage the changes before attempting to commit."; \
 		exit 1; \
 	fi
