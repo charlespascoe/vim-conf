@@ -108,13 +108,13 @@ if respErr := checkResponse("$1", resp, err); respErr != nil {
 }
 endsnippet
 
-snippet s "Struct"
+snippet '^s' "Struct" r
 type $1 struct {
 	$0
 }
 endsnippet
 
-snippet i "Interface"
+snippet '^i' "Interface" r
 type $1 interface {
 	$0
 }
