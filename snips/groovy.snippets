@@ -17,6 +17,7 @@ def LOCAL_ARTEFACT_PATH = '$1-linux'
 // Name prefix of uploaded artefact
 def ARTEFACT_NAME = '$1'
 
+// TODO: Make sure user sa069692 is a developer in the GitLab repository
 gitlabBuilds(builds: ['build', 'test', 'documentation', 'docker build', 'publish to nexus']) {
     node('generic-swarm-jnlp') {
         def scmVars = checkout scm
@@ -62,10 +63,8 @@ gitlabBuilds(builds: ['build', 'test', 'documentation', 'docker build', 'publish
                 retry(3) {
                     docker.withServer(env.DOCKER_HOST, 'docker-api-certs') {
                         docker.withRegistry('https://registry.docker.nat.bt.com', 'bt-docker-registry-user') {
-                            withCredentials([string(credentialsId: 'agile-ve-npm-auth-token', variable: 'AUTH_TOKEN')]) {
-                                sh "cp $LOCAL_ARTEFACT_PATH docker/"
-                                buildAndPush("registry.docker.nat.bt.com/ve/$ARTEFACTS_PATH", scmVars, ['docker/'])
-                            }
+                            sh "cp $LOCAL_ARTEFACT_PATH docker/"
+                            buildAndPush("registry.docker.nat.bt.com/ve/$ARTEFACTS_PATH", scmVars, ['docker/'])
                         }
                     }
                 }
@@ -87,9 +86,11 @@ gitlabBuilds(builds: ['build', 'test', 'documentation', 'docker build', 'publish
             }
         }
 
+        emailRecipients = emailextrecipients([developers(), requestor()])
+
         step([$class                : 'Mailer',
             notifyEveryUnstableBuild: true,
-            recipients              : 'charles.pascoe@bt.com'])
+            recipients              : emailRecipients])
     }
 }
 endsnippet
