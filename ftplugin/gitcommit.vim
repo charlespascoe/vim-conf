@@ -9,3 +9,5 @@ endfun
 command! ShowDiff call ShowDiff()
 
 nmap <silent> <buffer> <leader>gd <Esc>:ShowDiff<CR>
+
+setlocal nolist
