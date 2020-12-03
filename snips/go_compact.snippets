@@ -1,0 +1,225 @@
+# KEEP IN ALPHABETIC ORDER
+
+## A ##
+
+snippet ap "Append to slice"
+$1 = append($1, $0)
+endsnippet
+
+## C ##
+
+snippet 'c' "Channel" rb
+$1 := make(chan $2)
+endsnippet
+
+snippet 'cd' "Channel with deferred close" rb
+$1 := make(chan $2)
+defer close($1)
+endsnippet
+
+## F ##
+
+snippet 'f' "Function" rb
+func $1() {
+	$0
+}
+endsnippet
+
+snippet 'fr' "Function with Return" rb
+func $1() $2 {
+	$0
+}
+endsnippet
+
+snippet 'fc' "Function - Constructor" rb
+func New$1($2) *$1 {
+	return &${1:Type} {
+		$0
+	}
+}
+endsnippet
+
+snippet 'fcl' "Function - Constructor with Log" rb
+func New$1($2) *$1 {
+	return &${1:Type} {
+		log: log.With().
+			Str("cls", "$1").
+			Logger(),
+		$0
+	}
+}
+endsnippet
+
+## I ##
+
+snippet 'i' "If" rb
+if $1 {
+	$0
+}
+endsnippet
+
+snippet 'ie' "If-else" rb
+if $1 {
+	$0
+} else {
+	
+}
+endsnippet
+
+snippet 'ier' "If error" rb
+if err != nil {
+	$0
+}
+endsnippet
+
+snippet 'ierr' "If error, return" rb
+if err != nil {
+	return $1fmt.Errorf("$2: %s$3", err$4)
+}
+endsnippet
+
+snippet 'im' "import" rb
+import (
+	$0
+)
+endsnippet
+
+snippet 'in' "Interface" rb
+type $1 interface {
+	$0
+}
+endsnippet
+
+## L ##
+
+snippet 'ld' "Log Debug" rb
+${1:log}.Debug().
+	Msg("$3")
+endsnippet
+
+snippet 'ldf' "Log Debug Format" rb
+${1:log}.Debug().
+	Msgf("$2", $3)
+endsnippet
+
+snippet 'li' "Log Info" rb
+${1:log}.Info().
+	Msg("$3")
+endsnippet
+
+snippet 'lif' "Log Info Format" rb
+${1:log}.Info().
+	Msgf("$2", $3)
+endsnippet
+
+snippet 'lw' "Log Warn" rb
+${1:log}.Warn().
+	Msg("$3")
+endsnippet
+
+snippet 'lwf' "Log Warn Format" rb
+${1:log}.Warn().
+	Msgf("$2", $3)
+endsnippet
+
+snippet 'le' "Log Error" rb
+${1:log}.Error().
+	Err(${2:err}).
+	Msg("$3")
+endsnippet
+
+snippet 'lef' "Log Error Format" rb
+${1:log}.Error().
+	Err(${2:err}).
+	Msgf("$3", $4)
+endsnippet
+
+snippet 'lf' "Log Fatal" rb
+${1:log}.Fatal().
+	Err(${2:err}).
+	Msg("$3")
+endsnippet
+
+snippet 'lff' "Log Fatal Format" rb
+${1:log}.Fatal().
+	Err(${2:err}).
+	Msgf("$3", $4)
+endsnippet
+
+snippet 'lo' "Lock" rb
+$1.Lock()
+defer $1.Unlock()
+endsnippet
+
+## M ##
+
+global !p
+def get_last_method_type():
+	vim.command("let b:go_last_method_type = exists('b:go_last_method_type') ? b:go_last_method_type : ' '")
+	return vim.eval("b:go_last_method_type")
+
+def set_last_method_type(name):
+	vim.command("let b:go_last_method_type = '%s'"% name)
+	return name
+endglobal
+
+snippet 'm' "Method" rb
+func (${1:`!p snip.rv = get_last_method_type()`}) $2($3) $4 {
+	$0
+}`!p set_last_method_type(t[1])`
+endsnippet
+
+snippet 'ms' "Method - String" rb
+func (${1:`!p snip.rv = get_last_method_type()`}) String() string {
+	return $0
+}`!p set_last_method_type(t[1])`
+endsnippet
+
+snippet 'mv' "Method - Validation" rb
+func (${1:name} ${2:Type}) Validate() error {
+	return v.Validate($1,
+		v.Field(&$1.$3),
+	)
+}`!p set_last_method_type(t[1])`
+endsnippet
+
+## S ##
+
+snippet 'st' "Struct" rb
+type $1 struct {
+	$0
+}
+endsnippet
+
+## T ##
+
+snippet 't' "Test" rb
+func Test$1(t *testing.T) {
+	$0
+}
+endsnippet
+
+snippet 'tf' "Test File" rb
+import (
+	"github.com/stretchr/testify/assert"
+	"testing"
+)
+
+$0
+endsnippet
+
+snippet 'tt' "Test with Template" rb
+func Test$1(t *testing.T) {
+	assert := assert.New(t)
+
+	$0
+}
+endsnippet
+
+snippet 'tb' "Test Benchmarck" rb
+func Benchmark$1(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		$0
+	}
+}
+endsnippet
