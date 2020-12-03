@@ -46,45 +46,21 @@ func(res http.ResponseWriter, req *http.Request) error {
 }
 endsnippet
 
-snippet for
-for $1{
-	$0
-}
-endsnippet
-
-snippet fori
-for i := ${1:0}; i < $2; i++ {
-	$0
-}
-endsnippet
-
-snippet fore
-for ${1:_}, $2 := range $3 {
-	$0
-}
-endsnippet
-
-snippet forc
-for $1 := range $2 {
-	$0
-}
-endsnippet
-
 snippet drain
 for _ = range $0 { }
 endsnippet
 
-snippet err
-if err != nil {
-	return$1 fmt.Errorf("$2: %s",$3 err)
-}
-endsnippet
+# snippet err
+# if err != nil {
+# 	return$1 fmt.Errorf("$2: %s",$3 err)
+# }
+# endsnippet
 
-snippet ierr
-if err := $1; err != nil {
-	return$2 fmt.Errorf("$3: %s", err)
-}
-endsnippet
+# snippet ierr
+# if err := $1; err != nil {
+# 	return$2 fmt.Errorf("$3: %s", err)
+# }
+# endsnippet
 
 snippet herr "Error with HTTP response"
 if err != nil {
@@ -164,12 +140,6 @@ endsnippet
 # $1.Lock()
 # defer $1.Unlock()$0
 # endsnippet
-
-snippet go "Goroutine of an anonymous function"
-go func() {
-	$0
-}()
-endsnippet
 
 # snippet if
 # if $1 {
