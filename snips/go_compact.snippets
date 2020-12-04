@@ -1,5 +1,48 @@
 # KEEP IN ALPHABETIC ORDER
 
+global !p
+def find_method_type():
+	l = vim.current.window.cursor[0] - 1
+
+	struct = re.compile(r"^type (\w+) struct")
+	method = re.compile(r"^func \(([^)]+)\)\s+\w+\(")
+
+	name = ''
+
+	while l >= 0:
+		line = vim.current.window.buffer[l]
+
+		match = method.match(line)
+
+		if match:
+			return match[1]
+
+		match = struct.match(line)
+
+		if match:
+			name = match[1]
+			return (name[0] + re.sub('[a-z]', '', name[1:])).lower() + ' ' + name
+
+		l -= 1
+
+def find_type():
+	l = vim.current.window.cursor[0] - 1
+
+	struct = re.compile(r"^type (\w+) struct")
+
+	name = ''
+
+	while l >= 0:
+		line = vim.current.window.buffer[l]
+
+		match = struct.match(line)
+
+		if match:
+			return match[1]
+
+		l -= 1
+endglobal
+
 ## A ##
 
 snippet ap "Append to slice"
@@ -27,7 +70,7 @@ endsnippet
 
 snippet fc "Function - Constructor" bw
 func New$1($2) *$1 {
-	return &${1:Type} {
+	return &${1:`!p snip.rv = find_type() or 'Type'`} {
 		$0
 	}
 }
@@ -35,7 +78,7 @@ endsnippet
 
 snippet fcl "Function - Constructor with Log" bw
 func New$1($2) *$1 {
-	return &${1:Type} {
+	return &${1:`!p snip.rv = find_type() or 'Type'`} {
 		log: log.With().
 			Str("cls", "$1").
 			Logger(),
@@ -44,25 +87,25 @@ func New$1($2) *$1 {
 }
 endsnippet
 
-snippet for
+snippet for "For" bw
 for $1{
 	$0
 }
 endsnippet
 
-snippet forc
+snippet forc "For - Channel" bw
 for $1 := range $2 {
 	$0
 }
 endsnippet
 
-snippet fore
+snippet fore "For each" bw
 for ${1:_}, $2 := range $3 {
 	$0
 }
 endsnippet
 
-snippet fori
+snippet fori "For counter (i)" bw
 for i := ${1:0}; i < $2; i++ {
 	$0
 }
@@ -185,34 +228,24 @@ endsnippet
 
 ## M ##
 
-global !p
-def get_last_method_type():
-	vim.command("let b:go_last_method_type = exists(b:go_last_method_type) ? b:go_last_method_type :  ")
-	return vim.eval("b:go_last_method_type")
-
-def set_last_method_type(name):
-	vim.command("let b:go_last_method_type = %s"% name)
-	return name
-endglobal
-
 snippet m "Method" bw
-func (${1:`!p snip.rv = get_last_method_type()`}) $2($3) $4 {
+func (${1:`!p snip.rv = find_method_type()`}) $2($3) $4 {
 	$0
-}`!p set_last_method_type(t[1])`
+}
 endsnippet
 
 snippet ms "Method - String" bw
-func (${1:`!p snip.rv = get_last_method_type()`}) String() string {
+func (${1:`!p snip.rv = find_method_type()`}) String() string {
 	return $0
-}`!p set_last_method_type(t[1])`
+}
 endsnippet
 
 snippet mv "Method - Validation" bw
-func (${1:name} ${2:Type}) Validate() error {
-	return v.Validate($1,
-		v.Field(&$1.$3),
+func (${1:`!p snip.rv = find_method_type()`}) Validate() error {
+	return v.Validate(`!p snip.rv = t[1].split(' ')[0]`,
+		v.Field(&`!p snip.rv = t[1].split(' ')[0]`.$3),
 	)
-}`!p set_last_method_type(t[1])`
+}
 endsnippet
 
 ## S ##
