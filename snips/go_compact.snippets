@@ -1,23 +1,23 @@
 # KEEP IN ALPHABETIC ORDER
 
 global !p
+struct_re = re.compile(r"^type (\w+) struct")
+method_re = re.compile(r"^func \(([^)]+)\)\s+\w+\(")
+
 def find_method_type():
 	l = vim.current.window.cursor[0] - 1
-
-	struct = re.compile(r"^type (\w+) struct")
-	method = re.compile(r"^func \(([^)]+)\)\s+\w+\(")
 
 	name = ''
 
 	while l >= 0:
 		line = vim.current.window.buffer[l]
 
-		match = method.match(line)
+		match = method_re.match(line)
 
 		if match:
 			return match[1]
 
-		match = struct.match(line)
+		match = struct_re.match(line)
 
 		if match:
 			name = match[1]
@@ -28,19 +28,50 @@ def find_method_type():
 def find_type():
 	l = vim.current.window.cursor[0] - 1
 
-	struct = re.compile(r"^type (\w+) struct")
-
 	name = ''
 
 	while l >= 0:
 		line = vim.current.window.buffer[l]
 
-		match = struct.match(line)
+		match = struct_re.match(line)
 
 		if match:
 			return match[1]
 
 		l -= 1
+
+def get_receiver_type():
+	l = vim.current.window.cursor[0] - 1
+
+	name = ''
+
+	no_leading_whitespace_re = re.compile('^[^\s]')
+
+	while l >= 0:
+		line = vim.current.window.buffer[l]
+
+		match = no_leading_whitespace_re.match(line)
+
+		if match:
+			# Found the line before this line that doesn't have any leading whitespace,
+			# possibly the method declaration
+			match = method_re.match(line)
+
+			if match:
+				return match[1]
+			else:
+				# In this case, either we're in a regular function or not in any function at all
+				return ''
+
+		l -= 1
+
+def guess_log_var():
+	receiver_type = get_receiver_type()
+
+	if receiver_type:
+		return f"{receiver_type.split(' ')[0]}.log"
+
+	return 'log'
 endglobal
 
 ## A ##
@@ -93,7 +124,7 @@ for $1{
 }
 endsnippet
 
-snippet forc "For - Channel" bw
+snippet forc "For channel" bw
 for $1 := range $2 {
 	$0
 }
@@ -168,55 +199,55 @@ endsnippet
 ## L ##
 
 snippet ld "Log Debug" bw
-${1:log}.Debug().
+${1:`!p snip.rv = guess_log_var()`}.Debug().
 	Msg("$3")
 endsnippet
 
 snippet ldf "Log Debug Format" bw
-${1:log}.Debug().
+${1:`!p snip.rv = guess_log_var()`}.Debug().
 	Msgf("$2", $3)
 endsnippet
 
 snippet li "Log Info" bw
-${1:log}.Info().
+${1:`!p snip.rv = guess_log_var()`}.Info().
 	Msg("$3")
 endsnippet
 
 snippet lif "Log Info Format" bw
-${1:log}.Info().
+${1:`!p snip.rv = guess_log_var()`}.Info().
 	Msgf("$2", $3)
 endsnippet
 
 snippet lw "Log Warn" bw
-${1:log}.Warn().
+${1:`!p snip.rv = guess_log_var()`}.Warn().
 	Msg("$3")
 endsnippet
 
 snippet lwf "Log Warn Format" bw
-${1:log}.Warn().
+${1:`!p snip.rv = guess_log_var()`}.Warn().
 	Msgf("$2", $3)
 endsnippet
 
 snippet le "Log Error" bw
-${1:log}.Error().
+${1:`!p snip.rv = guess_log_var()`}.Error().
 	Err(${2:err}).
 	Msg("$3")
 endsnippet
 
 snippet lef "Log Error Format" bw
-${1:log}.Error().
+${1:`!p snip.rv = guess_log_var()`}.Error().
 	Err(${2:err}).
 	Msgf("$3", $4)
 endsnippet
 
 snippet lf "Log Fatal" bw
-${1:log}.Fatal().
+${1:`!p snip.rv = guess_log_var()`}.Fatal().
 	Err(${2:err}).
 	Msg("$3")
 endsnippet
 
 snippet lff "Log Fatal Format" bw
-${1:log}.Fatal().
+${1:`!p snip.rv = guess_log_var()`}.Fatal().
 	Err(${2:err}).
 	Msgf("$3", $4)
 endsnippet
@@ -229,8 +260,14 @@ endsnippet
 ## M ##
 
 snippet m "Method" bw
-func (${1:`!p snip.rv = find_method_type()`}) $2($3) $4 {
+func (${1:`!p snip.rv = find_method_type()`}) $2($3) {
 	$0
+}
+endsnippet
+
+snippet mr "Method with return" bw
+func (${1:`!p snip.rv = find_method_type()`}) $2($3) $4 {
+	return $0
 }
 endsnippet
 
@@ -246,6 +283,12 @@ func (${1:`!p snip.rv = find_method_type()`}) Validate() error {
 		v.Field(&`!p snip.rv = t[1].split(' ')[0]`.$3),
 	)
 }
+endsnippet
+
+## R ##
+
+snippet r "Return" bw
+return $0
 endsnippet
 
 ## S ##
