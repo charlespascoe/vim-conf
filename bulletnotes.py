@@ -83,14 +83,19 @@ def word_count(bullets, firstline, lastline):
     whitespace = re.compile(r'\s+')
     nonaphanum = re.compile('[^a-z0-9\s]', re.I)
 
-    # TODO: Also count text
-
     total = 0
 
-    note_bullets = (b for b in doc.walk() if isinstance(b, bulletnotes.Bullet) and b.bullet_type == '-')
+    for item in doc.walk():
+        content = ''
 
-    for bullet in note_bullets:
-        total += len(whitespace.split(nonaphanum.sub('', bullet.content)))
+        if isinstance(item, str):
+            content = item
+        elif isinstance(item, bulletnotes.Bullet) and item.bullet_type == '-':
+            content = item.content
+        else:
+            continue
+
+        total += len(whitespace.split(nonaphanum.sub('', content)))
 
     return total
 
