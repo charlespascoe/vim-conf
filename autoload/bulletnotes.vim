@@ -60,10 +60,17 @@ fun bulletnotes#InitBuffer()
     setlocal formatoptions=t
     setlocal autoread      " Used to update files after a remote sync
 
-    onoremap <silent> <buffer> ab :<C-u>call bulletnotes#MarkBullet(0)<CR>
-    onoremap <silent> <buffer> aB :<C-u>call bulletnotes#MarkBullet(1)<CR>
-    vnoremap <silent> <buffer> ab :<C-u>call bulletnotes#MarkBullet(0)<CR>
-    vnoremap <silent> <buffer> aB :<C-u>call bulletnotes#MarkBullet(1)<CR>
+    " TODO: Condense ab/aB/ib/iB stuff
+
+    onoremap <silent> <buffer> ab :<C-u>call bulletnotes#MarkBullet(0, 1)<CR>
+    onoremap <silent> <buffer> aB :<C-u>call bulletnotes#MarkBullet(1, 1)<CR>
+    vnoremap <silent> <buffer> ab :<C-u>call bulletnotes#MarkBullet(0, 1)<CR>
+    vnoremap <silent> <buffer> aB :<C-u>call bulletnotes#MarkBullet(1, 1)<CR>
+
+    onoremap <silent> <buffer> ib :<C-u>call bulletnotes#MarkBullet(0, 0)<CR>
+    onoremap <silent> <buffer> iB :<C-u>call bulletnotes#MarkBullet(1, 0)<CR>
+    vnoremap <silent> <buffer> ib :<C-u>call bulletnotes#MarkBullet(0, 0)<CR>
+    vnoremap <silent> <buffer> iB :<C-u>call bulletnotes#MarkBullet(1, 0)<CR>
 
     " Insert previous bullet when creating a new line
     imap <silent> <buffer> <expr> <CR> HandleI_CR()
@@ -79,6 +86,13 @@ fun bulletnotes#InitBuffer()
     nmap <silent> <buffer> <ab <abgvgw'<^:call repeat#set('<ab', v:count)<CR>
     nmap <silent> <buffer> >aB >aBgvgq^:call repeat#set('>aB', v:count)<CR>
     nmap <silent> <buffer> <aB <aBgvgq^:call repeat#set('<aB', v:count)<CR>
+
+    " TODO: Investigate better alternatives
+    " Maybe try tweaking indentexpr or similar?
+    nmap <silent> <buffer> >ib >ibgvgw'<^:call repeat#set('>ib', v:count)<CR>
+    nmap <silent> <buffer> <ib <ibgvgw'<^:call repeat#set('<ib', v:count)<CR>
+    nmap <silent> <buffer> >iB >iBgvgq^:call repeat#set('>iB', v:count)<CR>
+    nmap <silent> <buffer> <iB <iBgvgq^:call repeat#set('<iB', v:count)<CR>
 
     vmap <silent> <buffer> > >gvgq
     vmap <silent> <buffer> < <gvgq
@@ -252,7 +266,7 @@ fun bulletnotes#FindBulletStart(lnum)
 endfun
 
 
-fun bulletnotes#FindBullet(lnum, subitems)
+fun bulletnotes#FindBullet(lnum, subitems, whitespace)
     let start = bulletnotes#FindBulletStart(a:lnum)
 
     if start < 1
@@ -261,10 +275,16 @@ fun bulletnotes#FindBullet(lnum, subitems)
 
     let start = start - 1
 
+    let include_whitespace = "False"
+
+    if a:whitespace
+        let include_whitespace = "True"
+    endif
+
     if a:subitems
-        let bullet = py3eval('find_bullet_and_children(vim.current.buffer, '.start.', vim.eval("s:bullets"))')
+        let bullet = py3eval('find_bullet_and_children(vim.current.buffer, '.start.', vim.eval("s:bullets"), '.include_whitespace.')')
     else
-        let bullet = py3eval('find_bullet(vim.current.buffer, '.start.', vim.eval("s:bullets"))')
+        let bullet = py3eval('find_bullet(vim.current.buffer, '.start.', vim.eval("s:bullets"), '.include_whitespace.')')
     endif
 
     if !empty(bullet)
@@ -276,8 +296,8 @@ fun bulletnotes#FindBullet(lnum, subitems)
 endfun
 
 
-fun bulletnotes#MarkBullet(subitems)
-    let bullet = bulletnotes#FindBullet(line('.'), a:subitems)
+fun bulletnotes#MarkBullet(subitems, whitespace)
+    let bullet = bulletnotes#FindBullet(line('.'), a:subitems, a:whitespace)
 
     if empty(bullet)
         call s:Warning("Can't find bullet")
@@ -308,13 +328,13 @@ endfun
 
 
 fun bulletnotes#GetIndent(lnum)
-    let bullet = bulletnotes#FindBullet(a:lnum, 0)
+    let bullet = bulletnotes#FindBullet(a:lnum, 0, 0)
 
     if empty(bullet)
         " FindBullet() only looks for bullets on the current line; if this is
         " a new line for an existing bullet, then look for the bullet that
         " ends on the previous line, if any
-        let bullet = bulletnotes#FindBullet(a:lnum-1, 0)
+        let bullet = bulletnotes#FindBullet(a:lnum-1, 0, 0)
 
         if empty(bullet)
             " No preceding bullet - just use indent of previous line
@@ -342,12 +362,12 @@ fun bulletnotes#Format(start, end)
     let stop = a:end
 
     while i <= stop
-        let b = bulletnotes#FindBullet(i, 0)
+        let b = bulletnotes#FindBullet(i, 0, 0)
 
         if !empty(b)
             call setpos('.', [0, b['startline'], 1, 0])
             execute 'normal' 'gwab'
-            let bNew = bulletnotes#FindBullet(b['startline'], 0)
+            let bNew = bulletnotes#FindBullet(b['startline'], 0, 0)
             let stop = stop + bNew['endline'] - b['endline']
             let i = bNew['endline'] + 1
         else

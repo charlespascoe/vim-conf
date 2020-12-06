@@ -100,7 +100,7 @@ def word_count(bullets, firstline, lastline):
     return total
 
 
-def find_bullet(lines, start_line, bullet_types):
+def find_bullet(lines, start_line, bullet_types, include_whitespace):
     bullet_regexp = re.compile('^((\\s{4})*)([' + bullets_to_char_set(bullet_types) + ']) ')
     indent_match = bullet_regexp.match(lines[start_line])
 
@@ -129,6 +129,10 @@ def find_bullet(lines, start_line, bullet_types):
         else:
             break
 
+    if include_whitespace:
+        while pos < len(lines) and lines[pos].strip() == '':
+            pos += 1
+
     return {
         'startline': start_line,
         'endline': pos - 1,
@@ -136,8 +140,8 @@ def find_bullet(lines, start_line, bullet_types):
     }
 
 
-def find_bullet_and_children(lines, start_line, bullet_types):
-    bullet = find_bullet(lines, start_line, bullet_types)
+def find_bullet_and_children(lines, start_line, bullet_types, include_whitespace):
+    bullet = find_bullet(lines, start_line, bullet_types, False)
 
     if bullet is None:
         return None
@@ -153,7 +157,7 @@ def find_bullet_and_children(lines, start_line, bullet_types):
             lnum += 1
             continue
 
-        b = find_bullet(lines, lnum, bullet_types)
+        b = find_bullet(lines, lnum, bullet_types, False)
 
         if b is None or b['indent'] <= bullet['indent']:
             # Found non-bullet text or a bullet of the same or less indentation;
@@ -163,6 +167,10 @@ def find_bullet_and_children(lines, start_line, bullet_types):
         # Best end found so far
         end = b['endline']
         lnum = end + 1
+
+    if include_whitespace:
+        while (end + 1) < len(lines) and lines[end + 1].strip() == '':
+            end += 1
 
     bullet['endline'] = end
 
