@@ -97,6 +97,8 @@ fun bulletnotes#InitBuffer()
     nnoremap <silent> <buffer> <leader>gf :call bulletnotes#OpenFile(expand('<cWORD>'))<CR>
     nnoremap <silent> <buffer> <leader>gc :call bulletnotes#ViewContact(substitute(expand('<cWORD>'), '^@', '', ''))<CR>
 
+    nnoremap <silent> <buffer> gc :set operatorfunc=bulletnotes#Wordcount<CR>g@
+
     setlocal indentexpr=bulletnotes#GetIndent(v:lnum)
     setlocal formatexpr=bulletnotes#Format(v:lnum,v:lnum+v:count-1)
 
@@ -413,6 +415,13 @@ fun bulletnotes#ResolvePointer(pointer)
     return []
 endfun
 
+fun bulletnotes#Wordcount(type)
+    if a:type ==# 'line'
+        exec "'[,']WordCount"
+    else
+        echom "bulletnotes#Wordcount: Unhandled type ".a:type
+    endif
+endfun
 
 fun bulletnotes#OpenFile(pointer)
     let location = bulletnotes#ResolvePointer(a:pointer)
