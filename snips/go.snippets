@@ -176,6 +176,7 @@ snippet '^mainfile' "Main File" r
 package main
 
 import (
+	"flag"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"gopkg.in/natefinch/lumberjack.v2"
@@ -183,6 +184,15 @@ import (
 )
 
 func main() {
+	version := flag.Bool("version", false, "prints version and quits")
+
+	flag.Parse()
+
+	if *version {
+		fmt.Printf("version %s\n", Version)
+		return
+	}
+
 	logFile := os.Getenv("LOG_FILE")
 
 	if logFile != "" {

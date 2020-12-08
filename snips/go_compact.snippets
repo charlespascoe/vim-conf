@@ -2,14 +2,21 @@
 
 global !p
 struct_re = re.compile(r"^type (\w+) struct")
-method_re = re.compile(r"^func \(([^)]+)\)\s+\w+\(")
+method_re = re.compile(r"^func \(([^)]+)\)\s+(\w+)\(")
+func_re = re.compile(r"func (\w+)\(")
+test_re = re.compile(r"^func Test(.*)\(")
 
-def find_method_type():
+
+def preceeding_lines():
 	l = vim.current.window.cursor[0] - 1
 
-	name = ''
+	while l > 0:
+		yield vim.current.window.buffer[l]
+		l -= 1
 
-	while l >= 0:
+
+def find_method_type():
+	for line in preceeding_lines():
 		line = vim.current.window.buffer[l]
 
 		match = method_re.match(line)
@@ -23,33 +30,23 @@ def find_method_type():
 			name = match[1]
 			return (name[0] + re.sub('[a-z]', '', name[1:])).lower() + ' ' + name
 
-		l -= 1
+	return ''
+
 
 def find_type():
-	l = vim.current.window.cursor[0] - 1
-
-	name = ''
-
-	while l >= 0:
-		line = vim.current.window.buffer[l]
-
+	for line in preceeding_lines():
 		match = struct_re.match(line)
 
 		if match:
 			return match[1]
 
-		l -= 1
+	return ''
+
 
 def get_receiver_type():
-	l = vim.current.window.cursor[0] - 1
-
-	name = ''
-
 	no_leading_whitespace_re = re.compile('^[^\s]')
 
-	while l >= 0:
-		line = vim.current.window.buffer[l]
-
+	for line in preceeding_lines():
 		match = no_leading_whitespace_re.match(line)
 
 		if match:
@@ -63,7 +60,6 @@ def get_receiver_type():
 				# In this case, either we're in a regular function or not in any function at all
 				return ''
 
-		l -= 1
 
 def guess_log_var():
 	receiver_type = get_receiver_type()
@@ -72,12 +68,70 @@ def guess_log_var():
 		return f"{receiver_type.split(' ')[0]}.log"
 
 	return 'log'
+
+
+def get_function_name():
+	for line in preceeding_lines():
+		match = func_re.match(line)
+
+		if match:
+			return match[1]
+
+		match = method_re.match(line)
+
+		if match:
+			return match[2]
+
+	return ''
+
+
+def previous_test_name():
+	for line in preceeding_lines():
+		match = test_re.match(line)
+
+		if match:
+			return match[1]
+
+	return ''
+
 endglobal
 
 ## A ##
 
 snippet ap "Append to slice"
 $1 = append($1, $0)
+endsnippet
+
+snippet Ae "Assert Equal" bw
+assert.Equal(${1:expected}, ${2:actual})
+endsnippet
+
+snippet Aem "Assert Equal with Message" bw
+assert.Equal(${1:expected}, ${2:actual}, "${3:message}")
+endsnippet
+
+snippet Ane "Assert Not Equal" bw
+assert.NotEqual(${1:expected}, ${2:actual})
+endsnippet
+
+snippet Anem "Assert Not Equal with Message" bw
+assert.NotEqual(${1:expected}, ${2:actual}, "${3:message}")
+endsnippet
+
+snippet An "Assert Nil" bw
+assert.Nil(${1:value})
+endsnippet
+
+snippet Anm "Assert Nil with Message" bw
+assert.Nil(${1:value}, "${2:message}")
+endsnippet
+
+snippet Ann "Assert Not Nil" bw
+assert.NotNil(${1:value})
+endsnippet
+
+snippet Annm "Assert Not Nil with Message" bw
+assert.NotNil(${1:value}, "${2:message}")
 endsnippet
 
 ## C ##
@@ -110,10 +164,10 @@ endsnippet
 snippet fcl "Function - Constructor with Log" bw
 func New$1($2) *$1 {
 	return &${1:`!p snip.rv = find_type() or 'Type'`} {
+		$0
 		log: log.With().
 			Str("cls", "$1").
 			Logger(),
-		$0
 	}
 }
 endsnippet
@@ -168,7 +222,7 @@ snippet ie "If-else" bw
 if $1 {
 	$0
 } else {
-	
+	``
 }
 endsnippet
 
@@ -199,57 +253,67 @@ endsnippet
 ## L ##
 
 snippet ld "Log Debug" bw
-${1:`!p snip.rv = guess_log_var()`}.Debug().
-	Msg("$3")
+`!p snip.rv = guess_log_var()`.Debug().
+	Str("func", "`!p snip.rv = get_function_name()`").
+	Msg("$1")
 endsnippet
 
 snippet ldf "Log Debug Format" bw
-${1:`!p snip.rv = guess_log_var()`}.Debug().
-	Msgf("$2", $3)
+`!p snip.rv = guess_log_var()`.Debug().
+	Str("func", "`!p snip.rv = get_function_name()`").
+	Msgf("$1", $2)
 endsnippet
 
 snippet li "Log Info" bw
-${1:`!p snip.rv = guess_log_var()`}.Info().
-	Msg("$3")
+`!p snip.rv = guess_log_var()`.Info().
+	Str("func", "`!p snip.rv = get_function_name()`").
+	Msg("$1")
 endsnippet
 
 snippet lif "Log Info Format" bw
-${1:`!p snip.rv = guess_log_var()`}.Info().
-	Msgf("$2", $3)
+`!p snip.rv = guess_log_var()`.Info().
+	Str("func", "`!p snip.rv = get_function_name()`").
+	Msgf("$1", $2)
 endsnippet
 
 snippet lw "Log Warn" bw
-${1:`!p snip.rv = guess_log_var()`}.Warn().
-	Msg("$3")
+`!p snip.rv = guess_log_var()`.Warn().
+	Str("func", "`!p snip.rv = get_function_name()`").
+	Msg("$1")
 endsnippet
 
 snippet lwf "Log Warn Format" bw
-${1:`!p snip.rv = guess_log_var()`}.Warn().
-	Msgf("$2", $3)
+`!p snip.rv = guess_log_var()`.Warn().
+	Str("func", "`!p snip.rv = get_function_name()`").
+	Msgf("$1", $2)
 endsnippet
 
 snippet le "Log Error" bw
-${1:`!p snip.rv = guess_log_var()`}.Error().
-	Err(${2:err}).
-	Msg("$3")
+`!p snip.rv = guess_log_var()`.Error().
+	Str("func", "`!p snip.rv = get_function_name()`").
+	Err(err).
+	Msg("$1")
 endsnippet
 
 snippet lef "Log Error Format" bw
-${1:`!p snip.rv = guess_log_var()`}.Error().
-	Err(${2:err}).
-	Msgf("$3", $4)
+`!p snip.rv = guess_log_var()`.Error().
+	Str("func", "`!p snip.rv = get_function_name()`").
+	Err(err).
+	Msgf("$1", $2)
 endsnippet
 
 snippet lf "Log Fatal" bw
-${1:`!p snip.rv = guess_log_var()`}.Fatal().
-	Err(${2:err}).
-	Msg("$3")
+`!p snip.rv = guess_log_var()`.Fatal().
+	Str("func", "`!p snip.rv = get_function_name()`").
+	Err(err).
+	Msg("$1")
 endsnippet
 
 snippet lff "Log Fatal Format" bw
-${1:`!p snip.rv = guess_log_var()`}.Fatal().
-	Err(${2:err}).
-	Msgf("$3", $4)
+`!p snip.rv = guess_log_var()`.Fatal().
+	Str("func", "`!p snip.rv = get_function_name()`").
+	Err(err).
+	Msgf("$1", $2)
 endsnippet
 
 snippet L "Lock" bw
@@ -260,14 +324,8 @@ endsnippet
 ## M ##
 
 snippet m "Method" bw
-func (${1:`!p snip.rv = find_method_type()`}) $2($3) {
+func (${1:`!p snip.rv = find_method_type()`}) $2($3)$4 {
 	$0
-}
-endsnippet
-
-snippet mr "Method with return" bw
-func (${1:`!p snip.rv = find_method_type()`}) $2($3) $4 {
-	return $0
 }
 endsnippet
 
@@ -279,8 +337,8 @@ endsnippet
 
 snippet mv "Method - Validation" bw
 func (${1:`!p snip.rv = find_method_type()`}) Validate() error {
-	return v.Validate(`!p snip.rv = t[1].split(' ')[0]`,
-		v.Field(&`!p snip.rv = t[1].split(' ')[0]`.$3),
+	return v.ValidateStruct(`!p snip.rv = t[1].split(' ')[0]`,
+		v.Field(&`!p snip.rv = t[1].split(' ')[0]`.$2),
 	)
 }
 endsnippet
@@ -296,6 +354,13 @@ endsnippet
 snippet st "Struct" bw
 type $1 struct {
 	$0
+}
+endsnippet
+
+snippet stl "Struct with Log" bw
+type $1 struct {
+	$0
+	log zerolog.Logger
 }
 endsnippet
 
@@ -348,4 +413,10 @@ func Benchmark$1(b *testing.B) {
 		$0
 	}
 }
+endsnippet
+
+## V ##
+
+snippet v "Validate" bw
+v.Field(&`!p snip.rv = get_receiver_type().split(' ')[0]`.$1),
 endsnippet
