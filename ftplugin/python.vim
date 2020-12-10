@@ -1,7 +1,3 @@
-setlocal shiftwidth=2
-setlocal tabstop=2
-setlocal softtabstop=2
-
 fun! RealtimeRepl()
     let g:repl_buf = bufnr("Node REPL", 1)
     call setbufvar(g:repl_buf, '&buftype', 'nofile')
@@ -21,9 +17,8 @@ fun! RealtimeRepl()
 
     py3file ~/.vim-conf/realtime-repl.py
 
-    python3 init_node()
-    python3 run_js_code(vim.current.buffer.number, int(vim.eval('g:repl_buf')))
-    au TextChanged,TextChangedI <buffer> python3 run_js_code(vim.current.buffer.number, int(vim.eval('g:repl_buf')))
+    python3 run_code(vim.current.buffer.number, int(vim.eval('g:repl_buf')))
+    au TextChanged,TextChangedI <buffer> python3 run_code(vim.current.buffer.number, int(vim.eval('g:repl_buf')))
 
     " TODO: Stop this when the window is closed
 endfun
