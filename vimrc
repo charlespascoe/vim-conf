@@ -54,8 +54,13 @@ set fillchars+=vert:│
 " Custom indent marker
 set listchars=tab:│\  list
 
-" Enable mouse control (useful for scrolling)
-set mouse=a
+" Enable mouse control (useful for scrolling and resizing)
+set mouse=n
+set ttymouse=xterm2
+
+" Disable left-click to prevent moving the cursor when focusing the window
+map <LeftMouse> <Nop>
+imap <LeftMouse> <Nop>
 
 " Set options to improve syntax highlighing performance
 set nocursorcolumn
