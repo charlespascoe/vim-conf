@@ -23,3 +23,15 @@ snippet beg "Beginning/End"
   $0
 \end{$1}
 endsnippet
+
+snippet fig "Figure"
+\begin{figure}
+	\makebox[\textwidth][c]{\includegraphics[width=1.3\textwidth]{$1}}
+	\caption{${2:TODO: Caption}
+	\label{fig:$3}
+\end{figure}
+endsnippet
+
+snippet /r/ "Reference" r
+\hyperref[$1]{$1}
+endsnippet
