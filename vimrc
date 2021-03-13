@@ -67,6 +67,9 @@ set nocursorcolumn
 syntax sync minlines=256
 set re=1
 
+" Set window split options
+set splitright " For vertical splits, the cursor will be on the right pane
+
 " Disable folding (interferes with vim-go)
 set nofoldenable
 
