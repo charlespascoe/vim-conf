@@ -47,7 +47,8 @@ func(res http.ResponseWriter, req *http.Request) error {
 endsnippet
 
 snippet drain
-for _ = range $0 { }
+for range $0 {
+}
 endsnippet
 
 # snippet err

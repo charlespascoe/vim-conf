@@ -1,41 +1,45 @@
 # KEEP IN ALPHABETIC ORDER
 
 global !p
+type_re = re.compile(r"^type (\w+)")
 struct_re = re.compile(r"^type (\w+) struct")
 method_re = re.compile(r"^func \(([^)]+)\)\s+(\w+)\(")
-func_re = re.compile(r"func (\w+)\(")
-test_re = re.compile(r"^func Test(.*)\(")
+func_re = re.compile(r"^func (\w+)\(")
+test_re = re.compile(r"^func Test([^)]*)\(")
 
 
 def preceeding_lines():
-	l = vim.current.window.cursor[0] - 1
+	l = vim.current.window.cursor[0] - 2
 
 	while l > 0:
 		yield vim.current.window.buffer[l]
 		l -= 1
 
 
-def find_method_type():
+def find_method_type(pointer=False):
 	for line in preceeding_lines():
-		line = vim.current.window.buffer[l]
-
 		match = method_re.match(line)
 
 		if match:
 			return match[1]
 
-		match = struct_re.match(line)
+		match = type_re.match(line)
 
 		if match:
 			name = match[1]
-			return (name[0] + re.sub('[a-z]', '', name[1:])).lower() + ' ' + name
+			type_name = name
+
+			if pointer and not type_name.startswith('*'):
+				type_name = '*' + type_name
+
+			return (name[0] + re.sub('[a-z]', '', name[1:])).lower() + ' ' + type_name
 
 	return ''
 
 
 def find_type():
 	for line in preceeding_lines():
-		match = struct_re.match(line)
+		match = type_re.match(line)
 
 		if match:
 			return match[1]
@@ -68,6 +72,22 @@ def guess_log_var():
 		return f"{receiver_type.split(' ')[0]}.log"
 
 	return 'log'
+
+
+def guess_test_name():
+	for line in preceeding_lines():
+		match = test_re.match(line)
+
+		if match:
+			parts = match[1].split('_')
+
+			if len(parts) > 1:
+				# All but the last item
+				return '_'.join(parts[:-1]) + '_'
+
+			return match[1]
+
+	return ''
 
 
 def get_function_name():
@@ -148,7 +168,7 @@ endsnippet
 ## F ##
 
 snippet f "Function" bw
-func $1() {
+func $1($2)$3 {
 	$0
 }
 endsnippet
@@ -197,7 +217,7 @@ for i := ${1:0}; i < $2; i++ {
 endsnippet
 
 snippet fr "Function with Return" bw
-func $1() $2 {
+func $1($2) $3 {
 	return $0
 }
 endsnippet
@@ -234,7 +254,7 @@ endsnippet
 
 snippet ierr "If error, return" bw
 if err != nil {
-	return $1fmt.Errorf("$2: %s$3", err$4)
+	return $1fmt.Errorf("$2: %s",$3 err)
 }
 endsnippet
 
@@ -329,8 +349,22 @@ func (${1:`!p snip.rv = find_method_type()`}) $2($3)$4 {
 }
 endsnippet
 
+# TODO: Improve forced pointer handling
+snippet m* "Method" bw
+func (${1:`!p snip.rv = find_method_type(True)`}) $2($3)$4 {
+	$0
+}
+endsnippet
+
+
 snippet ms "Method - String" bw
 func (${1:`!p snip.rv = find_method_type()`}) String() string {
+	return $0
+}
+endsnippet
+
+snippet mE "Method - Error" bw
+func (${1:`!p snip.rv = find_method_type()`}) Error() string {
 	return $0
 }
 endsnippet
@@ -338,7 +372,7 @@ endsnippet
 snippet mv "Method - Validation" bw
 func (${1:`!p snip.rv = find_method_type()`}) Validate() error {
 	return v.ValidateStruct(`!p snip.rv = t[1].split(' ')[0]`,
-		v.Field(&`!p snip.rv = t[1].split(' ')[0]`.$2),
+		v.Field(&`!p snip.rv = t[1].split(' ')[0]`.$2),$0
 	)
 }
 endsnippet
@@ -367,25 +401,29 @@ endsnippet
 ## T ##
 
 snippet t "Test" bw
-func Test$1(t *testing.T) {
+func Test`!p snip.rv = snip.c or guess_test_name()`$1(t *testing.T) {
 	$0
 }
 endsnippet
 
 snippet ta "Test Array" bw
-func Test$1(t *testing.T) {
-	assert := assert.New(t)
-
+func Test`!p snip.rv = snip.c or guess_test_name()`$1(t *testing.T) {
 	tests := []struct{
-		$1
+		Description string
+		$2
 	}{
 		{
-			$2
+			Description: "$3"
+			$4
 		},
 	}
 
-	for _, test := range tests {
-		$0
+	for i, test := range tests {
+		t.Run(fmt.Sprintf("Test %d", i), func(s *testing.T) {
+			assert := assert.New(s)
+
+			assert.Equal(test.Result, $0, test.Description)
+		})
 	}
 }
 endsnippet
@@ -400,7 +438,7 @@ $0
 endsnippet
 
 snippet tt "Test with Template" bw
-func Test$1(t *testing.T) {
+func Test`!p snip.rv = snip.c or guess_test_name()`$1(t *testing.T) {
 	assert := assert.New(t)
 
 	$0
@@ -412,6 +450,27 @@ func Benchmark$1(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		$0
 	}
+}
+endsnippet
+
+snippet tm "Test Main" bw
+import (
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
+	"os"
+	"testing"
+)
+
+func TestMain(m *testing.M) {
+	log.Logger = log.Output(zerolog.ConsoleWriter{
+		Out:        os.Stderr,
+		TimeFormat: "15:04:05",
+	})
+	zerolog.SetGlobalLevel(zerolog.TraceLevel)
+
+	code := m.Run()
+
+	os.Exit(code)
 }
 endsnippet
 
