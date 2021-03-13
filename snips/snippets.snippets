@@ -1,23 +1,5 @@
-snippet s "Regular Snippet"
-snippet $1
-$0
-``endsnippet
-endsnippet
-
-snippet sd "Regular Snippet with Description"
-snippet $1 "$2"
-$0
-``endsnippet
-endsnippet
-
-snippet r "Regexp Snippet"
-snippet '$1' "$2" r
-$0
-``endsnippet
-endsnippet
-
-snippet rb "Regexp (b) Snippet"
-snippet '$1' "$2" rb
+snippet 's([biwrtsmeA]+)' "Snippet" bwr
+snippet $1 "$2" `!p snip.rv = match.group(1)`
 $0
 ``endsnippet
 endsnippet
