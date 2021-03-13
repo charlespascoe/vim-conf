@@ -62,13 +62,13 @@ download:
 ## fmt: Run go fmt on all source files
 fmt:
 	go fmt .
-	@echo -n $(SUBPACKAGES) | xargs -iX -d ' ' --verbose go fmt ./X
+	@echo -n $(SUBPACKAGES) | tr -s ' ' '\n' | xargs -I X -t go fmt ./X
 
 .PHONY: vet
 ## vet: Run go vet on all source files
 vet:
 	go vet .
-	@echo -n $(SUBPACKAGES) | xargs -iX -d ' ' --verbose go vet ./X
+	@echo -n $(SUBPACKAGES) | tr -s ' ' '\n' | xargs -I X -t go vet ./X
 
 .PHONY: fmtchk
 ## fmtchk: Checks code formatting, exits with non-zero exit code if there are formatting issues.
@@ -79,7 +79,7 @@ fmtchk:
 		echo gofmt -l $$p/'*.go'; \
 		i="$$(gofmt -l $$p/*.go)"; \
 		if [ -n "$$i" ]; then \
-			issues="$$issues\n  $$i"; \
+			issues="$$issues\n$$i"; \
 		fi; \
 	done; \
 	if [ -n "$$issues" ]; then \
