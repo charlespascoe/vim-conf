@@ -38,6 +38,9 @@ let delimitMate_expand_cr = 1
 nmap <silent> <C-n> :NERDTreeToggle \| NERDTreeRefreshRoot<CR>
 let NERDTreeWinSize = 48
 
+" Undotree
+nmap <silent> <leader>ut <Esc>:UndotreeToggle<CR>
+
 " tsuquyomi
 let g:tsuquyomi_single_quote_import = 1
 
