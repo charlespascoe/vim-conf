@@ -130,3 +130,9 @@ fun! ConfirmSpellGood()
 endfun
 
 nnoremap <expr> <silent> zg ConfirmSpellGood() ? 'zg' : ''
+
+" Attempts to fix syntax highlighting issues
+command SyntaxSync syntax sync fromstart
+
+" This autocommand may cause performance issues
+autocmd BufEnter,InsertLeave * :syntax sync fromstart
