@@ -13,9 +13,6 @@ command! Fix :
     \ %s/—/---/ge |
     \ %s/"\([^"]\+\)"/``\1''/ge
 
-vmap <buffer> m c\texttt{<C-r>"}<Esc>
-vmap <buffer> i c\textit{<C-r>"}<Esc>
-vmap <buffer> b c\textbf{<C-r>"}<Esc>
 
 " Text Wrapping
 setlocal textwidth=80
