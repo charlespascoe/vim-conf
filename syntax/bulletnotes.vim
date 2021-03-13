@@ -7,9 +7,9 @@ syntax match NoteTitle /^## .* ##/ contains=Tag,TitleEnd
 syntax match Subtitle /^:: .* ::/ contains=Tag,SubtitleEnd
 syntax match ContactTitle /^@@ .* @@/ contains=ContactTitleEnd
 
-syntax match TitleEnd /\s*##\s*/ conceal contained
-syntax match SubtitleEnd /\s*::\s*/ conceal contained
-syntax match ContactTitleEnd /\s*@@\s*/ conceal contained
+syntax match TitleEnd /\s*##\s*/ contained
+syntax match SubtitleEnd /\s*::\s*/ contained
+syntax match ContactTitleEnd /\s*@@\s*/ contained
 
 highlight NoteTitle cterm=bold,underline ctermfg=135
 highlight Subtitle cterm=underline ctermfg=140
@@ -83,17 +83,17 @@ highlight CommentItem ctermfg=117 ctermbg=235 cterm=italic
 
 syntax match Tag /#[a-zA-Z0-9_\-]\+/ contains=@NoSpell
 syntax match Pointer /&[a-zA-Z0-9_\-.]\+\(\/[a-zA-Z0-9_\-.]\+\)*/ contains=@NoSpell,PointerMarker
-syntax match PointerMarker /&/ conceal contained
+syntax match PointerMarker /&/ contained
 syntax match AnchorPointer /&:[a-zA-Z0-9]\+/ contains=@NoSpell,AnchorPointerMarker
-syntax match AnchorPointerMarker /&:/ conceal contained
+syntax match AnchorPointerMarker /&:/ contained
 syntax match Link /\(^\|\s\)\[[^\]]\+\]\(\s\|$\)/ contains=@NoSpell,LinkEnds keepend
-syntax match LinkEnds /\(\[\|\]\)/ conceal contained
+syntax match LinkEnds /\(\[\|\]\)/ contained
 syntax match Contact /@[a-zA-Z\-._]\+/ contains=ContactMarker
 syntax match Anchor /:[a-zA-Z0-9]\+:/ contains=@NoSpell,AnchorMarker
-syntax match AnchorMarker /:/ conceal contained
+syntax match AnchorMarker /:/ contained
 syntax region Monospace start='{' skip='\\}' end='}' contains=@NoSpell
 syntax cluster Metatext contains=Tag,Pointer,Link,Contact,Anchor,AnchorPointer,Monospace
-syntax match ContactMarker /@/ conceal contained
+syntax match ContactMarker /@/ contained
 
 highlight Tag ctermfg=226 cterm=bold
 highlight Pointer ctermfg=40
@@ -119,7 +119,7 @@ highlight link Field Link
 " Text Styles
 
 syntax region Highlight start='`' end='`' contains=HighlightMark keepend
-syntax match HighlightMark /`/ conceal contained
+syntax match HighlightMark /`/ contained
 " Using a cluster makes it easier to add new styles in future (or add user-defined styles)
 syntax cluster TextStyle contains=Highlight
 

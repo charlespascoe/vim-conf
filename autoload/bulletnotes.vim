@@ -19,7 +19,7 @@ endif
 set debug="msg"
 
 
-let s:edit_file_extensions = ['.adoc', '.md', '.txt']
+let s:edit_file_extensions = ['.adoc', '.md', '.txt', '.yml']
 
 fun s:Warning(msg)
     echohl WarningMsg
@@ -77,9 +77,6 @@ fun bulletnotes#InitBuffer()
     nmap <silent> <buffer> <expr> o HandleN_o('o')
     nmap <silent> <buffer> <expr> O HandleN_o('O')
 
-    " Double space after full stop
-    "imap <buffer> <expr> <space> getline('.')[col('.') - 2] == '.' ? '<space><space>' : '<space>'
-
     " TODO: Investigate better alternatives
     " Maybe try tweaking indentexpr or similar?
     nmap <silent> <buffer> >ab >abgvgw'<^:call repeat#set('>ab', v:count)<CR>
@@ -103,8 +100,8 @@ fun bulletnotes#InitBuffer()
         exec cmd
     endfor
 
-    imap <silent> <expr> <buffer> <Tab> bulletnotes#IsAtStartOfBullet() ? '<Esc>>ab^i<Right><Right>' : (ShouldAutocomplete() ? '<C-z>' : '<Tab>')
-    imap <silent> <expr> <buffer> <S-Tab> bulletnotes#IsAtStartOfBullet() ? '<Esc><ab^i<Right><Right>' : '<S-Tab>'
+    imap <silent> <expr> <buffer> <Tab> bulletnotes#IsAtStartOfBullet() ? '<Esc>>ibI<Right><Right>' : (ShouldAutocomplete() ? '<C-z>' : '<Tab>')
+    imap <silent> <expr> <buffer> <S-Tab> bulletnotes#IsAtStartOfBullet() ? '<Esc><ibI<Right><Right>' : '<S-Tab>'
 
     nnoremap <silent> <buffer> <leader>gl "zyi]:call system('open '.shellescape(@z))<CR>
     nnoremap <silent> <buffer> <leader>gt :Find <C-r><C-a><CR>
@@ -438,6 +435,9 @@ endfun
 fun bulletnotes#Wordcount(type)
     if a:type ==# 'line'
         exec "'[,']WordCount"
+    elseif a:type ==# 'char'
+        "exec "normal!" "`<v`>WordCount"
+        echom "Character text objects not supported yet"
     else
         echom "bulletnotes#Wordcount: Unhandled type ".a:type
     endif
