@@ -2,13 +2,13 @@
 let g:ctrlp_use_caching = 1
 let g:ctrlp_clear_cache_on_exit = 1
 let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
+let g:ctrlp_map = '<leader>o'
 
 highlight CtrlPBufferHid ctermfg=123
 highlight CtrlPBufferPath ctermfg=15
 highlight CtrlPPrtBase ctermfg=32
 
-inoremap <silent> <C-@> <Esc>:CtrlPBuffer<CR>
-nnoremap <silent> <C-@> <Esc>:CtrlPBuffer<CR>
+nmap <silent> <leader>f <Esc>:CtrlPBuffer<CR>
 
 " Airline
 let g:airline#extensions#tabline#enabled = 1
@@ -35,7 +35,8 @@ let g:airline_symbols.maxlinenr = ''
 let delimitMate_expand_cr = 1
 
 " NERDTree
-nmap <silent> <C-n> :NERDTreeToggle \| NERDTreeRefreshRoot<CR>
+nmap <silent> <leader>n :NERDTreeToggle \| NERDTreeRefreshRoot<CR>
+let NERDTreeShowLineNumbers = 1
 let NERDTreeWinSize = 48
 
 " Undotree
@@ -76,6 +77,9 @@ let g:go_highlight_variable_assignments = 1
 let g:go_highlight_variable_declarations = 1
 let g:go_highlight_trailing_whitespace_error = 0
 let g:go_addtags_transform = 'camelcase'
+
+" vim-gitgutter
+let g:gitgutter_set_sign_backgrounds = 0
 
 " Formatting interfers with jumps and folds; just do it manually
 let g:go_fmt_autosave = 0
