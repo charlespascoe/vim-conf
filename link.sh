@@ -1,6 +1,6 @@
 #!/bin/bash
 
-directories=$(find ~/.vim-conf/ -maxdepth 1 -mindepth 1 -type d ! -name '.*' ! -name 'patches' -printf '%f\n')
+directories=$(find ~/.vim-conf/ -maxdepth 1 -mindepth 1 -type d ! -name '.*' ! -name 'patches' | xargs basename)
 
 mkdir -p ~/.vim/
 

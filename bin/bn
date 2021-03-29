@@ -207,7 +207,7 @@ case $1 in
         fi
 
         if [ -z $2 ]; then
-            find "$BN_HOME" -maxdepth 1 -mindepth 1 -type d -printf '%f\n' | sort
+            find "$BN_HOME" -maxdepth 1 -mindepth 1 -type d | xargs -L 1 basename | sort
             exit
         fi
 

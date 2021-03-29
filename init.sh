@@ -15,7 +15,7 @@ function __bn_complete() {
         return
     fi
 
-    local projects="$(find "$BN_HOME" -maxdepth 1 -mindepth 1 -type d -printf '%f ')"
+    local projects="$(find "$BN_HOME" -maxdepth 1 -mindepth 1 -type d | xargs basename | xargs echo)"
 
     case "${COMP_WORDS[1]}" in
         fvs|inbox|journal|vs)
