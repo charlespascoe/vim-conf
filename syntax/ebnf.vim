@@ -12,7 +12,7 @@ elseif exists("b:current_syntax")
   finish
 endif
 
-syn match ebnfMetaIdentifier /[A-Za-z]/ skipwhite skipempty nextgroup=ebnfSeperator
+syn match ebnfMetaIdentifier /[A-Za-z0-9]/ skipwhite skipempty nextgroup=ebnfSeperator
 
 syn match ebnfSeperator "=" contained nextgroup=ebnfProduction skipwhite skipempty
 
