@@ -11,6 +11,7 @@ nmap <buffer> <leader>tT <Esc>:wa<CR><Plug>(go-test)
 nmap <buffer> <leader>tI <Plug>(go-import)
 nmap <buffer> <leader>tf $ca" ()<Left><CR><C-r>"
 nmap <buffer> <leader>tb <Esc>:wa<CR><Plug>(go-build)
+nmap <buffer> <leader>tv <Plug>(go-vet)
 nmap <silent> <buffer> <leader>tF <Esc>:GoFmt<CR>
 
 
