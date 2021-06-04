@@ -2,10 +2,8 @@ snippet go "Go Makefile Template"
 BINARY_NAME=$0
 BINARY_LINUX=$(BINARY_NAME)-linux
 SHELL=/bin/bash
-
-# List of subpackages (source folders). Used for fmt and vet. Space separated. Example:
-# SUBPACKAGES=package1 package2 package3
-SUBPACKAGES=
+GOLANG_MINOR_VERSION=14
+ALL_GO_FILES=find . -name '*.go' -not -path './vendor*' -not -path './.*'
 
 .PHONY: all
 ## : Same as 'make goversion init download build', recommended after checking out
@@ -21,15 +19,20 @@ help:
 init:
 	ln -sf ../../.hooks/pre-commit .git/hooks/pre-commit
 
+.PHONY: gencode
+## gencode: Runs 'go generate' on the project to produce generated code
+gencode:
+	go generate ./...
+
 .PHONY: build
 ## build: Builds binary for current OS
-build:
-	go build -o $(BINARY_NAME) -v
+build: gencode
+	go build -o $(BINARY_NAME) -v ./cmd/$(BINARY_NAME)
 
 .PHONY: linux
 ## linux: Builds Linux-compatible binary
 linux:
-	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o $(BINARY_LINUX) -v
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o $(BINARY_LINUX) -v ./cmd/$(BINARY_NAME)
 
 .PHONY: test
 ## test: Check formatting, vet code, and run tests
@@ -57,39 +60,30 @@ run: build
 ## download: Download dependencies
 download:
 	go mod download
+	go mod vendor
 
 .PHONY: fmt
 ## fmt: Run go fmt on all source files
 fmt:
-	go fmt .
-	@echo -n $(SUBPACKAGES) | tr -s ' ' '\n' | xargs -I X -t go fmt ./X
+	go fmt ./...
 
 .PHONY: vet
 ## vet: Run go vet on all source files
 vet:
-	go vet .
-	@echo -n $(SUBPACKAGES) | tr -s ' ' '\n' | xargs -I X -t go vet ./X
+	go vet ./...
 
 .PHONY: fmtchk
 ## fmtchk: Checks code formatting, exits with non-zero exit code if there are formatting issues.
 fmtchk:
-	@packages=(. $(SUBPACKAGES)); \
-	issues=""; \
-	for p in $${packages[@]}; do \
-		echo gofmt -l $$p/'*.go'; \
-		i="$$(gofmt -l $$p/*.go)"; \
-		if [ -n "$$i" ]; then \
-			issues="$$issues\n$$i"; \
-		fi; \
-	done; \
+	@issues="$$($(ALL_GO_FILES) | xargs gofmt -l)"; \
 	if [ -n "$$issues" ]; then \
-		echo -e "ERROR: Formatting issues in the following files:$$issues"; \
+		echo -e "ERROR: Formatting issues in the following files:\n$$issues"; \
 		echo "Run 'make fmt' and stage the changes before attempting to commit."; \
 		exit 1; \
 	fi
 
 .PHONY: goversion
-## goversion: Checks go 1.12 or later is installed
+## goversion: Checks minimum version of Go is installed
 goversion:
 	@if [ -z "$$(which go)" ]; then \
 		echo "go either not installed or not in PATH"; \
@@ -97,11 +91,11 @@ goversion:
 	fi
 	@minor="$$(go version | egrep -o 'go1.([0-9]+)' | egrep -o '[0-9]+$$')"; \
 	if [ -z "$$minor" ]; then \
-		echo "Could not determine Go version (1.12 or above required)"; \
+		echo "Could not determine Go version (1.$(GOLANG_MINOR_VERSION) or above required)"; \
 		exit 1; \
 	fi; \
-	if [ $$minor -lt 12 ]; then \
-		echo "Go version 1.12 or above required (version 1.$$minor installed)"; \
+	if [ $$minor -lt $(GOLANG_MINOR_VERSION) ]; then \
+		echo "Go version 1.$(GOLANG_MINOR_VERSION) or above required (version 1.$$minor installed)"; \
 		exit 1; \
 	fi
 endsnippet
