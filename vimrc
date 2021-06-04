@@ -1,6 +1,10 @@
 set nocompatible
 filetype plugin indent on
 
+if &diff
+    syntax off
+endif
+
 let mapleader=" "
 
 packadd! matchit
