@@ -1,4 +1,8 @@
-syntax enable
+if &diff
+    syntax off
+else
+    syntax enable
+endif
 
 colorscheme custom
 
