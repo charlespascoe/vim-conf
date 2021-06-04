@@ -56,4 +56,4 @@ hi ColorColumn ctermbg=234
 hi DiffAdd ctermfg=2 ctermbg=none
 hi DiffChange ctermfg=3 ctermbg=none
 hi DiffDelete ctermfg=1 ctermbg=none
-hi DiffText cterm=bold ctermbg=1
+hi DiffText ctermbg=58 ctermfg=3 cterm=none
