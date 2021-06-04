@@ -124,14 +124,6 @@ case $1:
 }
 endsnippet
 
-snippet recover "Recover"
-defer func() {
-	if r := recover(); r != nil {
-		$0
-	}
-}()
-endsnippet
-
 # snippet chan "Channel with deferred close"
 # $1 := make(chan $0)
 # defer close($1)
