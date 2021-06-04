@@ -336,6 +336,16 @@ snippet lff "Log Fatal Format" bw
 	Msgf("$1", $2)
 endsnippet
 
+snippet lp "Log Panic" bw
+`!p snip.rv = guess_log_var()`.Error().
+	Str("func", "`!p snip.rv = get_function_name()`").
+	Msgf(
+		"$1: %s\n%s",
+		r,
+		string(debug.Stack()),
+	)
+endsnippet
+
 snippet L "Lock" bw
 $1.Lock()
 defer $1.Unlock()
@@ -381,6 +391,24 @@ endsnippet
 
 snippet r "Return" bw
 return $0
+endsnippet
+
+snippet R "Recover" bw
+defer func() {
+	if r := recover(); r != nil {
+		$0
+	}
+}()
+endsnippet
+
+snippet Re "Recover Else" bw
+defer func() {
+	if r := recover(); r != nil {
+		$0
+	} else {
+		
+	}
+}()
 endsnippet
 
 ## S ##
