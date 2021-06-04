@@ -11,7 +11,7 @@ syntax match TitleEnd /\s*##\s*/ contained
 syntax match SubtitleEnd /\s*::\s*/ contained
 syntax match ContactTitleEnd /\s*@@\s*/ contained
 
-highlight NoteTitle cterm=bold,underline ctermfg=135
+hi link NoteTitle Title
 highlight Subtitle cterm=underline ctermfg=140
 highlight ContactTitle cterm=underline ctermfg=51
 
