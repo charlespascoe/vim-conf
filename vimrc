@@ -66,6 +66,16 @@ set ttymouse=xterm2
 map <LeftMouse> <Nop>
 imap <LeftMouse> <Nop>
 
+" Disable middle click paste
+map <MiddleMouse> <Nop>
+imap <MiddleMouse> <Nop>
+map <2-MiddleMouse> <Nop>
+imap <2-MiddleMouse> <Nop>
+map <3-MiddleMouse> <Nop>
+imap <3-MiddleMouse> <Nop>
+map <4-MiddleMouse> <Nop>
+imap <4-MiddleMouse> <Nop>
+
 " Set options to improve syntax highlighing performance
 set nocursorcolumn
 syntax sync minlines=256
