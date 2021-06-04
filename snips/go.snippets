@@ -178,14 +178,34 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"gopkg.in/natefinch/lumberjack.v2"
 	"os"
 )
 
+type Mode byte
+
+func (mode Mode) String() string {
+	switch mode {
+	case DevelopmentMode:
+		return "Development mode"
+	case ProductionMode:
+		return "Production mode"
+	default:
+		return fmt.Sprintf("an unknown mode (%d)", mode)
+	}
+}
+
+const (
+	DevelopmentMode Mode = 0
+	ProductionMode  Mode = 1
+)
+
 func main() {
 	version := flag.Bool("version", false, "prints version and quits")
+	debug := flag.Bool("debug", false, "turns on debug logging")
 
 	flag.Parse()
 
@@ -194,12 +214,28 @@ func main() {
 		return
 	}
 
+	mode := ProductionMode
+
+	if os.Getenv("MODE") == "dev" {
+		mode = DevelopmentMode
+		*debug = true
+	}
+
+	if coerceToBool(os.Getenv("DEBUG")) {
+		*debug = true
+	}
+
+	/* Logging */
+
 	logFile := os.Getenv("LOG_FILE")
 
 	if logFile != "" {
+		compressLogs := coerceToBool(os.Getenv("COMPRESS_LOGS"))
+
 		log.Logger = log.Output(&lumberjack.Logger{
 			Filename: logFile,
 			MaxAge:   30,
+			Compress: compressLogs,
 		})
 	} else {
 		log.Logger = log.Output(zerolog.ConsoleWriter{
@@ -208,10 +244,18 @@ func main() {
 		})
 	}
 
+	if !*debug {
+		log.Logger = log.Logger.Level(zerolog.InfoLevel)
+	}
+
 	log.Info().
-		Msgf("$1 Starting - Version %s (PID %d)", Version, os.Getpid())
+		Msgf("$1 version %s starting in %s (PID %d)", Version, mode, os.Getpid())
 
 	$0
+}
+
+func coerceToBool(text string) bool {
+	return text == "true" || text == "1"
 }
 endsnippet
 
