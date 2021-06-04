@@ -26,7 +26,10 @@ def init_node():
 
 def run_js_code(src, dst):
     global node
-    for line in vim.buffers[src]:
+
+    lines = [line for line in vim.buffers[src]]
+
+    for line in lines:
         node.stdin.write((line + "\n").encode('utf-8'))
 
     node.stdin.close()
@@ -36,6 +39,10 @@ def run_js_code(src, dst):
     r = re.compile(r'\n?> |\.\.\.')
 
     results = [' '.join(l.strip() for l in line.split('\n')) for line in r.split(output)[1:-1]]
+
+    for i in range(min(len(results), len(lines))):
+        if lines[i].startswith('//'):
+            results[i] = lines[i]
 
     vim.buffers[dst][:] = results
 
