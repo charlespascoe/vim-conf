@@ -9,7 +9,7 @@ properties([
     buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '7', numToKeepStr: '21')),
 ])
 
-def NEXUS_REPOSITORY = 'https://agile.nat.bt.com/nexus/repository/APP13273_VEXPOSURE_raw_hosted'
+def NEXUS_REPOSITORY = '`echo $NEXUS_REPOSITORY`'
 // Where in the Nexus and Docker repos all the artefacts/images should go
 def ARTEFACTS_PATH = '$1'
 // Path to file to upload
@@ -25,8 +25,8 @@ gitlabBuilds(builds: ['build', 'test', 'documentation', 'docker build', 'publish
         stage('Build') {
             gitlabCommitStatus('build') {
                 sh """
-                export HTTP_PROXY=http://cloudproxy-t.nat.bt.com:8080
-                export HTTPS_PROXY=http://cloudproxy-t.nat.bt.com:8080
+                export HTTP_PROXY=`echo $CI_PROXY`
+                export HTTPS_PROXY=`echo $CI_PROXY`
                 go version
                 make && make linux
                 """
@@ -36,8 +36,8 @@ gitlabBuilds(builds: ['build', 'test', 'documentation', 'docker build', 'publish
         stage('Test') {
             gitlabCommitStatus('test') {
                 sh """
-                export HTTP_PROXY=http://cloudproxy-t.nat.bt.com:8080
-                export HTTPS_PROXY=http://cloudproxy-t.nat.bt.com:8080
+                export HTTP_PROXY=`echo $CI_PROXY`
+                export HTTPS_PROXY=`echo $CI_PROXY`
                 make test
                 """
             }
@@ -62,9 +62,9 @@ gitlabBuilds(builds: ['build', 'test', 'documentation', 'docker build', 'publish
             gitlabCommitStatus("docker build") {
                 retry(3) {
                     docker.withServer(env.DOCKER_HOST, 'docker-api-certs') {
-                        docker.withRegistry('https://registry.docker.nat.bt.com', 'bt-docker-registry-user') {
+                        docker.withRegistry('https://`echo $DOCKER_REGISTRY`', 'bt-docker-registry-user') {
                             sh "cp $LOCAL_ARTEFACT_PATH docker/"
-                            buildAndPush("registry.docker.nat.bt.com/ve/$ARTEFACTS_PATH", scmVars, ['docker/'])
+                            buildAndPush("`echo $DOCKER_REGISTRY`/ve/$ARTEFACTS_PATH", scmVars, ['docker/'])
                         }
                     }
                 }
