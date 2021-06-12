@@ -136,3 +136,11 @@ command SyntaxSync syntax sync fromstart
 
 " This autocommand may cause performance issues
 autocmd BufEnter,InsertLeave * :syntax sync fromstart
+
+fun! Duplicate(type)
+    if a:type ==# 'line' || a:type ==# 'V'
+        exec "normal! '[0v']y']0P"
+    endif
+endfun
+
+nmap <silent> gd :set opfunc=Duplicate<CR>g@
