@@ -1,6 +1,5 @@
 set hidden
 
-nmap <silent> <leader>Tn <Esc>:tabnew<CR>
 nmap <silent> <leader>bb <Esc>:b#<CR>zz
 nmap <silent> <leader>bq <Esc>:call CloseBuffer()<CR>
 nmap <silent> <leader>bw <Esc>:w<CR>:call CloseBuffer()<CR>
@@ -28,7 +27,6 @@ command! Q wqa
 command! CloseAll :bufdo bdelete
 
 " Make it easier to close multiple buffers
-nnoremap <leader>lsd :ls<cr>:bd<space>
 
 " Always open quickfix at the bottom (full width)
 autocmd filetype qf wincmd J
