@@ -139,7 +139,7 @@ autocmd BufEnter,InsertLeave * :syntax sync fromstart
 
 fun! Duplicate(type)
     if a:type ==# 'line' || a:type ==# 'V'
-        exec "normal! '[0v']y']0P"
+        exec "normal! '[V']y']p"
     endif
 endfun
 
