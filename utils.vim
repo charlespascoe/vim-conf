@@ -43,6 +43,8 @@ map <leader>S <Esc>:echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") .
 " Trim trailing whitespace
 command! Trim %s/\s\+$//e
 
+nmap <silent> <leader>T <Esc>:Trim<CR>``
+
 " Jump back to mark centres on cursor
 nnoremap <expr> ` printf('`%czz', getchar())
 
