@@ -165,6 +165,17 @@ $1 := make(chan $2)
 defer close($1)
 endsnippet
 
+## E ##
+
+snippet 'ef' "Errorf" r
+fmt.Errorf("$1", $2)
+endsnippet
+
+snippet 'erf' "Errorf with error template" r
+fmt.Errorf("$1: %s",$2 err)
+endsnippet
+
+
 ## F ##
 
 snippet f "Function" bw
@@ -232,6 +243,8 @@ endsnippet
 
 ## I ##
 
+# TODO: Consider unifying the "If" snippets
+
 snippet i "If" bw
 if $1 {
 	$0
@@ -240,6 +253,20 @@ endsnippet
 
 snippet ie "If-else" bw
 if $1 {
+	$0
+} else {
+	``
+}
+endsnippet
+
+snippet is "If short" bw
+if $1 := $2; $3 {
+	$0
+}
+endsnippet
+
+snippet ise "If short, else" bw
+if $1 := $2; $3 {
 	$0
 } else {
 	``
@@ -258,6 +285,31 @@ if err != nil {
 }
 endsnippet
 
+snippet iser "If short error" bw
+if ${VISUAL:/err :?= .*//}$1err := ${VISUAL:/^.*err :?= //}$2; err != nil {
+	$0
+}
+endsnippet
+
+snippet iserr "If short error, return" bw
+if ${VISUAL:/err :?= .*//}$1err := ${VISUAL:/^.*err :?= //}$2; err != nil {
+	return $3fmt.Errorf("$4: %s",$5 err)
+}
+endsnippet
+
+snippet isju "If Short JSON Unmarshal" bw
+if err := json.Unmarshal(${1:data}, $2); err != nil {
+	$0
+}
+endsnippet
+
+snippet isjur "If Short JSON Unmarshal, return" bw
+if err := json.Unmarshal(${1:data}, $2); err != nil {
+	return $3fmt.Errorf("$4: %s",$5 err)
+}
+endsnippet
+
+
 snippet im "import" bw
 import (
 	$0
@@ -268,6 +320,16 @@ snippet in "Interface" bw
 type $1 interface {
 	$0
 }
+endsnippet
+
+## J ##
+
+snippet jm "JSON Marshal" bw
+${1:data}, err := json.Marshal(${2:${VISUAL}})
+endsnippet
+
+snippet ju "JSON Unmarshal" bw
+err := json.Unmarshal(${1:data}, $2)
 endsnippet
 
 ## L ##
@@ -349,6 +411,11 @@ endsnippet
 snippet L "Lock" bw
 $1.Lock()
 defer $1.Unlock()
+endsnippet
+
+snippet Lr "Read Lock" bw
+$1.RLock()
+defer $1.RUnlock()
 endsnippet
 
 ## M ##
