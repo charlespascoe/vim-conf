@@ -56,6 +56,10 @@ nmap <leader>ue <Esc>:UltiSnipsEdit<CR>
 " Vim's netrw
 let g:netrw_ftp_cmd="ftp -p"   " passive mode by default
 
+" Vim's TOhtml
+
+let g:html_pre_wrap = 1 " Ensures the content can wrap
+
 " vim-sort-motion
 let g:sort_motion_flags = "i"
 
