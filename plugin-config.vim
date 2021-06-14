@@ -78,6 +78,7 @@ let g:go_highlight_variable_assignments = 1
 let g:go_highlight_variable_declarations = 1
 let g:go_highlight_trailing_whitespace_error = 0
 let g:go_addtags_transform = 'camelcase'
+let g:go_def_mapping_enabled = 0
 
 " vim-gitgutter
 let g:gitgutter_set_sign_backgrounds = 0
