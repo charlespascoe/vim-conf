@@ -55,6 +55,8 @@ def export_to_clipboard(bullets, firstline, lastline, rtf):
 
     doc_formatter = bulletnotes.html.DocumentFormatter.default()
 
+    doc_formatter.section_formatter.append_br_to_bullet_lists = True
+
     html = doc_formatter.to_full_html(doc)
 
     # macOS only

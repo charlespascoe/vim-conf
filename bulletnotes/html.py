@@ -95,7 +95,7 @@ class BulletsFormatter:
     def default(text_formatter):
         bf = BulletsFormatter(text_formatter)
 
-        bf.register('-', None)
+        bf.register('-', {'color': 'black'})
         bf.register('*+', {'color': 'green'}, lambda s : f'<b>AP:</b> {s}')
         bf.register('?<', {'color': '#FF5722'})
         bf.register('>', {'color': 'initial', 'font-weight': 'bold'})
@@ -154,7 +154,7 @@ class TextFormatter:
             lambda s : link_regex.sub(r'<a href="\1" target="_blank">\1</a>', s),
             lambda s : ref_regex.sub(r'<span style="color: red">\1</span>', s),
             lambda s : monospace_regex
-                .sub(r'<span style="font-family: monospace">\1</span>', s)
+                .sub(r'<span style="font-family: monospace; color: crimson;">\1</span>', s)
                 .replace('\\{', '{')
                 .replace('\\}', '}'),
         ])
@@ -182,6 +182,7 @@ class SectionFormatter:
         self.bullets_formatter = bullets_formatter
         self.text_formatter = text_formatter
         self.append_br_to_paragraphs = False
+        self.append_br_to_bullet_lists = False
         self.heading_style = {
             'font-size': '1.2em'
         }
@@ -215,6 +216,10 @@ class SectionFormatter:
 
                 if in_ul:
                     output.append('</ul>')
+
+                    if self.append_br_to_bullet_lists:
+                        output.append('<br/>')
+
                     in_ul = False
 
                 formatted_text = self.text_formatter.to_html(item)
@@ -230,6 +235,10 @@ class SectionFormatter:
 
         if in_ul:
             output.append('</ul>')
+
+            if self.append_br_to_bullet_lists:
+                output.append('<br/>')
+
             in_ul = False
 
         return ''.join(output)
@@ -253,7 +262,7 @@ class DocumentFormatter:
             'body': {
                 'font-family': 'Arial',
                 # NOTE: May need to have different values for each platform
-                'font-size': '16px',
+                'font-size': '11pt',
             }
         }
 
