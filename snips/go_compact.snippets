@@ -75,19 +75,23 @@ def guess_log_var():
 
 
 def guess_test_name():
+	# NOTE: It is VERY important that this function ALWAYS returns a non-empty
+	# string, so that the snippet pluging doesn't run this function more than
+	# once per template
+
 	for line in preceeding_lines():
 		match = test_re.match(line)
 
 		if match:
-			parts = match[1].split('_')
+			parts = [part for part in match[1].split('_') if len(part) > 0]
 
 			if len(parts) > 1:
 				# All but the last item
-				return '_'.join(parts[:-1]) + '_'
+				return '_' + '_'.join(parts[:-1]) + '_'
+			else:
+				break
 
-			return match[1]
-
-	return ''
+	return '_'
 
 
 def get_function_name():
@@ -138,6 +142,14 @@ snippet Anem "Assert Not Equal with Message" bw
 assert.NotEqual(${1:expected}, ${2:actual}, "${3:message}")
 endsnippet
 
+snippet Aner "Assert No Error" bw
+assert.NoError(${1:err})
+endsnippet
+
+snippet Anerm "Assert No Error with Message" bw
+assert.NoError(${1:err}, "${2:message}")
+endsnippet
+
 snippet An "Assert Nil" bw
 assert.Nil(${1:value})
 endsnippet
@@ -175,12 +187,31 @@ snippet 'erf' "Errorf with error template" r
 fmt.Errorf("$1: %s",$2 err)
 endsnippet
 
-
 ## F ##
 
 snippet f "Function" bw
-func $1($2)$3 {
+// $1 ${4:TODO: Description}.
+func ${1: }($2)$3 {
 	$0
+}
+endsnippet
+
+snippet fr "Function with Return" bw
+// $1 ${4:TODO: Description}.
+func ${1: }($2) $3 {
+	return $0
+}
+endsnippet
+
+snippet '(?<=.)\bf' "Anonymous Function" r
+func($1)$2 {
+	$0
+}
+endsnippet
+
+snippet '(?<=.)\bfr' "Anonymous Function with Return" r
+func($1) $2 {
+	return $0
 }
 endsnippet
 
@@ -224,12 +255,6 @@ endsnippet
 snippet fori "For counter (i)" bw
 for i := ${1:0}; i < $2; i++ {
 	$0
-}
-endsnippet
-
-snippet fr "Function with Return" bw
-func $1($2) $3 {
-	return $0
 }
 endsnippet
 
@@ -317,6 +342,7 @@ import (
 endsnippet
 
 snippet in "Interface" bw
+// $1 ${2:TODO: Description}.
 type $1 interface {
 	$0
 }
@@ -421,6 +447,7 @@ endsnippet
 ## M ##
 
 snippet m "Method" bw
+// $2 ${5:TODO: Description}.
 func (${1:`!p snip.rv = find_method_type()`}) $2($3)$4 {
 	$0
 }
@@ -428,15 +455,15 @@ endsnippet
 
 # TODO: Improve forced pointer handling
 snippet m* "Method" bw
+// $2 ${5:TODO: Description}.
 func (${1:`!p snip.rv = find_method_type(True)`}) $2($3)$4 {
 	$0
 }
 endsnippet
 
-
 snippet ms "Method - String" bw
 func (${1:`!p snip.rv = find_method_type()`}) String() string {
-	return $0
+	return fmt.Sprintf("$1", $0)
 }
 endsnippet
 
@@ -457,7 +484,7 @@ endsnippet
 ## R ##
 
 snippet r "Return" bw
-return $0
+return ${0:${VISUAL}}
 endsnippet
 
 snippet R "Recover" bw
@@ -473,7 +500,7 @@ defer func() {
 	if r := recover(); r != nil {
 		$0
 	} else {
-		
+		``
 	}
 }()
 endsnippet
@@ -481,12 +508,14 @@ endsnippet
 ## S ##
 
 snippet st "Struct" bw
+// $1 ${2:TODO: Description}.
 type $1 struct {
 	$0
 }
 endsnippet
 
 snippet stl "Struct with Log" bw
+// $1 ${2:TODO: Description}.
 type $1 struct {
 	$0
 	log zerolog.Logger
@@ -496,20 +525,22 @@ endsnippet
 ## T ##
 
 snippet t "Test" bw
-func Test`!p snip.rv = snip.c or guess_test_name()`$1(t *testing.T) {
+// ${2:Test Description}.
+func Test`!p if not snip.c: snip.rv = guess_test_name()`$1(t *testing.T) {
 	$0
 }
 endsnippet
 
 snippet ta "Test Array" bw
-func Test`!p snip.rv = snip.c or guess_test_name()`$1(t *testing.T) {
+// ${2:Test Description}.
+func Test`!p if not snip.c: snip.rv = guess_test_name()`$1(t *testing.T) {
 	tests := []struct{
 		Description string
-		$2
+		$3
 	}{
 		{
-			Description: "$3"
-			$4
+			Description: "$4"
+			$5
 		},
 	}
 
@@ -533,7 +564,8 @@ $0
 endsnippet
 
 snippet tt "Test with Template" bw
-func Test`!p snip.rv = snip.c or guess_test_name()`$1(t *testing.T) {
+// ${2:Test Description}.
+func Test`!p if not snip.c: snip.rv = guess_test_name()`$1(t *testing.T) {
 	assert := assert.New(t)
 
 	$0
@@ -541,6 +573,7 @@ func Test`!p snip.rv = snip.c or guess_test_name()`$1(t *testing.T) {
 endsnippet
 
 snippet tb "Test Benchmarck" bw
+// ${2:Benchmark Description}.
 func Benchmark$1(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		$0
