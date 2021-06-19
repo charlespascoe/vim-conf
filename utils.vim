@@ -139,10 +139,18 @@ command SyntaxSync syntax sync fromstart
 " This autocommand may cause performance issues
 autocmd BufEnter,InsertLeave * :syntax sync fromstart
 
-fun! Duplicate(type)
+let s:duplicate_count = 1
+
+fun! Duplicate(type = '')
+    if a:type == ''
+        let s:duplicate_count = v:count1
+        set opfunc=Duplicate
+        return "\<Esc>g@"
+    endif
+
     if a:type ==# 'line' || a:type ==# 'V'
-        exec "normal! '[V']y']p"
+        exec "normal! '[V']y']".s:duplicate_count."p"
     endif
 endfun
 
-nmap <silent> gd :set opfunc=Duplicate<CR>g@
+nnoremap <expr> gd Duplicate()
