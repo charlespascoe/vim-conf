@@ -1,4 +1,4 @@
-let s:path_segment_pattern = '[a-zA-Z0-9_\-.]\+'
+let s:path_segment_pattern = '[a-zA-Z0-9:_\-.]\+'
 let s:path_pattern = s:path_segment_pattern.'\(\/'.s:path_segment_pattern.'\)*'
 let s:anchor_pattern = '[a-zA-Z0-9]\+'
 
@@ -20,6 +20,10 @@ set debug="msg"
 
 
 let s:edit_file_extensions = ['.adoc', '.md', '.txt', '.yml']
+
+if !exists('g:bulletnotes_omnicomplete_trailing_brackets')
+    let g:bulletnotes_omnicomplete_trailing_brackets = 1
+endif
 
 fun s:Warning(msg)
     echohl WarningMsg
@@ -103,10 +107,9 @@ fun bulletnotes#InitBuffer()
     imap <silent> <expr> <buffer> <Tab> bulletnotes#IsAtStartOfBullet() ? '<Esc>>ibI<Right><Right>' : (ShouldAutocomplete() ? '<C-z>' : '<Tab>')
     imap <silent> <expr> <buffer> <S-Tab> bulletnotes#IsAtStartOfBullet() ? '<Esc><ibI<Right><Right>' : '<S-Tab>'
 
-    nnoremap <silent> <buffer> <leader>gl "zyi]:call system('open '.shellescape(@z))<CR>
-    nnoremap <silent> <buffer> <leader>gt :Find <C-r><C-a><CR>
-    nnoremap <silent> <buffer> <leader>gf :call bulletnotes#OpenFile(expand('<cWORD>'))<CR>
-    nnoremap <silent> <buffer> <leader>gc :call bulletnotes#ViewContact(substitute(expand('<cWORD>'), '^@', '', ''))<CR>
+    nnoremap <silent> <buffer> <leader>t :Find <C-r><C-a><CR>
+    nnoremap <silent> <buffer> gl :call bulletnotes#OpenFile(expand('<cWORD>'))<CR>
+    nnoremap <silent> <buffer> gC :call bulletnotes#ViewContact(substitute(expand('<cWORD>'), '^@', '', ''))<CR>
 
     nnoremap <silent> <buffer> gc :set operatorfunc=bulletnotes#Wordcount<CR>g@
 
@@ -137,6 +140,7 @@ fun bulletnotes#InitProjectBuffer()
     nmap <buffer> <leader>s <Esc>:Sync<CR>
 
     " TODO: Make this use spelllang and maybe a configurable encoding scheme
+    " TODO: Prepend rather than replace
     setlocal spellfile=spell/en.utf-8.add,~/.vim/spell/en.utf-8.add
 
     " Disable git gutter - it just gets annoying because changes get commited
@@ -391,25 +395,31 @@ fun bulletnotes#IsAtStartOfBullet()
     return strpart(getline('.'), 0, col('.') - 1) =~ '^\s*'.s:bullet_set.' $'
 endfun
 
+fun bulletnotes#BuildPointerRegexp()
+    retur '\[\(:\('.s:anchor_pattern.'\):\|\[\('.s:path_pattern.'\)\]\|\(http.*\)\)\]'
+endfun
 
-fun bulletnotes#ResolvePointer(pointer)
-    let m = matchstr(a:pointer, '&\(:'.s:anchor_pattern.'\|'.s:path_pattern.'\)')
+fun bulletnotes#ResolveLink(pointer)
+    let m = matchlist(a:pointer, '\[\(:\('.s:anchor_pattern.'\):\|\[\('.s:path_pattern.'\)\]\|\(http.*\)\)\]')
 
     if len(m) == 0
         return []
     endif
 
-    if m =~ '^&:'
-        let anchor = m[2:]
+    let anchor = m[2]
+    let path = m[3]
+    " NOTE: path_pattern contains group 4
+    let link = m[5]
 
-        let files = systemlist("ag --vimgrep -G '".'\.bn$'."' -sQ ':".anchor.":'")
+    if anchor != ''
+        let files = systemlist("ag --vimgrep -G '".'\.bn$'."' -s '(?<!\\[):".anchor.":(?!\\])'")
 
         if len(files) == 0
             return []
         endif
 
         if len(files) > 1
-            exec 'Find :'.anchor.':'
+            exec 'FindReg (?<!\[):'.anchor.':(?!\])'
             return [v:none]
         endif
 
@@ -418,15 +428,20 @@ fun bulletnotes#ResolvePointer(pointer)
         return location[1:3]
     endif
 
-    " Remove ampersand
-    let path = m[1:]
+    if path != ''
+        if filereadable(path.'.bn')
+            return [path.'.bn']
+        endif
 
-    if filereadable(path.'.bn')
-        return [path.'.bn']
+        if filereadable(path)
+            return [path]
+        endif
+
+        return []
     endif
 
-    if filereadable(path)
-        return [path]
+    if link != ''
+        return link
     endif
 
     return []
@@ -444,7 +459,12 @@ fun bulletnotes#Wordcount(type)
 endfun
 
 fun bulletnotes#OpenFile(pointer)
-    let location = bulletnotes#ResolvePointer(a:pointer)
+    let location = bulletnotes#ResolveLink(a:pointer)
+
+    if type(location) == v:t_string
+        call system('open '.shellescape(location))
+        return
+    endif
 
     if len(location) == 1
         if location[0] == v:none
@@ -502,7 +522,7 @@ fun bulletnotes#GenerateAnchor()
     while 1
         let id = py3eval('gen_anchor_id('.length.')')
 
-        let location = bulletnotes#ResolvePointer('&:'.id)
+        let location = bulletnotes#ResolveLink('[:'.id.':]')
 
         if len(location) == 0
             return id
@@ -521,7 +541,7 @@ endfun
 fun bulletnotes#InsertAnchor()
     let id = bulletnotes#GenerateAnchor()
 
-    let @" = '&:'.id
+    let @" = '[:'.id.':]'
 
     return ':'.id.':'
 endfun
@@ -598,7 +618,7 @@ fun bulletnotes#CanOmniComplete()
 
     let lstr = strpart(getline('.'), 0, col('.') - 1)
 
-    let metatext = matchstr(lstr, '[#@&][^ ]*$')
+    let metatext = matchstr(lstr, '\(\[[\[:]\|[#@]\)[^ ]*$')
 
     return metatext != ''
 endfun
@@ -613,7 +633,7 @@ fun bulletnotes#Complete(findstart, base)
 
         let lstr = strpart(getline('.'), 0, col('.') - 1)
 
-        let metatext = matchstr(lstr, '[#&@][^ ]*$')
+        let metatext = matchstr(lstr, '\(\[[\[:]\|[#@]\)[^ ]*$')
 
         if metatext == ''
             " Cancel completion
@@ -644,15 +664,52 @@ fun bulletnotes#Complete(findstart, base)
         return tags
     endif
 
-    if type == '&'
-        " Requires shell=bash
-        let files = systemlist('git ls-files | egrep -v "(^|/)\.[^/]+$" | grep -v "^spell/" | grep -v "^snips/"')
-        call map(files, "'&'.substitute(v:val, '.bn$', '', '')")
-        let g:__bn_match = a:base
-        call filter(files, 'bulletnotes#StartsWith(g:__bn_match, v:val)')
-        unlet g:__bn_match
-        call sort(files)
-        return files
+    if type == '['
+        if len(a:base) < 2
+            return []
+        endif
+
+        let link_type = a:base[1]
+
+        if link_type == '['
+            " Requires shell=bash
+            let files = systemlist('git ls-files | egrep -v "(^|/)\.[^/]+$" | grep -v "^spell/" | grep -v "^snips/"')
+
+            if g:bulletnotes_omnicomplete_trailing_brackets
+                call map(files, "'[['.substitute(v:val, '.bn$', '', '').']]'")
+            else
+                " Some plugins will add the closing brackets automatically
+                call map(files, "'[['.substitute(v:val, '.bn$', '', '')")
+            endif
+
+            let g:__bn_match = a:base
+            call filter(files, 'bulletnotes#StartsWith(g:__bn_match, v:val)')
+            unlet g:__bn_match
+            call sort(files)
+            return files
+        endif
+
+        " Does this make sense? It might do if you where to use the correct
+        " menu API that would allow you to put the file name and line number
+        " TODO: Use API to put file name and line number in completion menu
+        if link_type == ':'
+            let anchors = systemlist("ag --no-filename -o '(?<!\\[):[a-zA-Z0-9]+:(?!\\])'")
+
+            if g:bulletnotes_omnicomplete_trailing_brackets
+                call map(anchors, "'['.v:val.']'")
+            else
+                " Some plugins will add the closing brackets automatically
+                call map(anchors, "'['.v:val")
+            endif
+
+            let g:__bn_match = a:base
+            call filter(anchors, 'bulletnotes#StartsWith(g:__bn_match, v:val)')
+            unlet g:__bn_match
+            call sort(anchors)
+            return anchors
+        endif
+
+        return []
     endif
 
     if type == '@'
@@ -877,10 +934,20 @@ endfun
 
 " Remote Sync }}}
 
-fun s:PathToPointer(path)
-    return '&'.substitute(a:path, '\.bn$', '', '')
+fun s:LinkToPath(path)
+    return '[['.substitute(a:path, '\.bn$', '', '').']]'
 endfun
 
+fun s:SedRegexpEscape(path)
+    " Only for use with paths, which already have a limited character set
+    let path = a:path
+    let path = substitute(path, '[', '\\[', 'g')
+    let path = substitute(path, ']', '\\]', 'g')
+    let path = substitute(path, '\.', '\\.', 'g')
+    let path = substitute(path, '/', '\\/', 'g')
+
+    return path
+endfun
 
 fun s:RevertToHead()
     call system('git reset --hard HEAD')
@@ -1081,13 +1148,14 @@ fun bulletnotes#MoveFile(from, to)
         exec 'Bwipeout!' bufnum
     endif
 
-    let from_pointer = s:PathToPointer(from)
-    let to_pointer = s:PathToPointer(to)
+    let from_path = s:LinkToPath(from)
+    let to_path = s:LinkToPath(to)
 
     " TODO: Maybe make this independent of ag?
-    let cmd  = "ag -lQ ".shellescape(from_pointer)
-    let cmd .= " | xargs --no-run-if-empty sed -i -e "
-    let cmd .= "'s|".from_pointer."|".substitute(to_pointer, '&', '\\&', 'g')."|g'"
+    let cmd  = "ag -lQ ".shellescape(from_path)
+    " let cmd .= \" | xargs --no-run-if-empty sed -i -e "
+    let cmd .= " | xargs sed -i -e "
+    let cmd .= "'s|".s:SedRegexpEscape(from_path)."|".s:SedRegexpEscape(to_path)."|g'"
 
     let output = system(cmd)
 

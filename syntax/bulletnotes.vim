@@ -81,25 +81,31 @@ highlight CommentItem ctermfg=117 ctermbg=235 cterm=italic
 
 " Metatext (annotations to text that add meaning, e.g. tags)
 
+let pointerRegexp = bulletnotes#BuildPointerRegexp()
+
 syntax match Tag /#[a-zA-Z0-9_\-]\+/ contains=@NoSpell
-syntax match Pointer /&[a-zA-Z0-9_\-.]\+\(\/[a-zA-Z0-9_\-.]\+\)*/ contains=@NoSpell,PointerMarker
-syntax match PointerMarker /&/ contained
-syntax match AnchorPointer /&:[a-zA-Z0-9]\+/ contains=@NoSpell,AnchorPointerMarker
-syntax match AnchorPointerMarker /&:/ contained
-syntax match Link /\(^\|\s\)\[[^\]]\+\]\(\s\|$\)/ contains=@NoSpell,LinkEnds keepend
-syntax match LinkEnds /\(\[\|\]\)/ contained
+
+exec 'syntax match Link /'.pointerRegexp.'/ contains=@NoSpell'
+" syntax match Pointer /&[a-zA-Z0-9_\-.]\+\(\/[a-zA-Z0-9_\-.]\+\)*/ contains=@NoSpell,PointerMarker
+" syntax match PointerMarker /&/ contained
+" syntax match AnchorPointer /&:[a-zA-Z0-9]\+/ contains=@NoSpell,AnchorPointerMarker
+" syntax match AnchorPointerMarker /&:/ contained
+" syntax match Link /\(^\|\s\)\[[^\]]\+\]\(\s\|$\)/ contains=@NoSpell,LinkEnds keepend
+" syntax match LinkEnds /\(\[\|\]\)/ contained
 syntax match Contact /@[a-zA-Z\-._]\+/ contains=ContactMarker
 syntax match Anchor /:[a-zA-Z0-9]\+:/ contains=@NoSpell,AnchorMarker
 syntax match AnchorMarker /:/ contained
 syntax region Monospace start='{' skip='\\}' end='}' contains=@NoSpell
-syntax cluster Metatext contains=Tag,Pointer,Link,Contact,Anchor,AnchorPointer,Monospace
+" syntax cluster Metatext contains=Tag,Pointer,Link,Contact,Anchor,AnchorPointer,Monospace
+syntax cluster Metatext contains=Anchor,Tag,Link,Contact,Monospace
 syntax match ContactMarker /@/ contained
 
 highlight Tag ctermfg=226 cterm=bold
-highlight Pointer ctermfg=40
-highlight link PointerMarker Pointer
-highlight Link ctermfg=42
-highlight link LinkEnds Link
+" highlight Pointer ctermfg=40
+" highlight link PointerMarker Pointer
+" highlight Link ctermfg=42
+highlight Link ctermfg=40
+" highlight link LinkEnds Link
 highlight Contact cterm=bold ctermfg=39
 highlight link ContactMarker Contact
 highlight link Monospace constant

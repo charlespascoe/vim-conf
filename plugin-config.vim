@@ -32,6 +32,10 @@ let g:airline_symbols.readonly = ''
 let g:airline_symbols.linenr = '☰'
 let g:airline_symbols.maxlinenr = ''
 
+" Bulletnotes
+
+let g:bulletnotes_omnicomplete_trailing_brackets = 0
+
 " delimitMate
 let delimitMate_expand_cr = 1
 
