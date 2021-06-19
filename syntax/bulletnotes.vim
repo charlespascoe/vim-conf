@@ -96,8 +96,9 @@ syntax match Contact /@[a-zA-Z\-._]\+/ contains=ContactMarker
 syntax match Anchor /:[a-zA-Z0-9]\+:/ contains=@NoSpell,AnchorMarker
 syntax match AnchorMarker /:/ contained
 syntax region Monospace start='{' skip='\\}' end='}' contains=@NoSpell
+syntax region HighlightedMonospace start='{{' skip='\\}' end='}}' contains=@NoSpell
 " syntax cluster Metatext contains=Tag,Pointer,Link,Contact,Anchor,AnchorPointer,Monospace
-syntax cluster Metatext contains=Anchor,Tag,Link,Contact,Monospace
+syntax cluster Metatext contains=Anchor,Tag,Link,Contact,Monospace,HighlightedMonospace
 syntax match ContactMarker /@/ contained
 
 highlight Tag ctermfg=226 cterm=bold
@@ -109,6 +110,8 @@ highlight Link ctermfg=40
 highlight Contact cterm=bold ctermfg=39
 highlight link ContactMarker Contact
 highlight link Monospace constant
+highlight link HighlightedMonospace Monospace
+highlight HighlightedMonospace cterm=bold ctermfg=196
 
 highlight Anchor ctermfg=0 ctermbg=24
 highlight link AnchorMarker Anchor

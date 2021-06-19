@@ -4,9 +4,12 @@ import re
 emphasis_regex = re.compile('`([^`]+)`')
 tag_regex = re.compile(r'#([a-zA-Z0-9_\-]+)')
 contact_regex = re.compile(r'(?<!\w)@([a-zA-Z0-9_\-.]+)')
-link_regex = re.compile(r'(?<!\w)\[([^"\]]+)\](?!\w)')
+link_regex = re.compile(r'(?<!\w)\[(http[^"\]]+)\](?!\w)')
 ref_regex = re.compile(r'&amp;([a-zA-Z0-9_\-.:]+(/[a-zA-Z0-9_\-.:]+)*)')
 monospace_regex = re.compile(r'\{((\\\}|\\\{|[^}])*)\}')
+highlighted_monospace_regex = re.compile(r'\{\{((\\\}|\\\{|[^}])*)\}\}')
+anchor_regex = re.compile(r':([a-zA-Z0-9]+):')
+anchor_pointer_regex = re.compile(r'\[:([a-zA-Z0-9]+):\]')
 
 
 def escape_html(text):
@@ -152,9 +155,15 @@ class TextFormatter:
             lambda s : tag_regex.sub(tag_format, s),
             lambda s : contact_regex.sub(contact_format, s),
             lambda s : link_regex.sub(r'<a href="\1" target="_blank">\1</a>', s),
+            lambda s : anchor_pointer_regex.sub(r'<a href="#\1">\1</a>', s),
+            lambda s : anchor_regex.sub(r'<span id="\1" style="color: teal;">:\1:</span>', s),
             lambda s : ref_regex.sub(r'<span style="color: red">\1</span>', s),
-            lambda s : monospace_regex
+            lambda s : highlighted_monospace_regex
                 .sub(r'<span style="font-family: monospace; color: crimson;">\1</span>', s)
+                .replace('\\{', '{')
+                .replace('\\}', '}'),
+            lambda s : monospace_regex
+                .sub(r'<span style="font-family: monospace;">\1</span>', s)
                 .replace('\\{', '{')
                 .replace('\\}', '}'),
         ])
