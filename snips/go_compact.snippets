@@ -6,6 +6,7 @@ struct_re = re.compile(r"^type (\w+) struct")
 method_re = re.compile(r"^func \(([^)]+)\)\s+(\w+)\(")
 func_re = re.compile(r"^func (\w+)\(")
 test_re = re.compile(r"^func Test([^)]*)\(")
+import_re = re.compile(r'^import \($')
 
 
 def preceeding_lines():
@@ -118,6 +119,47 @@ def previous_test_name():
 
 	return ''
 
+# Returns the zero-based index of the first line that matches the regexp
+def find_line(regexp):
+	for i in range(len(vim.current.window.buffer)):
+		if regexp.match(vim.current.window.buffer[i]):
+			return i
+
+	return None
+
+def add_import(prefix, snip, *imports):
+	if not snip.buffer[snip.line][:snip.column+1].endswith(prefix):
+		return False
+
+	# imports = [(f'"{pkg}"' if '"' not in pkg else pkg) for pkg in imports ]
+	imports = list(imports)
+
+	index = find_line(import_re)
+
+	if index is None:
+		return True
+
+	for i in range(index + 1, len(vim.current.window.buffer)):
+		line = vim.current.window.buffer[i].strip()
+
+		for imp_idx in range(len(imports)):
+			if line == imports[imp_idx]:
+				imports.pop(imp_idx)
+
+		if line == ')':
+			if len(imports) > 0:
+				for imp in imports:
+					# End of imports - not found, so just add it
+					parts = imp.split(' ')
+
+					if len(parts) > 1:
+						alias, path = parts[0], parts[1]
+						vim.command(f'GoImportAs {alias} {path}')
+					else:
+						vim.command(f'GoImport {imp}')
+
+			return True
+
 endglobal
 
 ## A ##
@@ -179,11 +221,11 @@ endsnippet
 
 ## E ##
 
-snippet 'ef' "Errorf" r
+snippet 'ef' "Errorf" "add_import('ef', snip, 'fmt')" re
 fmt.Errorf("$1", $2)
 endsnippet
 
-snippet 'erf' "Errorf with error template" r
+snippet 'erf' "Errorf with error template" "add_import('erf', snip, 'fmt')" re
 fmt.Errorf("$1: %s",$2 err)
 endsnippet
 
@@ -223,7 +265,7 @@ func New$1($2) *$1 {
 }
 endsnippet
 
-snippet fcl "Function - Constructor with Log" bw
+snippet fcl "Function - Constructor with Log" "add_import('fcl', snip, 'github.com/rs/zerolog/log')" bwe
 func New$1($2) *$1 {
 	return &${1:`!p snip.rv = find_type() or 'Type'`} {
 		$0
@@ -304,7 +346,7 @@ if err != nil {
 }
 endsnippet
 
-snippet ierr "If error, return" bw
+snippet ierr "If error, return" "add_import('ierr', snip, 'fmt')" bwe
 if err != nil {
 	return $1fmt.Errorf("$2: %s",$3 err)
 }
@@ -316,19 +358,19 @@ if ${VISUAL:/err :?= .*//}$1err := ${VISUAL:/^.*err :?= //}$2; err != nil {
 }
 endsnippet
 
-snippet iserr "If short error, return" bw
+snippet iserr "If short error, return" "add_import('iserr', snip, 'fmt')" bwe
 if ${VISUAL:/err :?= .*//}$1err := ${VISUAL:/^.*err :?= //}$2; err != nil {
 	return $3fmt.Errorf("$4: %s",$5 err)
 }
 endsnippet
 
-snippet isju "If Short JSON Unmarshal" bw
+snippet isju "If Short JSON Unmarshal" "add_import('isju', snip, 'encoding/json')" bwe
 if err := json.Unmarshal(${1:data}, $2); err != nil {
 	$0
 }
 endsnippet
 
-snippet isjur "If Short JSON Unmarshal, return" bw
+snippet isjur "If Short JSON Unmarshal, return" "add_import('isjur', snip, 'encoding/json', 'fmt')" bwe
 if err := json.Unmarshal(${1:data}, $2); err != nil {
 	return $3fmt.Errorf("$4: %s",$5 err)
 }
@@ -343,7 +385,7 @@ endsnippet
 
 snippet in "Interface" bw
 // $1 ${2:TODO: Description}.
-type $1 interface {
+type ${1: } interface {
 	$0
 }
 endsnippet
@@ -448,7 +490,7 @@ endsnippet
 
 snippet m "Method" bw
 // $2 ${5:TODO: Description}.
-func (${1:`!p snip.rv = find_method_type()`}) $2($3)$4 {
+func (${1:`!p snip.rv = find_method_type()`}) ${2: }($3)$4 {
 	$0
 }
 endsnippet
@@ -456,14 +498,14 @@ endsnippet
 # TODO: Improve forced pointer handling
 snippet m* "Method" bw
 // $2 ${5:TODO: Description}.
-func (${1:`!p snip.rv = find_method_type(True)`}) $2($3)$4 {
+func (${1:`!p snip.rv = find_method_type(True)`}) ${2: }($3)$4 {
 	$0
 }
 endsnippet
 
-snippet ms "Method - String" bw
+snippet ms "Method - String" "add_import('ms', snip, 'fmt')" bwe
 func (${1:`!p snip.rv = find_method_type()`}) String() string {
-	return fmt.Sprintf("$1", $0)
+	return fmt.Sprintf("$2", $0)
 }
 endsnippet
 
@@ -473,7 +515,7 @@ func (${1:`!p snip.rv = find_method_type()`}) Error() string {
 }
 endsnippet
 
-snippet mv "Method - Validation" bw
+snippet mv "Method - Validation" "add_import('mv', snip, 'v github.com/go-ozzo/ozzo-validation')" bwe
 func (${1:`!p snip.rv = find_method_type()`}) Validate() error {
 	return v.ValidateStruct(`!p snip.rv = t[1].split(' ')[0]`,
 		v.Field(&`!p snip.rv = t[1].split(' ')[0]`.$2),$0
@@ -507,16 +549,20 @@ endsnippet
 
 ## S ##
 
+snippet 'spf' "Sprintf" "add_import('spf', snip, 'fmt')" re
+fmt.Sprintf("$1", $0)
+endsnippet
+
 snippet st "Struct" bw
 // $1 ${2:TODO: Description}.
-type $1 struct {
+type ${1: } struct {
 	$0
 }
 endsnippet
 
-snippet stl "Struct with Log" bw
+snippet stl "Struct with Log" "add_import('stl', snip, 'github.com/rs/zerolog')" bwe
 // $1 ${2:TODO: Description}.
-type $1 struct {
+type ${1: } struct {
 	$0
 	log zerolog.Logger
 }
