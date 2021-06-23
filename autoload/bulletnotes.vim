@@ -1,6 +1,8 @@
-let s:path_segment_pattern = '[a-zA-Z0-9:_\-.]\+'
+let s:path_segment_pattern = '[a-zA-Z0-9: _\-.]\+'
 let s:path_pattern = s:path_segment_pattern.'\(\/'.s:path_segment_pattern.'\)*'
 let s:anchor_pattern = '[a-zA-Z0-9]\+'
+let s:link_pattern = 'http.*'
+let s:jira_ref_pattern = '[A-Z]\+-[0-9]\+'
 
 let s:bullets = ['-', '*', '+', '?', '<', '>', '#']
 
@@ -396,11 +398,11 @@ fun bulletnotes#IsAtStartOfBullet()
 endfun
 
 fun bulletnotes#BuildPointerRegexp()
-    retur '\[\(:\('.s:anchor_pattern.'\):\|\[\('.s:path_pattern.'\)\]\|\(http.*\)\)\]'
+    return '\[\(:\('.s:anchor_pattern.'\):\|\[\('.s:path_pattern.'\)\]\|\('.s:link_pattern.'\)\|\('.s:jira_ref_pattern.'\)\)\]'
 endfun
 
 fun bulletnotes#ResolveLink(pointer)
-    let m = matchlist(a:pointer, '\[\(:\('.s:anchor_pattern.'\):\|\[\('.s:path_pattern.'\)\]\|\(http.*\)\)\]')
+    let m = matchlist(a:pointer, bulletnotes#BuildPointerRegexp())
 
     if len(m) == 0
         return []
@@ -410,6 +412,7 @@ fun bulletnotes#ResolveLink(pointer)
     let path = m[3]
     " NOTE: path_pattern contains group 4
     let link = m[5]
+    let jira_ref = m[6]
 
     if anchor != ''
         let files = systemlist("ag --vimgrep -G '".'\.bn$'."' -s '(?<!\\[):".anchor.":(?!\\])'")
@@ -442,6 +445,10 @@ fun bulletnotes#ResolveLink(pointer)
 
     if link != ''
         return link
+    endif
+
+    if jira_ref != ''
+        return $JIRA_BASE_PATH.'/browse/'.jira_ref
     endif
 
     return []
@@ -580,6 +587,7 @@ fun bulletnotes#NewInboxItem(...)
 
         if !filereadable(path)
             " File doesn't exist - add template text
+            set modifiable
             set paste
             exec "normal i## ".a:1." ##\<CR>\<CR>- "
             set nopaste
