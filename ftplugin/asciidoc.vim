@@ -1,4 +1,5 @@
 setlocal textwidth=80
+setlocal spell
 
 " TODO: Fix this momumental hack
 fun! FixFormatOptions(timer)

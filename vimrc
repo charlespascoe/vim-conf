@@ -9,6 +9,11 @@ let mapleader=" "
 
 packadd! matchit
 
+" Set global formatting options, primarily for comments
+set formatoptions=crqjn
+set textwidth=80
+set formatlistpat=^\\s*\\d\\+[\\]:.)}\\t\ ]\\s*\\\|^\\s*-\\s*
+
 " Enable lazy redraw (waits until mappings/macros have finished before
 " redrawing, speeds up macros and prevents flashing)
 set lazyredraw
