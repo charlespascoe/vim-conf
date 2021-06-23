@@ -34,7 +34,7 @@ highlight NoteBullet ctermfg=220 cterm=bold
 " Task Bullets
 
 syntax match TaskBullet /^\(\s\{4\}\)*\*/ contained
-syntax region Task start=/^\(\s\{4\}\)*\*\s\+/hs=e+1 end=/^\s*$\|^\(\s\{4\}\)*[-*+?<>#]/me=s-1 contains=TaskBullet,LeadingWhitespace,@Metatext,@TextStyle
+syntax region Task start=/^\(\s\{4\}\)*\*\s\+/hs=e+1 end=/^\s*$\|^\(\s\{4\}\)*[-*+?<>#]/me=s-1 contains=TaskBullet,LeadingWhitespace,@Metatext
 
 highlight TaskBullet ctermfg=70 cterm=bold
 highlight Task ctermfg=84
@@ -42,7 +42,7 @@ highlight Task ctermfg=84
 " Processed Tasks
 
 syntax match ProcessedTaskBullet /^\(\s\{4\}\)*+/ contained
-syntax region ProcessedTask start=/^\(\s\{4\}\)*+\s\+/hs=e+1 end=/^\s*$\|^\(\s\{4\}\)*[-*+?<>#]/me=s-1 contains=ProcessedTaskBullet,LeadingWhitespace,@Metatext,@TextStyle
+syntax region ProcessedTask start=/^\(\s\{4\}\)*+\s\+/hs=e+1 end=/^\s*$\|^\(\s\{4\}\)*[-*+?<>#]/me=s-1 contains=ProcessedTaskBullet,LeadingWhitespace,@Metatext
 
 "highlight ProcessedTaskBullet ctermfg=25 cterm=bold
 highlight ProcessedTaskBullet ctermfg=70 cterm=bold
@@ -51,7 +51,7 @@ highlight ProcessedTask ctermfg=243
 " Question Bullets
 
 syntax match QuestionBullet /^\(\s\{4\}\)*?/ contained
-syntax region Question start=/^\(\s\{4\}\)*?\s\+/hs=e+1 end=/^\s*$\|^\(\s\{4\}\)*[-*+?<>#]/me=s-1 contains=QuestionBullet,LeadingWhitespace,@Metatext,@TextStyle
+syntax region Question start=/^\(\s\{4\}\)*?\s\+/hs=e+1 end=/^\s*$\|^\(\s\{4\}\)*[-*+?<>#]/me=s-1 contains=QuestionBullet,LeadingWhitespace,@Metatext
 
 highlight QuestionBullet ctermfg=196 cterm=bold
 highlight Question ctermfg=214
@@ -59,7 +59,7 @@ highlight Question ctermfg=214
 " Answered Question Bullets
 
 syntax match AnsweredQuestionBullet /^\(\s\{4\}\)*</ contained
-syntax region AnsweredQuestion start=/^\(\s\{4\}\)*<\s\+/hs=e+1 end=/^\s*$\|^\(\s\{4\}\)*[-*+?<>#]/me=s-1 contains=AnsweredQuestionBullet,LeadingWhitespace,@Metatext,@TextStyle
+syntax region AnsweredQuestion start=/^\(\s\{4\}\)*<\s\+/hs=e+1 end=/^\s*$\|^\(\s\{4\}\)*[-*+?<>#]/me=s-1 contains=AnsweredQuestionBullet,LeadingWhitespace,@Metatext
 
 "highlight AnsweredQuestionBullet ctermfg=25 cterm=bold
 highlight AnsweredQuestionBullet ctermfg=196 cterm=bold
@@ -67,14 +67,14 @@ highlight AnsweredQuestion cterm=bold,italic
 
 " Answer Bullets
 syntax match AnswerBullet /^\(\s\{4\}\)*>/ contained
-syntax region Answer start=/^\(\s\{4\}\)*>\s\+/hs=e+1 end=/^\s*$\|^\(\s\{4\}\)*[-*+?<>#]/me=s-1 contains=AnswerBullet,LeadingWhitespace,@Metatext,@TextStyle
+syntax region Answer start=/^\(\s\{4\}\)*>\s\+/hs=e+1 end=/^\s*$\|^\(\s\{4\}\)*[-*+?<>#]/me=s-1 contains=AnswerBullet,LeadingWhitespace,@Metatext
 
 highlight AnswerBullet ctermfg=70 cterm=bold
 highlight Answer cterm=bold
 
 " Comment Bullets
 syntax match CommentBullet /^\(\s\{4\}\)*#/ contained
-syntax region CommentItem start=/^\(\s\{4\}\)*#\s\+/hs=e+1 end=/^\s*$\|^\(\s\{4\}\)*[-*+?<>#]/me=s-1 contains=CommentBullet,LeadingWhitespace,@Metatext,@TextStyle
+syntax region CommentItem start=/^\(\s\{4\}\)*#\s\+/hs=e+1 end=/^\s*$\|^\(\s\{4\}\)*[-*+?<>#]/me=s-1 contains=CommentBullet,LeadingWhitespace,@Metatext
 
 highlight CommentBullet ctermfg=39 cterm=bold
 highlight CommentItem ctermfg=117 ctermbg=235 cterm=italic
@@ -97,6 +97,8 @@ syntax match Anchor /:[a-zA-Z0-9]\+:/ contains=@NoSpell,AnchorMarker
 syntax match AnchorMarker /:/ contained
 syntax region Monospace start='{' skip='\\}' end='}' contains=@NoSpell
 syntax region HighlightedMonospace start='{{' skip='\\}' end='}}' contains=@NoSpell
+syntax region Highlight start='`' end='`' contains=HighlightMark,@Metatext keepend
+syntax match HighlightMark /`/ contained
 " syntax cluster Metatext contains=Tag,Pointer,Link,Contact,Anchor,AnchorPointer,Monospace
 syntax cluster Metatext contains=Anchor,Tag,Link,Contact,Monospace,HighlightedMonospace
 syntax match ContactMarker /@/ contained
@@ -126,11 +128,6 @@ highlight FieldName ctermfg=39
 highlight link Field Link
 
 " Text Styles
-
-syntax region Highlight start='`' end='`' contains=HighlightMark keepend
-syntax match HighlightMark /`/ contained
-" Using a cluster makes it easier to add new styles in future (or add user-defined styles)
-syntax cluster TextStyle contains=Highlight
 
 highlight Highlight ctermfg=51 cterm=bold
 highlight link HighlightMark Highlight
