@@ -114,16 +114,17 @@ submodule:
 	git submodule update --init --recursive
 endsnippet
 
-snippet docker
+snippet docker "Docker" bw
 .PHONY: docker
 ## docker: Builds a docker image; set TAGS variable to the space-separated list of tags
 docker: linux
-	@mv $BINARY_LINUX docker/; \
+	@mv $(BINARY_NAME)-linux build/package/$(BINARY_NAME); \
 	tags=($${TAGS:-snapshot}); \
 	opts=""; \
 	for t in $${tags[@]}; do \
-		opts="$$opts -t $BINARY_NAME:$$t"; \
+		opts="$$opts -t $(BINARY_NAME):$$t"; \
 	done; \
-	echo docker build docker/ $$opts; \
-	docker build docker/ $$opts
+	echo docker build build/package/ $$opts; \
+	docker build build/package/ $$opts; \
+	rm build/package/$(BINARY_NAME)
 endsnippet
