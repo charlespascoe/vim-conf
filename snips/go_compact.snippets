@@ -392,11 +392,11 @@ endsnippet
 
 ## J ##
 
-snippet jm "JSON Marshal" bw
+snippet jm "JSON Marshal" "add_import('jm', snip, 'encoding/json')" bwe
 ${1:data}, err := json.Marshal(${2:${VISUAL}})
 endsnippet
 
-snippet ju "JSON Unmarshal" bw
+snippet ju "JSON Unmarshal" "add_import('ju', snip, 'encoding/json')" bwe
 err := json.Unmarshal(${1:data}, $2)
 endsnippet
 
