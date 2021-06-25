@@ -27,7 +27,5 @@ command! Q wqa
 
 command! CloseAll :bufdo bdelete
 
-" Make it easier to close multiple buffers
-
 " Always open quickfix at the bottom (full width)
 autocmd filetype qf wincmd J
