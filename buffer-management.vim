@@ -1,9 +1,7 @@
 set hidden
 
-nmap <silent> <leader>bb <Esc>:b#<CR>zz
-nmap <silent> <leader>bq <Esc>:call CloseBuffer()<CR>
-nmap <leader>bd <Esc>:ls<cr>:bd<space>
-nmap <silent> <leader>bw <Esc>:w<CR>:call CloseBuffer()<CR>
+nmap <silent> <leader>d <Esc>:Bdelete<CR>
+nmap <silent> <leader><BS> <Esc>:q<CR>
 nmap <silent> <leader><space> <Esc>:b#<CR>zz
 
 
@@ -19,11 +17,8 @@ endf
 " useful for plugins (like vim-go) that do stuff like this on change
 inoremap <C-s> <Esc>:keepjumps wa<CR>
 nnoremap <C-s> <Esc>:keepjumps wa<CR>
-nnoremap <C-q> <Esc>:q<CR>
-
-nnoremap <silent> ZX <Esc>:wqa<CR>
-
-command! Q wqa
+nnoremap <C-c> <Esc>:wqa<CR>
+inoremap <C-c> <Esc>:wqa<CR>
 
 command! CloseAll :bufdo bdelete
 

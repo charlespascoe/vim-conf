@@ -51,8 +51,8 @@ nmap <silent> <leader>ut <Esc>:UndotreeToggle<CR>
 let g:tsuquyomi_single_quote_import = 1
 
 " UtiliSnips
-let g:UltiSnipsExpandTrigger = "<c-y>"
-let g:UltiSnipsJumpForwardTrigger = "<c-y>"
+let g:UltiSnipsExpandTrigger = "<c-l>"
+let g:UltiSnipsJumpForwardTrigger = "<c-l>"
 let g:UltiSnipsSnippetsDir = "~/.vim/snips/"
 let g:UltiSnipsSnippetDirectories = ["snips"]
 nmap <leader>ue <Esc>:UltiSnipsEdit<CR>
