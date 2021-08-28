@@ -57,6 +57,23 @@ let g:UltiSnipsSnippetsDir = "~/.vim/snips/"
 let g:UltiSnipsSnippetDirectories = ["snips"]
 nmap <leader>ue <Esc>:UltiSnipsEdit<CR>
 
+fun! VisualExpandSnippet(type = '')
+    if a:type == ''
+        set opfunc=VisualExpandSnippet
+        return 'g@'
+    endif
+
+    if a:type == 'char'
+        call feedkeys("`[v`]\<C-l>")
+    elseif a:type == 'line'
+        call feedkeys("'[V']\<C-l>")
+    else
+        echom "Unknown type: ".a:type
+    endif
+endfun
+
+nmap <expr> gk VisualExpandSnippet()
+
 " Vim's netrw
 let g:netrw_ftp_cmd="ftp -p"   " passive mode by default
 
