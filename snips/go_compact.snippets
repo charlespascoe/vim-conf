@@ -8,6 +8,24 @@ func_re = re.compile(r"^func (\w+)\(")
 test_re = re.compile(r"^func Test([^)]*)\(")
 import_re = re.compile(r'^import \($')
 
+convert_type_map = {
+	'i':   'int',
+	'i1':  'int16',
+	'i3':  'int32',
+	'i6':  'int64',
+	'ui1': 'uint16',
+	'ui3': 'uint32',
+	'ui6': 'uint64',
+
+	's': 'string',
+
+	'f': 'float',
+	'f3': 'float32',
+	'f6': 'float64',
+
+	'b': 'byte',
+}
+
 
 def preceeding_lines():
 	l = vim.current.window.cursor[0] - 2
@@ -22,20 +40,27 @@ def find_method_type(pointer=False):
 		match = method_re.match(line)
 
 		if match:
-			return match[1]
+			rec_name, _, rec_type = match[1].partition(' ')
+
+			if pointer and '*' not in rec_type:
+				rec_type = '*' + rec_type
+
+			return (rec_name, rec_type)
 
 		match = type_re.match(line)
 
 		if match:
 			name = match[1]
-			type_name = name
+			rec_type = name
 
-			if pointer and not type_name.startswith('*'):
-				type_name = '*' + type_name
+			if pointer:
+				rec_type = '*' + rec_type
 
-			return (name[0] + re.sub('[a-z]', '', name[1:])).lower() + ' ' + type_name
+			rec_name = (name[0] + re.sub('[a-z]', '', name[1:])).lower()
 
-	return ''
+			return (rec_name, rec_type)
+
+	return ('', 'nil')
 
 
 def find_type():
@@ -160,6 +185,25 @@ def add_import(prefix, snip, *imports):
 
 			return True
 
+# ends_with_non_letter = re.compile(r'[^a-zA-Z]$')
+non_alphanum_underscore = re.compile(r'[^a-zA-Z0-9_]')
+
+def capitalise(s, remove=None):
+	cap = True
+
+	for i in range(len(s)):
+		if s[i].isalpha():
+			if cap:
+				s = s[:i] + s[i].upper() + s[i+1:]
+			cap = False
+		else:
+			cap = True
+
+	if remove is not None:
+		s = remove.sub('', s)
+
+	return s
+
 endglobal
 
 ## A ##
@@ -172,8 +216,16 @@ snippet Ae "Assert Equal" bw
 assert.Equal(${1:expected}, ${2:actual})
 endsnippet
 
+snippet Af "Assert False" bw
+assert.False(${1:actual})
+endsnippet
+
 snippet Aem "Assert Equal with Message" bw
 assert.Equal(${1:expected}, ${2:actual}, "${3:message}")
+endsnippet
+
+snippet Al "Assert Length" bw
+assert.Len(${1:result}, ${2:length})
 endsnippet
 
 snippet Ane "Assert Not Equal" bw
@@ -208,6 +260,10 @@ snippet Annm "Assert Not Nil with Message" bw
 assert.NotNil(${1:value}, "${2:message}")
 endsnippet
 
+snippet At "Assert True" bw
+assert.True(${1:actual})
+endsnippet
+
 ## C ##
 
 snippet c "Channel" bw
@@ -219,13 +275,28 @@ $1 := make(chan $2)
 defer close($1)
 endsnippet
 
+snippet '\bc(\[\])?(u?i[136]?|f[36]?|s|b)\b' "Convert to Type" r
+`!p snip.rv = match.group(1) or ''``!p snip.rv = convert_type_map[match.group(2)]`(${VISUAL}$1)
+endsnippet
+
+snippet '\bc\?\b' "Convert to Arbitrary Type" r
+$1(${VISUAL}$2)
+endsnippet
+
+## D ##
+
+snippet dc "Done Channel" bw
+done := make(chan struct{})
+defer close(done)
+endsnippet
+
 ## E ##
 
-snippet 'ef' "Errorf" "add_import('ef', snip, 'fmt')" re
+snippet 'Ef' "Errorf" "add_import('Ef', snip, 'fmt')" re
 fmt.Errorf("$1", $2)
 endsnippet
 
-snippet 'erf' "Errorf with error template" "add_import('erf', snip, 'fmt')" re
+snippet 'Eft' "Errorf with error template" "add_import('Eft', snip, 'fmt')" re
 fmt.Errorf("$1: %s",$2 err)
 endsnippet
 
@@ -259,7 +330,7 @@ endsnippet
 
 snippet fc "Function - Constructor" bw
 func New$1($2) *$1 {
-	return &${1:`!p snip.rv = find_type() or 'Type'`} {
+	return &${1:`!p snip.rv = find_type() or 'Type'`}{
 		$0
 	}
 }
@@ -267,7 +338,7 @@ endsnippet
 
 snippet fcl "Function - Constructor with Log" "add_import('fcl', snip, 'github.com/rs/zerolog/log')" bwe
 func New$1($2) *$1 {
-	return &${1:`!p snip.rv = find_type() or 'Type'`} {
+	return &${1:`!p snip.rv = find_type() or 'Type'`}{
 		$0
 		log: log.With().
 			Str("cls", "$1").
@@ -326,6 +397,18 @@ if $1 {
 }
 endsnippet
 
+snippet in "If nil" bw
+if $1 == nil {
+	$0
+}
+endsnippet
+
+snippet inn "If not nil" bw
+if $1 != nil {
+	$0
+}
+endsnippet
+
 snippet is "If short" bw
 if $1 := $2; $3 {
 	$0
@@ -340,26 +423,26 @@ if $1 := $2; $3 {
 }
 endsnippet
 
-snippet ier "If error" bw
+snippet iE "If error" bw
 if err != nil {
 	$0
 }
 endsnippet
 
-snippet ierr "If error, return" "add_import('ierr', snip, 'fmt')" bwe
+snippet iEr "If error, return" "add_import('iEr', snip, 'fmt')" bwe
 if err != nil {
 	return $1fmt.Errorf("$2: %s",$3 err)
 }
 endsnippet
 
-snippet iser "If short error" bw
-if ${VISUAL:/err :?= .*//}$1err := ${VISUAL:/^.*err :?= //}$2; err != nil {
+snippet isE "If short error" bw
+if $1err := ${VISUAL:/^.*err :?= //}$2; err != nil {
 	$0
 }
 endsnippet
 
-snippet iserr "If short error, return" "add_import('iserr', snip, 'fmt')" bwe
-if ${VISUAL:/err :?= .*//}$1err := ${VISUAL:/^.*err :?= //}$2; err != nil {
+snippet isEr "If short error, return" "add_import('isEr', snip, 'fmt')" bwe
+if $1err := ${VISUAL:/^.*err :?= //}$2; err != nil {
 	return $3fmt.Errorf("$4: %s",$5 err)
 }
 endsnippet
@@ -376,6 +459,37 @@ if err := json.Unmarshal(${1:data}, $2); err != nil {
 }
 endsnippet
 
+snippet isv "If Short Validate" bw
+if err := $1.Validate(); err != nil {
+	$0
+}
+endsnippet
+
+snippet isvr "If Short Validate, return" bw
+if err := $1.Validate(); err != nil {
+	return $3fmt.Errorf("$4: %s",$5 err)
+}
+endsnippet
+
+snippet ilz "If Length Zero" bw
+if len(${1: }) == 0 {
+	$0
+}
+endsnippet
+
+snippet ilze "If Length Zero Else" bw
+if len(${1: }) == 0 {
+	$0
+} else {
+	``
+}
+endsnippet
+
+snippet ilnz "If Length Not Zero" bw
+if len(${1: }) > 0 {
+	$0
+}
+endsnippet
 
 snippet im "import" bw
 import (
@@ -383,7 +497,7 @@ import (
 )
 endsnippet
 
-snippet in "Interface" bw
+snippet int "Interface" bw
 // $1 ${2:TODO: Description}.
 type ${1: } interface {
 	$0
@@ -466,15 +580,22 @@ snippet lff "Log Fatal Format" bw
 	Msgf("$1", $2)
 endsnippet
 
-snippet lp "Log Panic" bw
+snippet lp "Log Panic" "add_import('lp', snip, 'fmt')" bwe
 `!p snip.rv = guess_log_var()`.Error().
 	Str("func", "`!p snip.rv = get_function_name()`").
-	Msgf(
-		"$1: %s\n%s",
-		r,
-		string(debug.Stack()),
-	)
+	Stack().
+	Err(fmt.Errorf("%s", r)).
+	Msg("A panic occurred$1")
 endsnippet
+
+snippet lpf "Log Panic Format" "add_import('lpf', snip, 'fmt')" bwe
+`!p snip.rv = guess_log_var()`.Error().
+	Str("func", "`!p snip.rv = get_function_name()`").
+	Stack().
+	Err(fmt.Errorf("%s", r)).
+	Msgf("A panic occurred$1", $2)
+endsnippet
+
 
 snippet L "Lock" bw
 $1.Lock()
@@ -490,7 +611,7 @@ endsnippet
 
 snippet m "Method" bw
 // $2 ${5:TODO: Description}.
-func (${1:`!p snip.rv = find_method_type()`}) ${2: }($3)$4 {
+func (${1:`!p snip.rv = snip.c or find_method_type()[0]`} `!p snip.rv = snip.c or find_method_type()[1]`) ${2: }($3)$4 {
 	$0
 }
 endsnippet
@@ -498,25 +619,56 @@ endsnippet
 # TODO: Improve forced pointer handling
 snippet m* "Method" bw
 // $2 ${5:TODO: Description}.
-func (${1:`!p snip.rv = find_method_type(True)`}) ${2: }($3)$4 {
+func (${1:`!p snip.rv = snip.c or find_method_type(True)[0]`} `!p snip.rv = snip.c or find_method_type(True)[1]`) ${2: }($3)$4 {
+	$0
+}
+endsnippet
+
+snippet mmj "Method - MarshalJSON" bw
+func (${1:`!p snip.rv = snip.c or find_method_type()[0]`} `!p snip.rv = snip.c or find_method_type()[1]`) MarshalJSON() ([]byte, error) {
+	$0
+}
+endsnippet
+
+snippet mmy "Method - MarshalJSON" bw
+func (${1:`!p snip.rv = snip.c or find_method_type()[0]`} `!p snip.rv = snip.c or find_method_type()[1]`) MarshalYAML() (interface{}, error) {
+	$0
+}
+endsnippet
+
+snippet muj "Method - UnmarshalJSON" bw
+func (${1:`!p snip.rv = snip.c or find_method_type(True)[0]`} `!p snip.rv = snip.c or find_method_type(True)[1]`) UnmarshalJSON(data []byte) error {
+	$0
+}
+endsnippet
+
+snippet muy "Method - UnmarshalYAML" "add_import('muy', snip, 'fmt')" bwe
+func (${1:`!p snip.rv = snip.c or find_method_type(True)[0]`} `!p snip.rv = snip.c or find_method_type(True)[1]`) UnmarshalYAML(unmarshal func(interface{}) error) error {
+	var ${2:val} ${3:interface{}}
+
+	if err := unmarshal(&$2); err != nil {
+		return fmt.Errorf("invalid YAML: %s", err)
+	}
+
 	$0
 }
 endsnippet
 
 snippet ms "Method - String" "add_import('ms', snip, 'fmt')" bwe
-func (${1:`!p snip.rv = find_method_type()`}) String() string {
+func (${1:`!p snip.rv = snip.c or find_method_type()[0]`} `!p snip.rv = snip.c or find_method_type()[1]`) String() string {
 	return fmt.Sprintf("$2", $0)
 }
 endsnippet
 
 snippet mE "Method - Error" bw
-func (${1:`!p snip.rv = find_method_type()`}) Error() string {
+func (${1:`!p snip.rv = snip.c or find_method_type()[0]`} `!p snip.rv = snip.c or find_method_type()[1]`) Error() string {
 	return $0
 }
 endsnippet
 
 snippet mv "Method - Validation" "add_import('mv', snip, 'v github.com/go-ozzo/ozzo-validation')" bwe
-func (${1:`!p snip.rv = find_method_type()`}) Validate() error {
+// Validate returns an error if any of the fields are invalid.
+func (${1:`!p snip.rv = snip.c or find_method_type(True)[0]`} `!p snip.rv = snip.c or find_method_type(True)[1]`) Validate() error {
 	return v.ValidateStruct(`!p snip.rv = t[1].split(' ')[0]`,
 		v.Field(&`!p snip.rv = t[1].split(' ')[0]`.$2),$0
 	)
@@ -553,6 +705,12 @@ snippet 'spf' "Sprintf" "add_import('spf', snip, 'fmt')" re
 fmt.Sprintf("$1", $0)
 endsnippet
 
+snippet ss "Sort Slice" "add_import('ss', snip, 'sort')" bwe
+sort.Slice($1, func(i, j int) bool {
+	return $1[i]$2 < $1[j]$2
+})
+endsnippet
+
 snippet st "Struct" bw
 // $1 ${2:TODO: Description}.
 type ${1: } struct {
@@ -570,15 +728,15 @@ endsnippet
 
 ## T ##
 
+#// ${2:Test Description}.
 snippet t "Test" bw
-// ${2:Test Description}.
 func Test`!p if not snip.c: snip.rv = guess_test_name()`$1(t *testing.T) {
 	$0
 }
 endsnippet
 
-snippet ta "Test Array" bw
-// ${2:Test Description}.
+#// ${2:Test Description}.
+snippet ta "Test Array" "add_import('ta', snip, 'fmt', 'testing', 'github.com/stretchr/testify/assert')" bwe
 func Test`!p if not snip.c: snip.rv = guess_test_name()`$1(t *testing.T) {
 	tests := []struct{
 		Description string
@@ -591,7 +749,7 @@ func Test`!p if not snip.c: snip.rv = guess_test_name()`$1(t *testing.T) {
 	}
 
 	for i, test := range tests {
-		t.Run(fmt.Sprintf("Test %d", i), func(s *testing.T) {
+		t.Run(fmt.Sprintf("Test %d of %d", i+1, len(tests)), func(s *testing.T) {
 			assert := assert.New(s)
 
 			assert.Equal(test.Result, $0, test.Description)
@@ -609,8 +767,24 @@ import (
 $0
 endsnippet
 
+snippet tFoE "Fail on Error" "add_import('tFoE', snip, 'testing')" bwe
+func FailOnError(t *testing.T) FailOnErrorT {
+	return FailOnErrorT{T: t}
+}
+
+// A wrapper for *testing.T to stop the test on the first error
+type FailOnErrorT struct {
+	*testing.T
+}
+
+func (t FailOnErrorT) Errorf(format string, args ...interface{}) {
+	t.T.Helper()
+	t.T.Fatalf(format, args...)
+}
+endsnippet
+
 snippet tt "Test with Template" bw
-// ${2:Test Description}.
+// ${2:Test Description}.`!p t[1] = capitalise(t[1], non_alphanum_underscore)`
 func Test`!p if not snip.c: snip.rv = guess_test_name()`$1(t *testing.T) {
 	assert := assert.New(t)
 
@@ -618,12 +792,30 @@ func Test`!p if not snip.c: snip.rv = guess_test_name()`$1(t *testing.T) {
 }
 endsnippet
 
-snippet tb "Test Benchmarck" bw
-// ${2:Benchmark Description}.
+snippet ttf "Test with Template (Fail on Error)" bw
+// ${2:Test Description}.`!p t[1] = capitalise(t[1], non_alphanum_underscore)`
+func Test`!p if not snip.c: snip.rv = guess_test_name()`$1(t *testing.T) {
+	assert := assert.New(FailOnError(t))
+
+	$0
+}
+endsnippet
+
+snippet tb "Test Benchmark" bw
 func Benchmark$1(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		$0
 	}
+}
+endsnippet
+
+snippet tbp "Test Benchmark - Parallel" bw
+func Benchmark$1(b *testing.B) {
+	b.RunParallel(func (pb *testing.PB) {
+		for pb.Next() {
+			$0
+		}
+	})
 }
 endsnippet
 
@@ -650,6 +842,30 @@ endsnippet
 
 ## V ##
 
-snippet v "Validate" bw
+snippet v "Validate" b
 v.Field(&`!p snip.rv = get_receiver_type().split(' ')[0]`.$1),
+endsnippet
+
+snippet v.By "v.By rule" w
+v.By(func(val interface{}) error {
+	$0
+})
+endsnippet
+
+## Symbols ##
+
+snippet = "Assignment" b
+$1 := $0
+endsnippet
+
+snippet =2 "Assignment (2 arguments)" b
+$1, $2 := $0
+endsnippet
+
+snippet =3 "Assignment (3 arguments)" b
+$1, $2, $3 := $0
+endsnippet
+
+snippet =4 "Assignment (4 arguments)" b
+$1, $2, $3, $4 := $0
 endsnippet
