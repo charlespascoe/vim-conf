@@ -1,5 +1,6 @@
 #!/bin/bash
 
+mkdir -p ~/.vim/bundle
 cd ~/.vim/bundle
 
 while read line;  do
