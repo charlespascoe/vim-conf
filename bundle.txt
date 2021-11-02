@@ -1,7 +1,6 @@
 https://github.com/airblade/vim-gitgutter
 https://github.com/christoomey/vim-sort-motion
 https://github.com/ctrlpvim/ctrlp.vim
-https://github.com/derekwyatt/vim-scala
 https://github.com/fatih/vim-go
 https://github.com/habamax/vim-asciidoctor
 https://github.com/ianks/vim-tsx
