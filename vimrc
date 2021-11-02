@@ -52,14 +52,6 @@ set nowrapscan    " prevents wrapping around to top of file when searching
 " (&ma is true if the current buffer is modifiable)
 autocmd BufNewFile,BufRead * exec "setlocal colorcolumn=".(&ma ? "81" : "0")
 
-" Disable Page Up/Down
-map <PageUp> <Nop>
-map <PageDown> <Nop>
-nmap h <Nop>
-nmap j <Nop>
-nmap k <Nop>
-nmap l <Nop>
-
 " Set spell correction language
 set spelllang=en_gb
 
