@@ -1,6 +1,6 @@
 # KEEP IN ALPHABETIC ORDER
-
 global !p
+
 type_re = re.compile(r"^type (\w+)")
 struct_re = re.compile(r"^type (\w+) struct")
 method_re = re.compile(r"^func \(([^)]+)\)\s+(\w+)\(")
@@ -24,6 +24,8 @@ convert_type_map = {
 	'f6': 'float64',
 
 	'b': 'byte',
+
+	'B': 'bool',
 }
 
 
@@ -90,6 +92,8 @@ def get_receiver_type():
 				# In this case, either we're in a regular function or not in any function at all
 				return ''
 
+def get_receiver_name():
+	return get_receiver_type().split(' ')[0]
 
 def guess_log_var():
 	receiver_type = get_receiver_type()
@@ -220,6 +224,10 @@ snippet Af "Assert False" bw
 assert.False(${1:actual})
 endsnippet
 
+snippet AFn "Assert Fail Now" bw
+assert.FailNow("$1")
+endsnippet
+
 snippet Aem "Assert Equal with Message" bw
 assert.Equal(${1:expected}, ${2:actual}, "${3:message}")
 endsnippet
@@ -300,7 +308,19 @@ snippet 'Eft' "Errorf with error template" "add_import('Eft', snip, 'fmt')" re
 fmt.Errorf("$1: %s",$2 err)
 endsnippet
 
+snippet 'En' "errors.new" "add_import('En', snip, 'errors')" re
+errors.New("$1")
+endsnippet
+
 ## F ##
+
+snippet 'F(\[\])?(u?i[136]?|f[36]?|s|b|B)?' "Field" bwr
+$1 ${2:`!p snip.rv = match[1] or ''``!p snip.rv = convert_type_map.get(match[2] or '', '')`}`!p t[1] = capitalise(t[1], non_alphanum_underscore)`
+endsnippet
+
+snippet Fl "Field (logger)" "add_import('Fl', snip, 'github.com/rs/zerolog')" bwe
+log zerolog.Logger
+endsnippet
 
 snippet f "Function" bw
 // $1 ${4:TODO: Description}.
@@ -383,13 +403,13 @@ endsnippet
 
 # TODO: Consider unifying the "If" snippets
 
-snippet i "If" bw
+snippet 'if ' "If" brA
 if $1 {
 	$0
 }
 endsnippet
 
-snippet ie "If-else" bw
+snippet 'ife ' "If-else" brA
 if $1 {
 	$0
 } else {
@@ -397,14 +417,38 @@ if $1 {
 }
 endsnippet
 
-snippet in "If nil" bw
+snippet 'ifE ' "If error" brA
+if err != nil {
+	$0
+}
+endsnippet
+
+snippet 'ifEr ' "If error, return" "add_import('iEr', snip, 'fmt')" breA
+if err != nil {
+	return $1fmt.Errorf("$2: %s",$3 err)
+}
+endsnippet
+
+snippet 'ifn ' "If nil" brA
 if $1 == nil {
 	$0
 }
 endsnippet
 
-snippet inn "If not nil" bw
+snippet 'ifnn ' "If not nil" brA
 if $1 != nil {
+	$0
+}
+endsnippet
+
+snippet 'ifl ' "If Length" brA
+if len(${1: }) == $2 {
+	$0
+}
+endsnippet
+
+snippet 'ifln ' "If Length Not" brA
+if len(${1: }) != $2 {
 	$0
 }
 endsnippet
@@ -420,18 +464,6 @@ if $1 := $2; $3 {
 	$0
 } else {
 	``
-}
-endsnippet
-
-snippet iE "If error" bw
-if err != nil {
-	$0
-}
-endsnippet
-
-snippet iEr "If error, return" "add_import('iEr', snip, 'fmt')" bwe
-if err != nil {
-	return $1fmt.Errorf("$2: %s",$3 err)
 }
 endsnippet
 
@@ -471,33 +503,13 @@ if err := $1.Validate(); err != nil {
 }
 endsnippet
 
-snippet ilz "If Length Zero" bw
-if len(${1: }) == 0 {
-	$0
-}
-endsnippet
-
-snippet ilze "If Length Zero Else" bw
-if len(${1: }) == 0 {
-	$0
-} else {
-	``
-}
-endsnippet
-
-snippet ilnz "If Length Not Zero" bw
-if len(${1: }) > 0 {
-	$0
-}
-endsnippet
-
-snippet im "import" bw
+snippet '^im' "import" brwA
 import (
 	$0
 )
 endsnippet
 
-snippet int "Interface" bw
+snippet '^int' "Interface" brwA
 // $1 ${2:TODO: Description}.
 type ${1: } interface {
 	$0
@@ -630,7 +642,7 @@ func (${1:`!p snip.rv = snip.c or find_method_type()[0]`} `!p snip.rv = snip.c o
 }
 endsnippet
 
-snippet mmy "Method - MarshalJSON" bw
+snippet mmy "Method - MarshalYAML" bw
 func (${1:`!p snip.rv = snip.c or find_method_type()[0]`} `!p snip.rv = snip.c or find_method_type()[1]`) MarshalYAML() (interface{}, error) {
 	$0
 }
@@ -675,10 +687,36 @@ func (${1:`!p snip.rv = snip.c or find_method_type(True)[0]`} `!p snip.rv = snip
 }
 endsnippet
 
+snippet 'M\[\](u?i[136]?|f[36]?|s|b|B)?' "Make slice" r
+make([]${1:`!p snip.rv = convert_type_map.get(match[1] or '', '')`}, ${2:0})
+endsnippet
+
+## P ##
+
+snippet P "panic" bw
+panic($1)
+endsnippet
+
+snippet PE "panic - errer" bw
+panic(err)
+endsnippet
+
+snippet Pni "panic - not implemented" bw
+panic("Not implemented")
+endsnippet
+
 ## R ##
 
 snippet r "Return" bw
 return ${0:${VISUAL}}
+endsnippet
+
+snippet rr "Receiver type with dot" wA
+`!p snip.rv = get_receiver_name()`.
+endsnippet
+
+snippet RR "Receiver type" wA
+`!p snip.rv = get_receiver_name()`
 endsnippet
 
 snippet R "Recover" bw
@@ -784,7 +822,7 @@ func (t FailOnErrorT) Errorf(format string, args ...interface{}) {
 endsnippet
 
 snippet tt "Test with Template" bw
-// ${2:Test Description}.`!p t[1] = capitalise(t[1], non_alphanum_underscore)`
+// ${2:Test Description}.
 func Test`!p if not snip.c: snip.rv = guess_test_name()`$1(t *testing.T) {
 	assert := assert.New(t)
 
@@ -793,7 +831,7 @@ func Test`!p if not snip.c: snip.rv = guess_test_name()`$1(t *testing.T) {
 endsnippet
 
 snippet ttf "Test with Template (Fail on Error)" bw
-// ${2:Test Description}.`!p t[1] = capitalise(t[1], non_alphanum_underscore)`
+// ${2:Test Description}.
 func Test`!p if not snip.c: snip.rv = guess_test_name()`$1(t *testing.T) {
 	assert := assert.New(FailOnError(t))
 
