@@ -207,8 +207,8 @@ def add_import(prefix, snip, *imports):
 # ends_with_non_letter = re.compile(r'[^a-zA-Z]$')
 non_alphanum_underscore = re.compile(r'[^a-zA-Z0-9_]')
 
-def capitalise(s, remove=None):
-	cap = True
+def capitalise(s, remove=None, cap_first=False):
+	cap = cap_first
 
 	for i in range(len(s)):
 		if s[i].isalpha():
@@ -227,63 +227,63 @@ endglobal
 
 ## A ##
 
-snippet ap "Append to slice"
+snippet 'as ' "Append to slice" brA
 $1 = append($1, $0)
 endsnippet
 
-snippet Ae "Assert Equal" bw
+snippet 'Ae ' "Assert Equal" brA
 assert.Equal(${1:expected}, ${2:actual})
 endsnippet
 
-snippet Af "Assert False" bw
+snippet 'Af ' "Assert False" brA
 assert.False(${1:actual})
 endsnippet
 
-snippet AFn "Assert Fail Now" bw
+snippet 'AFn ' "Assert Fail Now" brA
 assert.FailNow("$1")
 endsnippet
 
-snippet Aem "Assert Equal with Message" bw
+snippet 'Aem ' "Assert Equal with Message" brA
 assert.Equal(${1:expected}, ${2:actual}, "${3:message}")
 endsnippet
 
-snippet Al "Assert Length" bw
+snippet 'Al ' "Assert Length" brA
 assert.Len(${1:result}, ${2:length})
 endsnippet
 
-snippet Ane "Assert Not Equal" bw
+snippet 'Ane ' "Assert Not Equal" brA
 assert.NotEqual(${1:expected}, ${2:actual})
 endsnippet
 
-snippet Anem "Assert Not Equal with Message" bw
+snippet 'Anem ' "Assert Not Equal with Message" brA
 assert.NotEqual(${1:expected}, ${2:actual}, "${3:message}")
 endsnippet
 
-snippet Aner "Assert No Error" bw
+snippet 'Aner ' "Assert No Error" brA
 assert.NoError(${1:err})
 endsnippet
 
-snippet Anerm "Assert No Error with Message" bw
+snippet 'Anerm ' "Assert No Error with Message" brA
 assert.NoError(${1:err}, "${2:message}")
 endsnippet
 
-snippet An "Assert Nil" bw
+snippet 'An ' "Assert Nil" brA
 assert.Nil(${1:value})
 endsnippet
 
-snippet Anm "Assert Nil with Message" bw
+snippet 'Anm ' "Assert Nil with Message" brA
 assert.Nil(${1:value}, "${2:message}")
 endsnippet
 
-snippet Ann "Assert Not Nil" bw
+snippet 'Ann ' "Assert Not Nil" brA
 assert.NotNil(${1:value})
 endsnippet
 
-snippet Annm "Assert Not Nil with Message" bw
+snippet 'Annm ' "Assert Not Nil with Message" brA
 assert.NotNil(${1:value}, "${2:message}")
 endsnippet
 
-snippet At "Assert True" bw
+snippet 'At ' "Assert True" brA
 assert.True(${1:actual})
 endsnippet
 
@@ -329,41 +329,42 @@ endsnippet
 
 ## F ##
 
-snippet 'F(\[\])?(u?i[136]?|f[36]?|s|b|B)?' "Field" bwr
-$1 ${2:`!p snip.rv = match[1] or ''``!p snip.rv = convert_type_map.get(match[2] or '', '')`}`!p t[1] = capitalise(t[1], non_alphanum_underscore)`
+snippet 'F(\[\])?(u?i[136]?|f[36]?|s|b|B)' "Field" bwr
+$1 `!p snip.rv = match[1] or ''``!p snip.rv = convert_type_map.get(match[2] or '', '')``!p t[1] = capitalise(t[1], non_alphanum_underscore)`
 endsnippet
 
 snippet Fl "Field (logger)" "add_import('Fl', snip, 'github.com/rs/zerolog')" bwe
 log zerolog.Logger
 endsnippet
 
-snippet f "Function" bw
+snippet FL "Field (Lock)" "add_import('FL', snip, 'sync')" bwe
+${1:lock} sync.Mutex
+endsnippet
+
+snippet FLr "Field (RW Lock)" "add_import('FLr', snip, 'sync')" bwe
+${1:lock} sync.RWMutex
+endsnippet
+
+snippet '^f(f?) ' "Function" brA
 // $1 ${4:TODO: Description}.
-func ${1: }($2)$3 {
+func ${1: }($2)$3 {`!p t[1] = capitalise(t[1], non_alphanum_underscore, match[1] == 'f')`
 	$0
 }
 endsnippet
 
-snippet fr "Function with Return" bw
-// $1 ${4:TODO: Description}.
-func ${1: }($2) $3 {
-	return $0
-}
-endsnippet
-
-snippet '(?<=.)\bf' "Anonymous Function" r
+snippet '(?<=.)\bf' "Anonymous Function" wr
 func($1)$2 {
 	$0
 }
 endsnippet
 
-snippet '(?<=.)\bfr' "Anonymous Function with Return" r
+snippet '(?<=.)\bfr' "Anonymous Function with Return" wr
 func($1) $2 {
 	return $0
 }
 endsnippet
 
-snippet fc "Function - Constructor" bw
+snippet '^fc ' "Function - Constructor" brA
 func New$1($2) *$1 {
 	return &${1:`!p snip.rv = find_type() or 'Type'`}{
 		$0
@@ -371,7 +372,7 @@ func New$1($2) *$1 {
 }
 endsnippet
 
-snippet fcl "Function - Constructor with Log" "add_import('fcl', snip, 'github.com/rs/zerolog/log')" bwe
+snippet '^fcl ' "Function - Constructor with Log" "add_import('fcl', snip, 'github.com/rs/zerolog/log')" breA
 func New$1($2) *$1 {
 	return &${1:`!p snip.rv = find_type() or 'Type'`}{
 		$0
@@ -476,13 +477,25 @@ if len(${1: }) != $2 {
 }
 endsnippet
 
-snippet is "If short" bw
+snippet 'ifv ' "If Validate" brA
+if err := $1.Validate(); err != nil {
+	$0
+}
+endsnippet
+
+snippet 'ifvr ' "If Validate, return" brA
+if err := $1.Validate(); err != nil {
+	return $3fmt.Errorf("$4: %s",$5 err)
+}
+endsnippet
+
+snippet 'ifs ' "If short" brA
 if $1 := $2; $3 {
 	$0
 }
 endsnippet
 
-snippet ise "If short, else" bw
+snippet 'ifse ' "If short, else" brA
 if $1 := $2; $3 {
 	$0
 } else {
@@ -490,53 +503,46 @@ if $1 := $2; $3 {
 }
 endsnippet
 
-snippet isE "If short error" bw
+snippet 'ifsE ' "If short error" brA
 if $1err := ${VISUAL:/^.*err :?= //}$2; err != nil {
 	$0
 }
 endsnippet
 
-snippet isEr "If short error, return" "add_import('isEr', snip, 'fmt')" bwe
+snippet 'ifsEr ' "If short error, return" "add_import('isEr', snip, 'fmt')" breA
 if $1err := ${VISUAL:/^.*err :?= //}$2; err != nil {
 	return $3fmt.Errorf("$4: %s",$5 err)
 }
 endsnippet
 
-snippet isju "If Short JSON Unmarshal" "add_import('isju', snip, 'encoding/json')" bwe
+snippet 'ifju ' "If Short JSON Unmarshal" "add_import('isju', snip, 'encoding/json')" breA
 if err := json.Unmarshal(${1:data}, $2); err != nil {
 	$0
 }
 endsnippet
 
-snippet isjur "If Short JSON Unmarshal, return" "add_import('isjur', snip, 'encoding/json', 'fmt')" bwe
+snippet 'ifjur ' "If Short JSON Unmarshal, return" "add_import('isjur', snip, 'encoding/json', 'fmt')" breA
 if err := json.Unmarshal(${1:data}, $2); err != nil {
 	return $3fmt.Errorf("$4: %s",$5 err)
 }
 endsnippet
 
-snippet isv "If Short Validate" bw
-if err := $1.Validate(); err != nil {
-	$0
-}
-endsnippet
-
-snippet isvr "If Short Validate, return" bw
-if err := $1.Validate(); err != nil {
-	return $3fmt.Errorf("$4: %s",$5 err)
-}
-endsnippet
-
-snippet '^im' "import" brwA
+snippet '^im' "import" brA
 import (
 	$0
 )
 endsnippet
 
-snippet '^int' "Interface" brwA
+snippet '^in' "Interface" brA
 // $1 ${2:TODO: Description}.
 type ${1: } interface {
 	$0
 }
+endsnippet
+
+snippet '^\tim' "Interface Method" brA
+	// $1 TODO: Description.
+	${1: }($2)$0`!p t[1] = capitalise(t[1], non_alphanum_underscore, True)`
 endsnippet
 
 ## J ##
@@ -631,15 +637,14 @@ snippet lpf "Log Panic Format" "add_import('lpf', snip, 'fmt')" bwe
 	Msgf("A panic occurred$1", $2)
 endsnippet
 
-
 snippet L "Lock" bw
-$1.Lock()
-defer $1.Unlock()
+`!p snip.rv = get_receiver_name()`.${1:lock}.Lock()
+defer `!p snip.rv = get_receiver_name()`.$1.Unlock()
 endsnippet
 
 snippet Lr "Read Lock" bw
-$1.RLock()
-defer $1.RUnlock()
+`!p snip.rv = get_receiver_name()`.${1:lock}.RLock()
+defer `!p snip.rv = get_receiver_name()`.$1.RUnlock()
 endsnippet
 
 ## M ##
@@ -772,20 +777,13 @@ sort.Slice($1, func(i, j int) bool {
 })
 endsnippet
 
-snippet st "Struct" bw
+snippet '^st' "Struct" brA
 // $1 ${2:TODO: Description}.
-type ${1: } struct {
+type ${1: } struct {`!p t[1] = capitalise(t[1], non_alphanum_underscore, True)`
 	$0
 }
 endsnippet
 
-snippet stl "Struct with Log" "add_import('stl', snip, 'github.com/rs/zerolog')" bwe
-// $1 ${2:TODO: Description}.
-type ${1: } struct {
-	$0
-	log zerolog.Logger
-}
-endsnippet
 
 ## T ##
 
