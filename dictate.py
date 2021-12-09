@@ -3,6 +3,7 @@ import random
 import PySide6
 import threading
 import os
+import subprocess
 from socketserver import UnixStreamServer, StreamRequestHandler, ThreadingMixIn
 from PySide6 import QtCore, QtWidgets, QtGui
 
@@ -49,10 +50,25 @@ class Handler(StreamRequestHandler):
         if self.request not in subscribers:
             subscribers.append(self.request)
 
-        while self.rfile.readline().strip():
-            pass
+        for data in self.rfile:
+            line = data.decode('utf-8').strip()
+
+            if line == 'start-dictation':
+                start_dictation()
+
+            print('> ' + line)
 
         print("Disconnected")
+
+
+def start_dictation():
+    script = f'tell application "System Events" to set frontmost of every process whose unix id is {os.getpid()} to true'
+    subprocess.check_call(['/usr/bin/osascript', '-e', script])
+    subprocess.check_call(['/usr/bin/osascript', '-e', 'tell application "System Events" to keystroke "d" using command down'])
+
+
+def return_to_vim():
+    subprocess.check_call(['/usr/bin/osascript', '-e', 'tell application "Alacritty" to activate'])
 
 
 class ThreadedUnixStreamServer(ThreadingMixIn, UnixStreamServer):
@@ -94,6 +110,7 @@ class MyWidget(QtWidgets.QWidget):
             broadcast(s[0].lower() + s[1:] + ' \n')
             # self.input.setText('')
             self.input.setPlainText('')
+            return_to_vim()
 
 if __name__ == "__main__":
     t = threading.Thread(target=run_unix_server, daemon=True)

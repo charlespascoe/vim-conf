@@ -1,12 +1,12 @@
 let s:in_insert_mode = v:false
 
-func dictate#Start()
+func dictate#Init()
     if empty(glob('/tmp/dictation'))
         echom "Dictation server unavailable"
         return
     endif
 
-    let s:job = job_start('socat - UNIX-CLIENT:/tmp/dictation', {
+    let s:job = job_start('socat - UNIX-CONNECT:/tmp/dictation', {
     \    'out_io': 'pipe',
     \    'err_io': 'pipe',
     \    'in_io': 'pipe',
@@ -17,11 +17,19 @@ func dictate#Start()
     \    'stoponexit': 'term'
     \})
 
+    inoremap <C-d> <C-o>:call dictate#Start()<CR>
+
     autocmd InsertEnter * call dictate#EnterInsertMode()
     autocmd InsertLeave * call dictate#LeaveInsertMode()
     " Auto-capitalise words after certain punctuation
     " autocmd InsertCharPre * if search('\v(%^|[.!?]\_s)\_s*%#', 'bcnw') != 0 | let v:char = toupper(v:char) | endif
     " autocmd InsertCharPre * if search('\v(%^\_s\+[-*+?<>]\_s)\_s*%#', 'bcnw') != 0 | let v:char = toupper(v:char) | endif
+endfun
+
+func dictate#Start()
+    let ch = job_getchannel(s:job)
+
+    call ch_sendraw(ch, "start-dictation\n")
 endfun
 
 func dictate#OnOutput(job, msg)
