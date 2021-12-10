@@ -471,6 +471,12 @@ if len(${1: }) == $2 {
 }
 endsnippet
 
+snippet 'ifl([lg])t(e?) ' "If Length less/greater than (or equal to)" brA
+if len(${1: }) `!p snip.rv = '>' if match[1] == 'g' else '<'``!p snip.rv = '=' if match[2] == 'e' else ''` $2 {
+	$0
+}
+endsnippet
+
 snippet 'ifln ' "If Length Not" brA
 if len(${1: }) != $2 {
 	$0
@@ -648,6 +654,12 @@ defer `!p snip.rv = get_receiver_name()`.$1.RUnlock()
 endsnippet
 
 ## M ##
+
+snippet '^main' "Main" brA
+func main() {
+	$0
+}
+endsnippet
 
 snippet m "Method" bw
 // $2 ${5:TODO: Description}.
