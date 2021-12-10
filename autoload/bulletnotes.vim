@@ -187,7 +187,8 @@ fun bulletnotes#InitProject()
     command! -nargs=? Inbox call bulletnotes#NewInboxItem(<f-args>)
     command! Journal call bulletnotes#OpenJournal()
     command! RemoteSync call bulletnotes#RemoteSync(1, 1)
-    command! BulletnotesAsyncStart call bulletnotes#RemoteSync(0, 0)
+    command! BulletnotesAsyncStart call bulletnotes#AsyncStart(v:false)
+    command! BulletnotesAsyncStartIndex call bulletnotes#AsyncStart(v:true)
 
     command! AddContact call bulletnotes#AddContact()
 
@@ -570,11 +571,18 @@ fun bulletnotes#SanitiseText(name)
     return result
 endfun
 
+fun bulletnotes#AsyncStart(index)
+    if a:index
+        e Index.bn
+    endif
+
+    call bulletnotes#RemoteSync(0, 0)
+endfun
 
 " Inbox {{{
 fun bulletnotes#NewInboxItem(...)
     if a:0 == 0
-        let path = 'inbox/'.trim(system('date +"%Y-%m-%d_%H:%M"')).'.bn'
+        let path = 'Inbox/'.trim(system('date +"%Y-%m-%d_%H:%M"')).'.bn'
 
         exec 'e '.path
         if !filereadable(path)
@@ -582,7 +590,7 @@ fun bulletnotes#NewInboxItem(...)
             exec 'normal i- '
         endif
     else
-        let path = 'inbox/'.trim(system('date +"%Y-%m-%d"')).'_'.bulletnotes#SanitiseText(a:1).'.bn'
+        let path = 'Inbox/'.trim(system('date +"%Y-%m-%d"')).'_'.bulletnotes#SanitiseText(a:1).'.bn'
         exec 'e '.path
 
         if !filereadable(path)
@@ -721,7 +729,7 @@ fun bulletnotes#Complete(findstart, base)
     endif
 
     if type == '@'
-        let contacts = split(system("ag --silent -o '@@ .* @@' contacts.bn"), '\n')
+        let contacts = split(system("ag --silent -o '@@ .* @@' Contacts.bn"), '\n')
         call map(contacts, '"@".trim(substitute(v:val, "@@", "", "g"))')
         let g:__bn_match = a:base
         call filter(contacts, 'bulletnotes#StartsWith(g:__bn_match, v:val)')
@@ -1005,7 +1013,7 @@ endfun
 
 " Journal {{{
 fun bulletnotes#OpenJournal()
-    e journal.bn
+    e Journal.bn
 
     let currentdate = bulletnotes#GetFriendlyDate()
 
@@ -1160,7 +1168,7 @@ fun bulletnotes#MoveFile(from, to)
     let to_path = s:LinkToPath(to)
 
     " TODO: Maybe make this independent of ag?
-    let cmd = "find . -type f -name '*.bn' | xargs sed -i -e "
+    let cmd = "find . -type f -name '*.bn' | xargs sed -i '' -e "
     let cmd .= "'s|".s:SedRegexpEscape(from_path)."|".s:SedRegexpEscape(to_path)."|g'"
 
     let output = system(cmd)
@@ -1258,7 +1266,7 @@ fun bulletnotes#AddContact()
 
     " TODO: Check to see if the buffer is already open
     " and just navigate to it if it is
-    e contacts.bn
+    e Contacts.bn
 
     " TODO: Check if contact already exists
 
@@ -1281,7 +1289,7 @@ endfun
 fun bulletnotes#FindContact(name)
     let name = bulletnotes#SanitiseText(a:name)
 
-    return matchstr(system('ag --silent "@@\\s*'.name.'\\s*@@" contacts.bn'), '^\d\+')
+    return matchstr(system('ag --silent "@@\\s*'.name.'\\s*@@" Contacts.bn'), '^\d\+')
 endfun
 
 
@@ -1292,7 +1300,7 @@ fun bulletnotes#ViewContact(name)
         call s:Error("Can't find contact: ".a:name)
     else
         " TODO: Check if the file is already open
-        exec 'e contacts.bn:'.line
+        exec 'e Contacts.bn:'.line
     endif
 endfun
 " }}} Contacts
