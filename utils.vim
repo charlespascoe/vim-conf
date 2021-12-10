@@ -148,9 +148,12 @@ fun! Duplicate(type = '')
         return "\<Esc>g@"
     endif
 
-    if a:type ==# 'line' || a:type ==# 'V'
+    if a:type ==# 'line' || a:type ==# 'V' || a:type ==# 'char'
         exec "normal! '[V']y']".s:duplicate_count."p"
+    else
+        echom a:type
     endif
+
 endfun
 
 nnoremap <expr> gd Duplicate()
