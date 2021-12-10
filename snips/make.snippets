@@ -12,7 +12,7 @@ all: goversion init download build
 .PHONY: help
 ## help: Prints this help
 help:
-	@sed -ne 's/^##/make/p' $(MAKEFILE_LIST) | column -c2 -t -s ':'
+	@sed -ne 's/^##/make/p' $(MAKEFILE_LIST) | column -c2 -t -s ':' | sort
 
 .PHONY: init
 ## init: Sets up the working directory for development, including git hooks
@@ -31,7 +31,7 @@ build: gencode
 
 .PHONY: linux
 ## linux: Builds Linux-compatible binary
-linux:
+linux: gencode
 	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o $(BINARY_LINUX) -v ./cmd/$(BINARY_NAME)
 
 .PHONY: test
@@ -40,9 +40,9 @@ test: fmtchk vet
 	go test ./...
 
 .PHONY: benchmark
-## benchmark: Run tests and run benchmarks
-benchmark: test
-	go test -bench=.
+## benchmark: Run tests and benchmarks
+benchmark: fmtchk vet
+	go test -bench . ./...
 
 .PHONY: clean
 ## clean: Clean up build artifacts
@@ -54,7 +54,7 @@ clean:
 .PHONY: run
 ## run: Builds and executes the program
 run: build
-	./$(BINARY_NAME)
+	MODE="$${MODE:-dev}" CONFIG_FILES="$${CONFIG_FILES:-configs/dev-config.yml}" ./$(BINARY_NAME)
 
 .PHONY: download
 ## download: Download dependencies

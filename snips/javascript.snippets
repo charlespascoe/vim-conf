@@ -1,180 +1,99 @@
-snippet des "Object Destructuring"
+## C ##
+
+snippet '(e?)c' "const" r
+`!p snip.rv = 'export ' if match.group(1) else ''`const $1 = $2;$0
+endsnippet
+
+snippet '(e?)cls' "Class" r
+`!p snip.rv = 'export ' if match.group(1) else ''`class $1 {
+	$0
+}
+endsnippet
+
+snippet Cd "Console Debug" bw
+console.debug($1);
+endsnippet
+
+snippet Ce "Console Error" bw
+console.error($1);
+endsnippet
+
+snippet Cl "Console Log" bw
+console.log($1);
+endsnippet
+
+snippet Cw "Console Warn" bw
+console.warn($1);
+endsnippet
+
+## D ##
+
+snippet des "Object destructure"
 const { $0 } = $1;
 endsnippet
 
+## F ##
 
-snippet sel "Self-executing Lambda"
-(() => {
-  $0
-})();
-endsnippet
-
-
-snippet asel "Async Self-executing Lambda"
-await (async () => {
-  $0
-})();
-endsnippet
-
-
-snippet l "lambda"
-($1) => $0
-endsnippet
-
-
-snippet lb "lambda with body"
-($1) => {$0}
-endsnippet
-
-
-snippet cls "Class"
-class $1 {
-  $0
+snippet '\b(e?)(a?)f\b' "Function" r
+`!p snip.rv = 'export ' if match.group(1) else ''``!p snip.rv = 'async ' if match.group(2) else ''`function $1($2) {
+	$0
 }
 endsnippet
-
-
-snippet fun "Function"
-function $1($2) {
-  $0
-}
-endsnippet
-
-
-snippet afun "Asynchronous Function"
-async function $1($2) {
-  $0
-}
-endsnippet
-
-
-snippet scon "Constructor with Super call"
-constructor($1) {
-  super();
-  $0
-}
-endsnippet
-
-
-snippet cons "Console Log"
-console.log($0);
-endsnippet
-
-
-snippet it "Test"
-it('$1', () => {
-  $0
-});
-endsnippet
-
-
-snippet describe "Test collection"
-describe('$1', () => {
-
-  $0
-
-});
-endsnippet
-
-
-snippet Promise "Promise constructor"
-new Promise((fulfill, reject) => {
-  $0
-});
-endsnippet
-
-
-# Flow Control
-snippet if
-if ($1) {
-  $0
-}
-endsnippet
-
-
-snippet ife
-if ($1) {
-  $0
-} else {
-  
-}
-endsnippet
-
-
-snippet switch
-switch ($1) {
-  case $2:
-    $0
-    break;
-}
-endsnippet
-
-
-snippet case
-case $1:
-  $0
-  break;
-endsnippet
-
 
 snippet for
 for ($1) {
-  $0
+	$0
 }
 endsnippet
 
-
-snippet 'forea?c?h?' "Foreach" r
+snippet fore
 for (const $2 of $1) {
-  $0
+	$0
 }
 endsnippet
-
 
 snippet fori
 for (let i = 0; i < $1; i++) {
-  $0
+	$0
 }
 endsnippet
 
+## I ##
 
-snippet while
-while ($1) {
-  $0
+snippet i "if" bw
+if ($1) {
+	$0
 }
 endsnippet
 
-
-snippet dowhile
-do {
-  $0
-} while ($1);
+snippet im "Import" bw
+import { $2 } from '$1';
 endsnippet
 
+## R ##
 
-snippet a-z "a-z" i
-abcdefghijklmnopqrstuvwxyz
+snippet r "Return" bw
+return $0;
 endsnippet
 
+## S ##
 
-snippet A-Z "A-Z" i
-ABCDEFGHIJKLMNOPQRSTUVWXYZ
+snippet sc "Switch Case" bw
+case $1:
+	$0
+
+	break;
+
 endsnippet
 
-
-snippet a-Z "a-Z" i
-abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ
-endsnippet
-
-
-snippet 0-9 "0-9" i
-0123456789
-endsnippet
-
-snippet fold
-// $1 {{{
-
+snippet sw "Switch" bw
+switch ($1) {
 $0
+}
+endsnippet
 
-// }}} $1
+## T ##
+
+snippet tE "Throw Error" bw
+throw new Error($1);
 endsnippet
