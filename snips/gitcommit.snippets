@@ -1,3 +1,11 @@
-snippet cc "Common Changes"
-`common-changes`: $0
+global !p
+def start_dictation():
+	vim.command('call dictate#Start()')
+	# Returning this value prevents the function for being run multiple times
+	# during a single expansion of a snippet
+	return ':'
+endglobal
+
+snippet cc "Common Changes" bA
+`common-changes``!p snip.rv = snip.c or start_dictation()` $0
 endsnippet
