@@ -96,6 +96,9 @@ set shell=/bin/bash
 " Disable command lookup (keep typing it accidentally)
 nmap K <Nop>
 
+" Start Dictation
+call dictate#Init()
+
 " External files
 source ~/.vim-conf/utils.vim
 source ~/.vim-conf/buffer-management.vim
