@@ -104,6 +104,7 @@ let g:go_highlight_trailing_whitespace_error = 0
 let g:go_highlight_types = 1
 let g:go_highlight_variable_assignments = 1
 let g:go_highlight_variable_declarations = 1
+let g:go_imports_autosave = 0
 
 " vim-gitgutter
 let g:gitgutter_set_sign_backgrounds = 0
