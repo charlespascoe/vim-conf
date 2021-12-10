@@ -7,9 +7,9 @@ syntax match NoteTitle /^## .* ##/ contains=Tag,TitleEnd
 syntax match Subtitle /^:: .* ::/ contains=Tag,SubtitleEnd
 syntax match ContactTitle /^@@ .* @@/ contains=ContactTitleEnd
 
-syntax match TitleEnd /\s*##\s*/ contained
-syntax match SubtitleEnd /\s*::\s*/ contained
-syntax match ContactTitleEnd /\s*@@\s*/ contained
+syntax match TitleEnd /\s*##\s*/ contained conceal
+syntax match SubtitleEnd /\s*::\s*/ contained conceal
+syntax match ContactTitleEnd /\s*@@\s*/ contained conceal
 
 hi link NoteTitle Title
 highlight Subtitle cterm=underline ctermfg=140
@@ -85,7 +85,8 @@ let pointerRegexp = bulletnotes#BuildPointerRegexp()
 
 syntax match Tag /#[a-zA-Z0-9_\-]\+/ contains=@NoSpell
 
-exec 'syntax match Link /'.pointerRegexp.'/ contains=@NoSpell'
+exec 'syntax match Link /'.pointerRegexp.'/ contains=@NoSpell,LinkEnds'
+syntax match LinkEnds /\[[\[:]\?\|[:\]]\?\]/ contained conceal
 " syntax match Pointer /&[a-zA-Z0-9_\-.]\+\(\/[a-zA-Z0-9_\-.]\+\)*/ contains=@NoSpell,PointerMarker
 " syntax match PointerMarker /&/ contained
 " syntax match AnchorPointer /&:[a-zA-Z0-9]\+/ contains=@NoSpell,AnchorPointerMarker
@@ -95,25 +96,31 @@ exec 'syntax match Link /'.pointerRegexp.'/ contains=@NoSpell'
 syntax match Contact /@[a-zA-Z\-._]\+/ contains=ContactMarker
 syntax match Anchor /:[a-zA-Z0-9]\+:/ contains=@NoSpell,AnchorMarker
 syntax match AnchorMarker /:/ contained
-syntax region Monospace start='{' skip='\\}' end='}' contains=@NoSpell
-syntax region HighlightedMonospace start='{{' skip='\\}' end='}}' contains=@NoSpell
+syntax match MonospaceEnd /{\|}/ contained conceal
+syntax region Monospace start='{' skip='\\}' end='}' keepend contains=@NoSpell,MonospaceEnd
+syntax match MonospaceEnd /{\|}/ contained conceal
+syntax region HighlightedMonospace start='{{' skip='\\}' end='}}' keepend contains=@NoSpell,HighlightedMonospaceEnd
+syntax match HighlightedMonospaceEnd /{{\|}}/ contained conceal
 syntax region Highlight start='`' end='`' contains=HighlightMark,@Metatext keepend
-syntax match HighlightMark /`/ contained
+syntax match HighlightMark /`/ contained conceal
 " syntax cluster Metatext contains=Tag,Pointer,Link,Contact,Anchor,AnchorPointer,Monospace
 syntax cluster Metatext contains=Anchor,Tag,Link,Contact,Monospace,HighlightedMonospace
-syntax match ContactMarker /@/ contained
+syntax match ContactMarker /@/ contained conceal
 
 highlight Tag ctermfg=226 cterm=bold
 " highlight Pointer ctermfg=40
 " highlight link PointerMarker Pointer
 " highlight Link ctermfg=42
 highlight Link ctermfg=40
+highlight LinkEnds ctermfg=23
 " highlight link LinkEnds Link
 highlight Contact cterm=bold ctermfg=39
 highlight link ContactMarker Contact
 highlight link Monospace constant
-highlight link HighlightedMonospace Monospace
-highlight HighlightedMonospace cterm=bold ctermfg=196
+highlight MonospaceEnd ctermfg=88
+highlight HighlightedMonospaceEnd ctermfg=124 cterm=bold
+" highlight link HighlightedMonospace Monospace
+highlight HighlightedMonospace cterm=bold,underline ctermfg=196
 
 highlight Anchor ctermfg=0 ctermbg=24
 highlight link AnchorMarker Anchor
@@ -130,4 +137,4 @@ highlight link Field Link
 " Text Styles
 
 highlight Highlight ctermfg=51 cterm=bold
-highlight link HighlightMark Highlight
+highlight HighlightMark ctermfg=33
