@@ -4,6 +4,7 @@ import PySide6
 import threading
 import os
 import subprocess
+import time
 from socketserver import UnixStreamServer, StreamRequestHandler, ThreadingMixIn
 from PySide6 import QtCore, QtWidgets, QtGui
 
@@ -36,6 +37,7 @@ def substitutions(s):
         ('great controller', 'rate controller'),
         ('bridge controller', 'rate controller'),
         ('rest API', 'REST API'),
+        ('\n', '\\n'),
     ]
 
     for sub_from, sub_to in subs:
@@ -64,6 +66,9 @@ class Handler(StreamRequestHandler):
 def start_dictation():
     script = f'tell application "System Events" to set frontmost of every process whose unix id is {os.getpid()} to true'
     subprocess.check_call(['/usr/bin/osascript', '-e', script])
+
+    time.sleep(0.1)
+
     subprocess.check_call(['/usr/bin/osascript', '-e', 'tell application "System Events" to keystroke "d" using command down'])
 
 
@@ -81,7 +86,7 @@ def run_unix_server():
 
 
 def broadcast(output):
-    output = substitutions(output)
+    output = substitutions(output) + '\n'
 
     sys.stdout.write(output)
     sys.stdout.flush()
@@ -107,7 +112,7 @@ class MyWidget(QtWidgets.QWidget):
         # s = self.input.text()
         s = self.input.toPlainText()
         if s != '':
-            broadcast(s[0].lower() + s[1:] + ' \n')
+            broadcast(s[0].lower() + s[1:])
             # self.input.setText('')
             self.input.setPlainText('')
             return_to_vim()

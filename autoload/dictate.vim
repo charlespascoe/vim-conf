@@ -34,12 +34,17 @@ endfun
 
 func dictate#OnOutput(job, msg)
     if s:in_insert_mode
-        if a:msg != "delete "
-            let @" = a:msg
-            call feedkeys("\<C-r>".'"')
-        else
-            call feedkeys("\<C-w>")
+        let msg = a:msg
+
+        " Automatically capitalise the first letter after certain
+        " characters
+        if search('\v(%^|[.!?/#]\_s)\_s*%#', 'bcnw') != 0 || search('\v(%^\_s\+[-*+?<>]\_s)\_s*%#', 'bcnw') != 0
+            let msg = toupper(msg[0]).msg[1:]
         endif
+
+        let @" = substitute(msg, '\\n', '\n', 'g')
+
+        call feedkeys("\<C-r>".'"')
     endif
 endfun
 
