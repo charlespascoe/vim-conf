@@ -223,6 +223,11 @@ def capitalise(s, remove=None, cap_first=False):
 
 	return s
 
+def start_dictation(ret_val):
+	vim.command('call dictate#Start()')
+	# Returning a value prevents the function for being run multiple times
+	# during a single expansion of a snippet
+	return ret_val
 endglobal
 
 ## A ##
@@ -298,6 +303,10 @@ $1 := make(chan $2)
 defer close($1)
 endsnippet
 
+snippet 'cc ' "Comment with dictation" brA
+`!p snip.rv = snip.c or start_dictation('//')` $1
+endsnippet
+
 snippet '\bc(\[\])?(u?i[136]?|f[36]?|s|b)\b' "Convert to Type" r
 `!p snip.rv = match.group(1) or ''``!p snip.rv = convert_type_map[match.group(2)]`(${VISUAL}$1)
 endsnippet
@@ -311,6 +320,10 @@ endsnippet
 snippet dc "Done Channel" bw
 done := make(chan struct{})
 defer close(done)
+endsnippet
+
+snippet '\bdd ' "Data (Byte slice)" wrA
+[]byte
 endsnippet
 
 ## E ##
@@ -661,44 +674,43 @@ func main() {
 }
 endsnippet
 
-snippet m "Method" bw
-// $2 ${5:TODO: Description}.
-func (${1:`!p snip.rv = snip.c or find_method_type()[0]`} `!p snip.rv = snip.c or find_method_type()[1]`) ${2: }($3)$4 {
+snippet '^m ' "Method" brA
+// $1 TODO: Description.
+func (`!p snip.rv = snip.c or ' '.join(find_method_type())`) ${1: }($2)$3 {
 	$0
 }
 endsnippet
 
-# TODO: Improve forced pointer handling
-snippet m* "Method" bw
-// $2 ${5:TODO: Description}.
-func (${1:`!p snip.rv = snip.c or find_method_type(True)[0]`} `!p snip.rv = snip.c or find_method_type(True)[1]`) ${2: }($3)$4 {
+snippet '^m\*' "Method" brA
+// $1 TODO: Description.
+func (`!p snip.rv = snip.c or ' '.join(find_method_type(True))`) ${1: }($2)$3 {
 	$0
 }
 endsnippet
 
 snippet mmj "Method - MarshalJSON" bw
-func (${1:`!p snip.rv = snip.c or find_method_type()[0]`} `!p snip.rv = snip.c or find_method_type()[1]`) MarshalJSON() ([]byte, error) {
+func (`!p snip.rv = snip.c or ' '.join(find_method_type())`) MarshalJSON() ([]byte, error) {
 	$0
 }
 endsnippet
 
 snippet mmy "Method - MarshalYAML" bw
-func (${1:`!p snip.rv = snip.c or find_method_type()[0]`} `!p snip.rv = snip.c or find_method_type()[1]`) MarshalYAML() (interface{}, error) {
+func (`!p snip.rv = snip.c or ' '.join(find_method_type())`) MarshalYAML() (interface{}, error) {
 	$0
 }
 endsnippet
 
 snippet muj "Method - UnmarshalJSON" bw
-func (${1:`!p snip.rv = snip.c or find_method_type(True)[0]`} `!p snip.rv = snip.c or find_method_type(True)[1]`) UnmarshalJSON(data []byte) error {
+func (`!p snip.rv = snip.c or ' '.join(find_method_type(True))`) UnmarshalJSON(data []byte) error {
 	$0
 }
 endsnippet
 
 snippet muy "Method - UnmarshalYAML" "add_import('muy', snip, 'fmt')" bwe
-func (${1:`!p snip.rv = snip.c or find_method_type(True)[0]`} `!p snip.rv = snip.c or find_method_type(True)[1]`) UnmarshalYAML(unmarshal func(interface{}) error) error {
-	var ${2:val} ${3:interface{}}
+func (`!p snip.rv = snip.c or ' '.join(find_method_type(True))`) UnmarshalYAML(unmarshal func(interface{}) error) error {
+	var ${1:val} ${2:interface{}}
 
-	if err := unmarshal(&$2); err != nil {
+	if err := unmarshal(&`!p snip.rv = snip.c or find_method_type()[0]`); err != nil {
 		return fmt.Errorf("invalid YAML: %s", err)
 	}
 
@@ -707,22 +719,22 @@ func (${1:`!p snip.rv = snip.c or find_method_type(True)[0]`} `!p snip.rv = snip
 endsnippet
 
 snippet ms "Method - String" "add_import('ms', snip, 'fmt')" bwe
-func (${1:`!p snip.rv = snip.c or find_method_type()[0]`} `!p snip.rv = snip.c or find_method_type()[1]`) String() string {
-	return fmt.Sprintf("$2", $0)
+func (`!p snip.rv = snip.c or ' '.join(find_method_type())`) String() string {
+	return fmt.Sprintf("$1", $0)
 }
 endsnippet
 
 snippet mE "Method - Error" bw
-func (${1:`!p snip.rv = snip.c or find_method_type()[0]`} `!p snip.rv = snip.c or find_method_type()[1]`) Error() string {
+func (`!p snip.rv = snip.c or ' '.join(find_method_type())`) Error() string {
 	return $0
 }
 endsnippet
 
-snippet mv "Method - Validation" "add_import('mv', snip, 'v github.com/go-ozzo/ozzo-validation')" bwe
+snippet '^mv' "Method - Validation" "add_import('mv', snip, 'v github.com/go-ozzo/ozzo-validation')" breA
 // Validate returns an error if any of the fields are invalid.
-func (${1:`!p snip.rv = snip.c or find_method_type(True)[0]`} `!p snip.rv = snip.c or find_method_type(True)[1]`) Validate() error {
-	return v.ValidateStruct(`!p snip.rv = t[1].split(' ')[0]`,
-		v.Field(&`!p snip.rv = t[1].split(' ')[0]`.$2),$0
+func (`!p snip.rv = snip.c or ' '.join(find_method_type(True))`) Validate() error {
+	return v.ValidateStruct(`!p snip.rv = snip.c or find_method_type()[0]`,
+		v.Field(&`!p snip.rv = snip.c or find_method_type()[0]`.$1),$0
 	)
 }
 endsnippet
