@@ -1,4 +1,5 @@
 import sys
+import re
 import random
 import PySide6
 import threading
@@ -20,28 +21,27 @@ subscribers = []
 
 
 def substitutions(s):
-    # TODO: Move this to an external file that is loaded
     subs = [
         ('sea RC', 'CRC'),
         ('cRC', 'CRC'),
         ('CLC', 'CRC'),
         ('can figuration', 'configuration'),
-        ('couch TV', 'CouchDB'),
-        ('couch dB', 'CouchDB'),
-        ('couch GB', 'CouchDB'),
-        ('couch DB', 'CouchDB'),
-        ('reach controller', 'rate controller'),
-        ('reach control', 'rate control'),
-        ('route controller', 'rate controller'),
-        ('route control', 'rate control'),
-        ('great controller', 'rate controller'),
-        ('bridge controller', 'rate controller'),
+        (re.compile('couch (TV|[DdG]B)'), 'CouchDB'),
+        (re.compile('r(each|ich|oute) control(ler)?'), r'rate control\2'),
+        (re.compile('great control(ler)?'), r'rate control\1'),
+        (re.compile('bridge control(ler)?'), r'rate control\1'),
         ('rest API', 'REST API'),
+        (re.compile(r'[Dd]uplicut'), 'duplicate'),
+        (re.compile(r'([A-Z]+) ?([0-9]+)'), r'\1-\2'),
+        ('Tino', 'TNOR'),
         ('\n', '\\n'),
     ]
 
     for sub_from, sub_to in subs:
-        s = s.replace(sub_from, sub_to)
+        if isinstance(sub_from, re.Pattern):
+            s = sub_from.sub(sub_to, s)
+        else:
+            s = s.replace(sub_from, sub_to)
 
     return s
 
@@ -66,9 +66,7 @@ class Handler(StreamRequestHandler):
 def start_dictation():
     script = f'tell application "System Events" to set frontmost of every process whose unix id is {os.getpid()} to true'
     subprocess.check_call(['/usr/bin/osascript', '-e', script])
-
-    time.sleep(0.1)
-
+    time.sleep(0.3)
     subprocess.check_call(['/usr/bin/osascript', '-e', 'tell application "System Events" to keystroke "d" using command down'])
 
 
@@ -109,11 +107,9 @@ class MyWidget(QtWidgets.QWidget):
 
     @QtCore.Slot()
     def magic(self):
-        # s = self.input.text()
         s = self.input.toPlainText()
         if s != '':
             broadcast(s[0].lower() + s[1:])
-            # self.input.setText('')
             self.input.setPlainText('')
             return_to_vim()
 
