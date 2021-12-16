@@ -65,6 +65,9 @@ set listchars=tab:│\  list
 set mouse=n
 set ttymouse=xterm2
 
+" Disable octal increment
+set nrformats-=octal
+
 " Disable left-click to prevent moving the cursor when focusing the window
 map <LeftMouse> <Nop>
 imap <LeftMouse> <Nop>
