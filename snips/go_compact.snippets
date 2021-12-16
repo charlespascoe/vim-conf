@@ -108,6 +108,25 @@ def guess_test_name():
 	# string, so that the snippet pluging doesn't run this function more than
 	# once per template
 
+	reg = vim.eval('@"')
+
+	match = method_re.match(reg)
+
+	if match:
+		vim.command('let @" = ""')
+		type_name = match[1].split(' ')[1]
+
+		if type_name.startswith('*'):
+			type_name = type_name[1:]
+
+		return f'_{type_name}_{match[2]}_'
+
+	match = func_re.match(reg)
+
+	if match and not match[1].startswith('Test'):
+		vim.command('let @" = ""')
+		return f'_{match[1]}_'
+
 	for line in preceeding_lines():
 		match = test_re.match(line)
 
