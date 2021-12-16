@@ -341,8 +341,12 @@ done := make(chan struct{})
 defer close(done)
 endsnippet
 
-snippet '\bdd ' "Data (Byte slice)" wrA
+snippet '\bdd' "Data (Byte slice)" wr
 []byte
+endsnippet
+
+snippet '\bds' "Data string (Byte slice)" wr
+[]byte("$1")
 endsnippet
 
 ## E ##
@@ -693,16 +697,9 @@ func main() {
 }
 endsnippet
 
-snippet '^m ' "Method" brA
+snippet '^m([ *])' "Method" brA
 // $1 TODO: Description.
-func (`!p snip.rv = snip.c or ' '.join(find_method_type())`) ${1: }($2)$3 {
-	$0
-}
-endsnippet
-
-snippet '^m\*' "Method" brA
-// $1 TODO: Description.
-func (`!p snip.rv = snip.c or ' '.join(find_method_type(True))`) ${1: }($2)$3 {
+func (`!p snip.rv = snip.c or ' '.join(find_method_type(match[1] == '*'))`) ${1: }($2)$3 {
 	$0
 }
 endsnippet
@@ -830,14 +827,12 @@ endsnippet
 
 ## T ##
 
-#// ${2:Test Description}.
 snippet t "Test" bw
 func Test`!p if not snip.c: snip.rv = guess_test_name()`$1(t *testing.T) {
 	$0
 }
 endsnippet
 
-#// ${2:Test Description}.
 snippet ta "Test Array" "add_import('ta', snip, 'fmt', 'testing', 'github.com/stretchr/testify/assert')" bwe
 func Test`!p if not snip.c: snip.rv = guess_test_name()`$1(t *testing.T) {
 	tests := []struct{
@@ -858,6 +853,10 @@ func Test`!p if not snip.c: snip.rv = guess_test_name()`$1(t *testing.T) {
 		})
 	}
 }
+endsnippet
+
+snippet 'td ' "TODO Comment" brA
+// `!p snip.rv = snip.c or start_dictation('TODO:')` $1
 endsnippet
 
 snippet tf "Test File" bw
@@ -886,7 +885,6 @@ func (t FailOnErrorT) Errorf(format string, args ...interface{}) {
 endsnippet
 
 snippet tt "Test with Template" bw
-// ${2:Test Description}.
 func Test`!p if not snip.c: snip.rv = guess_test_name()`$1(t *testing.T) {
 	assert := assert.New(t)
 
@@ -895,7 +893,6 @@ func Test`!p if not snip.c: snip.rv = guess_test_name()`$1(t *testing.T) {
 endsnippet
 
 snippet ttf "Test with Template (Fail on Error)" bw
-// ${2:Test Description}.
 func Test`!p if not snip.c: snip.rv = guess_test_name()`$1(t *testing.T) {
 	assert := assert.New(FailOnError(t))
 
@@ -904,7 +901,7 @@ func Test`!p if not snip.c: snip.rv = guess_test_name()`$1(t *testing.T) {
 endsnippet
 
 snippet tb "Test Benchmark" bw
-func Benchmark$1(b *testing.B) {
+func Benchmark_$1(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		$0
 	}
@@ -912,7 +909,7 @@ func Benchmark$1(b *testing.B) {
 endsnippet
 
 snippet tbp "Test Benchmark - Parallel" bw
-func Benchmark$1(b *testing.B) {
+func Benchmark_$1(b *testing.B) {
 	b.RunParallel(func (pb *testing.PB) {
 		for pb.Next() {
 			$0
