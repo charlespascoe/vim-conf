@@ -21,9 +21,6 @@ func dictate#Init()
 
     autocmd InsertEnter * call dictate#EnterInsertMode()
     autocmd InsertLeave * call dictate#LeaveInsertMode()
-    " Auto-capitalise words after certain punctuation
-    " autocmd InsertCharPre * if search('\v(%^|[.!?]\_s)\_s*%#', 'bcnw') != 0 | let v:char = toupper(v:char) | endif
-    " autocmd InsertCharPre * if search('\v(%^\_s\+[-*+?<>]\_s)\_s*%#', 'bcnw') != 0 | let v:char = toupper(v:char) | endif
 endfun
 
 func dictate#Start()
@@ -36,9 +33,8 @@ func dictate#OnOutput(job, msg)
     if s:in_insert_mode
         let msg = a:msg
 
-        " Automatically capitalise the first letter after certain
-        " characters
-        if search('\v(%^|[.!?/#]\_s)\_s*%#', 'bcnw') != 0 || search('\v(%^\_s\+[-*+?<>]\_s)\_s*%#', 'bcnw') != 0
+        " Automatically capitalise the first letter after certain characters
+        if search('\v(%^|[.!?/#]\_s)\_s*%#', 'bcn') != 0 || search('^\s\+[-*+?<>]\s\+\%#', 'bcn') != 0
             let msg = toupper(msg[0]).msg[1:]
         endif
 
