@@ -96,10 +96,19 @@ set nofoldenable
 " Set shell for shell-based commands
 set shell=/bin/bash
 
-" Disable command lookup (keep typing it accidentally)
-nmap K <Nop>
+" Convenience mappings to reduce pedal usage
+nnoremap l b
+nnoremap L B
 
-" Start Dictation
+nnoremap h p
+nnoremap H P
+
+nnoremap s .
+
+onoremap ae ap
+onoremap ie ip
+
+" Initialise Dictation
 call dictate#Init()
 
 " External files
