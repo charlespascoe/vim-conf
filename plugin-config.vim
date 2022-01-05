@@ -72,7 +72,7 @@ fun! VisualExpandSnippet(type = '')
     endif
 endfun
 
-nmap <expr> gk VisualExpandSnippet()
+nmap <expr> ge VisualExpandSnippet()
 
 " Vim's netrw
 let g:netrw_ftp_cmd="ftp -p"   " passive mode by default
