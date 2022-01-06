@@ -84,7 +84,7 @@ case $1 in
 
         ;;
 
-    fvs|vs)
+    fes|es)
         if [ "$#" -ne 2 ]; then
             echo "Usage: bn $1 PROJECT"
             exit 1
@@ -99,13 +99,19 @@ case $1 in
 
         export BN_PROJ=1
 
+        cmd="$1 -c BulletnotesAsyncStart"
+
+        if [ $1 == 'fes' ]; then
+            cmd="$1 -c BulletnotesAsyncStartIndex"
+        fi
+
         # TODO: Handle uncommited changes before pushing
         # TODO: Conditionally push based on commits
         #ec 45 "Pulling latest changes..." && \
         #git pull --rebase && \
         cd "$BN_HOME/$proj" && \
         source ~/.bash_aliases && \
-        $1 -c 'BulletnotesAsyncStart' && \
+        $cmd && \
         push "$proj"
 
         exit $?
