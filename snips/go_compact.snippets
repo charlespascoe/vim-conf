@@ -24,6 +24,7 @@ convert_type_map = {
 	'f6': 'float64',
 
 	'b': 'byte',
+	'd': 'byte', # Convenience alias
 
 	'B': 'bool',
 }
@@ -340,7 +341,7 @@ snippet 'cc ' "Comment with dictation" brA
 `!p snip.rv = snip.c or start_dictation('//')` $1
 endsnippet
 
-snippet '\bc(\[\])?(u?i[136]?|f[36]?|s|b)\b' "Convert to Type" r
+snippet '\bc(\[\])?(u?i[136]?|f[36]?|[sbBd])\b' "Convert to Type" r
 `!p snip.rv = match.group(1) or ''``!p snip.rv = convert_type_map[match.group(2)]`(${VISUAL}$1)
 endsnippet
 
@@ -785,8 +786,20 @@ func (`!p snip.rv = snip.c or ' '.join(find_method_type(True))`) Validate() erro
 }
 endsnippet
 
-snippet 'M\[\](u?i[136]?|f[36]?|s|b|B)?' "Make slice" r
-make([]${1:`!p snip.rv = convert_type_map.get(match[1] or '', '')`}, ${2:0})
+snippet Ms "Make slice"
+make([]$1, 0$2)
+endsnippet
+
+snippet 'Ms(u?i[136]?|f[36]?|[sbBd])' "Make slice of type" r
+make([]`!p snip.rv = convert_type_map.get(match[1] or '', '')`, 0$1)
+endsnippet
+
+snippet MS "Make set"
+make(map[${1:value}]struct{})
+endsnippet
+
+snippet Mm "Make map"
+make(map[${1:key}]${2:value})
 endsnippet
 
 ## P ##
@@ -807,6 +820,10 @@ endsnippet
 
 snippet r "Return" bw
 return ${0:${VISUAL}}
+endsnippet
+
+snippet 'r $' "Return (automatic)" brA
+return $0
 endsnippet
 
 snippet rr "Receiver type with dot" wA
@@ -866,12 +883,10 @@ endsnippet
 snippet ta "Test Array" "add_import('ta', snip, 'fmt', 'testing', 'github.com/stretchr/testify/assert')" bwe
 func Test`!p if not snip.c: snip.rv = guess_test_name()`$1(t *testing.T) {
 	tests := []struct{
-		Description string
-		$3
+		$2
 	}{
 		{
-			Description: "$4"
-			$5
+			$3
 		},
 	}
 
@@ -879,10 +894,10 @@ func Test`!p if not snip.c: snip.rv = guess_test_name()`$1(t *testing.T) {
 		t.Run(fmt.Sprintf("Test %d of %d", i+1, len(tests)), func(s *testing.T) {
 			assert := assert.New(s)
 
-			assert.Equal(test.Result, $0, test.Description)
+			$0
 		})
 	}
-}
+}`!p t[1] = capitalise(t[1], non_alphanum_underscore)`
 endsnippet
 
 snippet 'td ' "TODO Comment" brA
@@ -914,15 +929,15 @@ func (t FailOnErrorT) Errorf(format string, args ...interface{}) {
 }
 endsnippet
 
-snippet tt "Test with Template" bw
-func Test`!p if not snip.c: snip.rv = guess_test_name()`$1(t *testing.T) {
-	assert := assert.New(t)
+# snippet tt "Test with Template" bw
+# func Test`!p if not snip.c: snip.rv = guess_test_name()`$1(t *testing.T) {
+# 	assert := assert.New(t)
 
-	$0
-}
-endsnippet
+# 	$0
+# }
+# endsnippet
 
-snippet ttf "Test with Template (Fail on Error)" bw
+snippet tt "Test with Template (Fail on Error)" bw
 func Test`!p if not snip.c: snip.rv = guess_test_name()`$1(t *testing.T) {
 	assert := assert.New(FailOnError(t))
 
@@ -983,18 +998,22 @@ endsnippet
 
 ## Symbols ##
 
-snippet = "Assignment" b
-$1 := $0
+snippet = "Assignment" bA
+$1 := $0`!p t[1] = capitalise(t[1], non_alphanum_underscore)`
 endsnippet
 
-snippet =2 "Assignment (2 arguments)" b
+snippet e= "Error Assignment" bA
+$1, err := $0`!p t[1] = capitalise(t[1], non_alphanum_underscore)`
+endsnippet
+
+snippet 2= "Assignment (2 arguments)" bA
 $1, $2 := $0
 endsnippet
 
-snippet =3 "Assignment (3 arguments)" b
+snippet 3= "Assignment (3 arguments)" bA
 $1, $2, $3 := $0
 endsnippet
 
-snippet =4 "Assignment (4 arguments)" b
+snippet 4= "Assignment (4 arguments)" bA
 $1, $2, $3, $4 := $0
 endsnippet
