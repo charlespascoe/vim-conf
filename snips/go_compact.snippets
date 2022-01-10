@@ -27,6 +27,8 @@ convert_type_map = {
 	'd': 'byte', # Convenience alias
 
 	'B': 'bool',
+
+	'r': 'rune',
 }
 
 
@@ -243,6 +245,15 @@ def capitalise(s, remove=None, cap_first=False):
 
 	return s
 
+def smart_capitalisation(s, cap_first=True):
+	# Detects if the name has been dictated, and formats if necessary
+
+	if ' ' in s:
+		# Default to public methods
+		return capitalise(s, non_alphanum_underscore, cap_first)
+
+	return s
+
 def start_dictation(ret_val):
 	vim.command('call dictate#Start()')
 	# Returning a value prevents the function for being run multiple times
@@ -328,6 +339,10 @@ endsnippet
 
 ## C ##
 
+snippet '^c$' "Const" brA
+const $1 = `!p t[1] = smart_capitalisation(t[1])`
+endsnippet
+
 snippet c "Channel" bw
 $1 := make(chan $2)
 endsnippet
@@ -341,7 +356,7 @@ snippet 'cc ' "Comment with dictation" brA
 `!p snip.rv = snip.c or start_dictation('//')` $1
 endsnippet
 
-snippet '\bc(\[\])?(u?i[136]?|f[36]?|[sbBd])\b' "Convert to Type" r
+snippet '\bc(\[\])?(u?i[136]?|f[36]?|[sbBdr])\b' "Convert to Type" r
 `!p snip.rv = match.group(1) or ''``!p snip.rv = convert_type_map[match.group(2)]`(${VISUAL}$1)
 endsnippet
 
@@ -492,8 +507,14 @@ endsnippet
 # }
 # endsnippet
 
-snippet '}e' "Else" brA
+snippet '} ?e' "Else" brA
 } else {
+	$0
+}
+endsnippet
+
+snippet '} ?i' "Else If" brA
+} else if $1 {
 	$0
 }
 endsnippet
@@ -507,6 +528,12 @@ endsnippet
 snippet 'ifEr ' "If error, return" "add_import('iEr', snip, 'fmt')" breA
 if err != nil {
 	return $1fmt.Errorf("$2: %s",$3 err)
+}
+endsnippet
+
+snippet ifEP "If error, panic" bA
+if err != nil {
+	panic(err)
 }
 endsnippet
 
@@ -546,7 +573,7 @@ if len($1) `!p snip.rv = snip.c or to_comparison(match[1])` ${2:0} {
 }
 endsnippet
 
-snippet '[lg][et]' "Numeric comparison " wr
+snippet '\b[lg][et]\b' "Numeric comparison " wr
 ${1:a} `!p snip.rv = snip.c or to_comparison(match[0])` ${2:0}
 endsnippet
 
@@ -732,7 +759,16 @@ snippet '^m([ *])' "Method" brA
 // $1 TODO: Description.
 func (`!p snip.rv = snip.c or ' '.join(find_method_type(match[1] == '*'))`) ${1: }($2)$3 {
 	$0
-}
+}`!p t[1] = smart_capitalisation(t[1])`
+endsnippet
+
+snippet '^mr([ *])' "Method with self return" brA
+// $1 TODO: Description.
+func (`!p snip.rv = snip.c or ' '.join(find_method_type(match[1] == '*'))`) ${1: }($2) `!p snip.rv = snip.c or find_method_type(match[1] == '*')` {
+	$0
+
+	return `!p snip.rv = snip.c or find_method_type(match[1] == '*')[0]`
+}`!p t[1] = smart_capitalisation(t[1])`
 endsnippet
 
 snippet mmj "Method - MarshalJSON" bw
@@ -790,7 +826,7 @@ snippet Ms "Make slice"
 make([]$1, 0$2)
 endsnippet
 
-snippet 'Ms(u?i[136]?|f[36]?|[sbBd])' "Make slice of type" r
+snippet 'Ms(u?i[136]?|f[36]?|[sbBdr])' "Make slice of type" r
 make([]`!p snip.rv = convert_type_map.get(match[1] or '', '')`, 0$1)
 endsnippet
 
@@ -822,7 +858,7 @@ snippet r "Return" bw
 return ${0:${VISUAL}}
 endsnippet
 
-snippet 'r $' "Return (automatic)" brA
+snippet '\br $' "Return (automatic)" brA
 return $0
 endsnippet
 
@@ -866,11 +902,26 @@ endsnippet
 
 snippet '^st' "Struct" brA
 // $1 ${2:TODO: Description}.
-type ${1: } struct {`!p t[1] = capitalise(t[1], non_alphanum_underscore, True)`
+type ${1: } struct {`!p t[1] = smart_capitalisation(t[1])`
 	$0
 }
 endsnippet
 
+snippet sw "Switch" b
+switch $1 {
+case $2:
+	$0
+}
+endsnippet
+
+snippet swt "Switch (Type)" b
+switch $1 := $2.(type) {
+case $3:
+	$0
+default:
+	``
+}
+endsnippet
 
 ## T ##
 
@@ -984,6 +1035,10 @@ func TestMain(m *testing.M) {
 }
 endsnippet
 
+snippet '^ty' "Type" brA
+type ${1:Name} ${2:Type}
+endsnippet
+
 ## V ##
 
 snippet v "Validate" b
@@ -999,11 +1054,11 @@ endsnippet
 ## Symbols ##
 
 snippet = "Assignment" bA
-$1 := $0`!p t[1] = capitalise(t[1], non_alphanum_underscore)`
+$1 := $0`!p t[1] = smart_capitalisation(t[1], cap_first=False)`
 endsnippet
 
 snippet e= "Error Assignment" bA
-$1, err := $0`!p t[1] = capitalise(t[1], non_alphanum_underscore)`
+$1, err := $0`!p t[1] = smart_capitalisation(t[1], cap_first=False)`
 endsnippet
 
 snippet 2= "Assignment (2 arguments)" bA
