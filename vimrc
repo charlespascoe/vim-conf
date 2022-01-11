@@ -82,6 +82,9 @@ imap <3-MiddleMouse> <Nop>
 map <4-MiddleMouse> <Nop>
 imap <4-MiddleMouse> <Nop>
 
+" Disable 'Q' from leaving visual mode
+map Q <Nop>
+
 " Set options to improve syntax highlighing performance
 set nocursorcolumn
 syntax sync minlines=256

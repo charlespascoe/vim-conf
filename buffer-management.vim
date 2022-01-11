@@ -23,6 +23,9 @@ nnoremap <C-s> <Esc>:keepjumps wa<CR>
 " inoremap <C-c> <Esc>:wqa<CR>
 nnoremap ZX <Esc>:wqa<CR>
 
+" Deletes the session file before quitting
+nnoremap ZQ <Esc>:Obsession!<CR>:wqa<CR>
+
 command! CloseAll :bufdo bdelete
 
 " Always open quickfix at the bottom (full width)
