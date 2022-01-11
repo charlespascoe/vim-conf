@@ -3,9 +3,28 @@ def start_dictation():
 	vim.command('call dictate#Start()')
 	# Returning this value prevents the function for being run multiple times
 	# during a single expansion of a snippet
-	return ':'
+	return common_changes() + ':'
+
+def common_changes():
+	files = os.popen('git diff --cached --name-only').read().strip().split('\n')
+
+	if len(files) == 1:
+		return files[0]
+
+	min_len = min(len(file) for file in files)
+
+	prefix_len = 0
+
+	for i in range(min_len):
+		if all(files[0][i] == file[i] for file in files):
+			prefix_len = i
+		else:
+			break
+
+	return files[0][:prefix_len]
+
 endglobal
 
 snippet cc "Common Changes"
-`common-changes``!p snip.rv = snip.c or start_dictation()` $0
+`!p if not snip.c: snip.rv = start_dictation()` $0
 endsnippet
