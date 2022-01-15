@@ -1,5 +1,6 @@
 # KEEP IN ALPHABETIC ORDER
 global !p
+from snippet_utils import preceeding_lines
 
 type_re = re.compile(r"^type (\w+)")
 struct_re = re.compile(r"^type (\w+) struct")
@@ -30,14 +31,6 @@ convert_type_map = {
 
 	'r': 'rune',
 }
-
-
-def preceeding_lines():
-	l = vim.current.window.cursor[0] - 2
-
-	while l > 0:
-		yield vim.current.window.buffer[l]
-		l -= 1
 
 def find_method_type(pointer=False):
 	for line in preceeding_lines():
@@ -272,6 +265,9 @@ def to_comparison(snip_str):
 		sym += '='
 
 	return sym
+
+def auto_expand_cond(snip):
+	return re.match(r'^\t+if ', snip.buffer[snip.line])
 
 endglobal
 

@@ -44,6 +44,10 @@ nmap <silent> <leader>n :NERDTreeToggle \| NERDTreeRefreshRoot<CR>
 let NERDTreeShowLineNumbers = 1
 let NERDTreeWinSize = 48
 
+" python-syntax
+let g:python_highlight_all = 1
+let g:python_highlight_space_errors = 0
+
 " Undotree
 nmap <silent> <leader>ut <Esc>:UndotreeToggle<CR>
 

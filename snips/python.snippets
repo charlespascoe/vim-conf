@@ -1,23 +1,44 @@
+global !p
+from snippet_utils import preceeding_lines, top_level
+
+class_re = re.compile(r'^class ([a-zA-Z0-9_]+)(\s.*)?:$')
+
+def is_in_class():
+	for line in preceeding_lines():
+		print(line)
+
+	return class_re.match(next(top_level(preceeding_lines()), ''))
+
+
+def guess_class_assignments(args_str):
+	args = (arg.split('=')[0].strip() for arg in args_str.split(',') if arg.strip() != '')
+
+	return ('\n' + ' ' * 8).join(f'self.{arg} = {arg}' for arg in args)
+
+endglobal
+
 ## C ##
 
-snippet cls "Class" b
+snippet '^cls' "Class" brA
 class $1:
 	$0
-endsnippet
-
-snippet clsc "Class with constructor" b
-class $1:
-	def __init__(self$2):
-		$0
 endsnippet
 
 ## F ##
 
-snippet f "Function" b
+snippet '^f $' "Function" brA
 def $1($2):
 	$0
 endsnippet
 
+snippet '^from ' "From" brA
+from $1 import ${0:*}
+endsnippet
+
+snippet 'for ' "For" brA
+for $1:
+	$0
+endsnippet
 
 snippet fore "For Each" b
 for $1 in $2:
@@ -35,12 +56,12 @@ snippet im "Import" b
 import $0
 endsnippet
 
-snippet 'if ' "If" brA
+snippet 'if $' "If" brA
 if $1:
 	$0
 endsnippet
 
-snippet 'ife ' "If Else" brA
+snippet 'ife $' "If Else" brA
 if $1:
 	$0
 else:
@@ -55,6 +76,26 @@ endsnippet
 snippet 'if([lg])t(e?) ' "If length" brA
 if len(${1: }) `!p snip.rv = '>' if match[1] == 'g' else '<'``!p snip.rv = '=' if match[2] == 'e' else ''` $2:
 	$0
+endsnippet
+
+## M ##
+
+context "is_in_class()"
+snippet '^(\s{4})?m $' "" breA
+	def $1(self$2):
+		$0
+endsnippet
+
+context "is_in_class()"
+snippet '^(\s{4})?mc$' "" breA
+	def __init__(self$1):
+		`!p snip.rv = guess_class_assignments(t[1])`$0
+endsnippet
+
+context "is_in_class()"
+snippet '^(\s{4})?ms$' "" breA
+	def __str__(self):
+		$0
 endsnippet
 
 ## O ##
@@ -91,7 +132,7 @@ snippet r "Return" b
 return $0
 endsnippet
 
-snippet 'rr ' "Self reference" wA
+snippet rr "Self reference" wA
 self.
 endsnippet
 
@@ -99,4 +140,17 @@ snippet rl "Read lines (strip whitespace)" b
 for line in $1:
 	line = line.strip()
 	$0
+endsnippet
+
+## W ##
+
+snippet 'wh $' "While" brA
+while $1:
+	$0
+endsnippet
+
+## Y ##
+
+snippet y "yield" b
+yield $0
 endsnippet

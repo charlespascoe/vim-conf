@@ -24,3 +24,17 @@ fun! RealtimeRepl()
 endfun
 
 command! RealtimeRepl call RealtimeRepl()
+
+fun! AddImport()
+    let l:import_line = search('^\(import\|from\)\s\+', 'bs')
+
+    if l:import_line == 0
+        normal ggO
+    else
+        normal o
+    end
+
+    startinsert
+endfun
+
+noremap <silent> <buffer> <leader>i <Esc>:call AddImport()<CR>
