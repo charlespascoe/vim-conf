@@ -1,12 +1,11 @@
 global !p
 from snippet_utils import preceeding_lines, top_level
 
-class_re = re.compile(r'^class ([a-zA-Z0-9_]+)(\s.*)?:$')
+
+class_re = re.compile(r'^class ([a-zA-Z0-9_]+)(\([^)]+\))?:$')
+
 
 def is_in_class():
-	for line in preceeding_lines():
-		print(line)
-
 	return class_re.match(next(top_level(preceeding_lines()), ''))
 
 
@@ -22,6 +21,10 @@ endglobal
 snippet '^cls' "Class" brA
 class $1:
 	$0
+endsnippet
+
+snippet cont "continue" b
+continue
 endsnippet
 
 ## F ##
@@ -153,4 +156,15 @@ endsnippet
 
 snippet y "yield" b
 yield $0
+endsnippet
+
+## S ##
+
+snippet stdin "read lines from standard in" b
+import sys
+
+for line in sys.stdin:
+	line = line.strip()
+
+	$0
 endsnippet
