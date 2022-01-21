@@ -32,6 +32,7 @@ hi Visual cterm=reverse ctermbg=16
 hi VisualNOS cterm=bold,underline,underline
 hi WarningMsg ctermfg=16 ctermbg=214
 hi WildMenu ctermfg=16 ctermbg=220
+hi MatchParen cterm=bold ctermbg=240
 
 hi clear SignColumn
 
