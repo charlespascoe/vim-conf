@@ -1,13 +1,13 @@
 # KEEP IN ALPHABETIC ORDER
 global !p
-from snippet_utils import preceeding_lines
+from snippet_utils import preceeding_lines, find_line
+from go_snippet_utils import import_re, add_import
 
 type_re = re.compile(r"^type (\w+)")
 struct_re = re.compile(r"^type (\w+) struct")
 method_re = re.compile(r"^func \(([^)]+)\)\s+(\w+)\(")
 func_re = re.compile(r"^func (\w+)\(")
 test_re = re.compile(r"^func Test([^)]*)\(")
-import_re = re.compile(r'^import \($')
 
 convert_type_map = {
 	'i':   'int',
@@ -178,47 +178,8 @@ def previous_test_name():
 
 	return ''
 
-# Returns the zero-based index of the first line that matches the regexp
-def find_line(regexp):
-	for i in range(len(vim.current.window.buffer)):
-		if regexp.match(vim.current.window.buffer[i]):
-			return i
-
-	return None
 
 
-def add_import(prefix, snip, *imports):
-	if not snip.buffer[snip.line][:snip.column+1].endswith(prefix):
-		return False
-
-	imports = list(imports)
-
-	index = find_line(import_re)
-
-	if index is None:
-		go_import(imports)
-		return True
-
-	for i in range(index + 1, len(vim.current.window.buffer)):
-		line = vim.current.window.buffer[i].strip().replace('"', '')
-
-		imports = [imp for imp in imports if imp != line]
-
-		if line == ')':
-			if len(imports) > 0:
-				# End of imports - not found, so just add it
-				go_import(imports)
-			return True
-
-def go_import(imports):
-	for imp in imports:
-		parts = imp.split(' ')
-
-		if len(parts) > 1:
-			alias, path = parts[0], parts[1]
-			vim.command(f'GoImportAs {alias} {path}')
-		else:
-			vim.command(f'GoImport {imp}')
 
 # ends_with_non_letter = re.compile(r'[^a-zA-Z]$')
 non_alphanum_underscore = re.compile(r'[^a-zA-Z0-9_]')
@@ -971,30 +932,6 @@ import (
 $0
 endsnippet
 
-snippet tFoE "Fail on Error" "add_import('tFoE', snip, 'testing')" bwe
-func FailOnError(t *testing.T) FailOnErrorT {
-	return FailOnErrorT{T: t}
-}
-
-// A wrapper for *testing.T to stop the test on the first error
-type FailOnErrorT struct {
-	*testing.T
-}
-
-func (t FailOnErrorT) Errorf(format string, args ...interface{}) {
-	t.T.Helper()
-	t.T.Fatalf(format, args...)
-}
-endsnippet
-
-# snippet tt "Test with Template" bw
-# func Test`!p if not snip.c: snip.rv = guess_test_name()`$1(t *testing.T) {
-# 	assert := assert.New(t)
-
-# 	$0
-# }
-# endsnippet
-
 snippet tt "Test with Template (Fail on Error)" bw
 func Test`!p if not snip.c: snip.rv = guess_test_name()`$1(t *testing.T) {
 	assert := assert.New(FailOnError(t))
@@ -1021,26 +958,6 @@ func Benchmark_$1(b *testing.B) {
 }
 endsnippet
 
-snippet tm "Test Main" bw
-import (
-	"github.com/rs/zerolog"
-	"github.com/rs/zerolog/log"
-	"os"
-	"testing"
-)
-
-func TestMain(m *testing.M) {
-	log.Logger = log.Output(zerolog.ConsoleWriter{
-		Out:        os.Stderr,
-		TimeFormat: "15:04:05",
-	})
-	zerolog.SetGlobalLevel(zerolog.TraceLevel)
-
-	code := m.Run()
-
-	os.Exit(code)
-}
-endsnippet
 
 snippet '^ty' "Type" brA
 type ${1:Name} ${2:Type}
@@ -1078,222 +995,4 @@ endsnippet
 
 snippet 4= "Assignment (4 arguments)" bA
 $1, $2, $3, $4 := $0
-endsnippet
-
-## Argument Parsing (Move somewhere else?) ##
-
-snippet '^argutils' "Argument Parsing Utilities" brA
-import (
-	"flag"
-	"fmt"
-	"os"
-	"strconv"
-	"strings"
-)
-
-var output = os.Stderr
-
-type Subcommand struct {
-	Name string
-	Help string
-	Exec func(args []string)
-}
-
-type PosArg struct {
-	Name string
-	Help string
-	Meta string
-}
-
-func (posArg PosArg) GetMetaVar() string {
-	if posArg.Meta != "" {
-		return posArg.Meta
-	}
-
-	return posArg.Name
-}
-
-type HelpFormatter struct {
-	Description    string
-	Flags          *flag.FlagSet
-	PositionalArgs []PosArg
-	Subcommands    []Subcommand
-}
-
-func (helpFmt HelpFormatter) PrintUsage() {
-	Logf("Usage: %s", helpFmt.Flags.Name())
-
-	hasOptions := helpFmt.HasAnyOptions()
-
-	if hasOptions {
-		Logf(" <options>")
-	}
-
-	maxLen := 0
-
-	if len(helpFmt.PositionalArgs) > 0 {
-		for _, posArg := range helpFmt.PositionalArgs {
-			if len(posArg.Name) > maxLen {
-				maxLen = len(posArg.Name)
-			}
-
-			Logf(" %s", posArg.GetMetaVar())
-		}
-	}
-
-	if len(helpFmt.Subcommands) > 0 {
-		Logf(" <subcommand>")
-
-		for _, subcmd := range helpFmt.Subcommands {
-			if len(subcmd.Name) > maxLen {
-				maxLen = len(subcmd.Name)
-			}
-		}
-	}
-
-	Logf("\n")
-
-	if helpFmt.Description != "" {
-		Logf("\n%s\n", helpFmt.Description)
-	}
-
-	if len(helpFmt.PositionalArgs) > 0 {
-		Logf("\nPositional Arguments:\n")
-
-		for _, posArg := range helpFmt.PositionalArgs {
-			LogHelp(maxLen, posArg.Name, posArg.Help)
-		}
-	}
-
-	if len(helpFmt.Subcommands) > 0 {
-		Logf("\nSubcommands:\n")
-
-		for _, subcmd := range helpFmt.Subcommands {
-			LogHelp(maxLen, subcmd.Name, subcmd.Help)
-		}
-	}
-
-	if hasOptions {
-		Logf("\nOptions:\n")
-		helpFmt.Flags.PrintDefaults()
-	}
-}
-
-func (helpFmt HelpFormatter) HasAnyOptions() bool {
-	hasOptions := false
-
-	helpFmt.Flags.VisitAll(func(f *flag.Flag) {
-		hasOptions = true
-	})
-
-	return hasOptions
-}
-
-func Logf(format string, args ...interface{}) {
-	fmt.Fprintf(output, format, args...)
-}
-
-func LogHelp(maxLen int, name, help string) {
-	Logf("  %-"+strconv.Itoa(maxLen)+"s  %s\n", name, help)
-}
-
-func Next(args []string) (arg string, tail []string) {
-	if len(args) > 0 {
-		return args[0], args[1:]
-	}
-
-	return "", args
-}
-
-func ExecSubcommand(flags *flag.FlagSet, subcmds []Subcommand, args []string) {
-	cmd, args := Next(args)
-
-	if cmd == "" {
-		Logf("Expected subcommand.\n\n")
-		flags.Usage()
-		os.Exit(2)
-	}
-
-	for _, subcmd := range subcmds {
-		if subcmd.Name == cmd {
-			subcmd.Exec(args)
-			return
-		}
-	}
-
-	Logf("Unknown subcommand: %s\n\n", cmd)
-	flags.Usage()
-	os.Exit(2)
-}
-
-func ParseAllOptions(flags *flag.FlagSet, args []string) (posArgs []string) {
-	for len(args) > 0 {
-		if err := flags.Parse(args); err != nil {
-			// Really you should just use ExitOnError rather than allow Parse()
-			// to return an error
-			panic(err)
-		}
-
-		args = flags.Args()
-
-		for len(args) > 0 && !strings.HasPrefix(args[0], "-") {
-			posArgs = append(posArgs, args[0])
-			args = args[1:]
-		}
-	}
-
-	return
-}
-endsnippet
-
-context "add_import('subcmd', snip, 'flag')"
-snippet '^subcmd' "Subcommand" breA
-func create$1Subcmd(parent *flag.FlagSet) Subcommand {
-	name := "`!p snip.rv = t[1].lower()`"
-
-	flags := flag.NewFlagSet(parent.Name()+" "+name, flag.ExitOnError)
-	flags.SetOutput(parent.Output())
-
-	subcmds := []Subcommand{
-	}
-
-	flags.Usage = HelpFormatter{
-		Flags:          flags,
-		Subcommands:    subcmds,
-		PositionalArgs: []PosArg{
-			{Name: "EXAMPLE", Help: "An example positional argument"},
-		},
-	}.PrintUsage
-
-	return Subcommand{
-		Name: name,
-		Help: "TODO: Help",
-		Exec: func(args []string) {
-			flags.Parse(args)
-
-			$0
-		},
-	}
-}
-endsnippet
-
-context "add_import('mainargs', snip, 'flag', 'fmt', 'os')"
-snippet '^mainargs' "Main (With argument parsing)" breA
-func main() {
-	flags := flag.NewFlagSet(os.Args[0], flag.ExitOnError)
-
-	subcmds := []Subcommand{
-	}
-
-	flags.Usage = HelpFormatter{
-		Flags:       flags,
-		Subcommands: subcmds,
-	}.PrintUsage
-
-	flags.Parse(os.Args[1:])
-
-	args := flags.Args()
-
-	ExecSubcommand(flags, subcmds, args)
-}
 endsnippet

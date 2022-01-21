@@ -5,6 +5,14 @@ import vim
 leading_whitespace_re = re.compile(r'^\s+')
 
 
+# Returns the zero-based index of the first line that matches the regexp
+def find_line(regexp):
+	for i in range(len(vim.current.window.buffer)):
+		if regexp.match(vim.current.window.buffer[i]):
+			return i
+
+	return None
+
 def preceeding_lines():
 	l = vim.current.window.cursor[0] - 2
 
