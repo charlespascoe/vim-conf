@@ -186,38 +186,39 @@ def find_line(regexp):
 
 	return None
 
+
 def add_import(prefix, snip, *imports):
 	if not snip.buffer[snip.line][:snip.column+1].endswith(prefix):
 		return False
 
-	# imports = [(f'"{pkg}"' if '"' not in pkg else pkg) for pkg in imports ]
 	imports = list(imports)
 
 	index = find_line(import_re)
 
 	if index is None:
+		go_import(imports)
 		return True
 
 	for i in range(index + 1, len(vim.current.window.buffer)):
-		line = vim.current.window.buffer[i].strip()
+		line = vim.current.window.buffer[i].strip().replace('"', '')
 
-		for imp_idx in range(len(imports)):
-			if line == imports[imp_idx]:
-				imports.pop(imp_idx)
+		imports = [imp for imp in imports if imp != line]
 
 		if line == ')':
 			if len(imports) > 0:
-				for imp in imports:
-					# End of imports - not found, so just add it
-					parts = imp.split(' ')
-
-					if len(parts) > 1:
-						alias, path = parts[0], parts[1]
-						vim.command(f'GoImportAs {alias} {path}')
-					else:
-						vim.command(f'GoImport {imp}')
-
+				# End of imports - not found, so just add it
+				go_import(imports)
 			return True
+
+def go_import(imports):
+	for imp in imports:
+		parts = imp.split(' ')
+
+		if len(parts) > 1:
+			alias, path = parts[0], parts[1]
+			vim.command(f'GoImportAs {alias} {path}')
+		else:
+			vim.command(f'GoImport {imp}')
 
 # ends_with_non_letter = re.compile(r'[^a-zA-Z]$')
 non_alphanum_underscore = re.compile(r'[^a-zA-Z0-9_]')
@@ -269,7 +270,37 @@ def to_comparison(snip_str):
 def auto_expand_cond(snip):
 	return re.match(r'^\t+if ', snip.buffer[snip.line])
 
+def is_only_line_contents(s, snip):
+	return snip.buffer[snip.line].strip() == s.strip()
+
 endglobal
+
+## Auto-imports ##
+
+context "add_import('errors.', snip, 'errors')"
+snippet errors. "Errors auto-import" bwA
+errors.
+endsnippet
+
+context "add_import('fmt.', snip, 'fmt')"
+snippet fmt. "Format auto-import" bwA
+fmt.
+endsnippet
+
+context "add_import('http.', snip, 'net/http')"
+snippet http. "HTTP auto-import" bwA
+http.
+endsnippet
+
+context "add_import('json.', snip, 'encoding/json')"
+snippet json. "JSON auto-import" bwA
+json.
+endsnippet
+
+context "add_import('os.', snip, 'os')"
+snippet os. "OS auto-import" bwA
+os.
+endsnippet
 
 ## A ##
 
@@ -392,7 +423,7 @@ endsnippet
 ## F ##
 
 snippet 'F(\[\])?(u?i[136]?|f[36]?|s|b|B)' "Field" bwr
-$1 `!p snip.rv = match[1] or ''``!p snip.rv = convert_type_map.get(match[2] or '', '')``!p t[1] = capitalise(t[1], non_alphanum_underscore)`
+$1 `!p snip.rv = match[1] or ''``!p snip.rv = convert_type_map.get(match[2] or '', '')``!p t[1] = smart_capitalisation(t[1])`
 endsnippet
 
 snippet Fl "Field (logger)" "add_import('Fl', snip, 'github.com/rs/zerolog')" bwe
@@ -407,9 +438,9 @@ snippet FLr "Field (RW Lock)" "add_import('FLr', snip, 'sync')" bwe
 ${1:lock} sync.RWMutex
 endsnippet
 
-snippet '^f(f?) ' "Function" brA
+snippet '^f ' "Function" brA
 // $1 ${4:TODO: Description}.
-func ${1: }($2)$3 {`!p t[1] = capitalise(t[1], non_alphanum_underscore, match[1] == 'f')`
+func ${1: }($2)$3 {`!p t[1] = smart_capitalisation(t[1])`
 	$0
 }
 endsnippet
@@ -445,25 +476,26 @@ func New$1($2) *$1 {
 }
 endsnippet
 
-snippet for "For" bw
-for $1{
+context "is_only_line_contents('for', snip)"
+snippet 'for ' "For" breA
+for $1`!p snip.rv = ' ' if len(t[1]) > 0 else ''`{
 	$0
 }
 endsnippet
 
-snippet forc "For channel" bw
+snippet 'forc ' "For channel" brA
 for $1 := range $2 {
 	$0
 }
 endsnippet
 
-snippet fore "For each" bw
+snippet 'fore ' "For each" brA
 for ${1:_}, $2 := range $3 {
 	$0
 }
 endsnippet
 
-snippet fori "For counter (i)" bw
+snippet 'fori ' "For counter (i)" brA
 for i := ${1:0}; i < $2; i++ {
 	$0
 }
@@ -495,14 +527,6 @@ if $1 {
 }
 endsnippet
 
-# snippet 'ife ' "If-else" brA
-# if $1 {
-# 	$0
-# } else {
-# 	``
-# }
-# endsnippet
-
 snippet '} ?e' "Else" brA
 } else {
 	$0
@@ -521,7 +545,7 @@ if err != nil {
 }
 endsnippet
 
-snippet 'ifEr ' "If error, return" "add_import('iEr', snip, 'fmt')" breA
+snippet 'ifEr ' "If error, return" "add_import('ifEr ', snip, 'fmt')" breA
 if err != nil {
 	return $1fmt.Errorf("$2: %s",$3 err)
 }
@@ -545,32 +569,16 @@ if $1 != nil {
 }
 endsnippet
 
-snippet 'if([lg][et])' "If less/greater than" brA
-if ${1: } `!p snip.rv = snip.c or to_comparison(match[1])` ${2:0} {
-	$0
-}
+snippet '\b([lg][et]) ' "Less/greater than" wrA
+`!p snip.rv = snip.c or to_comparison(match[1])` ${0:0}
 endsnippet
 
-snippet 'ifl ' "If Length" brA
-if len(${1: }) == ${2:0} {
-	$0
-}
+snippet '\bl([lg][et]) ' "Length less/greater than" wrA
+len($1) `!p snip.rv = snip.c or to_comparison(match[1])` ${0:0}
 endsnippet
 
-snippet 'ifln ' "If Length Not" brA
-if len(${1: }) != ${2:0} {
-	$0
-}
-endsnippet
-
-snippet 'ifl([lg][et])' "If length less/greater than" brA
-if len($1) `!p snip.rv = snip.c or to_comparison(match[1])` ${2:0} {
-	$0
-}
-endsnippet
-
-snippet '\b[lg][et]\b' "Numeric comparison " wr
-${1:a} `!p snip.rv = snip.c or to_comparison(match[0])` ${2:0}
+snippet '\bl([ne])e ' "Length (not) equal" wrA
+len($1) `!p snip.rv = '!' if match[1] == 'n' else '='`= ${0:0}
 endsnippet
 
 snippet 'ifv ' "If Validate" brA
@@ -591,14 +599,6 @@ if $1 := $2; $3 {
 }
 endsnippet
 
-snippet 'ifse ' "If short, else" brA
-if $1 := $2; $3 {
-	$0
-} else {
-	``
-}
-endsnippet
-
 snippet 'ifsE ' "If short error" brA
 if $1err := ${VISUAL:/^.*err :?= //}$2; err != nil {
 	$0
@@ -611,13 +611,13 @@ if $1err := ${VISUAL:/^.*err :?= //}$2; err != nil {
 }
 endsnippet
 
-snippet 'ifju ' "If Short JSON Unmarshal" "add_import('isju', snip, 'encoding/json')" breA
+snippet 'ifju ' "If Short JSON Unmarshal" "add_import('ifju ', snip, 'encoding/json')" breA
 if err := json.Unmarshal(${1:data}, $2); err != nil {
 	$0
 }
 endsnippet
 
-snippet 'ifjur ' "If Short JSON Unmarshal, return" "add_import('isjur', snip, 'encoding/json', 'fmt')" breA
+snippet 'ifjur' "If Short JSON Unmarshal, return" "add_import('ifjur', snip, 'encoding/json', 'fmt')" breA
 if err := json.Unmarshal(${1:data}, $2); err != nil {
 	return $3fmt.Errorf("$4: %s",$5 err)
 }
@@ -638,7 +638,7 @@ endsnippet
 
 snippet '^\tim' "Interface Method" brA
 	// $1 TODO: Description.
-	${1: }($2)$0`!p t[1] = capitalise(t[1], non_alphanum_underscore, True)`
+	${1: }($2)$0`!p t[1] = smart_capitalisation(t[1])`
 endsnippet
 
 ## J ##
@@ -745,7 +745,7 @@ endsnippet
 
 ## M ##
 
-snippet '^main' "Main" brA
+snippet '^main ' "Main" brA
 func main() {
 	$0
 }
@@ -834,6 +834,13 @@ snippet Mm "Make map"
 make(map[${1:key}]${2:value})
 endsnippet
 
+## O ##
+
+context "add_import('oe ', snip, 'os')"
+snippet 'oe ' "OS Exit" breA
+os.Exit(${1:1})
+endsnippet
+
 ## P ##
 
 snippet P "panic" bw
@@ -852,6 +859,10 @@ endsnippet
 
 snippet r "Return" bw
 return ${0:${VISUAL}}
+endsnippet
+
+snippet rn "Return Nil" bw
+return nil
 endsnippet
 
 snippet '\br $' "Return (automatic)" brA
@@ -924,7 +935,7 @@ endsnippet
 snippet t "Test" bw
 func Test`!p if not snip.c: snip.rv = guess_test_name()`$1(t *testing.T) {
 	$0
-}
+}`!p t[1] = smart_capitalisation(t[1], non_alphanum_underscore)`
 endsnippet
 
 snippet ta "Test Array" "add_import('ta', snip, 'fmt', 'testing', 'github.com/stretchr/testify/assert')" bwe
@@ -944,7 +955,7 @@ func Test`!p if not snip.c: snip.rv = guess_test_name()`$1(t *testing.T) {
 			$0
 		})
 	}
-}`!p t[1] = capitalise(t[1], non_alphanum_underscore)`
+}`!p t[1] = smart_capitalisation(t[1])`
 endsnippet
 
 snippet 'td ' "TODO Comment" brA
@@ -989,7 +1000,7 @@ func Test`!p if not snip.c: snip.rv = guess_test_name()`$1(t *testing.T) {
 	assert := assert.New(FailOnError(t))
 
 	$0
-}
+}`!p t[1] = smart_capitalisation(t[1])`
 endsnippet
 
 snippet tb "Test Benchmark" bw
@@ -1067,4 +1078,222 @@ endsnippet
 
 snippet 4= "Assignment (4 arguments)" bA
 $1, $2, $3, $4 := $0
+endsnippet
+
+## Argument Parsing (Move somewhere else?) ##
+
+snippet '^argutils' "Argument Parsing Utilities" brA
+import (
+	"flag"
+	"fmt"
+	"os"
+	"strconv"
+	"strings"
+)
+
+var output = os.Stderr
+
+type Subcommand struct {
+	Name string
+	Help string
+	Exec func(args []string)
+}
+
+type PosArg struct {
+	Name string
+	Help string
+	Meta string
+}
+
+func (posArg PosArg) GetMetaVar() string {
+	if posArg.Meta != "" {
+		return posArg.Meta
+	}
+
+	return posArg.Name
+}
+
+type HelpFormatter struct {
+	Description    string
+	Flags          *flag.FlagSet
+	PositionalArgs []PosArg
+	Subcommands    []Subcommand
+}
+
+func (helpFmt HelpFormatter) PrintUsage() {
+	Logf("Usage: %s", helpFmt.Flags.Name())
+
+	hasOptions := helpFmt.HasAnyOptions()
+
+	if hasOptions {
+		Logf(" <options>")
+	}
+
+	maxLen := 0
+
+	if len(helpFmt.PositionalArgs) > 0 {
+		for _, posArg := range helpFmt.PositionalArgs {
+			if len(posArg.Name) > maxLen {
+				maxLen = len(posArg.Name)
+			}
+
+			Logf(" %s", posArg.GetMetaVar())
+		}
+	}
+
+	if len(helpFmt.Subcommands) > 0 {
+		Logf(" <subcommand>")
+
+		for _, subcmd := range helpFmt.Subcommands {
+			if len(subcmd.Name) > maxLen {
+				maxLen = len(subcmd.Name)
+			}
+		}
+	}
+
+	Logf("\n")
+
+	if helpFmt.Description != "" {
+		Logf("\n%s\n", helpFmt.Description)
+	}
+
+	if len(helpFmt.PositionalArgs) > 0 {
+		Logf("\nPositional Arguments:\n")
+
+		for _, posArg := range helpFmt.PositionalArgs {
+			LogHelp(maxLen, posArg.Name, posArg.Help)
+		}
+	}
+
+	if len(helpFmt.Subcommands) > 0 {
+		Logf("\nSubcommands:\n")
+
+		for _, subcmd := range helpFmt.Subcommands {
+			LogHelp(maxLen, subcmd.Name, subcmd.Help)
+		}
+	}
+
+	if hasOptions {
+		Logf("\nOptions:\n")
+		helpFmt.Flags.PrintDefaults()
+	}
+}
+
+func (helpFmt HelpFormatter) HasAnyOptions() bool {
+	hasOptions := false
+
+	helpFmt.Flags.VisitAll(func(f *flag.Flag) {
+		hasOptions = true
+	})
+
+	return hasOptions
+}
+
+func Logf(format string, args ...interface{}) {
+	fmt.Fprintf(output, format, args...)
+}
+
+func LogHelp(maxLen int, name, help string) {
+	Logf("  %-"+strconv.Itoa(maxLen)+"s  %s\n", name, help)
+}
+
+func Next(args []string) (arg string, tail []string) {
+	if len(args) > 0 {
+		return args[0], args[1:]
+	}
+
+	return "", args
+}
+
+func ExecSubcommand(flags *flag.FlagSet, subcmds []Subcommand, args []string) {
+	cmd, args := Next(args)
+
+	if cmd == "" {
+		Logf("Expected subcommand.\n\n")
+		flags.Usage()
+		os.Exit(2)
+	}
+
+	for _, subcmd := range subcmds {
+		if subcmd.Name == cmd {
+			subcmd.Exec(args)
+			return
+		}
+	}
+
+	Logf("Unknown subcommand: %s\n\n", cmd)
+	flags.Usage()
+	os.Exit(2)
+}
+
+func ParseAllOptions(flags *flag.FlagSet, args []string) (posArgs []string) {
+	for len(args) > 0 {
+		if err := flags.Parse(args); err != nil {
+			// Really you should just use ExitOnError rather than allow Parse()
+			// to return an error
+			panic(err)
+		}
+
+		args = flags.Args()
+
+		for len(args) > 0 && !strings.HasPrefix(args[0], "-") {
+			posArgs = append(posArgs, args[0])
+			args = args[1:]
+		}
+	}
+
+	return
+}
+endsnippet
+
+context "add_import('subcmd', snip, 'flag')"
+snippet '^subcmd' "Subcommand" breA
+func create$1Subcmd(parent *flag.FlagSet) Subcommand {
+	name := "`!p snip.rv = t[1].lower()`"
+
+	flags := flag.NewFlagSet(parent.Name()+" "+name, flag.ExitOnError)
+	flags.SetOutput(parent.Output())
+
+	subcmds := []Subcommand{
+	}
+
+	flags.Usage = HelpFormatter{
+		Flags:          flags,
+		Subcommands:    subcmds,
+		PositionalArgs: []PosArg{
+			{Name: "EXAMPLE", Help: "An example positional argument"},
+		},
+	}.PrintUsage
+
+	return Subcommand{
+		Name: name,
+		Help: "TODO: Help",
+		Exec: func(args []string) {
+			flags.Parse(args)
+
+			$0
+		},
+	}
+}
+endsnippet
+
+context "add_import('mainargs', snip, 'flag', 'fmt', 'os')"
+snippet '^mainargs' "Main (With argument parsing)" breA
+func main() {
+	flags := flag.NewFlagSet(os.Args[0], flag.ExitOnError)
+
+	subcmds := []Subcommand{
+	}
+
+	flags.Usage = HelpFormatter{
+		Flags:       flags,
+		Subcommands: subcmds,
+	}.PrintUsage
+
+	flags.Parse(os.Args[1:])
+
+	args := flags.Args()
+
+	ExecSubcommand(flags, subcmds, args)
+}
 endsnippet
