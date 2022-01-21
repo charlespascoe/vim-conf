@@ -25,6 +25,9 @@ def substitutions(s):
         ('sea RC', 'CRC'),
         ('cRC', 'CRC'),
         ('CLC', 'CRC'),
+        ('Siya see', 'CRC'),
+        ('COCE', 'CRC'),
+        (re.compile('CRC note(s?)'), r'CRC node\1'),
         ('can figuration', 'configuration'),
         (re.compile('couch (TV|[DdG]B)'), 'CouchDB'),
         (re.compile('r(each|ich|oute) control(ler)?'), r'rate control\2'),
@@ -33,6 +36,7 @@ def substitutions(s):
         ('rest API', 'REST API'),
         (re.compile(r'[Dd]uplicut'), 'duplicate'),
         (re.compile(r'([A-Z]+) ?([0-9]+)'), r'\1-\2'),
+        (re.compile(r'\bi\b'), 'I'),
         ('Tino', 'TNOR'),
         ('\n', '\\n'),
     ]
