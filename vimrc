@@ -11,6 +11,14 @@ let mapleader=" "
 
 packadd! matchit
 
+" Set cursor style
+let &t_SI = "\e[6 q"
+let &t_SR = "\e[4 q"
+let &t_EI = "\e[2 q"
+
+" Keycode and mapping timeouts
+set timeout timeoutlen=1000 ttimeout ttimeoutlen=0
+
 " Set global formatting options, primarily for comments
 set formatoptions=crqjn
 set textwidth=80
