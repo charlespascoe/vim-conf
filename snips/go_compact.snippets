@@ -1,6 +1,6 @@
 # KEEP IN ALPHABETIC ORDER
 global !p
-from snippet_utils import preceeding_lines, find_line
+from snippet_utils import preceeding_lines, top_level, find_line, find_lines
 from go_snippet_utils import import_re, add_import
 
 type_re = re.compile(r"^type (\w+)")
@@ -8,6 +8,8 @@ struct_re = re.compile(r"^type (\w+) struct")
 method_re = re.compile(r"^func \(([^)]+)\)\s+(\w+)\(")
 func_re = re.compile(r"^func (\w+)\(")
 test_re = re.compile(r"^func Test([^)]*)\(")
+ws_re = re.compile(r'\s+')
+
 
 convert_type_map = {
 	'i':   'int',
@@ -140,14 +142,14 @@ def guess_test_name():
 def get_package_name():
 	return vim.current.window.buffer[0].split(' ')[1]
 
-def get_interface_name(name):
+def get_interface_type(name):
 	if '.' in name:
 		return name
 
 	return f'{get_package_name()}.{name}'
 
 def implement_interface():
-	interface = get_interface_name(match[1])
+	interface = get_interface_type(match[1])
 	method_type = find_method_type(True)
 	vim.command(f'GoImpl {" ".join(method_type)} {interface}')
 
@@ -233,6 +235,135 @@ def auto_expand_cond(snip):
 
 def is_only_line_contents(s, snip):
 	return snip.buffer[snip.line].strip() == s.strip()
+
+def generate_mock(interface):
+	interface_name = get_interface_name(interface)
+	interface_type = get_interface_type(interface)
+	vim.command(f'GoImpl m *Mock{interface_name} {interface_type}')
+
+	# vim.current.window.buffer.append([
+	# 	f'func NewMock{interface_name}() *Mock{interface_name} ' + '{',
+	# 	f'\treturn &Mock{interface_name}' + '{}',
+	# 	'}',
+	# 	'',
+	# ], vim.current.window.cursor[0] + 3)
+
+	fields = []
+
+	for (linenr, line) in find_lines(re.compile(r'panic\("not implemented"\)')):
+		method = next(top_level(preceeding_lines(linenr)))
+
+		match = method_re.match(method)
+
+		if not match:
+			continue
+
+		del vim.current.window.buffer[linenr]
+
+		method_name = match[2]
+
+		s = method[len(match[0]):]
+
+		method_sig = re.sub(r'\s*{\s*$', '', s)
+
+		func_type = f'func({method_sig}'
+
+		args, s = read_args(s)
+		ret_vals = read_return(s)
+
+		mock_method_name = f'{method_name}_Mock'
+
+		fields.append(f'\t{mock_method_name} {func_type}')
+
+		ret_statement = ''
+
+		if len(ret_vals) > 0:
+			ret_statement = 'return '
+
+		func_call = f'\t{ret_statement}m.{method_name}_Mock(' + ', '.join(arg_name for (arg_name, _) in args) + ')'
+
+		vim.current.window.buffer.append([
+			f'\tif m.{mock_method_name} == nil ' + '{',
+			f'\t\tpanic("{method_name} should not have been called")',
+			'\t}',
+			'',
+			func_call
+		], linenr)
+
+	fields_str = "\n".join(fields)
+
+	return f'// Mock for {interface_type}\n{fields_str}'
+
+def get_interface_name(interface):
+	parts = interface.split('.')
+
+	if len(parts) == 1:
+		return parts[0]
+	else:
+		return parts[1]
+
+
+def read_args(s):
+	args_str, rest = read_parens(s)
+
+	args = []
+
+	for arg in args_str.split(','):
+		arg = arg.strip()
+
+		if arg == '':
+			continue
+
+		parts = ws_re.split(arg, maxsplit=1)
+
+		if len(parts) == 1:
+			args.append(('', parts[0]))
+		else:
+			args.append((parts[0], parts[1]))
+
+	return args, rest
+
+
+def read_return(s):
+	s = s.strip()
+
+	if s.startswith('('):
+		ret = []
+
+		ret_str, _ = read_parens(s[1:])
+
+		for ret_val in ret_str.split(','):
+			parts = ws_re.split(ret_val.strip(), maxsplit=1)
+
+			if len(parts) == 1:
+				ret.append(('', parts[0]))
+			else:
+				ret.append((parts[0], parts[1]))
+
+		return ret
+
+	ret_type = re.sub(r'\s*{\s*$', '', s).strip()
+
+	if ret_type == '':
+		return []
+
+	return [('', ret_type)]
+
+
+def read_parens(s):
+	depth = 1
+
+	for (i, c) in enumerate(s):
+		if c == '(':
+			depth += 1
+		elif c == ')':
+			depth -= 1
+
+		if depth == 0:
+			return s[:i], s[i+1:]
+
+	return s, ''
+
 
 endglobal
 
@@ -420,7 +551,7 @@ endsnippet
 
 snippet '^fc ' "Function - Constructor" brA
 func New$1($2) *$1 {
-	return &${1:`!p snip.rv = find_type() or 'Type'`}{
+	return &${1:`!p if not snip.c: snip.rv = find_type() or 'Type'`}{
 		$0
 	}
 }
@@ -428,7 +559,7 @@ endsnippet
 
 snippet '^fcl ' "Function - Constructor with Log" "add_import('fcl', snip, 'github.com/rs/zerolog/log')" breA
 func New$1($2) *$1 {
-	return &${1:`!p snip.rv = find_type() or 'Type'`}{
+	return &${1:`!p if not snip.c: snip.rv = find_type() or 'Type'`}{
 		$0
 		log: log.With().
 			Str("cls", "$1").
@@ -476,6 +607,10 @@ endsnippet
 
 snippet '^ii ' "Implement Interface Template" brA
 type impl $1
+endsnippet
+
+snippet 'ic ' "Improvement Comment" brA
+// IMPROVEMENT: $0
 endsnippet
 
 snippet '^type impl ([^\s]+) ' "Implement Interface" brA
@@ -758,6 +893,18 @@ func (`!p snip.rv = snip.c or ' '.join(find_method_type(True))`) UnmarshalYAML(u
 }
 endsnippet
 
+snippet '^mo' "Mock" brA
+var mock $0
+endsnippet
+
+snippet 'var mock ([^\s]+) ' "Mock" brA
+type Mock`!p if not snip.c: snip.rv = get_interface_name(match[1])` struct {
+	`!p if not snip.c: snip.rv = generate_mock(match[1])`
+}
+
+$0
+endsnippet
+
 snippet ms "Method - String" "add_import('ms', snip, 'fmt')" bwe
 func (`!p snip.rv = snip.c or ' '.join(find_method_type())`) String() string {
 	return fmt.Sprintf("$1", $0)
@@ -826,8 +973,18 @@ snippet rn "Return Nil" bw
 return nil
 endsnippet
 
-snippet '\br $' "Return (automatic)" brA
+snippet '\br ' "Return (automatic)" brA
 return $0
+endsnippet
+
+context "add_import('rE ', snip, 'errors')"
+snippet '\brE ' "Return new error" brA
+return $1errors.New("$0")
+endsnippet
+
+context "add_import('rEf ', snip, 'fmt')"
+snippet '\brEf ' "Return new formatted error" brA
+return $1fmt.Errorf("$2", ${3:err})
 endsnippet
 
 snippet rr "Receiver type with dot" wA
@@ -899,24 +1056,23 @@ func Test`!p if not snip.c: snip.rv = guess_test_name()`$1(t *testing.T) {
 }`!p t[1] = smart_capitalisation(t[1], non_alphanum_underscore)`
 endsnippet
 
-snippet ta "Test Array" "add_import('ta', snip, 'fmt', 'testing', 'github.com/stretchr/testify/assert')" bwe
-func Test`!p if not snip.c: snip.rv = guess_test_name()`$1(t *testing.T) {
-	tests := []struct{
-		$2
-	}{
-		{
-			$3
-		},
-	}
+context "add_import('ta', snip, 'fmt', 'testing', 'github.com/stretchr/testify/assert')"
+snippet ta "Test Array" bem
+tests := []struct{
+	$2
+}{
+	{
+		$3
+	},
+}
 
-	for i, test := range tests {
-		t.Run(fmt.Sprintf("Test %d of %d", i+1, len(tests)), func(s *testing.T) {
-			assert := assert.New(s)
+for i, test := range tests {
+	t.Run(fmt.Sprintf("Test %d of %d", i+1, len(tests)), func(s *testing.T) {
+		assert := assert.New(s)
 
-			$0
-		})
-	}
-}`!p t[1] = smart_capitalisation(t[1])`
+		$0
+	})
+}
 endsnippet
 
 snippet 'td ' "TODO Comment" brA
