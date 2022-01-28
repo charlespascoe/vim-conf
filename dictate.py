@@ -19,33 +19,38 @@ except OSError:
 
 subscribers = []
 
+substitutions = []
 
-def substitutions(s):
-    subs = [
-        ('sea RC', 'CRC'),
-        ('cRC', 'CRC'),
-        ('CLC', 'CRC'),
-        ('Siya see', 'CRC'),
-        ('COCE', 'CRC'),
-        (re.compile('CRC note(s?)'), r'CRC node\1'),
-        ('can figuration', 'configuration'),
-        (re.compile('couch (TV|[DdG]B)'), 'CouchDB'),
-        (re.compile('r(each|ich|oute) control(ler)?'), r'rate control\2'),
-        (re.compile('great control(ler)?'), r'rate control\1'),
-        (re.compile('bridge control(ler)?'), r'rate control\1'),
-        ('rest API', 'REST API'),
-        (re.compile(r'[Dd]uplicut'), 'duplicate'),
-        (re.compile(r'([A-Z]+) ?([0-9]+)'), r'\1-\2'),
-        (re.compile(r'\bi\b'), 'I'),
-        ('Tino', 'TNOR'),
-        ('\n', '\\n'),
-    ]
+def load_subtitutions():
+    global substitutions
+    substitutions = []
 
-    for sub_from, sub_to in subs:
-        if isinstance(sub_from, re.Pattern):
-            s = sub_from.sub(sub_to, s)
-        else:
-            s = s.replace(sub_from, sub_to)
+    # TODO: Escapes (e.g. \/)
+    pattern_re = re.compile(r'^/([^/]+)/([^/]+)/$')
+
+    with open('dictation_substitutions') as f:
+        print('Loading substitutions from file')
+
+        for line in f:
+            line = line.strip()
+
+            match = pattern_re.match(line)
+
+            if match:
+                print(line)
+                sub_from, sub_to = match[1], match[2]
+                substitutions.append((re.compile(sub_from), sub_to))
+
+
+load_subtitutions()
+
+def replace_substitutions(s):
+    global substitutions
+
+    for sub_from, sub_to in substitutions:
+        s = sub_from.sub(sub_to, s)
+
+    s = s.replace('\n', '\\n')
 
     return s
 
@@ -59,19 +64,36 @@ class Handler(StreamRequestHandler):
         for data in self.rfile:
             line = data.decode('utf-8').strip()
 
+            print('> ' + line)
+
             if line == 'start-dictation':
                 start_dictation()
 
-            print('> ' + line)
+            if line == 'reload':
+                load_subtitutions()
+
 
         print("Disconnected")
 
 
+auto_start_dictation = False
+
 def start_dictation():
+    global auto_start_dictation
+    auto_start_dictation = True
     script = f'tell application "System Events" to set frontmost of every process whose unix id is {os.getpid()} to true'
     subprocess.check_call(['/usr/bin/osascript', '-e', script])
-    time.sleep(0.3)
-    subprocess.check_call(['/usr/bin/osascript', '-e', 'tell application "System Events" to keystroke "d" using command down'])
+
+
+def on_focus(next_fun):
+    def f(*args):
+        global auto_start_dictation
+        next_fun(*args)
+        if auto_start_dictation:
+            auto_start_dictation = False
+            subprocess.check_call(['/usr/bin/osascript', '-e', 'tell application "System Events" to keystroke "d" using command down'])
+
+    return f
 
 
 def return_to_vim():
@@ -88,7 +110,7 @@ def run_unix_server():
 
 
 def broadcast(output):
-    output = substitutions(output) + '\n'
+    output = replace_substitutions(output) + '\n'
 
     sys.stdout.write(output)
     sys.stdout.flush()
@@ -107,10 +129,13 @@ class MyWidget(QtWidgets.QWidget):
 
         self.layout = QtWidgets.QVBoxLayout(self)
         self.layout.addWidget(self.input)
-        self.input.textChanged.connect(self.magic)
+        self.input.textChanged.connect(self.on_input)
+
+        # This is a hack, but I CANNOT figure out how to do this "properly"
+        self.input.focusInEvent = on_focus(self.input.focusInEvent)
 
     @QtCore.Slot()
-    def magic(self):
+    def on_input(self):
         s = self.input.toPlainText()
         if s != '':
             broadcast(s[0].lower() + s[1:])

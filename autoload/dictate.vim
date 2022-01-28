@@ -21,6 +21,8 @@ func dictate#Init()
 
     autocmd InsertEnter * call dictate#EnterInsertMode()
     autocmd InsertLeave * call dictate#LeaveInsertMode()
+
+    command! DictationReloadSubstitutions call dictate#ReloadSubstitutions()
 endfun
 
 func dictate#Start()
@@ -28,6 +30,12 @@ func dictate#Start()
 
     call ch_sendraw(ch, "start-dictation\n")
 endfun
+
+func dictate#ReloadSubstitutions()
+    let ch = job_getchannel(s:job)
+
+    call ch_sendraw(ch, "reload\n")
+endfunc
 
 func dictate#OnOutput(job, msg)
     if s:in_insert_mode

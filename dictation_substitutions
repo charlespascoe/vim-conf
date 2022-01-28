@@ -1,0 +1,13 @@
+/(sea RC|cRC|CLC|Siya see|COCE?)/CRC/
+/CRC note(s?)/CRC node\1/
+/can figuration/configuration/
+/couch (TV|[DdG]B)/CouchDB/
+/[Rr](?:each|ich|oute|o?ach) control(ler)?/rate control\1/
+/(?:great|bridge) control(ler)?/rate control\1/
+/rest API/REST API/
+/[Dd]uplicut/duplicate/
+/([A-Z]+) ?([0-9]+)/\1-\2/
+/TLS-1\.(\d)/TLS 1.\1/
+/\bi\b/I/
+/Tino/TNOR/
+/okay/OK/
