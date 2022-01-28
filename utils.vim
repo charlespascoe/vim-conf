@@ -145,3 +145,4 @@ fun! Duplicate(type = '')
 endfun
 
 nnoremap <expr> gd Duplicate()
+nnoremap <expr> gdd "yy".v:count1."p"
