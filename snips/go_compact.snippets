@@ -34,6 +34,12 @@ convert_type_map = {
 	'r': 'rune',
 }
 
+simple_value_map = {
+	'n': 'nil',
+	't': 'true',
+	'f': 'false',
+}
+
 def find_method_type(pointer=False):
 	for line in preceeding_lines():
 		match = method_re.match(line)
@@ -1012,8 +1018,8 @@ snippet r "Return" bw
 return ${0:${VISUAL}}
 endsnippet
 
-snippet rn "Return Nil" bw
-return nil
+snippet 'r([ntf]) ' "Return Simple Value" brA
+return `!p snip.rv = simple_value_map[match[1]]`
 endsnippet
 
 snippet '\br ' "Return (automatic)" brA
