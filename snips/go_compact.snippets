@@ -241,12 +241,14 @@ def generate_mock(interface):
 	interface_type = get_interface_type(interface)
 	vim.command(f'GoImpl m *Mock{interface_name} {interface_type}')
 
-	# vim.current.window.buffer.append([
-	# 	f'func NewMock{interface_name}() *Mock{interface_name} ' + '{',
-	# 	f'\treturn &Mock{interface_name}' + '{}',
-	# 	'}',
-	# 	'',
-	# ], vim.current.window.cursor[0] + 3)
+	vim.current.window.buffer.append([
+		f'func NewMock{interface_name}(t *testing.T) *Mock{interface_name} ' + '{',
+		f'\treturn &Mock{interface_name}' + '{',
+		'\t\tt: t,',
+		'\t}',
+		'}',
+		'',
+	], vim.current.window.cursor[0] + 3)
 
 	fields = []
 
@@ -282,17 +284,25 @@ def generate_mock(interface):
 
 		func_call = f'\t{ret_statement}m.{method_name}_Mock(' + ', '.join(arg_name for (arg_name, _) in args) + ')'
 
+		err_msg = f'"{interface_name}.{method_name}() should not have been called"'
+
 		vim.current.window.buffer.append([
 			f'\tif m.{mock_method_name} == nil ' + '{',
-			f'\t\tpanic("{method_name} should not have been called")',
+			f'\t\tm.t.Error({err_msg})',
+			'\t\tm.t.Fail()',
+			f'\t\tpanic({err_msg})',
 			'\t}',
 			'',
 			func_call
 		], linenr)
 
-	fields_str = "\n".join(fields)
+	fields_str = "\n".join(fields).strip()
 
-	return f'// Mock for {interface_type}\n{fields_str}'
+	if fields_str:
+		fields_str = '\n\t' + fields_str
+
+	return f't *testing.T{fields_str}'
+
 
 def get_interface_name(interface):
 	parts = interface.split('.')
@@ -365,6 +375,33 @@ def read_parens(s):
 	return s, ''
 
 
+def get_mock_signature(snip):
+	line = snip.buffer[snip.line]
+
+	match = re.search(r'(\.)?[A-Za-z0-9_]+_Mock(:)?$', line)
+
+	if not match or (not match[1] and not match[2]):
+		return False
+
+	info = ""
+
+	if line.endswith(':'):
+		l, c = vim.current.window.cursor
+		vim.current.window.cursor = (l, c - 1)
+		info = vim.eval('go#lsp#GetInfo()')
+		vim.current.window.cursor = (l, c)
+	else:
+		info = vim.eval('go#lsp#GetInfo()')
+
+	print(info)
+
+	if not re.match(r'^field [A-Za-z0-9_]+_Mock func', info):
+		return False
+
+	field, name, func_type = info.split(' ', maxsplit=2)
+	vim.command(f"let b:__mock_type = '{func_type}'")
+
+	return True
 endglobal
 
 ## Auto-imports ##
@@ -893,16 +930,22 @@ func (`!p snip.rv = snip.c or ' '.join(find_method_type(True))`) UnmarshalYAML(u
 }
 endsnippet
 
-snippet '^mo' "Mock" brA
+context "add_import('mo', snip, 'testing')"
+snippet '^mo' "Interface Mock" brA
 var mock $0
 endsnippet
 
-snippet 'var mock ([^\s]+) ' "Mock" brA
+snippet 'var mock ([^\s]+) ' "Mock Generator" brA
 type Mock`!p if not snip.c: snip.rv = get_interface_name(match[1])` struct {
 	`!p if not snip.c: snip.rv = generate_mock(match[1])`
 }
+endsnippet
 
-$0
+context "get_mock_signature(snip)"
+snippet '([A-Za-z0-9_]+_Mock)(:)?' "Mock Test Method" r
+`!p if not snip.c: snip.rv = match[1]``!p snip.rv = ':' if match[2] == ':' else ' ='` `!v b:__mock_type` {
+	$0
+}`!p snip.rv = ',' if match[2] == ':' else ''`
 endsnippet
 
 snippet ms "Method - String" "add_import('ms', snip, 'fmt')" bwe
