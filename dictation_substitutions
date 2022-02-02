@@ -2,12 +2,18 @@
 /CRC note(s?)/CRC node\1/
 /can figuration/configuration/
 /couch (TV|[DdG]B)/CouchDB/
-/[Rr](?:each|ich|oute|o?ach) control(ler)?/rate control\1/
-/(?:great|bridge) control(ler)?/rate control\1/
+/[Rr](?:each|ich|oute|o?ach|ight) control(ler)?/rate control\1/
+/(?:great|bridge|brakes?|writes?) control(ler)?/rate control\1/
 /rest API/REST API/
 /[Dd]uplicut/duplicate/
 /([A-Z]+) ?([0-9]+)/\1-\2/
 /TLS-1\.(\d)/TLS 1.\1/
 /\bi\b/I/
 /Tino/TNOR/
-/okay/OK/
+/[Oo]kay/OK/
+/(sorry for|psycho|cipher) sweets/cipher suites/
+/juror|Jeera|Dura/Jira/
+/functional model one\b/functional model 1/
+/functional model t[wo]?o\b/functional model 2/
+/[Uu]U ID/UUID/
+/percent D/%d/

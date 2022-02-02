@@ -42,7 +42,7 @@ func dictate#OnOutput(job, msg)
         let msg = a:msg
 
         " Automatically capitalise the first letter after certain characters
-        if search('\v(%^|[.!?/#]\_s)\_s*%#', 'bcn') != 0 || search('^\s\+[-*+?<>]\s\+\%#', 'bcn') != 0
+        if search('\v(%^|[.!?/#]\_s*|")%#', 'bcn') != 0 || search('^\s\+[-*+?<>]\s\+\%#', 'bcn') != 0
             let msg = toupper(msg[0]).msg[1:]
         endif
 
