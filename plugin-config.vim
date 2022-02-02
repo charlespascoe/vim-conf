@@ -41,7 +41,7 @@ let g:bulletnotes_omnicomplete_trailing_brackets = 0
 let delimitMate_expand_cr = 1
 
 " NERDTree
-nmap <silent> <leader>n :NERDTreeToggle \| NERDTreeRefreshRoot<CR>
+nmap <silent> <leader>N :NERDTreeToggle \| NERDTreeRefreshRoot<CR>
 let NERDTreeShowLineNumbers = 1
 let NERDTreeWinSize = 48
 

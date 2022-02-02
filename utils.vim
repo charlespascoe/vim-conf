@@ -146,3 +146,25 @@ endfun
 
 nnoremap <expr> gd Duplicate()
 nnoremap <expr> gdd "yy".v:count1."p"
+
+" Invert boolean
+
+fun! s:InvertBoolean()
+    let l:word = expand('<cword>')
+
+    if l:word == 'true'
+        exec 'normal' 'ciwfalse'
+    elseif l:word == 'True'
+        exec 'normal' 'ciwFalse'
+    elseif l:word == 'false'
+        exec 'normal' 'ciwtrue'
+    elseif l:word == 'False'
+        exec 'normal' 'ciwTrue'
+    end
+
+    call repeat#set("\<Plug>(InvertBool)", 1)
+endfun
+
+nnoremap <silent> <Plug>(InvertBool) :<C-u>call <SID>InvertBoolean()<CR>
+
+nmap <leader>n <Plug>(InvertBool)
