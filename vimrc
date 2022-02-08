@@ -114,7 +114,11 @@ nnoremap L B
 nnoremap h p
 nnoremap H P
 
-nnoremap s .
+nnoremap s f
+nnoremap S F
+nmap + g
+
+inoremap <C-e> <Esc>
 
 onoremap ae ap
 onoremap ie ip
