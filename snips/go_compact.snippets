@@ -501,7 +501,7 @@ endsnippet
 
 ## C ##
 
-snippet '^c$' "Const" brA
+snippet '^co$' "Const" brA
 const $1 = `!p t[1] = smart_capitalisation(t[1])`
 endsnippet
 
@@ -948,7 +948,7 @@ type Mock`!p if not snip.c: snip.rv = get_interface_name(match[1])` struct {
 endsnippet
 
 context "get_mock_signature(snip)"
-snippet '([A-Za-z0-9_]+_Mock)(:)?' "Mock Test Method" r
+snippet '([A-Za-z0-9_]+_Mock)(:)?' "Mock Test Method" re
 `!p if not snip.c: snip.rv = match[1]``!p snip.rv = ':' if match[2] == ':' else ' ='` `!v b:__mock_type` {
 	$0
 }`!p snip.rv = ',' if match[2] == ':' else ''`
