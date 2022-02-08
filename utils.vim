@@ -47,9 +47,6 @@ noremap <leader>R <Esc>:s/<C-r><C-w>//g<Left><Left>
 
 " Move a single line
 
-nnoremap <silent> <leader>e  :<c-u>execute 'move +'. v:count1<cr>
-nnoremap <silent> <leader>n  :<c-u>execute 'move -1-'. v:count1<cr>
-
 " Edit macros
 
 nnoremap <leader>m :<c-u><c-r><c-r>='let @'. v:register .' = '. string(getreg(v:register))<cr>
