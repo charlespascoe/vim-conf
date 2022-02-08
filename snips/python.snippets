@@ -1,5 +1,5 @@
 global !p
-from snippet_utils import preceeding_lines, top_level
+from snippet_utils import preceeding_lines, top_level, format_snake_case, format_camel_case
 
 
 class_re = re.compile(r'^class ([a-zA-Z0-9_]+)(\([^)]+\))?:$')
@@ -19,7 +19,7 @@ endglobal
 ## C ##
 
 snippet '^cls' "Class" brA
-class $1:
+class $1:`!p t[1] = format_camel_case(t[1], True)`
 	$0
 endsnippet
 
@@ -30,7 +30,7 @@ endsnippet
 ## F ##
 
 snippet '^f $' "Function" brA
-def $1($2):
+def $1($2):`!p t[1] = format_snake_case(t[1])`
 	$0
 endsnippet
 
@@ -85,7 +85,7 @@ endsnippet
 
 context "is_in_class()"
 snippet '^(\s{4})?m $' "" breA
-	def $1(self$2):
+	def $1(self$2):`!p t[1] = format_snake_case(t[1])`
 		$0
 endsnippet
 

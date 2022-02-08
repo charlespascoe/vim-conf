@@ -48,3 +48,47 @@ def top_level(lines):
     for line in lines:
         if line != '' and not leading_whitespace_re.match(line):
             yield line
+
+non_alphanum_underscore = re.compile(r'[^a-zA-Z0-9_]')
+
+
+def jump_after(ret):
+    if ret:
+        vim.command(r'call feedkeys("\<C-l>")')
+
+    return ret
+
+
+def format_camel_case(s, cap_first=False):
+    if s == "":
+        return s
+
+    print(f's: "{s}"')
+
+    out = []
+
+    cap = cap_first
+
+    for word in non_alphanum_underscore.split(s):
+        if not word:
+            continue
+
+        if cap:
+            word = word[0].upper() + word[1:]
+
+        out.append(word)
+
+        cap = True
+
+    return ''.join(out)
+
+
+def format_snake_case(s, cap=False):
+    if cap:
+        s = s.upper()
+
+    return '_'.join(word for word in non_alphanum_underscore.split(s) if word)
+
+
+def start_dictation():
+    vim.command('call dictate#Start()')

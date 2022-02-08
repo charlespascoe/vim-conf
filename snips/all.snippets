@@ -1,3 +1,7 @@
+global !p
+from snippet_utils import start_dictation, jump_after, format_camel_case, format_snake_case
+endglobal
+
 snippet date
 `date +'%Y/%m/%d'`
 endsnippet
@@ -24,4 +28,14 @@ endsnippet
 
 snippet A-Z "A-Z" i
 ABCDEFGHIJKLMNOPQRSTUVWXYZ
+endsnippet
+
+post_expand "start_dictation()"
+snippet '\b(cc|CC)\b' "Camel case" ri
+$1`!p t[1] = jump_after(format_camel_case(t[1], match[1] == 'CC'))`
+endsnippet
+
+post_expand "start_dictation()"
+snippet '\b(sc|SC)\b' "Snake case" ri
+$1`!p t[1] = jump_after(format_snake_case(t[1], match[1] == 'SC'))`
 endsnippet
