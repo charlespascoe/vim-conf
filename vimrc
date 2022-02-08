@@ -118,10 +118,11 @@ nnoremap s f
 nnoremap S F
 nmap + g
 
-inoremap <C-e> <Esc>
-
 onoremap ae ap
 onoremap ie ip
+
+imap <C-a> <Home>
+imap <C-e> <End>
 
 " Initialise Dictation
 call dictate#Init()
