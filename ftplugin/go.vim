@@ -68,3 +68,61 @@ endfun
 nmap <silent> <buffer> <leader>i <Esc>:call AddImport()<CR>
 
 hi SpecialKey ctermfg=236
+
+let s:date_formats = [
+            \ #{name: 'Year - 2 digits', pattern: '06'},
+            \ #{name: 'Year - 4 digits', pattern: '2006'},
+            \ #{name: 'Month - Numeric', pattern: '1'},
+            \ #{name: 'Month - Numeric, with leading zero', pattern: '01'},
+            \ #{name: 'Month - Name, short', pattern: 'Jan'},
+            \ #{name: 'Month - Name, long', pattern: 'January'},
+            \ #{name: 'Day', pattern: '2'},
+            \ #{name: 'Day - With leading zero', pattern: '02'},
+            \ #{name: 'Day - With leading whitespace', pattern: '_2'},
+            \ #{name: 'Weekday - short', pattern: 'Mon'},
+            \ #{name: 'Weekday - long', pattern: 'Monday'},
+            \ #{name: 'Hours - 12 hour', pattern: '3'},
+            \ #{name: 'Hours - 12 hour, with leading zero', pattern: '03'},
+            \ #{name: 'Hours - 24 hour, with leading zero', pattern: '15'},
+            \ #{name: 'Minutes', pattern: '4'},
+            \ #{name: 'Minutes - With leading zero', pattern: '04'},
+            \ #{name: 'Seconds', pattern: '5'},
+            \ #{name: 'Seconds - with leading zero', pattern: '05'},
+            \ #{name: 'Milliseconds', pattern: '.000'},
+            \ #{name: 'Milliseconds - Without trailing zeros', pattern: '.999'},
+            \ #{name: 'Microseconds', pattern: '.000000'},
+            \ #{name: 'Microseconds - Without trailing zeros', pattern: '.999999'},
+            \ #{name: 'Nanoseconds', pattern: '.000000000'},
+            \ #{name: 'Nanoseconds - Without trailing zeros', pattern: '.999999999'},
+            \ #{name: 'am/pm', pattern: 'pm'},
+            \ #{name: 'AM/PM', pattern: 'PM'},
+            \ #{name: 'Timezone', pattern: 'MST'},
+            \ #{name: 'Offset (-0700)', pattern: '-0700'},
+            \ #{name: 'Offset (-07)', pattern: '-07'},
+            \ #{name: 'Offset (-07:00)', pattern: '-07:00'},
+            \ #{name: 'Offset (Z0700)', pattern: 'Z0700'},
+            \ #{name: 'Offset (Z07:00)', pattern: 'Z07:00'},
+            \]
+
+fun! s:InsertDateFormat()
+    let names = []
+
+    for item in s:date_formats
+        call add(names, item.name)
+    endfor
+
+    fun! s:PickFormat(id, cmd)
+        if a:cmd == -1
+            return
+        end
+
+        " NOTE: cmd is 1-indexed
+        let item = s:date_formats[a:cmd-1]
+
+        call feedkeys(item.pattern)
+    endfun
+
+    call popup_menu(names, #{callback: function('s:PickFormat')})
+endfun
+
+imap <buffer> <C-g>t <C-o>:call <SID>InsertDateFormat()<CR>
