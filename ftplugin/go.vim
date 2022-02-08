@@ -32,6 +32,7 @@ nmap <buffer> <leader>tI <Plug>(go-import)
 nmap <buffer> <leader>tc <Esc>:wa<CR><Plug>(go-build)
 nmap <buffer> <leader>tv <Plug>(go-vet)
 nmap <silent> <buffer> <leader>tF <Esc>:GoFmt<CR>
+nmap <buffer> <leader>tfs <Esc>:GoFillStruct<CR>
 
 " Update spellings
 nmap <silent> <buffer> <leader>tS <Esc>:call IndexSpellings()<CR>
