@@ -6,8 +6,8 @@ tag_regex = re.compile(r'#([a-zA-Z0-9_\-]+)')
 contact_regex = re.compile(r'(?<!\w)@([a-zA-Z0-9_\-.]+)')
 link_regex = re.compile(r'(?<!\w)\[(http[^"\]]+)\](?!\w)')
 ref_regex = re.compile(r'&amp;([a-zA-Z0-9_\-.:]+(/[a-zA-Z0-9_\-.:]+)*)')
-monospace_regex = re.compile(r'\{((\\\}|\\\{|[^}])*)\}')
-highlighted_monospace_regex = re.compile(r'\{\{((\\\}|\\\{|[^}])*)\}\}')
+monospace_regex = re.compile(r'(?<!\\)\{((\\\}|\\\{|[^}])*)\}')
+highlighted_monospace_regex = re.compile(r'(?<!\\)\{\{((\\\}|\\\{|[^}])*)\}\}')
 anchor_regex = re.compile(r':([a-zA-Z0-9]+):')
 anchor_pointer_regex = re.compile(r'\[:([a-zA-Z0-9]+):\]')
 
@@ -159,11 +159,10 @@ class TextFormatter:
             lambda s : anchor_regex.sub(r'<span id="\1" style="color: teal;">:\1:</span>', s),
             lambda s : ref_regex.sub(r'<span style="color: red">\1</span>', s),
             lambda s : highlighted_monospace_regex
-                .sub(r'<span style="font-family: monospace; color: crimson;">\1</span>', s)
-                .replace('\\{', '{')
-                .replace('\\}', '}'),
+                .sub(r'<span style="font-family: monospace; color: crimson;">\1</span>', s),
             lambda s : monospace_regex
-                .sub(r'<span style="font-family: monospace;">\1</span>', s)
+                .sub(r'<span style="font-family: monospace;">\1</span>', s),
+            lambda s : s
                 .replace('\\{', '{')
                 .replace('\\}', '}'),
         ])
