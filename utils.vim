@@ -156,10 +156,14 @@ fun! s:InvertBoolean()
         exec 'normal' 'ciwfalse'
     elseif l:word == 'True'
         exec 'normal' 'ciwFalse'
+    elseif l:word == 'TRUE'
+        exec 'normal' 'ciwFALSE'
     elseif l:word == 'false'
         exec 'normal' 'ciwtrue'
     elseif l:word == 'False'
         exec 'normal' 'ciwTrue'
+    elseif l:word == 'FALSE'
+        exec 'normal' 'ciwTRUE'
     end
 
     call repeat#set("\<Plug>(InvertBool)", 1)
