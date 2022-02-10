@@ -144,28 +144,20 @@ endfun
 nnoremap <expr> gd Duplicate()
 nnoremap <expr> gdd "yy".v:count1."p"
 
-" Invert boolean
+" Invert binary
 
-fun! s:InvertBoolean()
-    let l:word = expand('<cword>')
+py3 from invert_binary import invert_binary
 
-    if l:word == 'true'
-        exec 'normal' 'ciwfalse'
-    elseif l:word == 'True'
-        exec 'normal' 'ciwFalse'
-    elseif l:word == 'TRUE'
-        exec 'normal' 'ciwFALSE'
-    elseif l:word == 'false'
-        exec 'normal' 'ciwtrue'
-    elseif l:word == 'False'
-        exec 'normal' 'ciwTrue'
-    elseif l:word == 'FALSE'
-        exec 'normal' 'ciwTRUE'
+fun! s:InvertBinary()
+    let l:replacement = py3eval("invert_binary(vim.eval('expand(\"<cword>\")'))")
+
+    if l:replacement != ''
+        exec 'normal' 'ciw'.l:replacement
     end
 
     call repeat#set("\<Plug>(InvertBool)", 1)
 endfun
 
-nnoremap <silent> <Plug>(InvertBool) :<C-u>call <SID>InvertBoolean()<CR>
+nnoremap <silent> <Plug>(InvertBinary) :<C-u>call <SID>InvertBinary()<CR>
 
-nmap <leader>n <Plug>(InvertBool)
+nmap <leader>n <Plug>(InvertBinary)
