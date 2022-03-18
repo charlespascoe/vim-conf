@@ -1,5 +1,6 @@
-/(sea RC|cRC|CLC|Siya see|COCE?)/CRC/
+/(sea RC|cRC|C[LI]C|Siya see|COCE?)/CRC/
 /CRC note(s?)/CRC node\1/
+/manag(ing|er) no[dt]e/manager node/
 /can figuration/configuration/
 /couch (TV|[DdG]B)/CouchDB/
 /[Rr](?:each|ich|oute|o?ach|ight) control(ler)?/rate control\1/
@@ -16,6 +17,17 @@
 /functional model one\b/functional model 1/
 /functional model t[wo]?o\b/functional model 2/
 /[Uu]U ID/UUID/
-/percent D/%d/
+/percent Di?\b/%d/
+/percent S\b/%s/
 /DKA/a.k.a./
 /bullying|bullion/boolean/
+/you are I/URI/
+/sip Pazza/SIP parser/
+/sip URI/SIP URI/
+/MER se[ea]s/MARCs/
+/(\d+) ([mµn])?s\b/\1\2s/
+/(\d+) calls per second\b/\1cps/
+/\b[Cc]osta\b/cluster/
+/[Jj]ason/JSON/
+/iron VCS/INVCS/
+/lock rotation/log rotation/
