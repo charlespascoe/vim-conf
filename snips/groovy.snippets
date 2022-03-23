@@ -9,24 +9,24 @@ properties([
     buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '7', numToKeepStr: '21')),
 ])
 
-def NEXUS_REPOSITORY = '`echo $NEXUS_REPOSITORY`'
-// Where in the Nexus and Docker repos all the artefacts/images should go
+// Where in the Docker repo all the images should go
 def ARTEFACTS_PATH = '$1'
 // Path to file to upload
 def LOCAL_ARTEFACT_PATH = '$1-linux'
-// Name prefix of uploaded artefact
-def ARTEFACT_NAME = '$1'
+
+def DOCKER_REGISTRY="`echo $DOCKER_REGISTRY`"
+def HTTP_PROXY="`echo $CI_PROXY`"
 
 // TODO: Make sure user sa069692 is a developer in the GitLab repository
-gitlabBuilds(builds: ['build', 'test', 'documentation', 'docker build', 'publish to nexus']) {
+gitlabBuilds(builds: ['build', 'test', 'documentation', 'docker']) {
     node('generic-swarm-jnlp') {
         def scmVars = checkout scm
 
         stage('Build') {
             gitlabCommitStatus('build') {
                 sh """
-                export HTTP_PROXY=`echo $CI_PROXY`
-                export HTTPS_PROXY=`echo $CI_PROXY`
+                export HTTP_PROXY=$HTTP_PROXY
+                export HTTPS_PROXY=$HTTP_PROXY
                 go version
                 make && make linux
                 """
@@ -36,8 +36,8 @@ gitlabBuilds(builds: ['build', 'test', 'documentation', 'docker build', 'publish
         stage('Test') {
             gitlabCommitStatus('test') {
                 sh """
-                export HTTP_PROXY=`echo $CI_PROXY`
-                export HTTPS_PROXY=`echo $CI_PROXY`
+                export HTTP_PROXY=$HTTP_PROXY
+                export HTTPS_PROXY=$HTTP_PROXY
                 make test
                 """
             }
@@ -59,30 +59,19 @@ gitlabBuilds(builds: ['build', 'test', 'documentation', 'docker build', 'publish
         }
 
         stage('Build and push Docker image') {
-            gitlabCommitStatus("docker build") {
+            gitlabCommitStatus("docker") {
                 retry(3) {
                     docker.withServer(env.DOCKER_HOST, 'docker-api-certs') {
-                        docker.withRegistry('https://`echo $DOCKER_REGISTRY`', 'bt-docker-registry-user') {
-                            sh "cp $LOCAL_ARTEFACT_PATH docker/"
-                            buildAndPush("`echo $DOCKER_REGISTRY`/ve/$ARTEFACTS_PATH", scmVars, ['docker/'])
+                        docker.withRegistry("https://$DOCKER_REGISTRY", 'bt-docker-registry-user') {
+                            withCredentials([string(credentialsId: 'agile-ve-npm-auth-token', variable: 'AUTH_TOKEN')]) {
+                                sh "cp $LOCAL_ARTEFACT_PATH docker/"
+                                buildAndPush("$DOCKER_REGISTRY/ve/$ARTEFACTS_PATH", scmVars, ['docker/'])
+                            }
                         }
                     }
                 }
 
                 cleanUpDockerImages(repository: "ve/$ARTEFACTS_PATH", credentialsId: 'bt-docker-registry-admin')
-            }
-        }
-
-        stage('Publish to Nexus') {
-            gitlabCommitStatus('publish to nexus') {
-                withCredentials([usernameColonPassword(credentialsId: 'bt-nexus-user', variable: 'NEXUS_CREDENTIALS')]) {
-                    def tag = getBuildGitTag(scmVars)
-                    def directory = tag ? 'releases' : 'snapshots'
-                    def version = tag ?: scmVars.GIT_BRANCH.replace('/', '-')
-                    def nexusPath = "$ARTEFACTS_PATH/$directory/$ARTEFACT_NAME-$version"
-
-                    sh "curl -f -u \"$NEXUS_CREDENTIALS\" --upload-file \"$LOCAL_ARTEFACT_PATH\" \"$NEXUS_REPOSITORY/$nexusPath\""
-                }
             }
         }
 

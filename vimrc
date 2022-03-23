@@ -70,15 +70,11 @@ set fillchars+=vert:│
 set listchars=tab:│\  list
 
 " Enable mouse control (useful for scrolling and resizing)
-set mouse=n
+set mouse=a
 set ttymouse=xterm2
 
 " Disable octal increment
 set nrformats-=octal
-
-" Disable left-click to prevent moving the cursor when focusing the window
-map <LeftMouse> <Nop>
-imap <LeftMouse> <Nop>
 
 " Disable middle click paste
 map <MiddleMouse> <Nop>
@@ -106,20 +102,6 @@ set nofoldenable
 
 " Set shell for shell-based commands
 set shell=/bin/bash
-
-" Convenience mappings to reduce pedal usage
-nnoremap l b
-nnoremap L B
-
-nnoremap h p
-nnoremap H P
-
-nnoremap s f
-nnoremap S F
-nmap + g
-
-onoremap ae ap
-onoremap ie ip
 
 imap <C-a> <Home>
 imap <C-e> <End>

@@ -29,3 +29,16 @@ fun! RealtimeRepl()
 endfun
 
 command! RealtimeRepl call RealtimeRepl()
+
+nmap <silent> <buffer> <leader>i <Esc>:call AddImport()<CR>
+
+fun! AddImport()
+    " Assumes this function is run when the cursor is some way below the imports
+    let l:import_line = search('^import\s', 'bs')
+
+    if l:import_line != 0
+        call feedkeys("oim\<C-l>")
+    else
+        call feedkeys("ggOim\<C-l>")
+    end
+endfun

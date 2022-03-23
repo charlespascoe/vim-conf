@@ -87,13 +87,7 @@ let g:netrw_ftp_cmd="ftp -p"   " passive mode by default
 let g:html_pre_wrap = 1 " Ensures the content can wrap
 
 " vim-exchange
-let g:exchange_no_mappings = 1
 let g:exchange_indent = 1
-
-nmap ce <Plug>(Exchange)
-xmap e <Plug>(Exchange)
-nmap cec <Plug>(ExchangeClear)
-nmap cee <Plug>(ExchangeLine)
 
 " vim-sort-motion
 let g:sort_motion_flags = "i"

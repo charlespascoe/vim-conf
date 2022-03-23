@@ -166,8 +166,8 @@ func ParseAllOptions(flags *flag.FlagSet, args []string) (posArgs []string) {
 }
 endsnippet
 
-context "add_import('FailOnError', snip, 'testing')"
-snippet FailOnError "FailOnError Template" be
+context "add_import('FailOnErrorOld', snip, 'testing')"
+snippet FailOnErrorOld "FailOnError Template (Old)" be
 func FailOnError(t *testing.T) FailOnErrorT {
 	return FailOnErrorT{T: t}
 }
@@ -179,6 +179,31 @@ type FailOnErrorT struct {
 
 func (t FailOnErrorT) Errorf(format string, args ...interface{}) {
 	t.T.Helper()
+	t.T.Fatalf(format, args...)
+}
+endsnippet
+
+context "add_import('FailOnError', snip, 'testing', 'sync')"
+snippet FailOnError "FailOnError Template" be
+func FailOnError(t *testing.T) *FailOnErrorT {
+	return &FailOnErrorT{
+		T: t,
+		C: make(chan struct{}),
+	}
+}
+
+// A wrapper for *testing.T to stop the test on the first error
+type FailOnErrorT struct {
+	*testing.T
+	failOnce sync.Once
+	C chan struct{}
+}
+
+func (t *FailOnErrorT) Errorf(format string, args ...interface{}) {
+	t.T.Helper()
+	t.failOnce.Do(func() {
+		close(t.C)
+	})
 	t.T.Fatalf(format, args...)
 }
 endsnippet

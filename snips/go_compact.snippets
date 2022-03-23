@@ -295,8 +295,8 @@ def generate_mock(interface):
 		vim.current.window.buffer.append([
 			f'\tif m.{mock_method_name} == nil ' + '{',
 			f'\t\tm.t.Error({err_msg})',
-			'\t\tm.t.Fail()',
-			f'\t\tpanic({err_msg})',
+			'\t\tm.t.FailNow()',
+			# f'\t\tpanic({err_msg})',
 			'\t}',
 			'',
 			func_call
@@ -399,7 +399,7 @@ def get_mock_signature(snip):
 	else:
 		info = vim.eval('go#lsp#GetInfo()')
 
-	print(info)
+	print('Type:', info)
 
 	if not re.match(r'^field [A-Za-z0-9_]+_Mock func', info):
 		return False

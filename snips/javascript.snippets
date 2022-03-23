@@ -1,10 +1,15 @@
+global !p
+from snippet_utils import start_dictation, jump_after, format_camel_case, format_snake_case
+endglobal
+
+
 ## C ##
 
-snippet '(e?)c' "const" r
+snippet '^(e?)c' "const" r
 `!p snip.rv = 'export ' if match.group(1) else ''`const $1 = $2;$0
 endsnippet
 
-snippet '(e?)cls' "Class" r
+snippet '^(e?)cls' "Class" r
 `!p snip.rv = 'export ' if match.group(1) else ''`class $1 {
 	$0
 }
@@ -68,6 +73,13 @@ endsnippet
 
 snippet im "Import" bw
 import { $2 } from '$1';
+endsnippet
+
+## L ##
+
+post_expand "start_dictation()"
+snippet 'let ' "Let" brA
+let $1 = $0;`!p t[1] = jump_after(format_camel_case(t[1]))`
 endsnippet
 
 ## R ##

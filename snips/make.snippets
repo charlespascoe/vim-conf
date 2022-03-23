@@ -1,4 +1,5 @@
 snippet go "Go Makefile Template"
+PROJECT_NAME=$1
 BINARY_NAME=$0
 BINARY_LINUX=$(BINARY_NAME)-linux
 SHELL=/bin/bash
@@ -81,6 +82,10 @@ fmtchk:
 		echo "Run 'make fmt' and stage the changes before attempting to commit."; \
 		exit 1; \
 	fi
+
+.PHONY: docs
+docs:
+	asciidoctor-pdf -o "docs/pdfs/$(PROJECT_NAME) \`cat version\` Software Manual (\`date +'%Y-%m-%d'\`).pdf" docs/index.adoc
 
 .PHONY: goversion
 ## goversion: Checks minimum version of Go is installed

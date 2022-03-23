@@ -25,6 +25,9 @@ def load_tags():
 
     symbols = set()
 
+    symbols.add('json')
+    symbols.add('yaml')
+
     with open('tags', 'r') as tags:
         for line in tags:
             if line.startswith('!'):
