@@ -1,9 +1,9 @@
 /(sea RC|cRC|C[LI]C|Siya see|COCE?)/CRC/
-/CRC note(s?)/CRC node\1/
+/CR([CE]) note(s?)/CR\1 node\2/
 /manag(ing|er) no[dt]e/manager node/
 /can figuration/configuration/
-/couch (TV|[DdG]B)/CouchDB/
-/[Rr](?:each|ich|oute|o?ach|ight) control(ler)?/rate control\1/
+/couch (TV|[TDdG]B)/CouchDB/
+/[Rr](?:each|ich|oute|o?ach|ight|oot) control(ler)?/rate control\1/
 /(?:great|bridge|brakes?|writes?) control(ler)?/rate control\1/
 /rest API/REST API/
 /[Dd]uplicut/duplicate/
@@ -23,6 +23,7 @@
 /bullying|bullion/boolean/
 /you are I/URI/
 /sip Pazza/SIP parser/
+/sip pa[us]sing/SIP parsing/
 /sip URI/SIP URI/
 /MER se[ea]s/MARCs/
 /(\d+) ([mµn])?s\b/\1\2s/
@@ -31,3 +32,13 @@
 /[Jj]ason/JSON/
 /iron VCS/INVCS/
 /lock rotation/log rotation/
+/[Bb]e(vi|tha)n/Bevan/
+/[Bb]e(v[ai]|tha)ns/Bevan's/
+/([pP])(ram|erram)/\1aram/
+/docker/Docker/
+/One Direction/one direction/
+#/(esky|[Pp]ascoe|[Aa]SCII) (duck|dog|dock)/asciidoc/
+/in Cryptid/encrypted/
+/\b([Cc])hange log\b/\1hangelog/
+/read ?only/read-only/
+/EI N/EIN/
