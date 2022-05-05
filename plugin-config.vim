@@ -37,6 +37,10 @@ let g:airline_symbols.maxlinenr = ''
 
 let g:bulletnotes_omnicomplete_trailing_brackets = 0
 
+" Vim-Serenade
+
+let g:serenade_match_re = 'alacritty'
+
 " delimitMate
 let delimitMate_expand_cr = 1
 
