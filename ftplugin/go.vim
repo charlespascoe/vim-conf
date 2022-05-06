@@ -34,6 +34,8 @@ nmap <buffer> <leader>tv <Plug>(go-vet)
 nmap <silent> <buffer> <leader>tF <Esc>:GoFmt<CR>
 nmap <buffer> <leader>tfs <Esc>:GoFillStruct<CR>
 
+let b:serenade_go_to_definition_command = 'GoDef'
+
 " Update spellings
 nmap <silent> <buffer> <leader>tS <Esc>:call IndexSpellings()<CR>
 
