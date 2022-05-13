@@ -35,6 +35,7 @@ nmap <silent> <buffer> <leader>tF <Esc>:GoFmt<CR>
 nmap <buffer> <leader>tfs <Esc>:GoFillStruct<CR>
 
 let b:serenade_go_to_definition_command = 'GoDef'
+let b:serenade_style_command = 'exec "GoFmt" | w'
 
 " Update spellings
 nmap <silent> <buffer> <leader>tS <Esc>:call IndexSpellings()<CR>
