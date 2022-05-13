@@ -161,3 +161,5 @@ endfun
 nnoremap <silent> <Plug>(InvertBinary) :<C-u>call <SID>InvertBinary()<CR>
 
 nmap <leader>n <Plug>(InvertBinary)
+
+nmap <Enter> i<Enter><Space><BS><Esc><Right>
