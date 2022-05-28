@@ -42,3 +42,6 @@
 /\b([Cc])hange log\b/\1hangelog/
 /read ?only/read-only/
 /EI N/EIN/
+/refracturing|re-factor(y|ing)/refactoring/
+/Sarah Nate/Serenade/
+/web socket/WebSocket/
