@@ -280,3 +280,196 @@ func TestMain(m *testing.M) {
 	os.Exit(code)
 }
 endsnippet
+
+snippet genstatic "Generate Static File Server" b
+package main
+
+import (
+	"bytes"
+	"compress/gzip"
+	"fmt"
+	"io/ioutil"
+	"os"
+	"path"
+	"strings"
+)
+
+/* Create the following shell script and tweak as necessary:
+ *
+ * #!/bin/bash
+ *
+ * # Change to root of project (one level up)
+ * cd "\`dirname "${BASH_SOURCE[0]}"\`/.."
+ *
+ * echo Generating web routes for static files
+ *
+ * rm -f internal/static/routes.go
+ *
+ * go run scripts/build-static.go web/ internal/static/routes.go
+ */
+
+func main() {
+	if len(os.Args) != 3 {
+		fmt.Println("Usage: go run scripts/build-static.go <input dir> <output path>")
+		os.Exit(1)
+		return
+	}
+
+	dir := os.Args[1]
+
+	routesPath := os.Args[2]
+
+	fmt.Printf("Building static files in %s\n", dir)
+
+	allFiles, err := readAllFiles(dir)
+
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+		return
+	}
+
+	fileTypes := map[string]string{
+		".html": "text/html",
+		".js":   "application/javascript",
+		".css":  "text/css",
+		".svg":  "image/svg+xml",
+	}
+
+	files := make([]string, 0)
+
+	for _, file := range allFiles {
+		if mimeType := fileTypes[path.Ext(file)]; mimeType != "" {
+			files = append(files, file)
+		}
+	}
+
+	lines := make([]string, 0)
+
+	lines = append(
+		lines,
+		"package static",
+		"",
+		"import (",
+		"\t\"fmt\"",
+		"\t\"github.com/gin-gonic/gin\"",
+		"\t\"net/http\"",
+		")",
+		"",
+	)
+
+	var indexPage []byte
+
+	for _, file := range files {
+		mimeType := fileTypes[path.Ext(file)]
+
+		// TODO: Ignore dotfiles
+
+		data, err := ioutil.ReadFile(path.Join(dir, file))
+
+		if err != nil {
+			fmt.Printf("Error while trying to read %s: %s\n", file, err)
+			os.Exit(1)
+			return
+		}
+
+		fmt.Printf("%s\n", file)
+
+		if file == "index.html" {
+			file = ""
+			indexPage = data
+		} else if strings.HasSuffix(file, ".html") {
+			file = file[:len(file)-5]
+		}
+
+		lines = append(
+			lines,
+			"",
+			fmt.Sprintf("\trouter.GET(\"/%s\", func(c *gin.Context) {", file),
+			"\t\tc.Header(\"Content-Encoding\", \"gzip\")",
+			fmt.Sprintf("\t\tc.Data(http.StatusOK, \"%s\", []byte{%s})", mimeType, formatData(gzipCompress(data))),
+			"\t})",
+		)
+	}
+
+	lines = append(
+		lines,
+		"}",
+	)
+
+	lines = append(
+		lines,
+		"",
+		fmt.Sprintf("var DefaultPage = []byte{%s}", formatData(gzipCompress(indexPage))),
+		"",
+	)
+
+	ioutil.WriteFile(routesPath, []byte(strings.Join(lines, "\n")), 0644)
+}
+
+func formatData(data []byte) string {
+	base10Data := make([]string, 0, len(data))
+
+	for _, b := range data {
+		base10Data = append(base10Data, fmt.Sprintf("%d", b))
+	}
+
+	return strings.Join(base10Data, ", ")
+}
+
+func readAllFiles(dir string) ([]string, error) {
+	files := make([]string, 0)
+	items, err := ioutil.ReadDir(dir)
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to read directory '%s': %s", dir, err)
+	}
+
+	for _, item := range items {
+		if item.IsDir() {
+			p := path.Join(dir, item.Name())
+			dirFiles, err := readAllFiles(p)
+
+			if err != nil {
+				return nil, err
+			}
+
+			for _, dirFile := range dirFiles {
+				files = append(files, path.Join(item.Name(), dirFile))
+			}
+		} else {
+			files = append(files, item.Name())
+		}
+	}
+
+	return files, nil
+}
+
+func gzipCompress(data []byte) []byte {
+	compressed := &bytes.Buffer{}
+
+	compressor, err := gzip.NewWriterLevel(compressed, gzip.BestCompression)
+
+	if err != nil {
+		panic(err)
+	}
+
+	compressor.Write(data)
+	compressor.Close()
+
+	return compressed.Bytes()
+}
+endsnippet
+
+snippet staticroutes "Static Routes"
+static.Routes(server.Group("/"))
+
+server.NoRoute(func(c *gin.Context) {
+	if strings.Contains(c.Request.Header.Get("Accept"), "text/html") {
+		c.Header("Content-Encoding", "gzip")
+		c.Data(http.StatusOK, "text/html", static.DefaultPage)
+	} else {
+		c.Status(http.StatusNotFound)
+	}
+})
+endsnippet
