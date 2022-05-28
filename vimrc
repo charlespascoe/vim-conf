@@ -24,6 +24,8 @@ set formatoptions=crqjn
 set textwidth=80
 set formatlistpat=^\\s*\\d\\+[\\]:.)}\\t\ ]\\s*\\\|^\\s*-\\s*
 
+set autoread
+
 " Enable lazy redraw (waits until mappings/macros have finished before
 " redrawing, speeds up macros and prevents flashing)
 set lazyredraw
@@ -96,6 +98,7 @@ set re=1
 
 " Set window split options
 set splitright " For vertical splits, the cursor will be on the right pane
+set splitbelow " For horizontal splits, the cursor will be on the bottom pane
 
 " Disable folding (interferes with vim-go)
 set nofoldenable
