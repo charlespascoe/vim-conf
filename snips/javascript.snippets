@@ -75,13 +75,6 @@ snippet im "Import" bw
 import { $2 } from '$1';
 endsnippet
 
-## L ##
-
-post_expand "start_dictation()"
-snippet 'let ' "Let" brA
-let $1 = $0;`!p t[1] = jump_after(format_camel_case(t[1]))`
-endsnippet
-
 ## R ##
 
 snippet r "Return" bw
