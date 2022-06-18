@@ -52,7 +52,7 @@ noremap <leader>R <Esc>:s/<C-r><C-w>//g<Left><Left>
 nnoremap <leader>m :<c-u><c-r><c-r>='let @'. v:register .' = '. string(getreg(v:register))<cr>
 
 " Line spread
-let g:line_spread_append_last = 0
+let g:line_spread_append_last = 1
 
 fun! TrimItem(index, text)
     return trim(a:text)
