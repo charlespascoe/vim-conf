@@ -1,47 +1,59 @@
+# CRC
 /(sea RC|cRC|C[LI]C|Siya see|COCE?)/CRC/
 /CR([CE]) note(s?)/CR\1 node\2/
-/manag(ing|er) no[dt]e/manager node/
-/can figuration/configuration/
-/couch (TV|[TDdG]B)/CouchDB/
 /[Rr](?:each|ich|oute|o?ach|ight|oot) control(ler)?/rate control\1/
 /(?:great|bridge|brakes?|writes?) control(ler)?/rate control\1/
-/rest API/REST API/
-/[Dd]uplicut/duplicate/
-/([A-Z]+) ?([0-9]+)/\1-\2/
-/TLS-1\.(\d)/TLS 1.\1/
-/\bi\b/I/
+/manag(ing|er) no[dt]e/manager node/
 /Tino/TNOR/
-/[Oo]kay/OK/
-/(sorry for|psycho|cipher) sweets/cipher suites/
-/juror|Jeera|Dura/Jira/
-/functional model one\b/functional model 1/
-/functional model t[wo]?o\b/functional model 2/
-/[Uu]U ID/UUID/
-/percent Di?\b/%d/
-/percent S\b/%s/
-/DKA/a.k.a./
-/bullying|bullion/boolean/
-/you are I/URI/
-/sip Pazza/SIP parser/
-/sip pa[us]sing/SIP parsing/
-/sip URI/SIP URI/
 /MER se[ea]s/MARCs/
+
+# Work Stuff
+/([A-Z]+) ?([0-9]+)/\1-\2/
+/[Bb]e(v[ai]|tha)ns/Bevan's/
+/[Bb]e(vi|tha)n/Bevan/
+/\b[pP]T\b/BT/
+/EI N/EIN/
+/iron VCS/INVCS/
+
+# General
+/([pP])(ram|erram)/\1aram/
 /(\d+) ([mµn])?s\b/\1\2s/
 /(\d+) calls per second\b/\1cps/
-/\b[Cc]osta\b/cluster/
+/(sorry for|psycho|cipher) sweets/cipher suites/
+/[Dd]uplicut/duplicate/
 /[Jj]ason/JSON/
-/iron VCS/INVCS/
-/lock rotation/log rotation/
-/[Bb]e(vi|tha)n/Bevan/
-/[Bb]e(v[ai]|tha)ns/Bevan's/
-/([pP])(ram|erram)/\1aram/
-/docker/Docker/
-/One Direction/one direction/
-#/(esky|[Pp]ascoe|[Aa]SCII) (duck|dog|dock)/asciidoc/
-/in Cryptid/encrypted/
+/[Oo]kay/OK/
+/[Uu]U ID/UUID/
 /\b([Cc])hange log\b/\1hangelog/
+/\b[Cc]osta\b/cluster/
+/\bcool\b/call/
+/\bi\b/I/
+/\bkit lab\b/GitLab/
+/bullying|bullion/boolean/
+/can figuration/configuration/
+/couch (TV|[TDdG]B)/CouchDB/
+/DKA/a.k.a./
+/docker/Docker/
+/double ?checking/double-checking/
+/functional model one\b/Functional Model 1/
+/functional model t[wo]?o\b/Functional Model 2/
+/in Cryptid/encrypted/
+/item potent/idempotent/
+/juror|Jeera|Dura/Jira/
+/lock rotation/log rotation/
+/Logik/logic/
+/One Direction/one direction/
+/percent Di?\b/%d/
+/percent S\b/%s/
+/Pinterest/pen test/
 /read ?only/read-only/
-/EI N/EIN/
 /refracturing|re-factor(y|ing)/refactoring/
+/rest API/REST API/
 /Sarah Nate/Serenade/
+/sip pa[us]sing/SIP parsing/
+/sip Pazza/SIP parser/
+/sip URI/SIP URI/
+/TLS-1\.(\d)/TLS 1.\1/
 /web socket/WebSocket/
+/WhatsApp/SIP/
+/you are I/URI/
