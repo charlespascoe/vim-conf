@@ -1,9 +1,9 @@
 snippet go "Go Makefile Template"
 PROJECT_NAME=$1
-BINARY_NAME=$0
+BINARY_NAME=${0:$1}
 BINARY_LINUX=$(BINARY_NAME)-linux
 SHELL=/bin/bash
-GOLANG_MINOR_VERSION=14
+GOLANG_MINOR_VERSION=17
 ALL_GO_FILES=find . -name '*.go' -not -path './vendor*' -not -path './.*'
 
 .PHONY: all
@@ -18,7 +18,7 @@ help:
 .PHONY: init
 ## init: Sets up the working directory for development, including git hooks
 init:
-	ln -sf ../../.hooks/pre-commit .git/hooks/pre-commit
+	ln -sf ../../githooks/pre-commit .git/hooks/pre-commit
 
 .PHONY: gencode
 ## gencode: Runs 'go generate' on the project to produce generated code
@@ -64,17 +64,17 @@ download:
 	go mod vendor
 
 .PHONY: fmt
-## fmt: Run go fmt on all source files
+## fmt: Run 'go fmt' on all source files
 fmt:
 	go fmt ./...
 
 .PHONY: vet
-## vet: Run go vet on all source files
+## vet: Run 'go vet' on all source files
 vet:
 	go vet ./...
 
 .PHONY: fmtchk
-## fmtchk: Checks code formatting, exits with non-zero exit code if there are formatting issues.
+## fmtchk: Checks code formatting, exits with non-zero exit code if there are formatting issues
 fmtchk:
 	@issues="$$($(ALL_GO_FILES) | xargs gofmt -l)"; \
 	if [ -n "$$issues" ]; then \
