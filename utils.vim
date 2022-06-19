@@ -162,4 +162,9 @@ nnoremap <silent> <Plug>(InvertBinary) :<C-u>call <SID>InvertBinary()<CR>
 
 nmap <leader>n <Plug>(InvertBinary)
 
+" Enter Improvements
+
 nmap <Enter> i<Enter><Space><BS><Esc><Right>
+
+" This prevents the above from interfering with quickfix and location lists
+au FileType qf nnoremap <buffer> <Enter> <Enter>
