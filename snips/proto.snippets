@@ -1,0 +1,19 @@
+snippet gopkg "Go Package" b
+option go_package = "$1";
+endsnippet
+
+snippet '^s ' "Service" brA
+service $1 {
+	$0
+}
+endsnippet
+
+snippet '^m ' "Message" brA
+message $1 {
+	$0
+}
+endsnippet
+
+snippet 'rpc ' "RPC Call" brA
+rpc $1($2) returns ($3) {}
+endsnippet

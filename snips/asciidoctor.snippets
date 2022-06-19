@@ -36,6 +36,16 @@ endsnippet
 
 # endsnippet
 
+snippet un "Unreleased" b
+== Unreleased
+
+=== $1
+endsnippet
+
+snippet jira "Jira link"
+`echo $JIRA_BASE_PATH`/browse/$1[${1: }]: $0
+endsnippet
+
 snippet 'co(l?)' "Config (Optional)" bwr
 | \`+$1+\`
 | `!p snip.rv = '<<' if match.group(1) else '\`+'`$2`!p snip.rv = '>>' if match.group(1) else '+\`'`
