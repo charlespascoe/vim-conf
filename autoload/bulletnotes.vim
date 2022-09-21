@@ -222,12 +222,9 @@ fun! HandleI_CR()
         return "\<C-o>[\<Space>"
     end
 
-    let prefix = matchstr(getline(startline), '^\s*[^\s]')
+    let bullet_type = bulletnotes#GetBulletType(startline, '-')
 
-    set pastetoggle=<Esc>[201~
-    set paste
-
-    return "\<CR>".prefix." \<Esc>[201~"
+    return "\<CR>\<BS>".bullet_type." "
 endfun
 
 fun! HandleN_o(o)
@@ -239,10 +236,11 @@ fun! HandleN_o(o)
 
     let prefix = matchstr(getline(startline), '^\s*[^\s]')
 
-    set pastetoggle=<Esc>[201~
-    set paste
+    let bullet_type = bulletnotes#GetBulletType(startline, '-')
 
-    return a:o.prefix." \<Esc>[201~"
+    " NOTE: The space before the backspace is a bit of a hack and may be
+    " dependent on my vim settings (CHECK)
+    return a:o." \<BS>".bullet_type." "
 endfun
 
 fun bulletnotes#FindBulletStart(lnum)
@@ -595,10 +593,10 @@ fun bulletnotes#NewInboxItem(...)
 
         if !filereadable(path)
             " File doesn't exist - add template text
-            set modifiable
-            set paste
+            setlocal modifiable
+            setlocal paste
             exec "normal i## ".a:1." ##\<CR>\<CR>- "
-            set nopaste
+            setlocal nopaste
         endif
     endif
 
