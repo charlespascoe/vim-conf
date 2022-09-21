@@ -1,42 +1,50 @@
 # CRC
-/(sea RC|cRC|C[LI]C|Siya see|COCE?)/CRC/
-/CR([CE]) note(s?)/CR\1 node\2/
-/[Rr](?:each|ich|oute|o?ach|ight|oot) control(ler)?/rate control\1/
 /(?:great|bridge|brakes?|writes?) control(ler)?/rate control\1/
+/(sea RC|cRC|C[LI]C|Siya see|COCE?)/CRC/
+/[Rr](?:each|ich|oute|o?ach|ight|oot) control(ler)?/rate control\1/
+/CR([CE]) note(s?)/CR\1 node\2/
 /manag(ing|er) no[dt]e/manager node/
-/Tino/TNOR/
 /MER se[ea]s/MARCs/
+/M a RC/MARC/
+
+/Tino/TNOR/
+/pseudo TNOR/pseudo-TNOR/
 
 # Work Stuff
 /([A-Z]+) ?([0-9]+)/\1-\2/
-/[Bb]e(v[ai]|tha)ns/Bevan's/
-/[Bb]e(vi|tha)n/Bevan/
+/(iron|I am) VCS/INVCS/
+/(?i)Be(v[ai]|tha)ns/Bevan's/
+/(?i)Be(vi|tha)n/Bevan/
 /\b[pP]T\b/BT/
 /EI N/EIN/
-/iron VCS/INVCS/
 
 # General
+/(?i)\bCosta\b/cluster/
+/(?i)Duplicut/duplicate/
+/(?i)Jason/JSON/
+/(?i)Okay/OK/
 /([pP])(ram|erram)/\1aram/
+/([Rr])(efracted|eflected)/\1efactored/
+/([zs]ip|city) traffic/SIP traffic/
 /(\d+) ([mµn])?s\b/\1\2s/
 /(\d+) calls per second\b/\1cps/
 /(sorry for|psycho|cipher) sweets/cipher suites/
-/[Dd]uplicut/duplicate/
-/[Jj]ason/JSON/
-/[Oo]kay/OK/
 /[Uu]U ID/UUID/
 /\b([Cc])hange log\b/\1hangelog/
-/\b[Cc]osta\b/cluster/
 /\bcool\b/call/
 /\bi\b/I/
 /\bkit lab\b/GitLab/
 /bullying|bullion/boolean/
 /can figuration/configuration/
+/can figure/configure/
+/change lo(g|ck)/changelog/
 /couch (TV|[TDdG]B)/CouchDB/
 /DKA/a.k.a./
 /docker/Docker/
 /double ?checking/double-checking/
 /functional model one\b/Functional Model 1/
 /functional model t[wo]?o\b/Functional Model 2/
+/hardcoded/hard-coded/
 /in Cryptid/encrypted/
 /item potent/idempotent/
 /juror|Jeera|Dura/Jira/
@@ -49,11 +57,15 @@
 /read ?only/read-only/
 /refracturing|re-factor(y|ing)/refactoring/
 /rest API/REST API/
+/rooted via/routed via/
 /Sarah Nate/Serenade/
-/sip pa[us]sing/SIP parsing/
-/sip Pazza/SIP parser/
-/sip URI/SIP URI/
 /TLS-1\.(\d)/TLS 1.\1/
 /web socket/WebSocket/
-/WhatsApp/SIP/
 /you are I/URI/
+
+# SIP (Note: the order is important)
+/WhatsApp/SIP/
+/\bsip\b/SIP/
+/SIP pa[us]sing/SIP parsing/
+/SIP Pazza/SIP parser/
+/SIP URI/SIP URI/
