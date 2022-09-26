@@ -1,0 +1,381 @@
+global !p
+from snippet_utils import start_dictation, jump_after, format_camel_case, format_snake_case
+
+def custom_camel_case(s):
+	if len(s) == 0:
+		return ''
+
+	return format_camel_case(s[0].lower() + s[1:])
+endglobal
+
+snippet luiapp "Lui App Index" b
+import {
+	component,
+	mount,
+	observable,
+	elems,
+} from '/modules/lui.js';
+import { Navigation } from '/modules/lui-nav.js';
+import { Client } from '/modules/client.js';
+
+const nav = new Navigation();
+nav.registerLinkInterceptor(document.body);
+
+const client = new Client();
+
+const titleText = observable.value('${1:App Name}');
+titleText.onChange(title => document.title = title === '$1' ? title : \`${title} - $1\`);
+
+const root = component(({children}, {}) => [
+	// Common UI elements e.g. navigation
+	children,
+]);
+
+// The "page" content that changes
+const content = elems.main()();
+
+mount(document.body, root()(content));
+
+function mountContent(elems, opts={}) {
+	content.removeChildren();
+	content.append(elems);
+
+	const {scrollToTop=true} = opts;
+
+	if (scrollToTop) {
+		window.scroll(0, 0);
+	}
+}
+
+const setPageInfo = (opts = {}) => {
+	const { title } = opts;
+
+	if (title) {
+		titleText.set(title);
+	}
+};
+const pages = [];
+
+for (const page of pages) {
+	page({
+		nav,
+		client,
+		setPageInfo,
+		mount: mountContent,
+	});
+}
+
+nav.onNotFound(() => {
+	mountContent(elems.div()('Not found'));
+});
+
+nav.go(window.location);
+endsnippet
+
+snippet luipage "Lui App Page" b
+import {
+	component,
+	Viewmodel,
+} from '/modules/lui.js';
+
+class ${1:Example}Viewmodel extends Viewmodel {
+	constructor() {
+		super({
+			text: 'Hello, world',$0
+		});
+	}
+}
+
+const `!p snip.rv = custom_camel_case(t[1])`View = component(({viewmodel}, {div}) => (
+	div()(
+		viewmodel.observable.text,
+	)
+));
+
+export default ({nav, setPageInfo, mount}) => {
+	nav.route('/`!p snip.rv = t[1].lower()`').do(() => {
+		const viewmodel = new $1Viewmodel();
+		setPageInfo({title: '$1'});
+		mount(`!p snip.rv = custom_camel_case(t[1])`View({viewmodel})());
+	});
+};
+endsnippet
+
+snippet simpleclient "API Client Template"
+import { validate } from '/modules/validate.js';
+
+async function withError(promise, message) {
+  try {
+    return await promise;
+  } catch (err) {
+    console.error(\`withError caught the following error which it replaced with '${message}':\`, err);
+    throw new Error(message.replace('\$1', err.message || err));
+  }
+}
+
+export class Client {
+  getApiKey() {
+    let apiKey = localStorage.getItem('api-key');
+
+    if (!apiKey) {
+      apiKey = prompt('Enter API Key');
+    }
+
+    if (!apiKey) {
+      throw new Error('API key not provided');
+    }
+
+    localStorage.setItem('api-key', apiKey);
+
+    return apiKey;
+  }
+
+  async fetch(url, opts={}) {
+    const headers = {
+      ...opts.headers,
+      'Authorization': \`Bearer ${this.getApiKey()}\`,
+    };
+
+    const resp = await fetch(url, {
+      ...opts,
+      headers,
+    });
+
+    if (resp.status === 401) {
+      localStorage.removeItem('api-key');
+      alert('Invalid API Key');
+      return await this.fetch(url, opts);
+    }
+
+    return resp;
+  }
+
+  async get(desc, url, validator) {
+    try {
+      const resp = await withError(this.fetch(url), 'the server is not responding');
+
+      if (!resp.ok) {
+        if (resp.status === 404) {
+          return undefined;
+        }
+
+        throw new Error(\`of an error from the server (${resp.status} ${resp.statusText})\`);
+      }
+
+      const body = await withError(resp.json(), 'the server response could not be parsed');
+
+      return validate.withMessage('the server response was invalid')(
+        body,
+        validator,
+      );
+    } catch (err) {
+      throw new Error(\`Couldn't get ${desc} because ${err.message || err || 'of unknown reasons'}\`);
+    }
+  }
+
+  async post(desc, url, reqBody, validator) {
+    try {
+      const opts = {
+        method: 'POST',
+      };
+
+      if (reqBody !== undefined) {
+        opts.headers = {
+          'Content-Type': 'application/json',
+        };
+        opts.body = JSON.stringify(reqBody);
+      }
+
+      const resp = await withError(this.fetch(url, opts), 'the server is not responding');
+
+      if (!resp.ok) {
+        if (resp.status === 404) {
+          return undefined;
+        }
+
+        throw new Error(\`of an error from the server (${resp.status} ${resp.statusText})\`);
+      }
+
+      if (!validator) {
+        return;
+      }
+
+      const body = await withError(resp.json(), 'the server response could not be parsed');
+
+      return validate.withMessage('the server response was invalid')(
+        body,
+        validator,
+      );
+    } catch (err) {
+      throw new Error(\`Couldn't post ${desc} because ${err.message || err || 'of unknown reasons'}\`);
+    }
+  }
+
+  async delete(desc, url) {
+    try {
+      const resp = await withError(this.fetch(url, {
+        method: 'DELETE',
+      }), 'the server is not responding');
+
+      if (!resp.ok) {
+        if (resp.status === 404) {
+          return false;
+        }
+
+        throw new Error(\`of an error from the server (${resp.status} ${resp.statusText})\`);
+      }
+
+      return true;
+    } catch (err) {
+      throw new Error(\`Couldn't delete ${desc} because ${err.message || err || 'of unknown reasons'}\`);
+    }
+  }
+
+}
+endsnippet
+
+snippet validatelib "Mini Validation Library" b
+export function validate(value, validator) {
+  if (typeof validator === 'string') {
+    if (validator === 'null') {
+      if (value === null) {
+        return null;
+      } else {
+        throw new Error(\`Expected ${validator}, got null\`);
+      }
+    }
+
+    if (typeof value !== validator) {
+      throw new Error(\`Expected ${validator}, got ${typeof value}\`)
+    }
+
+    return value;
+  }
+
+  if (validator instanceof RegExp) {
+    if (typeof value !== 'string') {
+      throw new Error(\`Expected a string, got ${value === null ? 'null' : typeof value}\`);
+    }
+
+    if (!validator.test(value)) {
+      throw new Error(\`String '${value}' doesn't match ${validator}\`);
+    }
+
+    return value;
+  }
+
+  if (typeof validator === 'object' && validator !== null) {
+    if (typeof value !== 'object' || value === null) {
+      throw new Error(\`Expected object, got ${value === null ? 'null' : typeof value}\`);
+    }
+
+    const result = {};
+
+    for (const key in validator) {
+      try {
+        result[key] = validate(value[key], validator[key]);
+      } catch (err) {
+        throw new Error(\`${key}: ${err.message}\`);
+      }
+    }
+
+    return result;
+  }
+
+  if (typeof validator === 'function') {
+    return validator(value);
+  }
+
+  throw new Error(\`Unknown validator: [${typeof validator}] ${validator}\`);
+}
+
+validate.withMessage = (msg='\$1') => (value, validator) => {
+  try {
+    return validate(value, validator);
+  } catch (err) {
+    console.error('validate.withMessage() caught the following error:', err);
+    throw new Error(msg.replace('\$1', err))
+  }
+};
+
+validate.isMap = (validator) => (value) => {
+  if (typeof value !== 'object' || value === null) {
+    throw new Error(\`Expected object, got ${value === null ? 'null' : typeof value}\`);
+  }
+
+  const result = {};
+
+  for (const key in value) {
+    try {
+      result[key] = validate(value[key], validator);
+    } catch (err) {
+      throw new Error(\`${key}: ${err.message}\`);
+    }
+  }
+
+  return result;
+};
+
+
+validate.isArray = (itemValidator, ...validators) => (value) => {
+  if (!Array.isArray(value)) {
+    throw new Error('Expected array');
+  }
+
+  const arr = value.map(item => validate(item, itemValidator));
+
+  return validators.reduce((arr, validator) => validate(arr, validator), arr)
+};
+
+validate.len = ({min = 0, max = Infinity}) => (value) => {
+  const len = value.length;
+
+  if (typeof len !== 'number') {
+    throw new Error(\`length property must be a number, not ${typeof len}\`);
+  }
+
+  if (len < min) {
+    throw new Error(\`length ${len} must be at least ${min}\`);
+  }
+
+  if (len > max) {
+    throw new Error(\`length ${len} must be no more than ${max}\`);
+  }
+
+  return value;
+};
+
+validate.either = (...validators) => (value) => {
+  const errors = [];
+
+  for (const validator of validators) {
+    try {
+      return validate(value, validator);
+    } catch (err) {
+      errors.push(err);
+    }
+  }
+
+  throw new Error(\`Multiple errors { ${errors.map(err => err.message).join('; ')} }\`);
+};
+
+validate.optional = (validator, defaultValue=undefined) => (value) => {
+  if (value === undefined) {
+    return defaultValue;
+  }
+
+  return validate(value, validator);
+};
+
+validate.oneOf = (...values) => {
+  const valueSet = new Set(values);
+
+  return (value) => {
+    if (!valueSet.has(value)) {
+      throw new Error(\`must be one of: ${values.join(', ')}\`);
+    }
+
+    return value;
+  };
+};
+endsnippet

@@ -657,9 +657,10 @@ snippet 'ic ' "Improvement Comment" brA
 endsnippet
 
 snippet '^type impl ([^\s]+) ' "Implement Interface" brA
-`!p snip.rv = snip.c or implement_interface()`
+`!p if not snip.c: snip.rv = implement_interface()`
 endsnippet
 
+context "is_only_line_contents('if', snip)"
 snippet 'if ' "If" brA
 if $1 {
 	$0
@@ -759,6 +760,19 @@ endsnippet
 snippet 'ifjur' "If Short JSON Unmarshal, return" "add_import('ifjur', snip, 'encoding/json', 'fmt')" breA
 if err := json.Unmarshal(${1:data}, $2); err != nil {
 	return $3fmt.Errorf("$4: %s",$5 err)
+}
+endsnippet
+
+
+context "add_import('ifbj ', snip, 'net/http')"
+snippet 'ifbj ' "If BindJSON" breA
+var ${1:body} ${2:type}
+
+if err := c.BindJSON(&$1); err != nil {
+	c.JSON(http.StatusBadRequest, gin.H{
+		"error": err.Error(),
+	})
+	return
 }
 endsnippet
 

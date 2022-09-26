@@ -1,0 +1,57 @@
+global !p
+from snippet_utils import start_dictation, jump_after, format_camel_case, format_snake_case
+
+def custom_camel_case(s):
+	if len(s) == 0:
+		return ''
+
+	return format_camel_case(s[0].lower() + s[1:])
+endglobal
+
+## C ##
+
+snippet comp "Component" b
+const $1 = component(({$2}, {$3}) => (
+	$3()($0)
+));
+endsnippet
+
+## L ##
+
+snippet list "Lui List"
+list({
+	elem: div,
+	items: viewmodel.observable.${1:items},
+	itemView: ${2:itemView},
+}),
+endsnippet
+
+# snippet lui "Lui template"
+# import {
+# 	component,
+# 	Viewmodel,
+# } from '/modules/lui.js';
+
+# class ${1:Example}Viewmodel extends Viewmodel {
+# 	constructor() {
+# 		super({
+# 			text: 'Hello, world',$0
+# 		});
+# 	}
+# }
+
+# const `!p snip.rv = custom_camel_case(t[1])`View = component(({viewmodel}, {div}) => (
+# 	div()(
+# 		viewmodel.observable.text,
+# 	)
+# ));
+
+# export default ({nav,setPageInfo, mount}) => {
+# 	nav.route('/`!p snip.rv = t[1].lower()`').do(() => {
+# 		const viewmodel = new $1Viewmodel();
+# 		setPageInfo('$1');
+# 		mount(`!p snip.rv = custom_camel_case(t[1])`View({viewmodel})());
+# 	});
+# };
+# endsnippet
+

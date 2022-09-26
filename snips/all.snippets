@@ -1,5 +1,9 @@
 global !p
+import random
 from snippet_utils import start_dictation, jump_after, format_camel_case, format_snake_case
+
+def rand_id(l=16):
+	return ''.join(random.choice('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789') for i in range(l))
 endglobal
 
 snippet date
@@ -46,4 +50,8 @@ endsnippet
 post_expand "start_dictation()"
 snippet '\b(sc|SC)\b' "Snake case" ri
 $1`!p t[1] = jump_after(format_snake_case(t[1], match[1] == 'SC'))`
+endsnippet
+
+snippet randid
+`!p if not snip.c: snip.rv = rand_id()`
 endsnippet

@@ -28,5 +28,5 @@ def common_changes():
 endglobal
 
 snippet cc "Common Changes"
-`!p if not snip.c: snip.rv = start_dictation()` $0
+`!p if not snip.c: snip.rv = common_changes() + ':'` $0
 endsnippet

@@ -1,0 +1,105 @@
+## C ##
+
+snippet 'cu ' "Cube" brA
+cube([$0]);
+endsnippet
+
+snippet 'ci ' "cirle" brA
+circle(r=$0);
+endsnippet
+
+# snippet 'ci ' "cirle" brA
+# circle(r=$0);
+# endsnippet
+
+snippet 'cy ' "cylinder" brA
+cylinder(r=$1, h=$0);
+endsnippet
+
+## D ##
+
+snippet 'di ' "Difference" brA
+difference() {
+	${VISUAL}$0
+}
+endsnippet
+
+## I ##
+snippet 'if ' "If" brA
+if ($1) {
+	$0
+}
+endsnippet
+
+snippet '}\s*e' "Else" brA
+} else {
+	$0
+}
+endsnippet
+
+snippet 'in ' "Intersection" brA
+intersection() {
+	${VISUAL}$0
+}
+endsnippet
+
+## L ##
+
+snippet 'le ' "Linear Extrude" brA
+linear_extrude(height=$0)
+endsnippet
+
+## M ##
+
+snippet '^mo ' "" brA
+module $1($2) {
+	$0
+}
+endsnippet
+
+snippet mirror_copy "Mirror Copy" b
+module mirror_copy(normal) {
+    union() {
+        children();
+
+        mirror(normal)
+        children();
+    }
+}
+endsnippet
+
+## P ##
+
+snippet preview "Preview" b
+$fn = $preview ? $fn : ${0:200};
+endsnippet
+
+## R ##
+
+snippet 'ro ' "Rotate" brA
+rotate([$0])
+endsnippet
+
+## S ##
+
+snippet 'su ' "Square" brA
+square([$0]);
+endsnippet
+
+snippet 'sc ' "Scale" brA
+scale([$0])
+endsnippet
+
+## T ##
+
+snippet 'tr ' "Translate" brA
+translate([$0])
+endsnippet
+
+## U ##
+
+snippet 'un ' "Union" brA
+union() {
+	${VISUAL}$0
+}
+endsnippet

@@ -1,0 +1,54 @@
+global !p
+from snippet_utils import preceeding_lines, top_level, find_line, find_lines
+from go_snippet_utils import import_re, add_import
+
+params_re = re.compile(':([a-z]+)', re.IGNORECASE)
+
+def add_handler_params(snip, route, fix_indent=False):
+	first = True
+	for param in params_re.findall(route):
+		s = f'{param} := c.Param("{param}")'
+		if first:
+			snip.rv = s
+			first = False
+			if fix_indent:
+				snip.shift()
+		else:
+			snip += s
+
+	if first:
+		snip.rv = ''
+	else:
+		snip += ''
+
+endglobal
+
+context "add_import('c.404', snip, 'net/http')"
+snippet c.404 "Not Found (Gin)" beA
+c.Status(http.StatusNotFound)
+return
+endsnippet
+
+context "add_import('c.err', snip, 'net/http')"
+snippet c.err "Error (Gin)" beA
+c.Status(http.Status${1:InternalServerError}, gin.H{
+	"error": err.Error(),
+})
+return
+endsnippet
+
+snippet params "Gin Params" b
+`!p if not snip.c: add_handler_params(snip, next(preceeding_lines()))`
+endsnippet
+
+snippet '\.(GET|POST|PUT|DELETE)' "Gin Route" r
+.`!p snip.rv = match.group(1)`("$1", func(c *gin.Context) {
+	`!p add_handler_params(snip, t[1], True)`$0
+})
+endsnippet
+
+snippet serverGroup "Server Group" b
+func ${1:example}Group(router *gin.Router) {
+	$0
+}`!p vim.command(f'let @" = "\t{t[1]}(server.Group(\\\"/{t[1].lower()}\\\"))\n"')`
+endsnippet

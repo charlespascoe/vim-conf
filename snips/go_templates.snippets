@@ -288,9 +288,11 @@ import (
 	"bytes"
 	"compress/gzip"
 	"fmt"
+	"github.com/evanw/esbuild/pkg/api"
 	"io/ioutil"
 	"os"
 	"path"
+	"path/filepath"
 	"strings"
 )
 
@@ -305,19 +307,21 @@ import (
  *
  * rm -f internal/static/routes.go
  *
- * go run scripts/build-static.go web/ internal/static/routes.go
+ * go run scripts/build-static.go web/ internal/static/routes.go \`cat version\`
  */
 
 func main() {
-	if len(os.Args) != 3 {
-		fmt.Println("Usage: go run scripts/build-static.go <input dir> <output path>")
+	if len(os.Args) != 4 {
+		fmt.Println("Usage: go run scripts/build-static.go <input dir> <output path> <version>")
 		os.Exit(1)
 		return
 	}
 
-	dir := os.Args[1]
+	dev := os.Getenv("MODE") == "dev"
 
+	dir := os.Args[1]
 	routesPath := os.Args[2]
+	version := os.Args[3]
 
 	fmt.Printf("Building static files in %s\n", dir)
 
@@ -331,7 +335,7 @@ func main() {
 
 	fileTypes := map[string]string{
 		".html": "text/html",
-		".js":   "application/javascript",
+		".js":   "text/javascript",
 		".css":  "text/css",
 		".svg":  "image/svg+xml",
 	}
@@ -351,15 +355,12 @@ func main() {
 		"package static",
 		"",
 		"import (",
-		"\t\"fmt\"",
 		"\t\"github.com/gin-gonic/gin\"",
 		"\t\"net/http\"",
 		")",
 		"",
 		"func Routes(router *gin.RouterGroup) {",
 	)
-
-	var indexPage []byte
 
 	for _, file := range files {
 		mimeType := fileTypes[path.Ext(file)]
@@ -376,13 +377,6 @@ func main() {
 
 		fmt.Printf("%s\n", file)
 
-		if file == "index.html" {
-			file = ""
-			indexPage = data
-		} else if strings.HasSuffix(file, ".html") {
-			file = file[:len(file)-5]
-		}
-
 		lines = append(
 			lines,
 			"",
@@ -392,6 +386,20 @@ func main() {
 			"\t})",
 		)
 	}
+
+	if !dev {
+		bundle := buildBundle()
+		lines = append(
+			lines,
+			"",
+			"\trouter.GET(\"/bundle.js\", func(c *gin.Context) {",
+			"\t\tc.Header(\"Content-Encoding\", \"gzip\")",
+			fmt.Sprintf("\t\tc.Data(http.StatusOK, \"text/javascript\", []byte{%s})", formatData(gzipCompress(bundle))),
+			"\t})",
+		)
+	}
+
+	indexPage := generateIndex(dev, version)
 
 	lines = append(
 		lines,
@@ -459,6 +467,105 @@ func gzipCompress(data []byte) []byte {
 	compressor.Close()
 
 	return compressed.Bytes()
+}
+
+func generateIndex(development bool, version string) []byte {
+	rootScript := \`  <script crossorigin type="module" src="/index.js"></script>\`
+
+	if development {
+		fmt.Println("\n\n===== BUILDING FOR DEVELOPMENT =====\n\n")
+	} else {
+		rootScript = \`  <script crossorigin type="module" src="/bundle.js"></script>\`
+	}
+
+	return []byte(strings.Join([]string{
+		\`<!doctype html>\`,
+		\`<html lang="en">\`,
+		\`<head>\`,
+		\`  <meta charset="utf-8">\`,
+		\`  <title>TODO</title>\`,
+		\`  <script>window.Version = '\` + version + \`';</script>\`,
+		rootScript,
+		\`  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0 user-scalable=no">\`,
+		\`  <link href="/assets/bootstrap.min.css" rel="stylesheet">\`,
+		\`  <link href="/assets/style.css" rel="stylesheet">\`,
+		\`</head>\`,
+		\`<body></body>\`,
+		\`</html>\`,
+	}, "\n"))
+}
+
+func buildBundle() []byte {
+	absPath, err := filepath.Abs("web")
+	if err != nil {
+		panic(err)
+	}
+
+	var resolver = api.Plugin{
+		Name: "resolver",
+		Setup: func(build api.PluginBuild) {
+			build.OnResolve(api.OnResolveOptions{Filter: \`.js$\`},
+				func(args api.OnResolveArgs) (api.OnResolveResult, error) {
+					var p string
+
+					if filepath.IsAbs(args.Path) {
+						p = filepath.Join(absPath, args.Path)
+					} else {
+						p = filepath.Join(args.ResolveDir, args.Path)
+					}
+
+					return api.OnResolveResult{
+						Path: p,
+					}, nil
+				})
+		},
+	}
+
+	// If this package isn't availabe, then just change the module name to
+	// 'index.js' until you get this fixed
+	result := api.Build(api.BuildOptions{
+		EntryPointsAdvanced: []api.EntryPoint{
+			{InputPath: "index.js", OutputPath: "bundle.js"},
+		},
+		AbsWorkingDir:     absPath,
+		Bundle:            true,
+		Plugins:           []api.Plugin{resolver},
+		MinifyWhitespace:  true,
+		MinifyIdentifiers: true,
+		// MinifySyntax: true,
+	})
+
+	if len(result.Errors) > 0 {
+		for _, err := range result.Errors {
+			fmt.Printf("ERROR: %v\n", err)
+		}
+
+		panic("ERRORS")
+	}
+
+	for _, warn := range result.Warnings {
+		fmt.Printf("WARN: %v\n", warn)
+	}
+
+	if len(result.OutputFiles) != 1 {
+		panic(fmt.Sprintf("Incorrect number of output files: %d", len(result.OutputFiles)))
+	}
+
+	file := result.OutputFiles[0]
+
+	return file.Contents
+}
+endsnippet
+
+
+context "add_import('ginserver', snip, 'github.com/gin-gonic/gin')"
+snippet ginserver "Gin Server"
+func BuildServer() *gin.Engine {
+	server := gin.New()
+
+	$0
+
+	return server
 }
 endsnippet
 

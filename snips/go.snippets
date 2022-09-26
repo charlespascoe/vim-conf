@@ -169,11 +169,6 @@ endsnippet
 # endsnippet
 
 ## GIN ROUTES ##
-snippet '\.(GET|POST|PUT|DELETE)' "Gin Route" r
-.`!p snip.rv = match.group(1)`("$1", func(c *gin.Context) {
-	$0
-})
-endsnippet
 
 ## FILES ##
 
