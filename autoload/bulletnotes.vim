@@ -102,7 +102,7 @@ fun bulletnotes#InitBuffer()
 
     for bullet in s:bullets
         let cmd = "inoremap <silent> <expr> <buffer> ".bullet
-        let cmd .= " bulletnotes#IsAtStartOfBullet() ? '<Left><BS>".bullet."<Right>' : '".bullet."'"
+        let cmd .= " bulletnotes#ShouldChangeBullet('".bullet."') ? '<Left><BS>".bullet."<Right>' : '".bullet."'"
         exec cmd
     endfor
 
@@ -394,6 +394,16 @@ endfun
 
 fun bulletnotes#IsAtStartOfBullet()
     return strpart(getline('.'), 0, col('.') - 1) =~ '^\s*'.s:bullet_set.' $'
+endfun
+
+fun bulletnotes#ShouldChangeBullet(new_bullet)
+    if !bulletnotes#IsAtStartOfBullet()
+        return v:false
+    end
+
+    let bullet_type = bulletnotes#GetBulletType(line('.'), '')
+
+    return bullet_type != a:new_bullet
 endfun
 
 fun bulletnotes#BuildPointerRegexp()
