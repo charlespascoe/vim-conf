@@ -64,6 +64,8 @@ autocmd BufNewFile,BufRead * exec "setlocal colorcolumn=".(&ma ? "81" : "0")
 
 " Set spell correction language
 set spelllang=en_gb
+set nospell
+nmap <leader>k 1z=
 
 " Custom vertical split char
 set fillchars+=vert:│
