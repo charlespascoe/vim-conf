@@ -128,6 +128,7 @@ class MyWidget(QtWidgets.QWidget):
         self.input = QtWidgets.QPlainTextEdit()
 
         self.layout = QtWidgets.QVBoxLayout(self)
+        self.layout.setContentsMargins(0,0,0,0)
         self.layout.addWidget(self.input)
         self.input.textChanged.connect(self.on_input)
 
