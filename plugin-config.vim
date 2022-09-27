@@ -131,3 +131,13 @@ let g:indentLine_showFirstIndentLevel = 1
 let g:indentLine_char = '│'
 let g:indentLine_first_char = '│'
 let g:indentLine_color_term = 236
+
+" jedi-vim
+let g:jedi#popup_on_dot = 0
+
+let g:jedi#goto_definitions_command= '<leader>tt'
+let g:jedi#goto_command = "<leader>td"
+let g:jedi#documentation_command = "<leader>tD"
+let g:jedi#usages_command = "<leader>tr"
+let g:jedi#rename_command = "<leader>tR"
+let g:jedi#completions_command = ""

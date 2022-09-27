@@ -1,3 +1,6 @@
+" Map autocomplete trigger onto Omnicomplete
+inoremap <buffer> <C-z> <C-x><C-o>
+
 fun! RealtimeRepl()
     let g:repl_buf = bufnr("Node REPL", 1)
     call setbufvar(g:repl_buf, '&buftype', 'nofile')
@@ -38,3 +41,7 @@ fun! AddImport()
 endfun
 
 noremap <silent> <buffer> <leader>i <Esc>:call AddImport()<CR>
+
+call QuickSearchMap('f', 'Functions', '\<def [a-zA-Z0-9_]\+(\(self\)\@!')
+call QuickSearchMap('c', 'Classes', '\<class [a-zA-Z0-9_]\+')
+call QuickSearchMap('m', 'Methods', '\<def [a-zA-Z0-9_]\+(self\>')
