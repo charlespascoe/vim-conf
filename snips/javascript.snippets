@@ -1,33 +1,47 @@
 global !p
-from snippet_utils import start_dictation, jump_after, format_camel_case, format_snake_case
+from snippet_utils import *
+import re
+
+line_terminator_re = re.compile(';$')
+exportable_re = re.compile(r'^(const|class|function)')
+import_re = re.compile(r'^import')
+
+def remove_line_terminator(line):
+	return line_terminator_re.sub('', line)
+
+def is_in_imports():
+	return import_re.match(next(nonempty(preceeding_lines()), 'import'))
+
 endglobal
 
 
 ## C ##
 
-snippet '^(e?)c' "const" r
-`!p snip.rv = 'export ' if match.group(1) else ''`const $1 = $2;$0
+context "cursor_at_eol(snip)"
+snippet '(e?)co?n?' "const" br
+`!p snip.rv = 'export ' if match.group(1) else ''`const $1 = $0;
 endsnippet
 
-snippet '^(e?)cls' "Class" r
+context "cursor_at_eol(snip)"
+snippet '^(e?)cls ' "Class" brA
 `!p snip.rv = 'export ' if match.group(1) else ''`class $1 {
 	$0
 }
 endsnippet
 
-snippet Cd "Console Debug" bw
+snippet cd "Console Debug" bw
 console.debug($1);
 endsnippet
 
-snippet Ce "Console Error" bw
+snippet ee "Console Error" bw
 console.error($1);
 endsnippet
 
-snippet Cl "Console Log" bw
+snippet cl "Console Log" bw
 console.log($1);
 endsnippet
 
-snippet Cw "Console Warn" bw
+snippet cw "Console Warn" bw
 console.warn($1);
 endsnippet
 
@@ -37,10 +51,25 @@ snippet des "Object destructure"
 const { $0 } = $1;
 endsnippet
 
+## E ##
+
+context "not cursor_at_eol(snip) and after_cursor(snip, exportable_re)"
+snippet '^e' "Export" brA
+export $0
+endsnippet
+
 ## F ##
 
-snippet '\b(e?)(a?)f\b' "Function" r
+context "cursor_at_eol(snip)"
+snippet '^(e?)(a?)f ' "Function" brA
 `!p snip.rv = 'export ' if match.group(1) else ''``!p snip.rv = 'async ' if match.group(2) else ''`function $1($2) {
+	$0
+}
+endsnippet
+
+context "cursor_at_eol(snip)"
+snippet f "Function" b
+function $1($2) {
 	$0
 }
 endsnippet
@@ -65,41 +94,66 @@ endsnippet
 
 ## I ##
 
-snippet i "if" bw
-if ($1) {
+# context "not cursor_at_eol(snip) or not next(following_lines(), '').strip().startswith('if ')"
+pre_expand "replace_rest_of_line(snip)"
+snippet 'if ' "If" brA
+if (`!p if not snip.c and snip.context: snip.rv = remove_line_terminator(snip.context)`$1) {
 	$0
 }
 endsnippet
 
-snippet 'if ' "If (Automatic)" brA
-if ($1) {
+# context "cursor_at_eol(snip) and next(following_lines(), '').strip().startswith('if ')"
+# pre_expand "del snip.buffer[snip.line]; snip.cursor.set(snip.line, snip.column - 2)"
+# snippet 'if ' "If Else If" brAm
+# if ($1) {
+# 	$0
+# } else ``
+# endsnippet
+
+context "cursor_at_eol(snip)"
+snippet '} ?e' "Else" brA
+} else {
 	$0
 }
 endsnippet
 
-snippet im "Import" bw
-import { $2 } from '$1';
+context "after_cursor(snip, 'if')"
+snippet '} ?e' "Else (Followed by If)" brA
+} else$0
+endsnippet
+
+context "cursor_at_eol(snip)"
+snippet '} ?i' "Else If" brA
+} else if ($1) {
+	$0
+}
+endsnippet
+
+context "cursor_at_eol(snip) and is_in_imports()"
+snippet '^im' "Import" brA
+import`!p snip.rv = ' {' if t[2] != '*' else ''` $2 `!p snip.rv = '} ' if t[2] != '*' else ''`from '$1';
 endsnippet
 
 ## R ##
 
-snippet r "Return" bw
-return $0;
+pre_expand "replace_rest_of_line(snip)"
+snippet 'r ' "Return" brA
+return $0`!p if not snip.c: snip.rv = snip.context or ';'`
 endsnippet
 
 ## S ##
 
-snippet sc "Switch Case" bw
+snippet 'case ' "Switch Case" brA
 case $1:
 	$0
-
 	break;
-
 endsnippet
 
-snippet sw "Switch" bw
+snippet 'swi?t?c?h? ' "Switch" brA
 switch ($1) {
-$0
+	case $2:
+		$0
+		break;
 }
 endsnippet
 

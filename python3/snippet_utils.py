@@ -5,6 +5,42 @@ import vim
 leading_whitespace_re = re.compile(r'^\s+')
 
 
+def line_startswith(snip, s):
+    if isinstance(s, re.Pattern):
+        return s.match(snip.buffer[snip.line])
+    else:
+        return snip.buffer[snip.line].strip().startswith(s)
+
+
+def cursor_at_eol(snip):
+    return len(snip.buffer[snip.line])-1 == snip.column
+
+
+def after_cursor(snip, s):
+    ac = snip.buffer[snip.line][snip.column+1:]
+    print(ac)
+
+    if isinstance(s, re.Pattern):
+        return s.match(ac)
+    else:
+        return ac.strip().startswith(s)
+
+
+def replace_rest_of_line(snip):
+	l = snip.buffer[snip.line]
+	snip.context = l[snip.column+1:].strip()
+
+	ws_match = leading_whitespace_re.match(l)
+
+	if ws_match is None:
+		ws = ''
+	else:
+		ws = ws_match[0]
+
+	snip.buffer[snip.line] = ws
+	snip.cursor.set(snip.line, len(ws))
+
+
 # Returns the zero-based index of the first line that matches the regexp
 def find_line(regexp):
     for i in range(len(vim.current.window.buffer)):
@@ -37,6 +73,17 @@ def preceeding_lines(line=None):
         yield vim.current.window.buffer[l]
         l -= 1
 
+# Note that line is zero-based
+def following_lines(line=None):
+    if line is None:
+        line = vim.current.window.cursor[0] - 1
+
+    l = line + 1
+
+    while l < len(vim.current.window.buffer):
+        yield vim.current.window.buffer[l]
+        l += 1
+
 
 def nonempty(strings):
     for string in strings:
@@ -52,9 +99,13 @@ def top_level(lines):
 non_alphanum_underscore = re.compile(r'[^a-zA-Z0-9_]')
 
 
+def jump():
+	vim.command(r'call feedkeys("\<C-l>")')
+
+
 def jump_after(ret):
     if ret:
-        vim.command(r'call feedkeys("\<C-l>")')
+        jump()
 
     return ret
 

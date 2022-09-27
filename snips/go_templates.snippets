@@ -166,8 +166,8 @@ func ParseAllOptions(flags *flag.FlagSet, args []string) (posArgs []string) {
 }
 endsnippet
 
-context "add_import('FailOnErrorOld', snip, 'testing')"
-snippet FailOnErrorOld "FailOnError Template (Old)" be
+pre_expand "add_import(snip, 'testing')"
+snippet FailOnErrorOld "FailOnError Template (Old)" b
 func FailOnError(t *testing.T) FailOnErrorT {
 	return FailOnErrorT{T: t}
 }
@@ -183,8 +183,8 @@ func (t FailOnErrorT) Errorf(format string, args ...interface{}) {
 }
 endsnippet
 
-context "add_import('FailOnError', snip, 'testing', 'sync')"
-snippet FailOnError "FailOnError Template" be
+pre_expand "add_import(snip, 'testing', 'sync')"
+snippet FailOnError "FailOnError Template" b
 func FailOnError(t *testing.T) *FailOnErrorT {
 	return &FailOnErrorT{
 		T: t,
@@ -208,8 +208,8 @@ func (t *FailOnErrorT) Errorf(format string, args ...interface{}) {
 }
 endsnippet
 
-context "add_import('mainargs', snip, 'flag', 'fmt', 'os')"
-snippet mainargs "Main with Argument Parsing" be
+pre_expand "add_import(snip, 'flag', 'fmt', 'os')"
+snippet mainargs "Main with Argument Parsing" b
 func main() {
 	flags := flag.NewFlagSet(os.Args[0], flag.ExitOnError)
 
@@ -229,8 +229,8 @@ func main() {
 }
 endsnippet
 
-context "add_import('subcmd', snip, 'flag')"
-snippet subcmd "Subcommand" be
+pre_expand "add_import(snip, 'flag')"
+snippet subcmd "Subcommand" b
 func create$1Subcmd(parent *flag.FlagSet) Subcommand {
 	name := "`!p snip.rv = t[1].lower()`"
 
@@ -558,8 +558,8 @@ func buildBundle() []byte {
 endsnippet
 
 
-context "add_import('ginserver', snip, 'github.com/gin-gonic/gin')"
-snippet ginserver "Gin Server"
+pre_expand "add_import(snip, 'github.com/gin-gonic/gin')"
+snippet ginserver "Gin Server" b
 func BuildServer() *gin.Engine {
 	server := gin.New()
 
@@ -569,7 +569,7 @@ func BuildServer() *gin.Engine {
 }
 endsnippet
 
-snippet staticroutes "Static Routes"
+snippet staticroutes "Static Routes" b
 static.Routes(server.Group("/"))
 
 server.NoRoute(func(c *gin.Context) {

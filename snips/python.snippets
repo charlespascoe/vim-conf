@@ -1,12 +1,22 @@
 global !p
-from snippet_utils import preceeding_lines, top_level, format_snake_case, format_camel_case
+from snippet_utils import *
 
+simple_type_map = {
+	'n': 'None',
+	't': 'True',
+	'f': 'False',
+}
 
 class_re = re.compile(r'^class ([a-zA-Z0-9_]+)(\([^)]+\))?:$')
+import_re = re.compile(r'^(import|from)')
 
 
 def is_in_class():
 	return class_re.match(next(top_level(preceeding_lines()), ''))
+
+
+def is_in_imports():
+	return import_re.match(next(nonempty(preceeding_lines()), 'import'))
 
 
 def guess_class_assignments(args_str):
@@ -34,38 +44,45 @@ def $1($2):`!p t[1] = format_snake_case(t[1])`
 	$0
 endsnippet
 
-snippet '^from ' "From" brA
+context "is_in_imports()"
+snippet '^fr' "From" breA
 from $1 import ${0:*}
 endsnippet
 
+context "cursor_at_eol(snip)"
 snippet 'for ' "For" brA
 for $1:
 	$0
 endsnippet
 
-snippet fore "For Each" b
+context "cursor_at_eol(snip)"
+snippet 'fore ' "For Each" breA
 for $1 in $2:
 	$0
 endsnippet
 
-snippet fori
+context "cursor_at_eol(snip)"
+snippet 'fori ' "For i" breA
 for i in range($1):
 	$0
 endsnippet
 
 ## I ##
 
-snippet im "Import" b
+context "is_in_imports()"
+snippet '^im' "Import" breA
 import $0
 endsnippet
 
-snippet 'if $' "If" brA
-if $1:
+pre_expand "replace_rest_of_line(snip)"
+snippet 'if ' "If" brA
+if `!p if not snip.c and snip.context: snip.rv = snip.context`$1:
 	$0
 endsnippet
 
-snippet 'ife $' "If Else" brA
-if $1:
+pre_expand "replace_rest_of_line(snip)"
+snippet 'ife ' "If Else" brA
+if `!p if not snip.c and snip.context: snip.rv = snip.context`$1:
 	$0
 else:
 	``
@@ -131,8 +148,14 @@ endsnippet
 
 ## R ##
 
-snippet r "Return" b
-return $0
+pre_expand "replace_rest_of_line(snip)"
+snippet 'r ' "Return" brA
+return `!p if not snip.c and snip.context: snip.rv = snip.context`$0
+endsnippet
+
+context "cursor_at_eol(snip)"
+snippet 'r([ntf]) ' "Return Simple Type" breA
+return `!p snip.rv = simple_type_map.get(match.group(1), '')`$0
 endsnippet
 
 snippet 'rr ' "Self reference" wrA

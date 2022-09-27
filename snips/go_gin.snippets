@@ -23,14 +23,14 @@ def add_handler_params(snip, route, fix_indent=False):
 
 endglobal
 
-context "add_import('c.404', snip, 'net/http')"
-snippet c.404 "Not Found (Gin)" beA
+pre_expand "add_import(snip, 'net/http')"
+snippet c.404 "Not Found (Gin)" bA
 c.Status(http.StatusNotFound)
 return
 endsnippet
 
-context "add_import('c.err', snip, 'net/http')"
-snippet c.err "Error (Gin)" beA
+pre_expand "add_import(snip, 'net/http')"
+snippet c.err "Error (Gin)" bA
 c.Status(http.Status${1:InternalServerError}, gin.H{
 	"error": err.Error(),
 })
