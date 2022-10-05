@@ -16,4 +16,4 @@ set splitright
 set nostartofline
 inoremap <C-s> <Esc>:keepjumps wa<CR>
 nnoremap <C-s> <Esc>:keepjumps wa<CR>
-nmap <silent> <leader><space> <Esc>:b#<CR>zz
+nmap <silent> <leader><space> <Cmd>b#<CR>zz

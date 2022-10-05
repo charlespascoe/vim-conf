@@ -40,7 +40,7 @@ fun! AddImport()
     startinsert
 endfun
 
-noremap <silent> <buffer> <leader>i <Esc>:call AddImport()<CR>
+noremap <buffer> <leader>i <Cmd>call AddImport()<CR>
 
 call QuickSearchMap('f', 'Functions', '\<def [a-zA-Z0-9_]\+(\(self\)\@!')
 call QuickSearchMap('c', 'Classes', '\<class [a-zA-Z0-9_]\+')

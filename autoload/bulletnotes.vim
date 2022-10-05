@@ -144,8 +144,8 @@ endfun
 
 
 fun bulletnotes#InitProjectBuffer()
-    nmap <buffer> <leader>p <Esc>:Push<CR>
-    nmap <buffer> <leader>s <Esc>:Sync<CR>
+    nmap <buffer> <leader>p <Cmd>Push<CR>
+    nmap <buffer> <leader>s <Cmd>Sync<CR>
 
     " TODO: Make this use spelllang and maybe a configurable encoding scheme
     " TODO: Prepend rather than replace

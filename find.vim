@@ -26,7 +26,7 @@ if executable("ag")
     command! -nargs=1 FindReg call Find(1, <f-args>)
     command! -range FindSelection call FindSelection()
 
-    nnoremap <Leader>* <Esc>:Find <C-R><C-W><CR>
-    vnoremap <Leader>* :FindSelection<CR>
-    nnoremap <Leader>l <Esc>:lclose<CR>
+    nnoremap <Leader>* <Cmd>Find <C-R><C-W><CR>
+    vnoremap <Leader>* <Cmd>FindSelection<CR>
+    nnoremap <Leader>l <Cmd>lclose<CR>
 endif

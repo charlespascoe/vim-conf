@@ -24,16 +24,16 @@ command! -nargs=1 -complete=help Help tab help <args>
 command! ShowHead call ShowHead()
 
 " Syntax highlighting debugging
-map <leader>S <Esc>:echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
+map <leader>S <Cmd>echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
 \ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
 \ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
 
 " Trim trailing whitespace
 command! Trim %s/\s\+$//e
 
-nmap <silent> <leader>T <Esc>:Trim<CR>``
+nmap <silent> <leader>T <Cmd>Trim<CR>``
 
-" Jump back to mark centres on cursor
+" Jumping centres on cursor
 nnoremap <expr> ` printf('`%czz', getchar())
 
 " Jump to imports marker
@@ -43,6 +43,7 @@ noremap <leader>i `iO
 " Format JSON
 command! FormatJson %!python -m json.tool
 
+" This needs to be '<Esc>:' because it expects user input
 noremap <leader>R <Esc>:s/<C-r><C-w>//g<Left><Left>
 
 " Move a single line
@@ -95,8 +96,8 @@ fun! QuickSearchMap(key, title, pattern)
 endfun
 
 " Make n and N move through location list when open
-nnoremap <expr> n get(getloclist(0, {'winid':0}), 'winid', 0) ? '<Esc>:lnext<CR>zz' : 'nzz'
-nnoremap <expr> N get(getloclist(0, {'winid':0}), 'winid', 0) ? '<Esc>:lprev<CR>zz' : 'Nzz'
+nnoremap <expr> n get(getloclist(0, {'winid':0}), 'winid', 0) ? '<Cmd>lnext<CR>zz' : 'nzz'
+nnoremap <expr> N get(getloclist(0, {'winid':0}), 'winid', 0) ? '<Cmd>lprev<CR>zz' : 'Nzz'
 
 " Normalise search operators (always center)
 nnoremap * *zz

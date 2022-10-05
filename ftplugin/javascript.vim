@@ -30,7 +30,7 @@ endfun
 
 command! RealtimeRepl call RealtimeRepl()
 
-nmap <silent> <buffer> <leader>i <Esc>:call AddImport()<CR>
+nmap <buffer> <leader>i <Cmd>call AddImport()<CR>
 
 fun! AddImport()
     " Assumes this function is run when the cursor is some way below the imports

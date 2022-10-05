@@ -22,20 +22,20 @@ nmap <buffer> <leader>td <Plug>(go-def)
 nmap <buffer> <leader>tD <Plug>(go-doc)
 nmap <buffer> <leader>tr <Plug>(go-referrers)
 nmap <buffer> <leader>tC <Plug>(go-coverage-toggle)
-nmap <buffer> <leader>ta <Esc>:GoAlternate!<CR>
+nmap <buffer> <leader>ta <Cmd>GoAlternate!<CR>
 nmap <buffer> <leader>tR <Esc>:wa<CR><Plug>(go-rename)
 nmap <buffer> <leader>tT <Esc>:wa<CR><Plug>(go-test)
 nmap <buffer> <leader>tI <Plug>(go-import)
 nmap <buffer> <leader>tc <Esc>:wa<CR><Plug>(go-build)
 nmap <buffer> <leader>tv <Plug>(go-vet)
-nmap <silent> <buffer> <leader>tF <Esc>:GoFmt<CR>
-nmap <buffer> <leader>tfs <Esc>:GoFillStruct<CR>
+nmap <buffer> <leader>tF <Cmd>GoFmt<CR>
+nmap <buffer> <leader>tfs <Cmd>GoFillStruct<CR>
 
 let b:serenade_go_to_definition_command = 'GoDef'
 let b:serenade_style_command = 'exec "GoFmt" | w'
 
 " Update spellings
-nmap <silent> <buffer> <leader>tS <Esc>:call IndexSpellings()<CR>
+nmap <buffer> <leader>tS <Cmd>call IndexSpellings()<CR>
 
 call QuickSearchMap('f', 'Functions', '\<func\>')
 call QuickSearchMap('F', 'Named Functions', '^func [^(]\+')
@@ -66,7 +66,7 @@ fun! AddImport()
     call setpos('.', l:pos)
 endfun
 
-nmap <silent> <buffer> <leader>i <Esc>:call AddImport()<CR>
+nmap <buffer> <leader>i <Cmd>call AddImport()<CR>
 
 hi SpecialKey ctermfg=236
 

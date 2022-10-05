@@ -10,7 +10,7 @@ highlight CtrlPBufferHid ctermfg=123
 highlight CtrlPBufferPath ctermfg=15
 highlight CtrlPPrtBase ctermfg=32
 
-nmap <silent> <leader>f <Esc>:CtrlPBuffer<CR>
+nmap <silent> <leader>f <Cmd>CtrlPBuffer<CR>
 
 " Airline
 let g:airline#extensions#tabline#enabled = 1
@@ -50,7 +50,7 @@ let g:python_highlight_all = 1
 let g:python_highlight_space_errors = 0
 
 " Undotree
-nmap <silent> <leader>ut <Esc>:UndotreeToggle<CR>
+nmap <silent> <leader>ut <Cmd>UndotreeToggle<CR>
 
 " tsuquyomi
 let g:tsuquyomi_single_quote_import = 1
@@ -60,7 +60,7 @@ let g:UltiSnipsExpandTrigger = "<c-l>"
 let g:UltiSnipsJumpForwardTrigger = "<c-l>"
 let g:UltiSnipsSnippetsDir = $HOME."/.vim/snips/"
 let g:UltiSnipsSnippetDirectories = ["snips"]
-nmap <leader>ue <Esc>:UltiSnipsEdit<CR>
+nmap <leader>ue <Cmd>UltiSnipsEdit<CR>
 
 fun! VisualExpandSnippet(type = '')
     if a:type == ''
@@ -76,8 +76,6 @@ fun! VisualExpandSnippet(type = '')
         echom "Unknown type: ".a:type
     endif
 endfun
-
-nmap <expr> ge VisualExpandSnippet()
 
 " Vim's netrw
 let g:netrw_ftp_cmd="ftp -p"   " passive mode by default
