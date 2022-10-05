@@ -153,9 +153,15 @@ fun! s:InvertBinary()
 
     if l:replacement != ''
         exec 'normal' 'ciw'.l:replacement
+    else
+        let l:replacement = py3eval("invert_binary(vim.eval('expand(\"<cWORD>\")'))")
+
+        if l:replacement != ''
+            exec 'normal' 'ciW'.l:replacement
+        end
     end
 
-    call repeat#set("\<Plug>(InvertBool)", 1)
+    call repeat#set("\<Plug>(InvertBinary)", 1)
 endfun
 
 nnoremap <silent> <Plug>(InvertBinary) :<C-u>call <SID>InvertBinary()<CR>
