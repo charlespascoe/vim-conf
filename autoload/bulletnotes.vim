@@ -40,6 +40,13 @@ fun s:Error(msg)
     echohl None
 endfun
 
+fun s:ExportOptions(cur, ...)
+    let options = ['text', 'rtf', 'html']
+    let g:__bn_match = a:cur
+    call filter(options, 'bulletnotes#StartsWith(g:__bn_match, v:val)')
+    return options
+endfunc
+
 fun LocateBullets(type)
     if index(s:bullet_set, a:type[0]) < 0
         echoerr 'Invalid bullet: '.a:type[0]
@@ -125,9 +132,8 @@ fun bulletnotes#InitBuffer()
 
     command! DeleteDoneTasks let @/='^\(\s{4}\)*+' | let @a='ndaB@a' | normal gg@a
 
-    command! -buffer -range=% ExportHtml python3 export_html(vim.eval('s:bullets'), <line1>, <line2>)
-    command! -buffer -range=% ExportToClipboard python3 export_to_clipboard(vim.eval('s:bullets'), <line1>, <line2>, False)
-    command! -buffer -range=% ExportRTFToClipboard python3 export_to_clipboard(vim.eval('s:bullets'), <line1>, <line2>, True)
+    command! -buffer -range=% -nargs=? -complete=customlist,<SID>ExportOptions Export python3 export(vim.eval('s:bullets'), "<args>", <line1>, <line2>)
+
     command! -buffer -range=% WordCount python3 print(word_count(vim.eval('s:bullets'), <line1>, <line2>))
 
     " \K Resets the match start, used here to remove the leading whitespace

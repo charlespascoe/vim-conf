@@ -22,6 +22,17 @@ def gen_anchor_id(length):
     return ''.join(random.choice(anchor_charset) for i in range(length))
 
 
+def export(bullets, export_type, firstline, lastline):
+    if export_type == 'text' or export_type == '':
+        export_to_clipboard(bullets, firstline, lastline, False)
+    elif export_type == 'rtf':
+        export_to_clipboard(bullets, firstline, lastline, True)
+    elif export_type == 'html':
+        export_html(bullets, firstline, lastline)
+    else:
+        raise Exception(f'Unknown export type: "{export_type}"')
+
+
 def export_html(bullets, firstline, lastline):
     if not vim.current.buffer.name.endswith('.bn'):
         raise Exception('Not a Bulletnotes file')
