@@ -20,7 +20,7 @@ endif
 
 set debug="msg"
 
-
+" TODO: Make this a global variable
 let s:edit_file_extensions = ['.adoc', '.md', '.txt', '.yml']
 
 if !exists('g:bulletnotes_omnicomplete_trailing_brackets')
@@ -41,7 +41,7 @@ fun s:Error(msg)
 endfun
 
 fun s:ExportOptions(cur, ...)
-    let options = ['text', 'rtf', 'html']
+    let options = ['text', 'rtf', 'html', 'jira']
     let g:__bn_match = a:cur
     call filter(options, 'bulletnotes#StartsWith(g:__bn_match, v:val)')
     return options
@@ -113,6 +113,9 @@ fun bulletnotes#InitBuffer()
         exec cmd
     endfor
 
+    " TODO: Make this an option
+    setlocal listchars+=leadmultispace:│\ \ \  " Note the trailing whitespace
+
     imap <silent> <expr> <buffer> <Tab> bulletnotes#IsAtStartOfBullet() ? '<Esc>>ibI<Right><Right>' : (ShouldAutocomplete() ? '<C-z>' : '<Tab>')
     imap <silent> <expr> <buffer> <S-Tab> bulletnotes#IsAtStartOfBullet() ? '<Esc><ibI<Right><Right>' : '<S-Tab>'
 
@@ -132,9 +135,9 @@ fun bulletnotes#InitBuffer()
 
     command! DeleteDoneTasks let @/='^\(\s{4}\)*+' | let @a='ndaB@a' | normal gg@a
 
-    command! -buffer -range=% -nargs=? -complete=customlist,<SID>ExportOptions Export python3 export(vim.eval('s:bullets'), "<args>", <line1>, <line2>)
+    command! -bar -buffer -range=% -nargs=? -complete=customlist,<SID>ExportOptions Export python3 export(vim.eval('s:bullets'), "<args>", <line1>, <line2>)
 
-    command! -buffer -range=% WordCount python3 print(word_count(vim.eval('s:bullets'), <line1>, <line2>))
+    command! -bar -buffer -range=% WordCount python3 print(word_count(vim.eval('s:bullets'), <line1>, <line2>))
 
     " \K Resets the match start, used here to remove the leading whitespace
     " from the match (could also use (?=...) positive look-ahead to ignore
@@ -142,16 +145,24 @@ fun bulletnotes#InitBuffer()
     command! -buffer -nargs=1 FindBullet FindReg ^(\s{4})*\K\<args>
 endfun
 
-
 fun bulletnotes#InitProjectBuffer()
-    nmap <buffer> <leader>p <Cmd>Push<CR>
-    nmap <buffer> <leader>s <Cmd>Sync<CR>
+    if get(b:, 'bulletnotes_autosync', v:true)
+        nmap <buffer> <leader>p <Cmd>Push<CR>
+        nmap <buffer> <leader>s <Cmd>Sync<CR>
+    endif
 
-    " TODO: Make this use spelllang and maybe a configurable encoding scheme
-    " TODO: Prepend rather than replace
-    setlocal spellfile=spell/en.utf-8.add,~/.vim/spell/en.utf-8.add
+    if isdirectory('.bnproj')
+        " Allows per-project Vim config, e.g. snippets, filetype config, etc.
+        set runtimepath^=.bnproj
+    end
 
-    " Disable git gutter - it just gets annoying because changes get commited
+    " TODO: Config option for per-project spelling files (off by default)
+
+    " substitute() removes the region from the language segment, e.g. 'en_GB.UTF-8' ->
+    " 'spell/en.utf-8.add'
+    exec 'setlocal spellfile^=.bnproj/spell/'.fnameescape(substitute(tolower(v:lang), '_[a-z]\+\.', '.', '')).'.add'
+
+    " Disable git gutter - it just gets annoying because changes get committed
     " on save
     GitGutterBufferDisable
 
@@ -192,27 +203,26 @@ fun bulletnotes#InitProject()
 
     command! -nargs=? Inbox call bulletnotes#NewInboxItem(<f-args>)
     command! Journal call bulletnotes#OpenJournal()
-    command! RemoteSync call bulletnotes#RemoteSync(1, 1)
-    command! BulletnotesAsyncStart call bulletnotes#AsyncStart(v:false)
-    command! BulletnotesAsyncStartIndex call bulletnotes#AsyncStart(v:true)
 
     command! AddContact call bulletnotes#AddContact()
 
     command! -nargs=+ -complete=file Move call bulletnotes#MoveFile(<f-args>)
     command! -nargs=? -complete=file Delete call bulletnotes#DeleteFile(<f-args>)
 
-    command! Commit call bulletnotes#Commit()
-    command! Push call bulletnotes#Push()
-    command! Sync call bulletnotes#Sync()
+    if get(b:, 'bulletnotes_autosync', v:true)
+        command! BulletnotesAsyncStart call bulletnotes#AsyncStart(v:false)
+        command! BulletnotesAsyncStartIndex call bulletnotes#AsyncStart(v:true)
 
-    au BufWritePost * call bulletnotes#Commit()
-    au VimLeave * call bulletnotes#WaitForJobs()
+        command! Commit call bulletnotes#Commit()
+        command! Push call bulletnotes#Push()
+        command! Sync call bulletnotes#Sync()
+        command! RemoteSync call bulletnotes#RemoteSync(1, 1)
+
+        au BufWritePost * call bulletnotes#Commit()
+        au VimLeave * call bulletnotes#WaitForJobs()
+    end
 
     au BufRead,BufNewFile *.bn call bulletnotes#InitProjectBuffer()
-
-    if exists('g:UltiSnipsSnippetDirectories')
-        call add(g:UltiSnipsSnippetDirectories, fnamemodify('snips', ':p'))
-    endif
 endfun
 
 " Init }}}
@@ -484,7 +494,11 @@ fun bulletnotes#OpenFile(pointer)
     let location = bulletnotes#ResolveLink(a:pointer)
 
     if type(location) == v:t_string
-        call system('open '.shellescape(location))
+        " Must use job_start instead of system() because the terminal or
+        " terminal multiplexer (e.g. tmux) may send <Esc>[O when leaving, which
+        " prints those characters when using the blocking system() call instead
+        " of the non-blocking job_start() call
+        call job_start(['open', location])
         return
     endif
 
@@ -760,6 +774,10 @@ endfun
 " Commit {{{
 
 fun bulletnotes#Commit(...)
+    if !get(b:, 'bulletnotes_autosync', v:true)
+        return
+    endif
+
     let commit_msg = 'Edit'
 
     let sync = 0
@@ -853,6 +871,10 @@ endfun
 " Remote Sync {{{
 
 fun bulletnotes#Push()
+    if !get(b:, 'bulletnotes_autosync', v:true)
+        return
+    endif
+
     call bulletnotes#WaitForCommit()
 
     echo "Pushing changes..."
@@ -869,6 +891,10 @@ endfun
 
 
 fun bulletnotes#Sync()
+    if !get(b:, 'bulletnotes_autosync', v:true)
+        return
+    endif
+
     wa
     call bulletnotes#WaitForCommit()
 
@@ -898,6 +924,10 @@ endfun
 
 
 fun bulletnotes#RemoteSync(showmsg, push)
+    if !get(b:, 'bulletnotes_autosync', v:true)
+        return
+    endif
+
     wa
     call bulletnotes#WaitForCommit()
 

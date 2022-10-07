@@ -92,7 +92,7 @@ nnoremap gS :set operatorfunc=SeparatorSpread<CR>g@
 
 " Quick Search
 fun! QuickSearchMap(key, title, pattern)
-    exec "nnoremap <silent> <buffer> <leader>s".a:key." :lvimgrep /".a:pattern."/ % \\| call setloclist(0, [], 'a', {'title': '".a:title."'}) \\| lopen<CR><CR>zz"
+    exec "nnoremap <silent> <buffer> <leader>s".a:key." :lvimgrep /".a:pattern."/ % \\| call setloclist(0, [], 'a', {'title': '".a:title."'}) \\| lopen<CR>"
 endfun
 
 " Make n and N move through location list when open
@@ -143,7 +143,7 @@ fun! Duplicate(type = '')
 endfun
 
 nnoremap <expr> gd Duplicate()
-nnoremap <expr> gdd "yy".v:count1."p"
+nnoremap gdd <Cmd>exec 'normal yy'.v:count1.'p'<CR>
 
 " Invert binary
 

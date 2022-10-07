@@ -29,8 +29,29 @@ def export(bullets, export_type, firstline, lastline):
         export_to_clipboard(bullets, firstline, lastline, True)
     elif export_type == 'html':
         export_html(bullets, firstline, lastline)
+    elif export_type == 'jira':
+        export_jira(bullets, firstline, lastline)
     else:
         raise Exception(f'Unknown export type: "{export_type}"')
+
+
+def export_jira(bullets, firstline, lastline):
+    if not vim.current.buffer.name.endswith('.bn'):
+        raise Exception('Not a Bulletnotes file')
+
+    doc = bulletnotes.parse_doc(bulletnotes.minimise_indent(vim.current.buffer[firstline-1:lastline]), bullets)
+
+    # A very crude conversion to the Jira format
+
+    fmt = lambda s: s.replace('`', '*').replace('{', '{{').replace('}', '}}')
+
+    text = '\n'.join(
+        ('-' * (item.indent + 1) + ' ' + fmt(item.content)) if isinstance(item, bulletnotes.Bullet) else fmt(item)
+        for item in doc.walk()
+    )
+
+    with os.popen('pbcopy -Prefer txt', 'w') as copy:
+        copy.write(text)
 
 
 def export_html(bullets, firstline, lastline):

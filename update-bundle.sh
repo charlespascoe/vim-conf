@@ -7,6 +7,6 @@ while read line;  do
     dir="$(basename "$line")"
 
     if [ ! -d "$dir" ]; then
-        git clone --depth 1 "$line"
+        git clone --depth 1 --recursive "$line"
     fi
 done < ~/.vim-conf/bundle.txt

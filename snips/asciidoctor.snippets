@@ -43,7 +43,7 @@ snippet un "Unreleased" b
 endsnippet
 
 snippet jira "Jira link"
-`echo $JIRA_BASE_PATH`/browse/$1[${1: }]: $0
+`echo $JIRA_BASE_PATH`/browse/$1[${1:`t current -q`}]: $0
 endsnippet
 
 snippet 'co(l?)' "Config (Optional)" bwr

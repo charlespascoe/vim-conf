@@ -4,6 +4,23 @@ from .types import Document, Section, Bullet
 
 title_regexp = re.compile('^##(.+)##')
 subtitle_regexp = re.compile('^::(.+)::')
+leading_ws_regexp = re.compile(r'^\s*')
+
+
+def leading_ws_len(s):
+    return len(leading_ws_regexp.findall(s)[0])
+
+
+def minimise_indent(lines):
+    min_indent = min(leading_ws_len(l) for l in lines if l.strip() != '')
+
+    if min_indent == 0:
+        return lines
+
+    return [
+        line[min_indent:] if len(line) > min_indent else line
+        for line in lines
+    ]
 
 
 def isempty(s):

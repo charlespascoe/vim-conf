@@ -1,4 +1,4 @@
-from .parser import parse_doc
+from .parser import parse_doc, minimise_indent
 
 from .types import Document, Section, Bullet
 

@@ -104,7 +104,7 @@ syntax match HighlightedMonospaceEnd /{{\|}}/ contained conceal
 syntax region Highlight start='`' end='`' contains=HighlightMark,@Metatext keepend
 syntax match HighlightMark /`/ contained conceal
 " syntax cluster Metatext contains=Tag,Pointer,Link,Contact,Anchor,AnchorPointer,Monospace
-syntax cluster Metatext contains=Anchor,Tag,Link,Contact,Monospace,HighlightedMonospace
+syntax cluster Metatext contains=Anchor,Tag,Link,Contact,Monospace,Highlight,HighlightedMonospace
 syntax match ContactMarker /@/ contained conceal
 
 highlight Tag ctermfg=226 cterm=bold

@@ -33,6 +33,9 @@ let g:airline_symbols.readonly = ''
 let g:airline_symbols.linenr = '☰'
 let g:airline_symbols.maxlinenr = ''
 
+" bullets.vim
+let g:bullets_enabled_file_types = ['markdown', 'text', 'gitcommit', 'asciidoctor']
+
 " Bulletnotes
 
 let g:bulletnotes_omnicomplete_trailing_brackets = 0
@@ -102,9 +105,14 @@ let g:exchange_indent = 1
 " vim-sort-motion
 let g:sort_motion_flags = "i"
 
+" vim-sleuth
+let g:sleuth_markdown_heuristics = 0
+
 " vim-go
 let g:go_addtags_transform = 'camelcase'
 let g:go_def_mapping_enabled = 0
+let g:go_imports_autosave = 0
+
 let g:go_highlight_array_whitespace_error = 1
 let g:go_highlight_build_constraints = 1
 let g:go_highlight_chan_whitespace_error = 1
@@ -112,6 +120,7 @@ let g:go_highlight_extra_types = 1
 let g:go_highlight_fields = 1
 let g:go_highlight_function_calls = 1
 let g:go_highlight_functions = 1
+let g:go_highlight_generate_tags = 1
 let g:go_highlight_interfaces = 1
 let g:go_highlight_methods = 1
 let g:go_highlight_operators = 1
@@ -120,9 +129,8 @@ let g:go_highlight_string_spellcheck = 1
 let g:go_highlight_structs = 1
 let g:go_highlight_trailing_whitespace_error = 0
 let g:go_highlight_types = 1
-let g:go_highlight_variable_assignments = 1
+let g:go_highlight_variable_assignments = 0
 let g:go_highlight_variable_declarations = 1
-let g:go_imports_autosave = 0
 
 " vim-gitgutter
 let g:gitgutter_set_sign_backgrounds = 0
@@ -136,7 +144,7 @@ let g:go_gopls_deep_completion = v:false
 let g:go_rename_command = 'gopls'
 
 " indentLine
-let g:indentLine_fileType = ['yaml', 'javascript', 'typescript', 'python']
+let g:indentLine_fileTypeExclude = ['bulletnotes', 'help']
 let g:indentLine_showFirstIndentLevel = 1
 let g:indentLine_char = '│'
 let g:indentLine_first_char = '│'

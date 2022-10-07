@@ -1,0 +1,92 @@
+global !p
+def addws(snip, t):
+  if t[1]:
+    snip.rv = '  '
+endglobal
+
+snippet res "Responses"
+'${1:200}':
+  description: ${2:Ok}
+  content:
+    application/json:
+      schema:
+        $0
+endsnippet
+
+snippet req "Request Body"
+requestBody:
+  description: $1
+  required: true
+  content:
+    application/json:
+      schema:
+        $0
+endsnippet
+
+snippet post "Post" b
+post:
+  summary: "$1"
+  tags:
+    - $2
+  requestBody:
+    description: $3
+    required: true
+    content:
+      application/json:
+        schema:
+          $0
+  responses:
+    '400':
+      $ref: "#/components/responses/bad_request"
+    '401':
+      $ref: "#/components/responses/unauthenticated"
+    '403':
+      $ref: "#/components/responses/unauthorised"
+endsnippet
+
+# Schemas
+
+snippet $ "Reference"
+$ref: "#/components/schemas/$0"
+endsnippet
+
+snippet sa "Schema - Array"
+type: array
+items:
+  $0
+endsnippet
+
+snippet sb "Schema - Boolean"
+type: boolean
+description: "$0"
+endsnippet
+
+snippet sn "Schema - Number"
+type: number
+description: "$0"
+minimum: 1
+maximum: 999
+endsnippet
+
+snippet so "Schema - Object"
+type: object
+description: "$1"
+properties:
+  $0
+endsnippet
+
+snippet sor "Schema - Object Reference"
+allOf:
+  - $ref: "#/components/schemas/$2"
+  - type: object
+    required:
+      - $0
+endsnippet
+
+snippet ss "Schema - String"
+type: string
+description: "$0"
+minLength: 1
+maxLength: 256
+pattern: ""
+endsnippet

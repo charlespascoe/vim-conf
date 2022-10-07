@@ -64,8 +64,14 @@ autocmd BufNewFile,BufRead * exec "setlocal colorcolumn=".(&ma ? "81" : "0")
 
 " Set spell correction language
 set spelllang=en_gb
-set nospell
+set nospell " Off by default, turned on by relevant file types
+set spellfile=~/.vim/spell/en.utf-8.add
+
+" See spell-sug-file for how the word suggestions are loaded
+
+" Convenience map for picking best alternative
 nmap <leader>k 1z=
+nmap <expr> <leader>gs &l:spell ? '<Cmd>setlocal nospell<CR>' : '<Cmd>setlocal spell<CR>'
 
 " Custom vertical split char
 set fillchars+=vert:│

@@ -11,6 +11,7 @@ set autoindent
 set expandtab
 set nowrap
 set nowrapscan
+set nohlsearch
 set incsearch
 set splitright
 set nostartofline
