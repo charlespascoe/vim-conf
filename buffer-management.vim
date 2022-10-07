@@ -15,6 +15,15 @@ fun! CloseBuffer()
     en
 endf
 
+" Window Zoom Util
+
+fun <SID>ShouldZoom()
+    let t:zoomed = !get(t:, 'zoomed', v:false)
+    return t:zoomed
+endfun
+
+nmap <expr> <C-w>z <SID>ShouldZoom() ? "<Cmd>vertical resize 1000 \| resize 1000<CR>" : "<C-w>="
+
 " keepjumps leaves `` etc. unchanged during the command; useful for plugins
 " (like vim-go) that do stuff like this on change (these need to be '<Esc>:'
 " because they must always return to normal mode and clear any other pending
