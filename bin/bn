@@ -152,6 +152,7 @@ case $1 in
 
         ec 220 "\nInitialising git repo..." && \
         git init && \
+        git config commit.gpgsign false && \
         git checkout -b "$proj"
         rm -f .git/hooks/* && \
 
@@ -193,6 +194,7 @@ case $1 in
 
         cd "$BN_HOME" && \
         git clone "$($BN_GET_REMOTE "$proj")" "$proj" && \
+        git config commit.gpgsign false && \
         cd "$proj" && \
         rm -f .git/hooks/* && \
         git checkout "$proj"
