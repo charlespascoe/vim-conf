@@ -23,9 +23,11 @@ EE's
 EOL
 foobar
 FQDN
+geo-replication
 GMV
 goroutine
 goroutines
+GPG
 gRPC
 HMAC
 iff
@@ -81,4 +83,3 @@ whether or not/!
 whitespace
 xyz
 µs
-GPG
