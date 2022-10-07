@@ -41,9 +41,21 @@ let g:bulletnotes_omnicomplete_trailing_brackets = 0
 let delimitMate_expand_cr = 1
 
 " NERDTree
-nmap <silent> <leader>N :NERDTreeToggle \| NERDTreeRefreshRoot<CR>
+
+fun! s:ToggleNERDTree()
+    if g:NERDTree.IsOpen()
+        NERDTreeClose
+    else
+        " NERDTreeFind expand('%', ':p')
+        NERDTreeFind
+        NERDTreeRefreshRoot
+    endif
+endfun
+
+nmap <leader>N <Cmd>call <SID>ToggleNERDTree()<CR>
 let NERDTreeShowLineNumbers = 1
 let NERDTreeWinSize = 48
+let NERDTreeChDirMode = 3 " Change tree root to match CWD of tab
 
 " python-syntax
 let g:python_highlight_all = 1
