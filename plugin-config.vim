@@ -151,3 +151,5 @@ let g:jedi#documentation_command = "<leader>tD"
 let g:jedi#usages_command = "<leader>tr"
 let g:jedi#rename_command = "<leader>tR"
 let g:jedi#completions_command = ""
+
+let g:jedi#case_insensitive_completion = 0
