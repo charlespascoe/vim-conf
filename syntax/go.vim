@@ -65,39 +65,65 @@ syntax match goReceiverType /\K\k*)\@=/ contained
 syntax match goFuncName /\K\k*/ contained skipwhite nextgroup=goFuncParams
 
 " TODO: indepentent matching of param name and type
-syntax region goFuncParams matchgroup=goFuncParens start='(' end=')' contained contains=@goType,goComma skipwhite nextgroup=goFuncBlock,goFuncReturnType
+syntax region goFuncParams matchgroup=goFuncParens start='(' end=')' contained contains=@goType,goComma skipwhite nextgroup=goFuncReturnType,goFuncMultiReturn,goFuncBlock
+syntax match goFuncReturnType /\s*\zs(\@<!\%(\%(interface\|struct\)\s*{\|[^{]\)\+{\@<!/ contained contains=@goType skipempty skipwhite nextgroup=goFuncBlock
+syntax region goFuncMultiReturn matchgroup=goFuncMultiReturnParens start='(' end=')' extend contained contains=@goType,goComma skipempty skipwhite nextgroup=goFuncBlock
 
-" TODO: Maybe handle invalid variations
-" TODO: Handle newlines in multi-return type
-" Note: \{-} = match 0 or more, fewest possible
-syntax match goFuncReturnType /\_.\{-}\ze\s*{/ contained contains=goFuncMultiReturn,@goType skipempty skipwhite nextgroup=goFuncBlock
 
-syntax region goFuncMultiReturn matchgroup=goFuncMultiReturnParens start='(' end=')' contained contains=@goType,goComma
+" syntax match goTEST /\s*\zs(\@<!\%(\%(interface\|struct\)\s*{\|[^{]\)\+{\@<!/ contained contains=@goType skipempty skipwhite nextgroup=goFuncBlock
+
 
 syntax region goFuncBlock matchgroup=goFuncBraces start='{' end='}' contained transparent
+
+" syntax match goStructDecl /struct\s*{/ contained extend contains=goStruct
 
 syntax keyword goStruct struct skipempty skipwhite nextgroup=goStructBlock
 
 " TODO: Maybe highlight tags differently
 " TODO: Is there a better way of making sure nested braces work?
-syntax region goStructBlock matchgroup=goStructBraces start='{' end='}' contained contains=@goType,goRawString,goBrace
+syntax region goStructBlock matchgroup=goStructBraces start='{' end='}' extend contained contains=@goType,goRawString,goBrace
 
 syntax keyword goInterface interface skipempty skipwhite nextgroup=goInterfaceBlock
-syntax region goInterfaceBlock matchgroup=goInterfaceBraces start='{' end='}' contained contains=goInterfaceFunc
+syntax region goInterfaceBlock matchgroup=goInterfaceBraces start='{' end='}' extend contained contains=goInterfaceFunc
 
-syntax match goInterfaceFunc /^\s\+\zs\K\k*\ze\s*(/ contained skipempty skipwhite nextgroup=goInterfaceFuncParams
+syntax match goInterfaceFunc /\K\k*\ze\s*(/ contained skipwhite nextgroup=goInterfaceFuncParams
 syntax region goInterfaceFuncParams matchgroup=goInterfaceFuncParens start='(' end=')' contained contains=@goType skipwhite nextgroup=goInterfaceFuncReturn
-syntax match goInterfaceFuncReturn /[^\s].*\ze\s*$/ contained contains=goFuncMultiReturn,@goType
+syntax region goInterfaceFuncMultiReturn matchgroup=goFuncMultiReturnParens start='(' end=')' extend contained contains=@goType,goComma
+syntax match goInterfaceFuncReturn /[^\s].*\ze\s*$/ contained contains=goInterfaceFuncMultiReturn,@goType
 
 
 syntax keyword goFuncType func contained skipwhite nextgroup=goFuncTypeParens
 syntax region goFuncTypeParens matchgroup=goFuncParens start='(' end=')' contained contains=@goType,goComma skipwhite nextgroup=@goType,goFuncTypeMultiReturnType
 syntax region goFuncTypeMultiReturnType matchgroup=goFuncMultiReturnParens start='(' end=')' contained contains=@goType,goComma
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 " TODO: Function types
 " TODO: Structs
 " TODO: Composite types? Is this needed?
-syntax cluster goType contains=goBuiltinTypes,goFuncType,goStruct,goBracket
+syntax cluster goType contains=goBuiltinTypes,goFuncType,goStruct,goInterface,goBracket
 syntax keyword goReturn return
 
 syntax keyword goIf if skipempty skipwhite nextgroup=goIfCondition,goIfBlock
