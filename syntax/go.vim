@@ -10,6 +10,7 @@ syntax clear
 " TODO: Add support for defining multiple types at once
 " (https://go.dev/ref/spec#Underlying_types)
 " TODO: Const and Var group declarations
+" TODO: Simplify basic keywords into one syntax group (maybe?)
 
 " TODO: Maybe have highlighting for built-in functions etc?
 
@@ -69,19 +70,20 @@ syntax match goImportItem /\(\([\._]\|\K\k*\)\s\+\)\?"[^"]*"/ contained contains
 syntax match goFunCall /\<\K\k*\ze(/ nextgroup=goFuncCallParen
 syntax region goFuncCallParen matchgroup=goFuncCallParens start='(' end=')' contained transparent
 
-syntax keyword goFunc func skipempty skipwhite nextgroup=goMethodReceiver,goFuncName
+syntax keyword goFunc func skipempty skipwhite nextgroup=goMethodReceiver,goFuncName,goFuncParams
 
-syntax match goMethodReceiver /([^,]\+)\ze\s\+\K\k*\s*(/ contained contains=goReceiverBlock skipempty skipwhite nextgroup=goFuncName
-syntax region goReceiverBlock matchgroup=goReceiverParens start='(' end=')' contained contains=goReceiverParam,goReceiverType
-syntax match goReceiverParam /(\@<=\K\k*/ contained
-syntax match goReceiverType /\*\?\K\k*)\@=/ contained contains=@goType
+syntax match goParam /^\s*\zs\K\k*/ contained skipempty skipwhite nextgroup=goParam,@goType
+syntax match goParam /[(,]\@<=\s*\zs\K\k*/ contained skipempty skipwhite nextgroup=goParam,@goType
 
 syntax match goFuncName /\K\k*/ contained skipwhite nextgroup=goFuncParams
-" TODO: indepentent matching of param name and type
-syntax region goFuncParams matchgroup=goFuncParens start='(' end=')' contained contains=@goType,goComma skipwhite nextgroup=goFuncReturnType,goFuncMultiReturn,goFuncBlock
+syntax region goFuncParams matchgroup=goFuncParens start='(' end=')' contained contains=goParam,goComma skipwhite nextgroup=goFuncReturnType,goFuncMultiReturn,goFuncBlock
 syntax match goFuncReturnType /\s*\zs(\@<!\%(\%(interface\|struct\)\s*{\|[^{]\)\+{\@<!/ contained contains=@goType skipempty skipwhite nextgroup=goFuncBlock
+" TODO: Support named return values
 syntax region goFuncMultiReturn matchgroup=goFuncMultiReturnParens start='(' end=')' extend contained contains=@goType,goComma skipempty skipwhite nextgroup=goFuncBlock
 syntax region goFuncBlock matchgroup=goFuncBraces start='{' end='}' contained transparent
+
+syntax match goMethodReceiver /([^,]\+)\ze\s\+\K\k*\s*(/ contained contains=goReceiverBlock skipempty skipwhite nextgroup=goFuncName
+syntax region goReceiverBlock matchgroup=goReceiverParens start='(' end=')' contained contains=goParam
 
 syntax keyword goReturn return
 
@@ -95,13 +97,14 @@ syntax match goEmbeddedType /\K\k*\%#\@<!$/ contained
 
 " It is techically possible to have a space between a struct name and the
 " braces, but it causes odd behaviour elsewhere
-syntax match goStructValue /\K\k*\ze{/ skipwhite nextgroup=goBrace
+syntax match goStructValue /\K\k*\ze{/ skipwhite contains=@goType nextgroup=goBrace
 
 " Interfaces
 syntax keyword goInterface interface skipempty skipwhite nextgroup=goInterfaceBlock
 syntax region goInterfaceBlock matchgroup=goInterfaceBraces start='{' end='}' extend contained keepend contains=goEmbeddedType,goInterfaceFunc,goComment
 syntax match goInterfaceFunc /\K\k*\ze\s*(/ contained skipwhite nextgroup=goInterfaceFuncParams
-syntax region goInterfaceFuncParams matchgroup=goInterfaceFuncParens start='(' end=')' contained contains=@goType skipwhite nextgroup=@goType,goInterfaceFuncMultiReturn
+syntax region goInterfaceFuncParams matchgroup=goInterfaceFuncParens start='(' end=')' contained contains=goParam,goComma skipwhite nextgroup=@goType,goInterfaceFuncMultiReturn
+" TODO: Support named return values
 syntax region goInterfaceFuncMultiReturn matchgroup=goFuncMultiReturnParens start='(' end=')' contained contains=@goType,goComma
 
 " Types
@@ -110,16 +113,15 @@ syntax match goTypeDeclName /\K\k*/ contained skipempty skipwhite nextgroup=@goT
 
 syntax match goPointer /*/ contained nextgroup=@goType
 
-syntax cluster goType contains=goBuiltinTypes,goFuncType,goStruct,goInterface,goMap,goSliceOrArray,goChannel,goNonBuiltinType,goPointer
+syntax cluster goType contains=goSimpleBuiltinTypes,goFuncType,goStruct,goInterface,goMap,goSliceOrArray,goChannel,goNonBuiltinType,goPointer
 
 syntax match goNonBuiltinType /\K\k*/ contained
-hi link goNonBuiltinType Type
 
-syntax keyword goBuiltinTypes bool byte chan complex128 complex64 error float32 float64 int int8 int16 int32 int64 map rune string uint uint8 uint16 uint32 uint64 uintptr
-" syntax keyword goBuiltinTypes bool byte complex128 complex64 error float32 float64 int int8 int16 int32 int64 map rune string uint uint8 uint16 uint32 uint64 uintptr
+syntax keyword goSimpleBuiltinTypes bool byte complex128 complex64 error float32 float64 int int8 int16 int32 int64 rune string uint uint8 uint16 uint32 uint64 uintptr
 
 syntax keyword goFuncType func contained skipwhite nextgroup=goFuncTypeParens
 syntax region goFuncTypeParens matchgroup=goFuncParens start='(' end=')' contained contains=@goType,goComma skipwhite nextgroup=@goType,goFuncTypeMultiReturnType
+" TODO: Support named return values
 syntax region goFuncTypeMultiReturnType matchgroup=goFuncMultiReturnParens start='(' end=')' contained contains=@goType,goComma
 
 syntax keyword goMap map skipempty skipwhite nextgroup=goMapKeyType
@@ -134,19 +136,21 @@ syntax keyword goIf if skipempty skipwhite nextgroup=goIfCondition,goIfBlock
 syntax match goIfCondition /.\+\ze\s*{/ contained contains=TOP skipempty skipwhite nextgroup=goIfBlock
 syntax region goIfBlock matchgroup=goIfBraces start='{' end='}' contained transparent
 
-" For TODO: Finish
-syntax keyword goFor for skipempty skipwhite nextgroup=goInlineShortVarDecl,goForBlock
-syntax region goForBlock matchgroup=goForBraces start='{' end='}' contained transparent
+" For
+syntax keyword goFor for skipempty skipwhite nextgroup=goInlineShortVarDecl
 syntax keyword goRange range
 
-" Select TODO
+" Switch and Select
+syntax keyword goSwitch switch skipwhite nextgroup=goInlineShortVarDecl
+syntax keyword goSelect select
+syntax keyword goSwitchKeywords case fallthrough default
 
 " Labels TODO
 
-" Defer TODO
-
-" Other
+" Misc
+syntax keyword goDefer defer
 syntax keyword goIota iota
+syntax region goTypeAssertion matchgroup=goParens start=/\.\@<=(/ end=/)/ contains=@goType
 
 "Highlighting
 hi link goBooleanFalse Constant
@@ -161,7 +165,7 @@ hi link goVarKeyword StorageClass
 hi link goString Constant
 hi link goNumber Constant
 hi link goOperator Operator
-hi link goBuiltinTypes Type
+hi link goSimpleBuiltinTypes Type
 hi link goFunc Keyword
 hi link goFuncName Identifier
 hi link goStruct Keyword
@@ -195,7 +199,7 @@ hi link goFor Keyword
 hi link goRange Keyword
 
 hi link goRuneLiteral Constant
-hi link goMap goBuiltinTypes
+hi link goMap goSimpleBuiltinTypes
 
 " Keep this, but have an option to change it to 'Constant'
 hi link goInvalidRuneLiteral Error
@@ -205,9 +209,15 @@ hi link goSliceOrArray Special
 hi link goEmbeddedType Special
 hi link goDot Operator
 hi link goSemicolon Operator
-hi link goStructValue Type
+" hi link goStructValue Type
 hi link goChannel Type
 hi link goIota Special
+hi link goDefer Keyword
+hi link goSwitch Keyword
+hi link goSwitchKeywords goSwitch
+hi link goSelect Keyword
+"hi link goNonBuiltinType Type
+hi goNonBuiltinType ctermfg=121
 
 " TODO: This isn't standard
 hi link goFuncParens FunctionParens
