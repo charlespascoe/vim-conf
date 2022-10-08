@@ -182,6 +182,30 @@ fun bulletnotes#ImportPythonUtils()
 endfun
 
 
+fun bulletnotes#UpgradeProject()
+    if isdirectory('.bnproj')
+        echom 'You are already using the new project structure'
+    end
+
+    if filereadable('.bnproj')
+        !git rm .bnproj
+    endif
+
+    call mkdir('.bnproj')
+    !touch .bnproj/keep && git add .bnproj/keep
+
+    if isdirectory('spell')
+        !git mv spell/ .bnproj/
+    end
+
+    if isdirectory('snips')
+        !git mv snips/ .bnproj/
+    end
+
+    !git ci -m 'Project Upgrade'
+endfun
+
+
 fun bulletnotes#InitProject()
     if g:bn_project_loaded
         return
@@ -196,6 +220,12 @@ fun bulletnotes#InitProject()
         call s:Error("Can't find project root")
         return
     endif
+
+    if filereadable('.bnproj')
+        echoerr 'You are using the old project structure - some feature may not work (run UpgradeProject to fix)'
+        " Upgrade from old structure
+        command! UpgradeProject call bulletnotes#UpgradeProject()
+    end
 
     call bulletnotes#ImportPythonUtils()
 
@@ -800,7 +830,7 @@ fun bulletnotes#Commit(...)
         return
     endif
 
-    if !filereadable('.bnproj')
+    if !isdirectory('.bnproj')
         call s:Warning("Warning: Not in project directory")
         return
     endif
