@@ -52,9 +52,9 @@ syntax keyword goBooleanFalse false
 syntax match goStringFormat /\v\%%([%EFGOTUXbcdefgopqstvxf])/
 
 " Simple Blocks
-syntax region goBracket matchgroup=goBrackets start='\[' end='\]' transparent
-syntax region goParen matchgroup=goParens start='(' end=')' transparent
-syntax region goBrace matchgroup=goBraces start='{' end='}' transparent keepend extend
+syntax region goBracket matchgroup=goBrackets start='\[' end='\]' transparent extend
+syntax region goParen matchgroup=goParens start='(' end=')' transparent extend
+syntax region goBrace matchgroup=goBraces start='{' end='}' transparent extend
 
 " Constants and Variables
 syntax keyword goConstKeyword const skipempty skipwhite nextgroup=goVariableDef,goConstDelcGroup
@@ -62,9 +62,11 @@ syntax keyword goVarKeyword var skipempty skipwhite nextgroup=goVariableDef,goVa
 syntax region goVarDelcGroup start='(' end=')' contained
 syntax region goConstDelcGroup start='(' end=')' contained
 " TODO: Rename to something else
-syntax match goVariableDef /\<\K\k*/ contained skipempty skipwhite nextgroup=@goType
+syntax match goVariableDef /\<\K\k*/ contained skipwhite nextgroup=@goType
 
 " TODO: Is it possible to reduce duplication here? Remember performance!
+" NOTE: goShortVarDecl doesn't work inside one-line functions,
+" e.g func() { a, b := f(); return a }
 syntax match goShortVarDecl /^\s*\zs\K\k*\%(\s*,\s*\%(\K\k*\)\?\)*\ze\s*:=/ contains=goComma,goUnderscore
 syntax match goInlineShortVarDecl /\K\k*\%(\s*,\s*\%(\K\k*\)\?\)*\ze\s*:=/ contained contains=goComma,goUnderscore
 
@@ -73,6 +75,36 @@ syntax keyword goPackage package
 syntax keyword goImport import skipwhite nextgroup=goImportItem,goImports
 syntax region goImports matchgroup=goImportParens start='(' end=')' contained contains=goImportItem
 syntax match goImportItem /\(\([\._]\|\K\k*\)\s\+\)\?"[^"]*"/ contained contains=@NoSpell,goString
+
+" Types
+syntax region goTypeParens start='(' end=')' contained contains=@goType
+
+syntax keyword goTypeDecl type skipempty skipwhite nextgroup=goTypeDeclName
+syntax match goTypeDeclName /\K\k*/ contained skipempty skipwhite nextgroup=@goType
+syntax match goPointer /*/ contained nextgroup=@goType
+syntax cluster goType contains=goSimpleBuiltinTypes,goFuncType,goStructType,goInterface,goMap,goSliceOrArrayType,goChannel,goNonPrimitiveType,goPointer,goTypeParens
+syntax match goNonPrimitiveType /\K\k*/ contained
+syntax keyword goSimpleBuiltinTypes any bool byte complex128 complex64 error float32 float64 int int8 int16 int32 int64 rune string uint uint8 uint16 uint32 uint64 uintptr
+
+syntax keyword goFuncType func contained skipwhite nextgroup=goFuncTypeParens
+syntax region goFuncTypeParens matchgroup=goFuncParens start='(' end=')' contained contains=goFuncTypeParam,goComma skipwhite nextgroup=@goType,goFuncTypeMultiReturnType
+" TODO: Support named return values
+syntax region goFuncTypeMultiReturnType matchgroup=goFuncMultiReturnParens start='(' end=')' contained contains=goNamedReturnValue,goComma
+
+syntax keyword goMap map skipempty skipwhite nextgroup=goMapKeyType
+syntax region goMapKeyType matchgroup=goMapBrackets start='\[' end='\]' contained contains=@goType skipwhite nextgroup=@goType
+
+syntax match goSliceOrArrayType /\[\%(\d\+\|\.\.\.\)\?\]/ contained contains=goNumber,goDot skipwhite nextgroup=@goType
+
+" A lookbehind is used to distinguish a new slice value with slice indexing.
+" The lookbehind  has variable length, so it has a reasonable 20 character limit
+syntax match goSliceOrArray /\%([[:keyword:])]\s*\)\@20<!\[\%(\d\+\|\.\.\.\)\?\]/ contains=goNumber,goDot skipwhite nextgroup=goSliceItemType
+" Only look to the end of the line for the item type, and let slices etc. extend
+" across lines as necessary
+syntax match goSliceItemType /\%(\%(interface\|struct\)\s*{\|[^{]\)\+\ze\%({\|$\)/ contained contains=@goType skipwhite nextgroup=goSliceItems
+syntax region goSliceItems matchgroup=goSliceBraces start='{' end='}' contained transparent
+
+syntax match goChannel /<-chan\|chan\%(<-\)\?/ contains=goOperator skipwhite nextgroup=@goType
 
 " Functions
 syntax match goFunCall /\<\K\k*\ze(/ nextgroup=goFuncCallParen
@@ -89,18 +121,24 @@ syntax match goFuncName /\K\k*/ contained skipwhite nextgroup=goFuncParams
 syntax region goFuncParams matchgroup=goFuncParens start='(' end=')' contained contains=goParam,goComma skipwhite nextgroup=goFuncReturnType,goFuncMultiReturn,goFuncBlock
 syntax match goFuncReturnType /\s*\zs(\@<!\%(\%(interface\|struct\)\s*{\|[^{]\)\+{\@<!/ contained contains=@goType skipempty skipwhite nextgroup=goFuncBlock
 " TODO: Support named return values
-syntax region goFuncMultiReturn matchgroup=goFuncMultiReturnParens start='(' end=')' contained contains=@goType,goComma skipempty skipwhite nextgroup=goFuncBlock
+syntax region goFuncMultiReturn matchgroup=goFuncMultiReturnParens start='(' end=')' contained contains=goNamedReturnValue,goComma skipempty skipwhite nextgroup=goFuncBlock
+" syntax region goFuncMultiReturn matchgroup=goFuncMultiReturnParens start='(' end=')' contained contains=@goType,goComma skipempty skipwhite nextgroup=goFuncBlock
 syntax region goFuncBlock matchgroup=goFuncBraces start='{' end='}' contained transparent
 
 syntax match goMethodReceiver /([^,]\+)\ze\s\+\K\k*\s*(/ contained contains=goReceiverBlock skipempty skipwhite nextgroup=goFuncName
 syntax region goReceiverBlock matchgroup=goReceiverParens start='(' end=')' contained contains=goParam
+
+" TODO: Check performance of the backtracking on these
+" These are both the same, only defined separately for highlighting purposes
+syntax match goNamedReturnValue /[(,]\@<=\s*\zs\%(\K\k*\%(\s*,\s*\K\k*\)*\s\+\)\?\ze[^,]/ contained contains=goComma skipwhite nextgroup=@goType
+syntax match goFuncTypeParam    /[(,]\@<=\s*\zs\%(\K\k*\%(\s*,\s*\K\k*\)*\s\+\)\?\ze[^,]/ contained contains=goComma skipwhite nextgroup=@goType
 
 syntax keyword goReturn return
 
 " Structs
 " TODO: goStruct or goStructType?
 syntax keyword goStructType struct skipempty skipwhite nextgroup=goStructTypeBlock
-syntax region goStructTypeBlock matchgroup=goStructTypeBraces start='{' end='}' keepend extend contained contains=goEmbeddedType,goStructTypeField,goComment,goStructTypeTag,goDot,goSemicolon
+syntax region goStructTypeBlock matchgroup=goStructTypeBraces start='{' end='}' extend contained contains=goEmbeddedType,goStructTypeField,goComment,goStructTypeTag,goDot,goSemicolon
 syntax region goStructTypeTag start='`' end='`' contained
 syntax region goStructTypeTag start='"' skip='\\"' end='"' contained
 syntax match goStructTypeField /\%(_\|\K\k*\)\%(,\s*\%(_\|\K\k*\)\)*/ contained skipwhite contains=goComma,goUnderscore nextgroup=@goType
@@ -114,54 +152,18 @@ syntax match goStructValue /\K\k*\ze{/ skipwhite contains=@goType nextgroup=goBr
 " Interfaces
 syntax keyword goInterface interface skipempty skipwhite nextgroup=goInterfaceBlock
 " TODO: Maybe don't just put goOperator in here
-syntax region goInterfaceBlock matchgroup=goInterfaceBraces start='{' end='}' contained keepend extend contains=goEmbeddedType,goOperator,goInterfaceFunc,goComment
+syntax region goInterfaceBlock matchgroup=goInterfaceBraces start='{' end='}' contained extend contains=goEmbeddedType,goOperator,goInterfaceFunc,goComment
 syntax match goInterfaceFunc /\K\k*\ze\s*(/ contained skipwhite nextgroup=goInterfaceFuncParams
 syntax region goInterfaceFuncParams matchgroup=goInterfaceFuncParens start='(' end=')' contained contains=goParam,goComma skipwhite nextgroup=@goType,goInterfaceFuncMultiReturn
 " TODO: Support named return values
-syntax region goInterfaceFuncMultiReturn matchgroup=goFuncMultiReturnParens start='(' end=')' contained contains=@goType,goComma
+syntax region goInterfaceFuncMultiReturn matchgroup=goFuncMultiReturnParens start='(' end=')' contained contains=goNamedReturnValue,goComma
 
-" Types
-syntax keyword goTypeDecl type skipempty skipwhite nextgroup=goTypeDeclName
-syntax match goTypeDeclName /\K\k*/ contained skipempty skipwhite nextgroup=@goType
-
-syntax match goPointer /*/ contained nextgroup=@goType
-
-syntax cluster goType contains=goSimpleBuiltinTypes,goFuncType,goStructType,goInterface,goMap,goSliceOrArrayType,goChannel,goNonPrimitiveType,goPointer,goTypeParens
-
-syntax match goNonPrimitiveType /\K\k*/ contained
-
-syntax keyword goSimpleBuiltinTypes any bool byte complex128 complex64 error float32 float64 int int8 int16 int32 int64 rune string uint uint8 uint16 uint32 uint64 uintptr
-
-syntax keyword goFuncType func contained skipwhite nextgroup=goFuncTypeParens
-syntax region goFuncTypeParens matchgroup=goFuncParens start='(' end=')' contained contains=@goType,goComma skipwhite nextgroup=@goType,goFuncTypeMultiReturnType
-" TODO: Support named return values
-syntax region goFuncTypeMultiReturnType matchgroup=goFuncMultiReturnParens start='(' end=')' contained contains=@goType,goComma
-
-syntax region goTypeParens start='(' end=')' contained contains=@goType
-
-syntax keyword goMap map skipempty skipwhite nextgroup=goMapKeyType
-syntax region goMapKeyType matchgroup=goMapBrackets start='\[' end='\]' contained contains=@goType skipempty nextgroup=@goType
-
-syntax match goSliceOrArrayType /\[\%(\d\+\|\.\.\.\)\?\]/ contained contains=goNumber,goDot skipwhite nextgroup=@goType
-
-" A lookbehind is used to distinguish a new slice value with slice indexing.
-" The lookbehind  has variable length, so it has a reasonable 20 character limit
-syntax match goSliceOrArray /\%([[:keyword:])]\s*\)\@20<!\[\%(\d\+\|\.\.\.\)\?\]/ contains=goNumber,goDot skipwhite nextgroup=goSliceItemType
-" Only look to the end of the line for the item type, and let slices etc. extend
-" across lines as necessary
-syntax match goSliceItemType /\%(\%(interface\|struct\)\s*{\|[^{]\)\+\ze\%({\|$\)/ contained contains=@goType skipwhite nextgroup=goSliceItems
-syntax region goSliceItems matchgroup=goSliceBraces start='{' end='}' contained transparent
-
-syntax match goChannel /<-chan\|chan\%(<-\)\?/ contains=goOperator skipwhite nextgroup=@goType
 
 " Make and New
-" TODO: Don't match if method?
 syntax keyword goMakeBuiltin make skipwhite nextgroup=goNewMakeBlock
 syntax region goNewMakeBlock matchgroup=goParens start='(' end=')' contained
 syntax match goNewMakeType /\%(\<make(\)\@<=[^,]\+\ze[,)]/ contained contains=@goType containedin=goNewMakeBlock
 
-" Make and New
-" TODO: Don't match if method?
 syntax keyword goNewBuiltin new skipwhite nextgroup=goNewBlock
 syntax region goNewBlock matchgroup=goParens start='(' end=')' contained contains=@goType
 
