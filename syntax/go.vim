@@ -21,6 +21,9 @@ syntax clear
 "   contain complext nested types
 " - No other types should use extend
 
+"syntax match goFuncCallSOMETHING /\v<\K\k*\ze\[%(\_[^[]|\[%(\_[^\]]|\[\])*\])*\]\(/ nextgroup=goGenericFuncCall
+" Alternate: \v<\K\k*\[%(\_[^[]|\[\_[^\]]*\])*\]\(
+
 let b:current_syntax = 'go'
 
 syntax match goDot /\./
@@ -110,9 +113,11 @@ syntax region goSliceItems matchgroup=goSliceBraces start='{' end='}' contained 
 syntax match goChannel /<-chan\|chan\%(<-\)\?/ contains=goOperator skipwhite nextgroup=@goType
 
 " Functions
-syntax match goFunCall /\<\K\k*\ze\[\_[^\]]\+\](/ nextgroup=goFuncCallTypeParams,goFuncCallParen
-syntax region goFuncCallTypeArgs matchgroup=goTypeParamBrackets start='\[' end='\]' contained contains=@goType,goUnderscore,goComma nextgroup=goFuncCallParens
-syntax region goFuncCallParen matchgroup=goFuncCallParens start='(' end=')' contained transparent
+
+" Unfortunately limited to at most 3 nested type args
+syntax match goFuncCall /\v<\K\k*\ze%(\[%(\_[^\[\]]|\[%(\_[^\[\]]|\[%(\_[^\[\]]|\[\_[^\[\]]*\])*\])*\])*\])?\(/ nextgroup=goFuncCallTypeArgs,goFuncCallPara
+syntax region goFuncCallTypeArgs matchgroup=goTypeParamBrackets start='\[' end='\]' contained contains=@goType,goUnderscore,goComma nextgroup=goFuncCallArgs
+syntax region goFuncCallArgs matchgroup=goFuncCallParens start='(' end=')' contained transparent
 
 syntax keyword goFunc func skipempty skipwhite nextgroup=goMethodReceiver,goFuncName,goFuncParams
 
@@ -210,7 +215,7 @@ syntax region goTypeAssertion matchgroup=goParens start=/\.\@<=(/ end=/)/ contai
 "Highlighting
 hi link goBooleanFalse Constant
 hi link goBooleanTrue Constant
-hi link goFunCall FunctionCall
+hi link goFuncCall FunctionCall
 hi link goImport Keyword
 hi link goRawString Constant
 hi link goStringEscape Special
