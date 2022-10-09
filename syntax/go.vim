@@ -16,6 +16,11 @@ syntax clear
 " TODO: Check performance of lookbehinds
 " TODO: Check correct use of 'skipempty'
 
+" Notes on use of extend:
+" - Struct and Interface need them so that simple matches (e.g. /struct {/) can
+"   contain complext nested types
+" - No other types should use extend
+
 let b:current_syntax = 'go'
 
 syntax match goDot /\./
@@ -26,14 +31,15 @@ syntax keyword goUnderscore _
 
 " Comments
 syntax keyword goCommentTodo    contained TODO FIXME XXX TBD NOTE
-syntax region goComment start=+//+ end=+$+ contains=goCommentTodo extend keepend
-syntax region goComment start=+/\*+ end=+\*/+ contains=goCommentTodo fold extend keepend
+syntax region goComment start=+//+ end=+$+ contains=goCommentTodo keepend
+syntax region goComment start=+/\*+ end=+\*/+ contains=goCommentTodo fold keepend
 syntax match goGenerateComment +//go:generate.*$/+
 
 " Literals
-syntax region goString start='"' skip=/\\"/ end='"\|$' extend contains=goStringEscape,goDoubleQuoteEscape,goStringFormat
+syntax region goString start='"' skip=/\\"/ end='"\|$' contains=goStringEscape,goDoubleQuoteEscape,goStringFormat
 syntax match goStringEscape /\v\\%(\o{3}|x\x{2}|u\x{4}|U\x{8}|[abfnrtv\\"])/ contained
-syntax region goInvalidRuneLiteral start=+'+ end=+'+ keepend contains=goRuneLiteral
+syntax region goInvalidRuneLiteral start=+'+ end=+'\|$+ contains=goRuneLiteral
+" TODO: Highlight escapes
 syntax match goRuneLiteral /\v'%([^\\]|\\%(\o{3}|x\x{2}|u\x{4}|U\x{8}|[abfnrtv\\']))'/
 syntax region goRawString start='`' end='`'
 " TODO: Proper number matching
@@ -48,7 +54,7 @@ syntax match goStringFormat /\v\%%([%EFGOTUXbcdefgopqstvxf])/
 " Simple Blocks
 syntax region goBracket matchgroup=goBrackets start='\[' end='\]' transparent
 syntax region goParen matchgroup=goParens start='(' end=')' transparent
-syntax region goBrace matchgroup=goBraces start='{' end='}' transparent
+syntax region goBrace matchgroup=goBraces start='{' end='}' transparent keepend extend
 
 " Constants and Variables
 syntax keyword goConstKeyword const skipempty skipwhite nextgroup=goVariableDef,goConstDelcGroup
@@ -83,7 +89,7 @@ syntax match goFuncName /\K\k*/ contained skipwhite nextgroup=goFuncParams
 syntax region goFuncParams matchgroup=goFuncParens start='(' end=')' contained contains=goParam,goComma skipwhite nextgroup=goFuncReturnType,goFuncMultiReturn,goFuncBlock
 syntax match goFuncReturnType /\s*\zs(\@<!\%(\%(interface\|struct\)\s*{\|[^{]\)\+{\@<!/ contained contains=@goType skipempty skipwhite nextgroup=goFuncBlock
 " TODO: Support named return values
-syntax region goFuncMultiReturn matchgroup=goFuncMultiReturnParens start='(' end=')' extend contained contains=@goType,goComma skipempty skipwhite nextgroup=goFuncBlock
+syntax region goFuncMultiReturn matchgroup=goFuncMultiReturnParens start='(' end=')' contained contains=@goType,goComma skipempty skipwhite nextgroup=goFuncBlock
 syntax region goFuncBlock matchgroup=goFuncBraces start='{' end='}' contained transparent
 
 syntax match goMethodReceiver /([^,]\+)\ze\s\+\K\k*\s*(/ contained contains=goReceiverBlock skipempty skipwhite nextgroup=goFuncName
@@ -95,7 +101,8 @@ syntax keyword goReturn return
 " TODO: goStruct or goStructType?
 syntax keyword goStructType struct skipempty skipwhite nextgroup=goStructTypeBlock
 syntax region goStructTypeBlock matchgroup=goStructTypeBraces start='{' end='}' keepend extend contained contains=goEmbeddedType,goStructTypeField,goComment,goStructTypeTag,goDot,goSemicolon
-syntax region goStructTypeTag start='\z([`"]\)' end='\z1' contained
+syntax region goStructTypeTag start='`' end='`' contained
+syntax region goStructTypeTag start='"' skip='\\"' end='"' contained
 syntax match goStructTypeField /\%(_\|\K\k*\)\%(,\s*\%(_\|\K\k*\)\)*/ contained skipwhite contains=goComma,goUnderscore nextgroup=@goType
 " TODO: Highlight pointer for pointer embedded types
 syntax match goEmbeddedType /\K\k*\%#\@<!$/ contained
@@ -107,7 +114,7 @@ syntax match goStructValue /\K\k*\ze{/ skipwhite contains=@goType nextgroup=goBr
 " Interfaces
 syntax keyword goInterface interface skipempty skipwhite nextgroup=goInterfaceBlock
 " TODO: Maybe don't just put goOperator in here
-syntax region goInterfaceBlock matchgroup=goInterfaceBraces start='{' end='}' extend contained keepend contains=goEmbeddedType,goOperator,goInterfaceFunc,goComment
+syntax region goInterfaceBlock matchgroup=goInterfaceBraces start='{' end='}' contained keepend extend contains=goEmbeddedType,goOperator,goInterfaceFunc,goComment
 syntax match goInterfaceFunc /\K\k*\ze\s*(/ contained skipwhite nextgroup=goInterfaceFuncParams
 syntax region goInterfaceFuncParams matchgroup=goInterfaceFuncParens start='(' end=')' contained contains=goParam,goComma skipwhite nextgroup=@goType,goInterfaceFuncMultiReturn
 " TODO: Support named return values
@@ -137,10 +144,12 @@ syntax region goMapKeyType matchgroup=goMapBrackets start='\[' end='\]' containe
 
 syntax match goSliceOrArrayType /\[\%(\d\+\|\.\.\.\)\?\]/ contained contains=goNumber,goDot skipwhite nextgroup=@goType
 
-syntax match goSliceOrArray /\k\@<=\[\%(\d\+\|\.\.\.\)\?\]\ze[*([:keyword:]]/ contains=goNumber,goDot skipwhite nextgroup=goSliceItemType
-
-"@goType
-syntax match goSliceItemType /\%(\%(interface\|struct\)\s*{\|\_[^{]\)\+\ze{/ contained contains=@goType skipwhite nextgroup=goSliceItems
+" A lookbehind is used to distinguish a new slice value with slice indexing.
+" The lookbehind  has variable length, so it has a reasonable 20 character limit
+syntax match goSliceOrArray /\%([[:keyword:])]\s*\)\@20<!\[\%(\d\+\|\.\.\.\)\?\]/ contains=goNumber,goDot skipwhite nextgroup=goSliceItemType
+" Only look to the end of the line for the item type, and let slices etc. extend
+" across lines as necessary
+syntax match goSliceItemType /\%(\%(interface\|struct\)\s*{\|[^{]\)\+\ze\%({\|$\)/ contained contains=@goType skipwhite nextgroup=goSliceItems
 syntax region goSliceItems matchgroup=goSliceBraces start='{' end='}' contained transparent
 
 syntax match goChannel /<-chan\|chan\%(<-\)\?/ contains=goOperator skipwhite nextgroup=@goType
