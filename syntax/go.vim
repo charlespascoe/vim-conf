@@ -3,10 +3,8 @@
 
 syntax clear
 " syntax sync fromstart
-" syntax case match
+syntax case match
 
-" TODO: Add support for general interfaces
-" (https://go.dev/ref/spec#General_interfaces)
 " TODO: Add support for defining multiple types at once
 " (https://go.dev/ref/spec#Underlying_types)
 " TODO: Const and Var group declarations
@@ -59,8 +57,10 @@ syntax region goBrace matchgroup=goBraces start='{' end='}' transparent extend
 " Constants and Variables
 syntax keyword goConstKeyword const skipempty skipwhite nextgroup=goVariableDef,goConstDelcGroup
 syntax keyword goVarKeyword var skipempty skipwhite nextgroup=goVariableDef,goVarDelcGroup
-syntax region goVarDelcGroup start='(' end=')' contained
-syntax region goConstDelcGroup start='(' end=')' contained
+" TODO: Actually do something with this
+syntax region goVarDelcGroup start='(' end=')' contained transparent
+" TODO: Actually do something with this
+syntax region goConstDelcGroup start='(' end=')' contained transparent
 " TODO: Rename to something else
 syntax match goVariableDef /\<\K\k*/ contained skipwhite nextgroup=@goType
 
@@ -85,7 +85,10 @@ syntax match goTypeDeclName /\K\k*/ contained skipempty skipwhite nextgroup=goTy
 syntax region goTypeDeclTypeParams matchgroup=goTypeParamBrackets start='\[' end='\]' contained contains=goTypeParam,goComma nextgroup=@goType
 syntax cluster goType contains=goSimpleBuiltinTypes,goFuncType,goStructType,goInterface,goMap,goSliceOrArrayType,goChannel,goNonPrimitiveType,goPointer,goTypeParens
 
-syntax match goNonPrimitiveType /\K\k*\[\?/ contained contains=goTypeArgs
+syntax match goNonPrimitiveType /\%(\K\k*\.\)*\K\k*\[\?/ contained contains=goPackageName,goDot,goTypeArgs
+syntax match goPackageName /[\.[:keyword:]]\@<!\K\k*/ contained
+
+" TODO: Try to reduce type arg declarations
 syntax region goTypeArgs matchgroup=goTypeParamBrackets start='\[' end='\]' contained contains=@goType,goUnderscore,goComma
 
 syntax keyword goSimpleBuiltinTypes any bool byte complex128 complex64 error float32 float64 int int8 int16 int32 int64 rune string uint uint8 uint16 uint32 uint64 uintptr
@@ -146,8 +149,8 @@ syntax region goReceiverBlock matchgroup=goReceiverParens start='(' end=')' cont
 
 " TODO: Check performance of the backtracking on these
 " These are both the same, only defined separately for highlighting purposes
-syntax match goNamedReturnValue /\%(^\|[(,]\)\@<=\s*\zs\%(\K\k*\%(\s*,\s*\K\k*\)*\s\+\)\?\ze[^,]/ contained contains=goComma skipwhite nextgroup=@goType
-syntax match goFuncTypeParam    /\%(^\|[(,]\)\@<=\s*\zs\%(\K\k*\%(\s*,\s*\K\k*\)*\s\+\)\?\ze[^,]/ contained contains=goComma skipwhite nextgroup=@goType
+syntax match goNamedReturnValue /\%(^\|[(,]\)\@<=\s*\zs\%(\K\k*\%(\s*,\%(\s\|\n\)*\K\k*\)*\s\+\)\?\ze[^,]/ contained contains=goComma skipwhite nextgroup=@goType
+syntax match goFuncTypeParam    /\%(^\|[(,]\)\@<=\s*\zs\%(\K\k*\%(\s*,\%(\s\|\n\)*\K\k*\)*\s\+\)\?\ze[^,]/ contained contains=goComma skipwhite nextgroup=@goType
 
 syntax keyword goReturn return
 
@@ -275,6 +278,7 @@ hi link goSwitch goKeywords
 hi link goSwitchKeywords goKeywords
 "hi link goNonPrimitiveType Type
 hi goNonPrimitiveType ctermfg=121
+hi link goPackageName goNonPrimitiveType
 hi link goVariadic Operator
 
 hi link goBuiltins Special
