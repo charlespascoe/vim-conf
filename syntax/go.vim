@@ -89,7 +89,7 @@ syntax match goTypeAssign /=/ contained skipwhite nextgroup=@goType
 syntax cluster goType contains=goSimpleBuiltinTypes,goFuncType,goStructType,goInterface,goMap,goSliceOrArrayType,goChannel,goNonPrimitiveType,goPointer,goTypeParens
 
 syntax match goNonPrimitiveType /\%(\K\k*\.\)*\K\k*\[\?/ contained contains=goPackageName,goDot,goTypeArgs
-syntax match goPackageName /[\.[:keyword:]]\@<!\K\k*/ contained
+syntax match goPackageName /[\.[:keyword:]]\@<!\K\k*\ze\./ contained
 
 " TODO: Try to reduce type arg declarations
 syntax region goTypeArgs matchgroup=goTypeParamBrackets start='\[' end='\]' contained contains=@goType,goUnderscore,goComma
@@ -117,9 +117,8 @@ syntax match goChannel /<-chan\|chan\%(<-\)\?/ contains=goOperator skipwhite nex
 
 " Functions
 
-" Unfortunately limited to at most 3 nested type args and can't be spread across
-" lines
-syntax match goFuncCall /\v<\K\k*\ze%(\[%([^\[\]]|\[%([^\[\]]|\[%([^\[\]]|\[[^\[\]]*\])*\])*\])*\])?\(/ nextgroup=goFuncCallTypeArgs,goFuncCallPara
+" Unfortunately limited to at most 3 nested type args
+syntax match goFuncCall /\v<\K\k*\ze%(\[\s*\n?%(,\n|[^\[\]]|\[\s*\n?%(,\n|[^\[\]]|\[[^\[\]]*\])*\])*\])?\(/ nextgroup=goFuncCallTypeArgs,goFuncCallArgs
 syntax region goFuncCallTypeArgs matchgroup=goTypeParamBrackets start='\[' end='\]' contained contains=@goType,goUnderscore,goComma nextgroup=goFuncCallArgs
 syntax region goFuncCallArgs matchgroup=goFuncCallParens start='(' end=')' contained transparent
 
@@ -136,9 +135,11 @@ syntax region goFuncTypeParams matchgroup=goTypeParamBrackets start='\[' end='\]
 
 " TODO: is skipempty needed?
 syntax match goTypeParam /\%(^\|[\[,]\)\@<=\s*\zs\K\k*/ contained skipempty skipwhite nextgroup=goTypeParam,goTypeConstraint
-" TODO: Specific operators
+
 " This is a region to allow use of types that have commas (e.g. function
-" definitions) or nested type parameters
+" definitions) or nested type parameters, because they will automatically extend
+" the match of the region
+" TODO: Specific operators
 syntax region goTypeConstraint start='\s'ms=e+1 end=/[,\]]/me=s-1 contained contains=@goType,goOperator
 
 
@@ -170,7 +171,7 @@ syntax match goEmbeddedType /\K\k*\%#\@<!$/ contained
 
 " It is techically possible to have a space between a struct name and the
 " braces, but it causes odd behaviour elsewhere
-syntax match goStructValue /\v<\K\k*\ze%(\[%([^\[\]]|\[%([^\[\]]|\[%([^\[\]]|\[[^\[\]]*\])*\])*\])*\])?\{/ contains=@goType nextgroup=goBrace
+syntax match goStructValue /\v<\K\k*\ze%(\[\s*\n?%(,\n|[^\[\]]|\[\s*\n?%(,\n|[^\[\]]|\[[^\[\]]*\])*\])*\])?\{/ contains=@goType nextgroup=goBrace
 syntax region goStructValueTypeArgs matchgroup=goTypeParamBrackets start='\[' end='\]' contained contains=@goType,goUnderscore,goComma nextgroup=goBrace
 
 " Interfaces
@@ -184,9 +185,13 @@ syntax region goInterfaceFuncMultiReturn matchgroup=goFuncMultiReturnParens star
 
 
 " Make and New
-syntax keyword goMakeBuiltin make skipwhite nextgroup=goMakeBlock
+syntax keyword goMakeBuiltin make nextgroup=goMakeBlock
 syntax region goMakeBlock matchgroup=goParens start='(' end=')' contained transparent
-syntax region goMakeType start='\%(\<make(\)\@<='ms=e+1 end='[,)$]'me=s-1 contained contains=@goType containedin=goMakeBlock
+" TODO: Fix this (multiline)
+syntax match goFirstParen /\%(make(\)\@<=/ contained skipempty skipwhite nextgroup=@goType containedin=goMakeBlock
+" syntax region goMakeType start='\%(\<make(\n\?\s*\)\@40<=' end=',\|$' contained containedin=goMakeBlock
+"contains=@goType
+" hi link goMakeType Error
 
 syntax keyword goNewBuiltin new skipwhite nextgroup=goNewBlock
 syntax region goNewBlock matchgroup=goParens start='(' end=')' contained contains=@goType
@@ -213,6 +218,7 @@ syntax keyword goSwitchKeywords case fallthrough default select
 " TODO: Make this a catch-all for various keywords
 syntax keyword goKeywords defer go range
 syntax keyword goIota iota
+" This has to use a lookbehind, otherwise goDot steals the dot
 syntax region goTypeAssertion matchgroup=goParens start=/\.\@<=(/ end=/)/ contains=@goType,goTypeDecl
 
 " TODO: Statement vs Keyword?
@@ -283,7 +289,6 @@ hi link goPackage goKeywords
 hi link goSwitch goKeywords
 hi link goSwitchKeywords goKeywords
 "hi link goNonPrimitiveType Type
-hi goNonPrimitiveType ctermfg=121
 hi link goPackageName goNonPrimitiveType
 hi link goVariadic Operator
 
