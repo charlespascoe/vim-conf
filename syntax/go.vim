@@ -80,9 +80,12 @@ syntax match goImportItem /\(\([\._]\|\K\k*\)\s\+\)\?"[^"]*"/ contained contains
 syntax match goPointer /*/ contained nextgroup=@goType
 syntax region goTypeParens start='(' end=')' contained contains=@goType
 
-syntax keyword goTypeDecl type skipempty skipwhite nextgroup=goTypeDeclName
-syntax match goTypeDeclName /\K\k*/ contained skipempty skipwhite nextgroup=goTypeDeclTypeParams,@goType
+syntax keyword goTypeDecl type skipempty skipwhite nextgroup=goTypeDeclName,goTypeDeclGroup
+syntax region goTypeDeclGroup matchgroup=goTypeDeclGroupParens start='(' end=')' contained contains=goTypeDeclName
+syntax match goTypeDeclName /\K\k*/ contained skipempty skipwhite nextgroup=goTypeDeclTypeParams,goTypeAssign,@goType
 syntax region goTypeDeclTypeParams matchgroup=goTypeParamBrackets start='\[' end='\]' contained contains=goTypeParam,goComma nextgroup=@goType
+syntax match goTypeAssign /=/ contained skipwhite nextgroup=@goType
+
 syntax cluster goType contains=goSimpleBuiltinTypes,goFuncType,goStructType,goInterface,goMap,goSliceOrArrayType,goChannel,goNonPrimitiveType,goPointer,goTypeParens
 
 syntax match goNonPrimitiveType /\%(\K\k*\.\)*\K\k*\[\?/ contained contains=goPackageName,goDot,goTypeArgs
@@ -114,8 +117,9 @@ syntax match goChannel /<-chan\|chan\%(<-\)\?/ contains=goOperator skipwhite nex
 
 " Functions
 
-" Unfortunately limited to at most 3 nested type args
-syntax match goFuncCall /\v<\K\k*\ze%(\[%(\_[^\[\]]|\[%(\_[^\[\]]|\[%(\_[^\[\]]|\[\_[^\[\]]*\])*\])*\])*\])?\(/ nextgroup=goFuncCallTypeArgs,goFuncCallPara
+" Unfortunately limited to at most 3 nested type args and can't be spread across
+" lines
+syntax match goFuncCall /\v<\K\k*\ze%(\[%([^\[\]]|\[%([^\[\]]|\[%([^\[\]]|\[[^\[\]]*\])*\])*\])*\])?\(/ nextgroup=goFuncCallTypeArgs,goFuncCallPara
 syntax region goFuncCallTypeArgs matchgroup=goTypeParamBrackets start='\[' end='\]' contained contains=@goType,goUnderscore,goComma nextgroup=goFuncCallArgs
 syntax region goFuncCallArgs matchgroup=goFuncCallParens start='(' end=')' contained transparent
 
@@ -166,7 +170,7 @@ syntax match goEmbeddedType /\K\k*\%#\@<!$/ contained
 
 " It is techically possible to have a space between a struct name and the
 " braces, but it causes odd behaviour elsewhere
-syntax match goStructValue /\v<\K\k*\ze%(\[%(\_[^\[\]]|\[%(\_[^\[\]]|\[%(\_[^\[\]]|\[\_[^\[\]]*\])*\])*\])*\])?\{/ contains=@goType nextgroup=goBrace
+syntax match goStructValue /\v<\K\k*\ze%(\[%([^\[\]]|\[%([^\[\]]|\[%([^\[\]]|\[[^\[\]]*\])*\])*\])*\])?\{/ contains=@goType nextgroup=goBrace
 syntax region goStructValueTypeArgs matchgroup=goTypeParamBrackets start='\[' end='\]' contained contains=@goType,goUnderscore,goComma nextgroup=goBrace
 
 " Interfaces
@@ -259,6 +263,8 @@ hi link goRange Keyword
 hi link goRuneLiteral Constant
 hi link goMap goSimpleBuiltinTypes
 hi link goElse Keyword
+hi link goTypeAssign Operator
+hi link goTypeDeclGroupParens Parens
 
 " Keep this, but have an option to change it to 'Constant'
 hi link goInvalidRuneLiteral Error
