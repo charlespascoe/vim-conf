@@ -21,9 +21,6 @@ syntax clear
 "   contain complext nested types
 " - No other types should use extend
 
-"syntax match goFuncCallSOMETHING /\v<\K\k*\ze\[%(\_[^[]|\[%(\_[^\]]|\[\])*\])*\]\(/ nextgroup=goGenericFuncCall
-" Alternate: \v<\K\k*\[%(\_[^[]|\[\_[^\]]*\])*\]\(
-
 let b:current_syntax = 'go'
 
 syntax match goDot /\./
@@ -103,7 +100,7 @@ syntax region goMapKeyType matchgroup=goMapBrackets start='\[' end='\]' containe
 syntax match goSliceOrArrayType /\[\%(\d\+\|\.\.\.\)\?\]/ contained contains=goNumber,goDot skipwhite nextgroup=@goType
 
 " A lookbehind is used to distinguish a new slice value with slice indexing.
-" The lookbehind  has variable length, so it has a reasonable 20 character limit
+" The lookbehind has variable length, so it has a reasonable 20 character limit
 syntax match goSliceOrArray /\%([[:keyword:])]\s*\)\@20<!\[\%(\d\+\|\.\.\.\)\?\]/ contains=goNumber,goDot skipwhite nextgroup=goSliceItemType
 " Only look to the end of the line for the item type, and let slices etc. extend
 " across lines as necessary
@@ -130,11 +127,11 @@ syntax match goFuncName /\K\k*/ contained skipwhite nextgroup=goFuncTypeParams,g
 
 syntax region goFuncTypeParams matchgroup=goTypeParamBrackets start='\[' end='\]' contained contains=goTypeParam,goComma nextgroup=goFuncParams
 
-" TODO: TypeArgs vs TypeParams
-
 " TODO: is skipempty needed?
 syntax match goTypeParam /\%(^\|[\[,]\)\@<=\s*\zs\K\k*/ contained skipempty skipwhite nextgroup=goTypeParam,goTypeConstraint
 " TODO: Specific operators
+" This is a region to allow use of types that have commas (e.g. function
+" definitions) or nested type parameters
 syntax region goTypeConstraint start='\s'ms=e+1 end=/[,\]]/me=s-1 contained contains=@goType,goOperator
 
 
@@ -166,13 +163,14 @@ syntax match goEmbeddedType /\K\k*\%#\@<!$/ contained
 
 " It is techically possible to have a space between a struct name and the
 " braces, but it causes odd behaviour elsewhere
-syntax match goStructValue /\K\k*\ze{/ skipwhite contains=@goType nextgroup=goBrace
+syntax match goStructValue /\v<\K\k*\ze%(\[%(\_[^\[\]]|\[%(\_[^\[\]]|\[%(\_[^\[\]]|\[\_[^\[\]]*\])*\])*\])*\])?\{/ contains=@goType nextgroup=goBrace
+syntax region goStructValueTypeArgs matchgroup=goTypeParamBrackets start='\[' end='\]' contained contains=@goType,goUnderscore,goComma nextgroup=goBrace
 
 " Interfaces
 syntax keyword goInterface interface skipempty skipwhite nextgroup=goInterfaceBlock
 " TODO: Maybe don't just put goOperator in here, actually look at what the
 " syntax means
-syntax region goInterfaceBlock matchgroup=goInterfaceBraces start='{' end='}' contained extend contains=goEmbeddedType,goOperator,goInterfaceFunc,goComment
+syntax region goInterfaceBlock matchgroup=goInterfaceBraces start='{' end='}' contained extend contains=@goType,goOperator,goInterfaceFunc,goComment
 syntax match goInterfaceFunc /\K\k*\ze\s*(/ contained skipwhite nextgroup=goInterfaceFuncParams
 syntax region goInterfaceFuncParams matchgroup=goInterfaceFuncParens start='(' end=')' contained contains=goParam,goComma skipwhite nextgroup=@goType,goInterfaceFuncMultiReturn
 syntax region goInterfaceFuncMultiReturn matchgroup=goFuncMultiReturnParens start='(' end=')' contained contains=goNamedReturnValue,goComma
@@ -186,7 +184,7 @@ syntax region goMakeType start='\%(\<make(\)\@<='ms=e+1 end='[,)$]'me=s-1 contai
 syntax keyword goNewBuiltin new skipwhite nextgroup=goNewBlock
 syntax region goNewBlock matchgroup=goParens start='(' end=')' contained contains=@goType
 
-" TODO: Field access
+" TODO: Field access?
 
 " If
 " TODO: Figure out how to remove goInlineShortVarDecl; this could simplify if,
