@@ -44,7 +44,7 @@ syntax match goRuneLiteral /\v'%([^\\]|\\%(\o{3}|x\x{2}|u\x{4}|U\x{8}|[abfnrtv\\
 syntax region goRawString start='`' end='`'
 " TODO: Proper number matching
 " TODO: Fix numbers matching in int64 etc.
-syntax match goNumber /\c\d\+\%(\.\d\+\)\?\%(e[-+]\d+\)\?/
+syntax match goNumber /\<\c\d\+\%(\.\d\+\)\?\%(e[-+]\d+\)\?\>/
 syntax keyword goNil nil
 syntax keyword goBooleanTrue true
 syntax keyword goBooleanFalse false
@@ -77,13 +77,17 @@ syntax region goImports matchgroup=goImportParens start='(' end=')' contained co
 syntax match goImportItem /\(\([\._]\|\K\k*\)\s\+\)\?"[^"]*"/ contained contains=@NoSpell,goString
 
 " Types
+syntax match goPointer /*/ contained nextgroup=@goType
 syntax region goTypeParens start='(' end=')' contained contains=@goType
 
 syntax keyword goTypeDecl type skipempty skipwhite nextgroup=goTypeDeclName
-syntax match goTypeDeclName /\K\k*/ contained skipempty skipwhite nextgroup=@goType
-syntax match goPointer /*/ contained nextgroup=@goType
+syntax match goTypeDeclName /\K\k*/ contained skipempty skipwhite nextgroup=goTypeDeclTypeParams,@goType
+syntax region goTypeDeclTypeParams matchgroup=goTypeParamBrackets start='\[' end='\]' contained contains=goTypeParam,goComma nextgroup=@goType
 syntax cluster goType contains=goSimpleBuiltinTypes,goFuncType,goStructType,goInterface,goMap,goSliceOrArrayType,goChannel,goNonPrimitiveType,goPointer,goTypeParens
-syntax match goNonPrimitiveType /\K\k*/ contained
+
+syntax match goNonPrimitiveType /\K\k*\[\?/ contained contains=goTypeArgs
+syntax region goTypeArgs matchgroup=goTypeParamBrackets start='\[' end='\]' contained contains=@goType,goUnderscore,goComma
+
 syntax keyword goSimpleBuiltinTypes any bool byte complex128 complex64 error float32 float64 int int8 int16 int32 int64 rune string uint uint8 uint16 uint32 uint64 uintptr
 
 syntax keyword goFuncType func contained skipwhite nextgroup=goFuncTypeParens
@@ -106,7 +110,8 @@ syntax region goSliceItems matchgroup=goSliceBraces start='{' end='}' contained 
 syntax match goChannel /<-chan\|chan\%(<-\)\?/ contains=goOperator skipwhite nextgroup=@goType
 
 " Functions
-syntax match goFunCall /\<\K\k*\ze(/ nextgroup=goFuncCallParen
+syntax match goFunCall /\<\K\k*\ze\[\_[^\]]\+\](/ nextgroup=goFuncCallTypeParams,goFuncCallParen
+syntax region goFuncCallTypeArgs matchgroup=goTypeParamBrackets start='\[' end='\]' contained contains=@goType,goUnderscore,goComma nextgroup=goFuncCallParens
 syntax region goFuncCallParen matchgroup=goFuncCallParens start='(' end=')' contained transparent
 
 syntax keyword goFunc func skipempty skipwhite nextgroup=goMethodReceiver,goFuncName,goFuncParams
@@ -116,7 +121,18 @@ syntax match goVariadic /\.\.\./ contained skipwhite nextgroup=@goType
 syntax match goParam /^\s*\zs\K\k*/ contained skipempty skipwhite nextgroup=goParam,goVariadic,@goType
 syntax match goParam /[(,]\@<=\s*\zs\K\k*/ contained skipempty skipwhite nextgroup=goParam,goVariadic,@goType
 
-syntax match goFuncName /\K\k*/ contained skipwhite nextgroup=goFuncParams
+syntax match goFuncName /\K\k*/ contained skipwhite nextgroup=goFuncTypeParams,goFuncParams
+
+syntax region goFuncTypeParams matchgroup=goTypeParamBrackets start='\[' end='\]' contained contains=goTypeParam,goComma nextgroup=goFuncParams
+
+" TODO: TypeArgs vs TypeParams
+
+" TODO: is skipempty needed?
+syntax match goTypeParam /\%(^\|[\[,]\)\@<=\s*\zs\K\k*/ contained skipempty skipwhite nextgroup=goTypeParam,goTypeConstraint
+" TODO: Specific operators
+syntax region goTypeConstraint start='\s'ms=e+1 end=/[,\]]/me=s-1 contained contains=@goType,goOperator
+
+
 syntax region goFuncParams matchgroup=goFuncParens start='(' end=')' contained contains=goParam,goComma skipwhite nextgroup=goFuncReturnType,goFuncMultiReturn,goFuncBlock
 syntax match goFuncReturnType /\s*\zs(\@<!\%(\%(interface\|struct\)\s*{\|[^{]\)\+{\@<!/ contained contains=@goType skipempty skipwhite nextgroup=goFuncBlock
 syntax region goFuncMultiReturn matchgroup=goFuncMultiReturnParens start='(' end=')' contained contains=goNamedReturnValue,goComma skipempty skipwhite nextgroup=goFuncBlock
@@ -128,8 +144,8 @@ syntax region goReceiverBlock matchgroup=goReceiverParens start='(' end=')' cont
 
 " TODO: Check performance of the backtracking on these
 " These are both the same, only defined separately for highlighting purposes
-syntax match goNamedReturnValue /[(,]\@<=\s*\zs\%(\K\k*\%(\s*,\s*\K\k*\)*\s\+\)\?\ze[^,]/ contained contains=goComma skipwhite nextgroup=@goType
-syntax match goFuncTypeParam    /[(,]\@<=\s*\zs\%(\K\k*\%(\s*,\s*\K\k*\)*\s\+\)\?\ze[^,]/ contained contains=goComma skipwhite nextgroup=@goType
+syntax match goNamedReturnValue /\%(^\|[(,]\)\@<=\s*\zs\%(\K\k*\%(\s*,\s*\K\k*\)*\s\+\)\?\ze[^,]/ contained contains=goComma skipwhite nextgroup=@goType
+syntax match goFuncTypeParam    /\%(^\|[(,]\)\@<=\s*\zs\%(\K\k*\%(\s*,\s*\K\k*\)*\s\+\)\?\ze[^,]/ contained contains=goComma skipwhite nextgroup=@goType
 
 syntax keyword goReturn return
 
@@ -158,9 +174,9 @@ syntax region goInterfaceFuncMultiReturn matchgroup=goFuncMultiReturnParens star
 
 
 " Make and New
-syntax keyword goMakeBuiltin make skipwhite nextgroup=goNewMakeBlock
-syntax region goNewMakeBlock matchgroup=goParens start='(' end=')' contained
-syntax match goNewMakeType /\%(\<make(\)\@<=[^,]\+\ze[,)]/ contained contains=@goType containedin=goNewMakeBlock
+syntax keyword goMakeBuiltin make skipwhite nextgroup=goMakeBlock
+syntax region goMakeBlock matchgroup=goParens start='(' end=')' contained transparent
+syntax region goMakeType start='\%(\<make(\)\@<='ms=e+1 end='[,)$]'me=s-1 contained contains=@goType containedin=goMakeBlock
 
 syntax keyword goNewBuiltin new skipwhite nextgroup=goNewBlock
 syntax region goNewBlock matchgroup=goParens start='(' end=')' contained contains=@goType
@@ -261,6 +277,7 @@ hi link goVariadic Operator
 hi link goBuiltins Special
 hi link goNewBuiltin goBuiltins
 hi link goMakeBuiltin goBuiltins
+hi link goTypeParamBrackets Special
 
 " TODO: This isn't standard
 hi link goFuncParens FunctionParens
