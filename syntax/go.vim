@@ -88,7 +88,6 @@ syntax keyword goSimpleBuiltinTypes any bool byte complex128 complex64 error flo
 
 syntax keyword goFuncType func contained skipwhite nextgroup=goFuncTypeParens
 syntax region goFuncTypeParens matchgroup=goFuncParens start='(' end=')' contained contains=goFuncTypeParam,goComma skipwhite nextgroup=@goType,goFuncTypeMultiReturnType
-" TODO: Support named return values
 syntax region goFuncTypeMultiReturnType matchgroup=goFuncMultiReturnParens start='(' end=')' contained contains=goNamedReturnValue,goComma
 
 syntax keyword goMap map skipempty skipwhite nextgroup=goMapKeyType
@@ -120,7 +119,6 @@ syntax match goParam /[(,]\@<=\s*\zs\K\k*/ contained skipempty skipwhite nextgro
 syntax match goFuncName /\K\k*/ contained skipwhite nextgroup=goFuncParams
 syntax region goFuncParams matchgroup=goFuncParens start='(' end=')' contained contains=goParam,goComma skipwhite nextgroup=goFuncReturnType,goFuncMultiReturn,goFuncBlock
 syntax match goFuncReturnType /\s*\zs(\@<!\%(\%(interface\|struct\)\s*{\|[^{]\)\+{\@<!/ contained contains=@goType skipempty skipwhite nextgroup=goFuncBlock
-" TODO: Support named return values
 syntax region goFuncMultiReturn matchgroup=goFuncMultiReturnParens start='(' end=')' contained contains=goNamedReturnValue,goComma skipempty skipwhite nextgroup=goFuncBlock
 " syntax region goFuncMultiReturn matchgroup=goFuncMultiReturnParens start='(' end=')' contained contains=@goType,goComma skipempty skipwhite nextgroup=goFuncBlock
 syntax region goFuncBlock matchgroup=goFuncBraces start='{' end='}' contained transparent
@@ -151,11 +149,11 @@ syntax match goStructValue /\K\k*\ze{/ skipwhite contains=@goType nextgroup=goBr
 
 " Interfaces
 syntax keyword goInterface interface skipempty skipwhite nextgroup=goInterfaceBlock
-" TODO: Maybe don't just put goOperator in here
+" TODO: Maybe don't just put goOperator in here, actually look at what the
+" syntax means
 syntax region goInterfaceBlock matchgroup=goInterfaceBraces start='{' end='}' contained extend contains=goEmbeddedType,goOperator,goInterfaceFunc,goComment
 syntax match goInterfaceFunc /\K\k*\ze\s*(/ contained skipwhite nextgroup=goInterfaceFuncParams
 syntax region goInterfaceFuncParams matchgroup=goInterfaceFuncParens start='(' end=')' contained contains=goParam,goComma skipwhite nextgroup=@goType,goInterfaceFuncMultiReturn
-" TODO: Support named return values
 syntax region goInterfaceFuncMultiReturn matchgroup=goFuncMultiReturnParens start='(' end=')' contained contains=goNamedReturnValue,goComma
 
 
@@ -181,22 +179,23 @@ syntax keyword goRange range
 
 " Switch and Select
 syntax keyword goSwitch switch skipwhite nextgroup=goInlineShortVarDecl
-syntax keyword goSelect select
-syntax keyword goSwitchKeywords case fallthrough default
+syntax keyword goSwitchKeywords case fallthrough default select
 
 " Labels TODO
 
 " Misc
-syntax keyword goDefer defer
+" TODO: Make this a catch-all for various keywords
+syntax keyword goKeywords defer go range
 syntax keyword goIota iota
 syntax region goTypeAssertion matchgroup=goParens start=/\.\@<=(/ end=/)/ contains=@goType,goTypeDecl
+
+" TODO: Statement vs Keyword?
 
 "Highlighting
 hi link goBooleanFalse Constant
 hi link goBooleanTrue Constant
 hi link goFunCall FunctionCall
 hi link goImport Keyword
-hi link goPackage Keyword
 hi link goRawString Constant
 hi link goStringEscape Special
 hi link goConstKeyword StorageClass
@@ -208,12 +207,12 @@ hi link goSimpleBuiltinTypes Type
 hi link goFunc Keyword
 hi link goFuncName Identifier
 hi link goStructType Keyword
-hi link goReturn Statement
 hi link goNil Constant
 hi link goStringFormat Special
 hi link goShortVarDecl Identifier
 hi link goInlineShortVarDecl goShortVarDecl
 hi link goIf Keyword
+hi link goReturn Statement
 hi link goTypeDecl Keyword
 hi link goTypeDeclName Identifier
 hi link goComma Operator
@@ -251,10 +250,10 @@ hi link goSemicolon Operator
 " hi link goStructValue Type
 hi link goChannel Type
 hi link goIota Special
-hi link goDefer Keyword
-hi link goSwitch Keyword
-hi link goSwitchKeywords goSwitch
-hi link goSelect Keyword
+hi link goKeywords Keyword
+hi link goPackage goKeywords
+hi link goSwitch goKeywords
+hi link goSwitchKeywords goKeywords
 "hi link goNonPrimitiveType Type
 hi goNonPrimitiveType ctermfg=121
 hi link goVariadic Operator
