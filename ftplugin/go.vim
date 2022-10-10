@@ -127,3 +127,77 @@ fun! s:InsertDateFormat()
 endfun
 
 imap <buffer> <C-g>t <C-o>:call <SID>InsertDateFormat()<CR>
+
+
+fun! FindAllImports()
+    let l:winview = winsaveview()
+    let l:pos = getpos('.')
+    let l:imports = []
+
+    normal gg
+
+    let l:import_line = search('^import\s\+($', 'W')
+
+    if l:import_line != 0
+        normal $
+        let l:end_import_line =  searchpair('(', '', ')', 'Wn')
+
+        if l:end_import_line > 0
+            let l:imports = getbufline(bufnr('%'), line('.')+1, l:end_import_line-1)
+        end
+    else
+        " TODO: Check both, not just one?
+        normal gg
+
+        let l:import_line = search('^import\s\+[^(]$', 'W')
+
+        while l:import_line != 0
+            call add(l:imports, getline('.')[len("import"):])
+            let l:import_line = search('^import\s\+[^(]$', 'W')
+        endwhile
+    end
+
+    call map(l:imports, 'trim(v:val)')
+    call winrestview(l:winview)
+
+    return l:imports
+endfun
+
+fun! FindAllPackageNames()
+    let l:imports = FindAllImports()
+    let l:packages = []
+
+    for l:import in l:imports
+        if l:import =~ '^"'
+            let l:path = split(substitute(l:import, '"', '', 'g'), '/')
+            let l:last = l:path[len(l:path) - 1]
+            call add(l:packages, split(l:last, '\.')[0])
+        else
+            call add(l:packages, split(l:import, ' ')[0])
+        end
+    endfor
+
+    return l:packages
+endfun
+
+fun! RefreshPackageHighlighting()
+    let l:packages = FindAllPackageNames()
+
+    if hlexists('goPackageCustomNames')
+        syn clear goPackageCustomNames
+    end
+
+    exec 'syn keyword goPackageCustomNames '.join(l:packages, ' ')
+endfun
+
+fun! RegAutocmds()
+    au BufReadPost,CursorHold,CursorHoldI *.go call RefreshPackageHighlighting()
+endfun
+
+" TODO: I know there's a much better way of doing this instead of using a flag
+if !exists('g:REG')
+    " TODO: Figure out where to put this
+    hi link goPackageCustomNames goPackageName
+    call RegAutocmds()
+    let g:REG = 1
+end

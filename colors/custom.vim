@@ -56,8 +56,7 @@ hi Type ctermfg=47
 hi StorageClass ctermfg=34
 
 hi Error ctermfg=253 ctermbg=124
-" hi Special ctermfg=75
-hi Special ctermfg=33 cterm=bold
+hi Special ctermfg=75 cterm=bold
 hi Todo ctermfg=16 ctermbg=220
 
 " Non-standard
