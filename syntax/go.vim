@@ -148,7 +148,8 @@ syntax region goFuncParams matchgroup=goFuncParens start='(' end=')' contained c
 syntax match goFuncReturnType /\s*\zs(\@<!\%(\%(interface\|struct\)\s*{\|[^{]\)\+{\@<!/ contained contains=@goType skipempty skipwhite nextgroup=goFuncBlock
 syntax region goFuncMultiReturn matchgroup=goFuncMultiReturnParens start='(' end=')' contained contains=goNamedReturnValue,goComma skipempty skipwhite nextgroup=goFuncBlock
 " syntax region goFuncMultiReturn matchgroup=goFuncMultiReturnParens start='(' end=')' contained contains=@goType,goComma skipempty skipwhite nextgroup=goFuncBlock
-syntax region goFuncBlock matchgroup=goFuncBraces start='{' end='}' contained transparent
+syntax region goFuncBlock matchgroup=goFuncBraces start='{' end='}' contained transparent skipwhite nextgroup=goFuncCallArgs
+
 
 syntax match goMethodReceiver /([^,]\+)\ze\s\+\K\k*\s*(/ contained contains=goReceiverBlock skipempty skipwhite nextgroup=goFuncName
 syntax region goReceiverBlock matchgroup=goReceiverParens start='(' end=')' contained contains=goParam
@@ -172,7 +173,7 @@ syntax match goEmbeddedType /\K\k*\%#\@<!$/ contained
 
 " It is techically possible to have a space between a struct name and the
 " braces, but it causes odd behaviour elsewhere
-syntax match goStructValue /\v<\K\k*\ze%(\[\s*\n?%(,\n|[^\[\]]|\[\s*\n?%(,\n|[^\[\]]|\[[^\[\]]*\])*\])*\])?\{/ contains=@goType nextgroup=goBrace
+syntax match goStructValue /\v<%(\K\k*\.)*\K\k*\ze%(\[\s*\n?%(,\n|[^\[\]]|\[\s*\n?%(,\n|[^\[\]]|\[[^\[\]]*\])*\])*\])?\{/ contains=goPackageName,goDot,@goType nextgroup=goBrace
 syntax region goStructValueTypeArgs matchgroup=goTypeParamBrackets start='\[' end='\]' contained contains=@goType,goUnderscore,goComma nextgroup=goBrace
 
 " Interfaces
@@ -291,7 +292,7 @@ hi link goSwitch goKeywords
 hi link goSwitchKeywords goKeywords
 " hi goNonPrimitiveType ctermfg=121
 hi link goNonPrimitiveType Type
-hi link goPackageName goNonPrimitiveType
+hi link goPackageName Special
 hi link goVariadic Operator
 
 hi link goBuiltins Special
