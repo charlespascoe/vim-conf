@@ -80,7 +80,7 @@ syntax match goImportItem /\(\([\._]\|\K\k*\)\s\+\)\?"[^"]*"/ contained contains
 syntax match goPointer /*/ contained nextgroup=@goType
 syntax region goTypeParens start='(' end=')' contained contains=@goType
 
-syntax keyword goTypeDecl type skipempty skipwhite nextgroup=goTypeDeclName,goTypeDeclGroup
+syntax keyword goTypeKeyword type skipempty skipwhite nextgroup=goTypeDeclName,goTypeDeclGroup
 syntax region goTypeDeclGroup matchgroup=goTypeDeclGroupParens start='(' end=')' contained contains=goTypeDeclName
 syntax match goTypeDeclName /\K\k*/ contained skipempty skipwhite nextgroup=goTypeDeclTypeParams,goTypeAssign,@goType
 syntax region goTypeDeclTypeParams matchgroup=goTypeParamBrackets start='\[' end='\]' contained contains=goTypeParam,goComma nextgroup=@goType
@@ -96,6 +96,7 @@ syntax region goTypeArgs matchgroup=goTypeParamBrackets start='\[' end='\]' cont
 
 syntax keyword goSimpleBuiltinTypes any bool byte complex128 complex64 error float32 float64 int int8 int16 int32 int64 rune string uint uint8 uint16 uint32 uint64 uintptr
 
+" TODO: Can function types have type params?
 syntax keyword goFuncType func contained skipwhite nextgroup=goFuncTypeParens
 syntax region goFuncTypeParens matchgroup=goFuncParens start='(' end=')' contained contains=goFuncTypeParam,goComma skipwhite nextgroup=@goType,goFuncTypeMultiReturnType
 syntax region goFuncTypeMultiReturnType matchgroup=goFuncMultiReturnParens start='(' end=')' contained contains=goNamedReturnValue,goComma
@@ -216,44 +217,44 @@ syntax keyword goSwitchKeywords case fallthrough default select
 
 " Misc
 " TODO: Make this a catch-all for various keywords
+" TODO: Is "range" technically an operator?
 syntax keyword goKeywords defer go range
 syntax keyword goIota iota
 " This has to use a lookbehind, otherwise goDot steals the dot
-syntax region goTypeAssertion matchgroup=goParens start=/\.\@<=(/ end=/)/ contains=@goType,goTypeDecl
+syntax region goTypeAssertion matchgroup=goParens start=/\.\@<=(/ end=/)/ contains=@goType,goTypeKeyword
 
 " TODO: Statement vs Keyword?
 
 "Highlighting
-hi link goBooleanFalse Constant
-hi link goBooleanTrue Constant
-hi link goFuncCall FunctionCall
-hi link goImport Keyword
-hi link goRawString Constant
+hi link goBooleanFalse Boolean
+hi link goBooleanTrue Boolean
+hi link goImport Include
+hi link goRawString String
 hi link goStringEscape Special
 hi link goConstKeyword StorageClass
 hi link goVarKeyword StorageClass
-hi link goString Constant
-hi link goNumber Constant
+hi link goString String
+" TODO: Link floats to Float
+hi link goNumber Number
 hi link goOperator Operator
 hi link goSimpleBuiltinTypes Type
 hi link goFunc Keyword
-hi link goFuncName Identifier
+hi link goFuncName Function
 hi link goStructType Keyword
 hi link goNil Constant
-hi link goStringFormat Special
+hi link goStringFormat SpecialChar
 hi link goShortVarDecl Identifier
 hi link goInlineShortVarDecl goShortVarDecl
-hi link goIf Keyword
+hi link goIf Conditional
 hi link goReturn Statement
-hi link goTypeDecl Keyword
-hi link goTypeDeclName Identifier
+hi link goTypeKeyword Keyword
+hi link goTypeDeclName Typedef
 hi link goComma Operator
-hi link goOtherTypes Type
+" TODO: Should this link to Structure instead?
 hi link goInterface Keyword
 hi link goComment Comment
 hi link goGenerateComment PreProc
 hi link goCommentTodo Todo
-hi link goReceiverType Type
 hi link goFuncType goFunc
 " TODO: Figure out what this should be
 hi link goStructTypeTag PreProc
@@ -263,12 +264,12 @@ hi link goUnderscore Special
 hi link goParams NONE
 
 hi link goReceiverParam goParams
-hi link goFor Keyword
-hi link goRange Keyword
+hi link goFor Repeat
+hi link goRange Repeat
 
-hi link goRuneLiteral Constant
+hi link goRuneLiteral Character
 hi link goMap goSimpleBuiltinTypes
-hi link goElse Keyword
+hi link goElse Conditional
 hi link goTypeAssign Operator
 hi link goTypeDeclGroupParens Parens
 
@@ -288,7 +289,8 @@ hi link goKeywords Keyword
 hi link goPackage goKeywords
 hi link goSwitch goKeywords
 hi link goSwitchKeywords goKeywords
-"hi link goNonPrimitiveType Type
+" hi goNonPrimitiveType ctermfg=121
+hi link goNonPrimitiveType Type
 hi link goPackageName goNonPrimitiveType
 hi link goVariadic Operator
 
@@ -298,6 +300,7 @@ hi link goMakeBuiltin goBuiltins
 hi link goTypeParamBrackets Special
 
 " TODO: This isn't standard
+hi link goFuncCall FunctionCall
 hi link goFuncParens FunctionParens
 hi link goInterfaceBraces Braces
 hi link goParens Parens
