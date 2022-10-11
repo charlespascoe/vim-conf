@@ -1,6 +1,13 @@
 " Prefix: go
 
-syntax clear
+if exists("b:current_syntax")
+  finish
+endif
+
+let b:current_syntax = 'go'
+
+
+" syntax clear
 syntax sync fromstart
 syntax case match
 
@@ -34,9 +41,9 @@ syntax match goGenerateComment +//go:generate.*$/+
 
 " Literals
 " syntax region goString start='"' skip=/\\"/ end='"\|$' contains=goStringEscape,goDoubleQuoteEscape,goStringFormat
-syntax region goString start='"' skip=/\\"/ end='"' oneline contains=goStringEscape,goDoubleQuoteEscape,goStringFormat
+syntax region goString start='"' skip=/\\\\\|\\"/ end='"' oneline contains=goStringEscape,goDoubleQuoteEscape,goStringFormat
 syntax match goStringEscape /\v\\%(\o{3}|x\x{2}|u\x{4}|U\x{8}|[abfnrtv\\"])/ contained
-syntax region goInvalidRuneLiteral start=+'+ end=+'+ oneline contains=goRuneLiteral
+syntax region goInvalidRuneLiteral start=+'+ skip=+\\'+ end=+'+ oneline contains=goRuneLiteral
 " TODO: Highlight escapes
 syntax match goRuneLiteral /\v'%([^\\]|\\%(\o{3}|x\x{2}|u\x{4}|U\x{8}|[abfnrtv\\']))'/ contained
 syntax region goRawString start='`' end='`'
@@ -237,9 +244,8 @@ hi def link Brackets Delimiter
 hi def link Braces Delimiter
 hi def link Parens Delimiter
 hi def link FunctionCall Special
-hi def link Noise NONE
-hi def link Parameters NONE
-hi def link Arguments NONE
+" hi def link Noise NONE
+" hi def link Parameters NONE
 
 " Constants and Literals
 
@@ -283,7 +289,6 @@ hi link goIf Conditional
 hi link goReturn Statement
 hi link goTypeKeyword Keyword
 hi link goTypeDeclName Typedef
-" TODO: Should this link to Structure instead?
 hi link goInterfaceType goStructType
 hi link goComment Comment
 hi link goGenerateComment PreProc
@@ -291,9 +296,6 @@ hi link goCommentTodo Todo
 " TODO: Figure out what this should be
 
 hi link goUnderscore Special
-
-hi link goParams Parameters
-hi link goReceiverParam goParams
 
 hi link goFor Repeat
 hi link goRange Repeat
