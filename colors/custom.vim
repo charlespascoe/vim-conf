@@ -41,33 +41,33 @@ hi clear SignColumn
 hi Comment ctermfg=32 ctermbg=235
 
 " hi Identifier cterm=none ctermfg=43
-hi Identifier cterm=none ctermfg=36
+hi Identifier ctermfg=36 cterm=bold
 
 hi Constant ctermfg=196
 
-" hi PreProc ctermfg=99
 hi PreProc ctermfg=135
 
 hi Statement ctermfg=220
-" hi Operator ctermfg=208
-hi Operator ctermfg=202
+hi Operator ctermfg=208
 
 hi Type ctermfg=47
-hi StorageClass ctermfg=34
+hi Structure ctermfg=34
 
 hi Error ctermfg=253 ctermbg=124
-hi Special ctermfg=75 cterm=bold
+hi Special ctermfg=75
 hi Todo ctermfg=16 ctermbg=220
 
 " Non-standard
-hi FunctionCall ctermfg=123
-hi link FunctionParens Operator
-
-hi Parens ctermfg=39
-hi Brackets ctermfg=43
+hi Brackets ctermfg=37
 hi link Braces Brackets
-hi link Noise Operator
+" hi Parens ctermfg=39
+hi Parens ctermfg=111
 
+hi FunctionBraces ctermfg=37
+hi FunctionCall ctermfg=123
+
+hi link FunctionParens Operator
+hi link Noise Operator
 
 " Spelling
 hi SpellBad cterm=none ctermfg=255 ctermbg=88
