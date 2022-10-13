@@ -255,3 +255,19 @@ fun! DumpObject()
 endfun
 
 command! DumpObject call DumpObject()
+
+
+fun! RunCode()
+    let l:winid = win_getid()
+    let l:file = expand('%')
+
+    if exists('t:term_winid') && len(getwininfo(t:term_winid)) > 0
+        call win_gotoid(t:term_winid)
+        call term_start(['go', 'run', l:file], {'curwin': 1})
+    else
+        call term_start(['go', 'run', l:file], {'vertical': 1})
+        let t:term_winid = win_getid()
+    end
+
+    call win_gotoid(l:winid)
+endfun
