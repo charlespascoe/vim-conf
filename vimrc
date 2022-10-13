@@ -11,11 +11,6 @@ let mapleader=" "
 
 packadd! matchit
 
-let b:match_words = ''
-
-" Match Git conflict boundaries
-au BufReadPost * let b:match_words .= '^<\{7}:^=\{7}:^>\{7},'
-
 " Set cursor style
 let &t_SI = "\e[6 q"
 let &t_SR = "\e[4 q"
