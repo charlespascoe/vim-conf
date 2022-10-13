@@ -201,3 +201,57 @@ if !exists('g:REG')
     call RegAutocmds()
     let g:REG = 1
 end
+
+
+fun! DumpObject()
+    fun! GetModuleName()
+        for l:line in readfile('go.mod')
+            if l:line =~# '^module'
+                return trim(l:line[len('module'):])
+            end
+        endfor
+
+        return ''
+    endfun
+
+    let l:mod = GetModuleName()
+
+    let l:item_name = expand('<cword>')
+
+    let l:match = matchlist(getline('.'), 'func ([^[:space:]]\+\([^)]\+\))')
+
+    if len(l:match) > 0
+        let l:recv_type = trim(l:match[1])
+
+        if l:recv_type =~ '^\*'
+            let l:recv_type = '\'..l:recv_type
+        end
+
+        let l:item_name = '\('..l:recv_type..'\)\.'..l:item_name
+    end
+
+    if l:mod == ''
+        echoerr "Couldn't figure out module name"
+        return
+    end
+
+    let l:path = l:mod.'/'.expand('%:h').'\.'.l:item_name
+
+    " TODO: Make this a background job
+    " make! build
+
+    let t:dump_go_winid = win_getid()
+    set cursorline
+    hi CursorLine ctermbg=235 cterm=bold
+    hi CursorLineNr ctermbg=235 cterm=bold
+
+    au CursorMoved <buffer> call win_execute(t:dump_term_winid, 'match CursorLine /^\s\+'..expand('%:t')..':'..line('.')..'\s.*$/ | call search("'..expand('%:t')..':'..line('.')..'", "wc") | normal zz')
+
+    " TODO: Figure out where the binary is properly
+    let l:term_buf = term_start(['go', 'tool', 'objdump', '-s', l:path, l:mod], {'vertical': 1, 'norestore': 1})
+
+    call setbufvar(l:term_buf, '&ft', 'godump')
+    let t:dump_term_winid = win_getid()
+endfun
+
+command! DumpObject call DumpObject()
