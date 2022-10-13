@@ -14,7 +14,11 @@ var invert_binary_subs = [
     ['Yes', 'No'],
     ['YES', 'NO'],
     ['Required', 'Optional'],
+    ['required', 'optional'],
     ['==', '!='],
+    ['===', '!=='],
+    ['>', '<='],
+    ['<', '>='],
     ['+', '-'],
     ['1', '0'],
     ReSub('enabl\(ing\|e[sd]\?\)', 'disabl\1'),
@@ -49,15 +53,15 @@ def Invert(s: string): string
 enddef
 
 def InvertBinary()
-    var replacement = Invert(expand('<cword>'))
+    var replacement = Invert(expand('<cWORD>'))
 
     if replacement != ''
-        exec 'normal' 'ciw' .. replacement
+        exec 'normal' 'ciW' .. replacement
     else
-        replacement = Invert(expand('<cWORD>'))
+        replacement = Invert(expand('<cword>'))
 
         if replacement != ''
-            exec 'normal' 'ciW' .. replacement
+            exec 'normal' 'ciw' .. replacement
         endif
     endif
 
@@ -66,4 +70,4 @@ enddef
 
 nmap <Plug>(InvertBinary) <ScriptCmd>call InvertBinary()<CR>
 
-nmap <leader>n <Plug>(InvertBinary)
+nmap s <Plug>(InvertBinary)
