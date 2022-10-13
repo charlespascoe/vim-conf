@@ -66,9 +66,9 @@ endfun
 fun bulletnotes#InitBuffer()
     " TODO: Move the contents of this function into ftplugin
 
-    setlocal shiftwidth=4  " operation >> indents 4 columns; << unindents 4 columns
-    setlocal tabstop=4     " a hard TAB displays as 4 columns
-    setlocal softtabstop=4 " insert/delete 4 spaces when hitting a TAB/BACKSPACE"
+    setlocal shiftwidth=4
+    setlocal tabstop=4
+    setlocal softtabstop=4
     setlocal textwidth=80
     setlocal formatoptions=t
     setlocal autoread      " Used to update files after a remote sync

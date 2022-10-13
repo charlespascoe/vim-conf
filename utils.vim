@@ -28,6 +28,15 @@ map <leader>S <Cmd>echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . 
 \ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
 \ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
 
+fun! PrintSyntaxDetails()
+    let l:syn_stack = synstack(line("."),col("."))
+    for l:syn_id in l:syn_stack
+        echom synIDattr(l:syn_id, "name")
+    endfor
+endfun
+
+map <leader><C-s> <Cmd>call PrintSyntaxDetails()<CR>
+
 " Trim trailing whitespace
 command! Trim %s/\s\+$//e
 
@@ -35,16 +44,21 @@ nmap <silent> <leader>T <Cmd>Trim<CR>``
 
 " Jumping centres on cursor
 nnoremap <expr> ` printf('`%czz', getchar())
+nnoremap ]c <Plug>(GitGutterNextHunk)zz
+nnoremap [c <Plug>(GitGutterPrevHunk)zz
 
 " Jump to imports marker
 
 noremap <leader>i `iO
 
+" Add and jump to new line below while in insert mode (<C-Space>)
+imap <expr> <C-@> match(getline('.'), '^\s\+$') ? '<C-o>o' : '<Enter>'
+
 " Format JSON
 command! FormatJson %!python -m json.tool
 
 " This needs to be '<Esc>:' because it expects user input
-noremap <leader>R <Esc>:s/<C-r><C-w>//g<Left><Left>
+noremap <leader>R <Esc>:%s/\<<C-r><C-w>\>//gc<Left><Left><Left>
 
 " Move a single line
 
@@ -175,3 +189,33 @@ nmap <Enter> i<Enter><Space><BS><Esc><Right>
 
 " This prevents the above from interfering with quickfix and location lists
 au FileType qf nnoremap <buffer> <Enter> <Enter>
+
+" Note that the two double quote substitutions are very subtly different (open
+" vs close)
+command FixQuotes %s/’/'/ge | %s/“/"/ge | %s/”/"/ge
+
+" Set indent level marker based on shiftwidth (only applies to space-indented
+" files)
+
+fun s:SetIndentMarker()
+    let lc = &l:listchars
+
+    if lc == ''
+        let lc = &listchars
+    end
+
+    let lcopts = filter(split(lc, ','), 'v:val !~ "^leadmultispace"')
+
+    let sw = &l:shiftwidth
+
+    if sw == 0
+        let sw = &shiftwidth
+    end
+
+    call add(lcopts, 'leadmultispace:│'.repeat(' ', sw-1))
+
+    let &l:listchars = join(lcopts, ',')
+endfun
+
+au BufReadPost * call <SID>SetIndentMarker()
+au OptionSet shiftwidth call <SID>SetIndentMarker()

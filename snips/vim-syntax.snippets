@@ -1,0 +1,93 @@
+global !p
+from snippet_utils import *
+import re
+skip = {'e': 'empty', 'w': 'white', 'n': 'nl'}
+hl_links = {
+	'c': 'Constant',
+	'i': 'Identifier',
+	'p': 'PreProc',
+	's': 'Statement',
+	't': 'Type',
+	'x': 'Special',
+	'n': 'NONE',
+}
+
+syntax_re = re.compile(r'^syntax\s+(?:match|keyword|region)\s+([^\s]+).+?(?:matchgroup=([^\s]+))?')
+hi_re = re.compile(r'^hi\s+(?:def\s+)?link\s+([^\s]+)')
+
+def missing_highlights():
+	syntax_defs = {match[2] or match[1] for match in (syntax_re.search(line) for lnr, line in find_lines(syntax_re))}
+	hi_defs = {hi_re.search(line)[1] for lnr, line in find_lines(hi_re)}
+
+	return sorted(list(syntax_defs - hi_defs))
+
+
+endglobal
+
+snippet 'sk ' "syntax keyword" brA
+syntax keyword `!v get(b:, 'syntax_prefix', '')`$0
+endsnippet
+
+snippet 'sm ' "syntax match" brA
+syntax match `!v get(b:, 'syntax_prefix', '')`$1 /$0/
+endsnippet
+
+snippet 'sr(m?) ' "syntax region" brA
+syntax region `!v get(b:, 'syntax_prefix', '')`$1 `!p snip.rv = 'matchgroup=NONE ' if match[1] else ''`start='$2' end='$3'
+endsnippet
+
+snippet 'sc ' "syntax cluster" brA
+syntax cluster `!v get(b:, 'syntax_prefix', '')`$1
+endsnippet
+
+snippet 'h(d?)l([a-z]*) ' "Highlight Link" brA
+hi`!p snip.rv = ' def' if match[1] else ''` link `!v get(b:, 'syntax_prefix', '')`$0`!p snip.rv = (' ' + (hl_links.get(match[2]) or '')).rstrip()`
+endsnippet
+
+snippet '(?<=\s)ng ' "Next Group" rA
+nextgroup=
+endsnippet
+
+snippet '(?<=\s)cd ' "Contained" rA
+contained $0
+endsnippet
+
+snippet '(?<=\s)cs ' "Contains" rA
+contains=
+endsnippet
+
+snippet '(?<=\s)ci ' "Contained in" rA
+containedin=
+endsnippet
+
+snippet '(?<=\s)mg ' "Match Group" rA
+matchgroup=
+endsnippet
+
+snippet '(?<=\s)tr ' "Transparent" rA
+transparent $0
+endsnippet
+
+snippet '(?<=\s)s([ewn]+) ' "" rA
+`!p snip.rv = ' '.join('skip' + skip[s] for s in sorted(set(match[1])))` $0
+endsnippet
+
+snippet '(?<=[,=])@ns' "NoSpell" rA
+@NoSpell
+endsnippet
+
+snippet '(?<=[,=])@s' "NoSpell" rA
+@Spell
+endsnippet
+
+snippet missinghl "Missing Highlights" b
+`!p snip.rv = snip.c or '\n'.join(f'hi link {item} NONE' for item in missing_highlights())`
+endsnippet
+
+# snippet '(?<=\s)se ' "Contained in" rA
+# skipempty $0
+# endsnippet
+
+# snippet '(?<=\s)sw ' "Contained in" rA
+# skipwhite $0
+# endsnippet

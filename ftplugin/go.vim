@@ -172,7 +172,7 @@ fun! FindAllPackageNames()
             let l:path = split(substitute(l:import, '"', '', 'g'), '/')
             let l:last = l:path[len(l:path) - 1]
             call add(l:packages, split(l:last, '\.')[0])
-        else
+        elseif trim(l:import) != ''
             call add(l:packages, split(l:import, ' ')[0])
         end
     endfor
@@ -187,7 +187,9 @@ fun! RefreshPackageHighlighting()
         syn clear goPackageCustomNames
     end
 
-    exec 'syn keyword goPackageCustomNames '.join(l:packages, ' ')
+    if len(l:packages) > 0
+        exec 'syn keyword goPackageCustomNames '.join(l:packages, ' ')
+    end
 endfun
 
 fun! RegAutocmds()

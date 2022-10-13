@@ -29,4 +29,3 @@ https://github.com/tpope/vim-unimpaired
 https://github.com/vim-airline/vim-airline
 https://github.com/vim-python/python-syntax
 https://github.com/vim-scripts/ReplaceWithRegister
-https://github.com/Yggdroot/indentLine

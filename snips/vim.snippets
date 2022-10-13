@@ -1,0 +1,31 @@
+global !p
+from snippet_utils import *
+endglobal
+
+## F ##
+
+snippet '^f ' "Function" brA
+fun $1($2)
+	$0
+endfun
+endsnippet
+
+## I ##
+
+snippet 'if ' "If" brA
+if $1
+	$0
+end
+endsnippet
+
+## L ##
+
+snippet 'l([lbtwg]) ' "Let" brA
+let `!p snip.rv = match[1]`:$1 = $0
+endsnippet
+
+## R ##
+
+snippet '^\s*r ' "return" brA
+return $0
+endsnippet

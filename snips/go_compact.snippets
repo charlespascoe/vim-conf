@@ -11,7 +11,7 @@ test_re = re.compile(r"^func Test([^)]*)\(")
 ws_re = re.compile(r'\s+')
 err_re = re.compile(r'\berr\b')
 err_assignment_re = re.compile(r'\berr\s+:=\s+')
-if_re = re.compile('^\s*(}\s+else\s+)?if ')
+if_re = re.compile(r'^\s*(}\s+else\s+)?if ')
 
 
 convert_type_map = {
@@ -411,7 +411,7 @@ def get_mock_signature(snip):
 
 
 def append_err_check(cond):
-	match = err_re.match(cond)
+	match = err_re.search(cond)
 
 	if match:
 		jump()
@@ -421,7 +421,7 @@ def append_err_check(cond):
 
 
 def generate_err_check(cond):
-	if err_assignment_re.match(cond):
+	if err_assignment_re.search(cond):
 		return '; err != nil'
 
 	return ''
@@ -434,7 +434,7 @@ snippet errors. "Errors auto-import" bwA
 errors.
 endsnippet
 
-pre_expand "add_import_new(snip, 'fmt')"
+pre_expand "add_import(snip, 'fmt')"
 snippet fmt. "Format auto-import" bwA
 fmt.
 endsnippet
@@ -595,7 +595,7 @@ endsnippet
 # Removed comment
 # // $1 ${4:TODO: Description}.
 snippet '^f ' "Function" brA
-func ${1: }($2)$3 {`!p t[1] = smart_capitalisation(t[1])`
+func ${1: }($2)$3 {
 	$0
 }
 endsnippet
@@ -690,7 +690,7 @@ endsnippet
 
 pre_expand "replace_rest_of_line(snip)"
 snippet 'if ' "If" brA
-if `!p if not snip.c and snip.context: snip.rv = append_err_check(snip.context.replace('=', ':=', 1))`$1`!p snip.rv = generate_err_check(t[1])` {
+if `!p if not snip.c and snip.context: snip.rv = append_err_check(snip.context.replace(' =', ' :=', 1))`$1`!p snip.rv = generate_err_check(t[1])` {
 	$0
 }
 endsnippet
@@ -828,7 +828,7 @@ endsnippet
 
 snippet '^\tim' "Interface Method" brA
 	// $1 TODO: Description.
-	${1: }($2)$0`!p t[1] = smart_capitalisation(t[1])`
+	${1: }($2)$0
 endsnippet
 
 ## J ##
@@ -949,7 +949,7 @@ snippet '^m([ *])' "Method" brA
 // $1 TODO: Description.
 func (`!p snip.rv = snip.c or ' '.join(find_method_type(match[1] == '*'))`) ${1: }($2)$3 {
 	$0
-}`!p t[1] = smart_capitalisation(t[1])`
+}
 endsnippet
 
 snippet '^mr([ *])' "Method with self return" brA
@@ -958,7 +958,7 @@ func (`!p snip.rv = snip.c or ' '.join(find_method_type(match[1] == '*'))`) ${1:
 	$0
 
 	return `!p snip.rv = snip.c or find_method_type(match[1] == '*')[0]`
-}`!p t[1] = smart_capitalisation(t[1])`
+}
 endsnippet
 
 snippet mmj "Method - MarshalJSON" bw
@@ -1058,6 +1058,16 @@ endsnippet
 
 ## P ##
 
+pre_expand "add_import(snip, 'fmt')"
+snippet pf "Printf" b
+fmt.Printf("$1", $0)
+endsnippet
+
+pre_expand "add_import(snip, 'fmt')"
+snippet pl "Println" b
+fmt.Println("$0")
+endsnippet
+
 snippet P "panic" bw
 panic($1)
 endsnippet
@@ -1079,6 +1089,11 @@ endsnippet
 
 snippet 'r ' "Return" brA
 return $0
+endsnippet
+
+pre_expand "add_import(snip, 'regexp')"
+snippet re. "regexp" b
+regexp.
 endsnippet
 
 context "cursor_at_eol(snip)"
@@ -1135,7 +1150,7 @@ endsnippet
 
 snippet '^st' "Struct" brA
 // $1 ${2:TODO: Description}.
-type ${1: } struct {`!p t[1] = smart_capitalisation(t[1])`
+type ${1: } struct {
 	$0
 }
 endsnippet
@@ -1161,7 +1176,7 @@ endsnippet
 snippet t "Test" bw
 func Test`!p if not snip.c: snip.rv = guess_test_name()`$1(t *testing.T) {
 	$0
-}`!p t[1] = smart_capitalisation(t[1], non_alphanum_underscore)`
+}
 endsnippet
 
 pre_expand "add_import(snip, 'fmt', 'testing', 'github.com/stretchr/testify/assert')"
@@ -1201,7 +1216,7 @@ func Test`!p if not snip.c: snip.rv = guess_test_name()`$1(t *testing.T) {
 	assert := assert.New(FailOnError(t))
 
 	$0
-}`!p t[1] = smart_capitalisation(t[1])`
+}
 endsnippet
 
 snippet tb "Test Benchmark" bw
@@ -1241,17 +1256,28 @@ endsnippet
 
 ## Symbols ##
 
+snippet '(?<![^\s])/\*' "Comment" rA
+/*$0*/
+endsnippet
+
+# Wraps single return type in parens when adding another
+# Requires new syntax definition
+context "get_syntax_name(snip.cursor, '^\s*({)$') == 'goFuncBraces'"
+snippet '\b([a-zA-Z0-9_.-]+),' "" rA
+(`!p snip.rv = match[1]`, $0)
+endsnippet
+
 context "line_startswith(snip, if_re) and 'err := ' in snip.buffer[snip.line]"
 snippet '; ?e' "Error Gaurd" irA
 ; err !$0= nil
 endsnippet
 
 snippet = "Assignment" bA
-$1 := $0`!p t[1] = smart_capitalisation(t[1], cap_first=False)`
+$1 := $0
 endsnippet
 
 snippet e= "Error Assignment" bA
-$1, err := $0`!p t[1] = smart_capitalisation(t[1], cap_first=False)`
+$1, err := $0
 endsnippet
 
 snippet 2= "Assignment (2 arguments)" bA

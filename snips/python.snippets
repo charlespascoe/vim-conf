@@ -117,14 +117,8 @@ else:
 	``
 endsnippet
 
-snippet 'ifl(n?) ' "If length" brA
-if len(${1: }) `!p snip.rv = '!' if match[1] == 'n' else '='`= $2:
-	$0
-endsnippet
-
-snippet 'if([lg])t(e?) ' "If length" brA
-if len(${1: }) `!p snip.rv = '>' if match[1] == 'g' else '<'``!p snip.rv = '=' if match[2] == 'e' else ''` $2:
-	$0
+snippet ii "isinstance" w
+isinstance($1, $2)
 endsnippet
 
 ## M ##

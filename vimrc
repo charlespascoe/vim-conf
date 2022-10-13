@@ -24,6 +24,10 @@ set formatoptions=crqjn
 set textwidth=80
 set formatlistpat=^\\s*\\d\\+[\\]:.)}\\t\ ]\\s*\\\|^\\s*-\\s*
 
+" Allow the cursor to go past the last character
+set ve+=onemore
+
+" Reload files when they change outside of Vim
 set autoread
 
 " Enable lazy redraw (waits until mappings/macros have finished before
@@ -83,7 +87,7 @@ set listchars=tab:│\  list
 set mouse=a
 set ttymouse=xterm2
 
-" Disable octal increment
+" Disable octal increment (annoying when dealing with telephone numbers)
 set nrformats-=octal
 
 " Disable middle click paste
@@ -102,9 +106,7 @@ map Q <Nop>
 nmap K <Nop>
 
 " Set options to improve syntax highlighing performance
-set nocursorcolumn
-syntax sync minlines=256
-set re=1
+set re=2
 
 " Set window split options
 set splitright " For vertical splits, the cursor will be on the right pane
@@ -114,10 +116,7 @@ set splitbelow " For horizontal splits, the cursor will be on the bottom pane
 set nofoldenable
 
 " Set shell for shell-based commands
-set shell=/bin/bash
-
-imap <C-a> <Home>
-imap <C-e> <End>
+set shell=/bin/zsh
 
 " Initialise Dictation
 call dictate#Init()

@@ -2,6 +2,19 @@ global !p
 from go_snippet_utils import add_import
 endglobal
 
+snippet gotempfile "Go Temp File Template" b
+package main
+
+import (
+)
+
+// Summary: $1
+
+func main() {
+	$0
+}
+endsnippet
+
 snippet argutils "Argument Parsing Utilities" b
 import (
 	"flag"

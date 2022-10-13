@@ -143,13 +143,6 @@ let g:go_gopls_complete_unimported = v:false
 let g:go_gopls_deep_completion = v:false
 let g:go_rename_command = 'gopls'
 
-" indentLine
-let g:indentLine_fileTypeExclude = ['bulletnotes', 'help']
-let g:indentLine_showFirstIndentLevel = 1
-let g:indentLine_char = '│'
-let g:indentLine_first_char = '│'
-let g:indentLine_color_term = 236
-
 " jedi-vim
 let g:jedi#popup_on_dot = 0
 

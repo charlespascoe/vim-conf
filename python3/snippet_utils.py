@@ -21,7 +21,7 @@ def after_cursor(snip, s):
     print(ac)
 
     if isinstance(s, re.Pattern):
-        return s.match(ac)
+        return s.search(ac)
     else:
         return ac.strip().startswith(s)
 
@@ -143,3 +143,31 @@ def format_snake_case(s, cap=False):
 
 def start_dictation():
     vim.command('call dictate#Start()')
+
+def get_syntax_name(pos, pattern, behind_pos=False):
+    # NOTE: pos (in any form) must be zero-based
+    if isinstance(pos, int):
+        line = pos
+        col = 0
+    else:
+        line, col = pos
+
+    if isinstance(pattern, str):
+        pattern = re.compile(pattern)
+
+    line_text = vim.current.window.buffer[line]
+
+    if behind_pos:
+        m = pattern.search(line_text[:col])
+    else:
+        m = pattern.search(line_text[col:])
+
+    if m is None:
+        return None
+
+    if len(m.groups() > 0):
+        match_col = m.span(1)[0]
+    else:
+        match_col = m.span()[0]
+
+    return vim.eval(f'synIDattr(synID({line + 1}, {col + match_col + 1}, 0), "name")')
