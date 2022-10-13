@@ -2,6 +2,12 @@ global !p
 from snippet_utils import *
 endglobal
 
+snippet '^def ' "Define Function" brA
+def $1($2)$3
+	$0
+enddef
+endsnippet
+
 ## F ##
 
 snippet '^f ' "Function" brA
@@ -10,12 +16,18 @@ fun $1($2)
 endfun
 endsnippet
 
+snippet 'for ' "For loop" brA
+for $1
+	$0
+endfor
+endsnippet
+
 ## I ##
 
 snippet 'if ' "If" brA
 if $1
 	$0
-end
+endif
 endsnippet
 
 ## L ##
@@ -26,6 +38,11 @@ endsnippet
 
 ## R ##
 
-snippet '^\s*r ' "return" brA
+snippet 'r ' "return" brA
 return $0
+endsnippet
+
+## T ##
+snippet type "Type assertion"
+type($1) == v:t_
 endsnippet

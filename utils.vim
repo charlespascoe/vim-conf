@@ -10,8 +10,6 @@ fun! FindProjectRoot(dir, indicator)
     end
 endf
 
-" Auto-Paste Mode
-
 function! ShowHead()
     let l = line('.')
     Gvsplit HEAD:%
@@ -60,49 +58,9 @@ command! FormatJson %!python -m json.tool
 " This needs to be '<Esc>:' because it expects user input
 noremap <leader>R <Esc>:%s/\<<C-r><C-w>\>//gc<Left><Left><Left>
 
-" Move a single line
-
 " Edit macros
 
 nnoremap <leader>m :<c-u><c-r><c-r>='let @'. v:register .' = '. string(getreg(v:register))<cr>
-
-" Line spread
-let g:line_spread_append_last = 1
-
-fun! TrimItem(index, text)
-    return trim(a:text)
-endfun
-
-fun! SpreadAcrossLines(charCode, input)
-    if a:charCode == 13
-        return a:input
-    endif
-
-    let splitChar = printf('%c', a:charCode)
-
-    let items = map(split(a:input, splitChar), function("TrimItem"))
-    let lines = join(items, splitChar."\n")
-
-    if g:line_spread_append_last
-        let lines .= splitChar
-    endif
-
-    return lines
-endfun
-
-fun! SeparatorSpread(type)
-    if a:type ==# 'char'
-        let charCode = getchar()
-        exec 'normal!' "`[v`]c\<Enter>\<Up>"
-        let lines = split(SpreadAcrossLines(charCode, @"), "\n")
-        call append(line('.'), lines)
-        exec 'normal!' "\<Down>=".len(lines)."="
-    else
-        echom "CommaSpread: Unhandled type ".a:type
-    endif
-endfun
-
-nnoremap gS :set operatorfunc=SeparatorSpread<CR>g@
 
 " Quick Search
 fun! QuickSearchMap(key, title, pattern)
@@ -134,54 +92,10 @@ endfun
 nnoremap <expr> <silent> zg ConfirmSpellGood() ? 'zg' : ''
 
 " Attempts to fix syntax highlighting issues
-command SyntaxSync syntax sync fromstart
+" command SyntaxSync syntax sync fromstart
 
 " This autocommand may cause performance issues
 autocmd BufEnter,InsertLeave * :syntax sync fromstart
-
-let s:duplicate_count = 1
-
-fun! Duplicate(type = '')
-    if a:type == ''
-        let s:duplicate_count = v:count1
-        set opfunc=Duplicate
-        return "\<Esc>g@"
-    endif
-
-    if a:type ==# 'line' || a:type ==# 'V' || a:type ==# 'char'
-        exec "normal! '[V']y']".s:duplicate_count."p"
-    else
-        echom a:type
-    endif
-
-endfun
-
-nnoremap <expr> gd Duplicate()
-nnoremap gdd <Cmd>exec 'normal yy'.v:count1.'p'<CR>
-
-" Invert binary
-
-py3 from invert_binary import invert_binary
-
-fun! s:InvertBinary()
-    let l:replacement = py3eval("invert_binary(vim.eval('expand(\"<cword>\")'))")
-
-    if l:replacement != ''
-        exec 'normal' 'ciw'.l:replacement
-    else
-        let l:replacement = py3eval("invert_binary(vim.eval('expand(\"<cWORD>\")'))")
-
-        if l:replacement != ''
-            exec 'normal' 'ciW'.l:replacement
-        end
-    end
-
-    call repeat#set("\<Plug>(InvertBinary)", 1)
-endfun
-
-nnoremap <silent> <Plug>(InvertBinary) :<C-u>call <SID>InvertBinary()<CR>
-
-nmap <leader>n <Plug>(InvertBinary)
 
 " Enter Improvements
 
@@ -193,32 +107,6 @@ au FileType qf nnoremap <buffer> <Enter> <Enter>
 " Note that the two double quote substitutions are very subtly different (open
 " vs close)
 command FixQuotes %s/’/'/ge | %s/“/"/ge | %s/”/"/ge
-
-" Set indent level marker based on shiftwidth (only applies to space-indented
-" files)
-
-fun s:SetIndentMarker()
-    let lc = &l:listchars
-
-    if lc == ''
-        let lc = &listchars
-    end
-
-    let lcopts = filter(split(lc, ','), 'v:val !~ "^leadmultispace"')
-
-    let sw = &l:shiftwidth
-
-    if sw == 0
-        let sw = &shiftwidth
-    end
-
-    call add(lcopts, 'leadmultispace:│'.repeat(' ', sw-1))
-
-    let &l:listchars = join(lcopts, ',')
-endfun
-
-au BufReadPost * call <SID>SetIndentMarker()
-au OptionSet shiftwidth call <SID>SetIndentMarker()
 
 " Command-line mappings and abbreviations
 cabbr <expr> eh 'e '..expand('%:h')..'/'

@@ -140,3 +140,6 @@ let g:jedi#usages_command = "<leader>tr"
 let g:jedi#rename_command = "<leader>tR"
 let g:jedi#completions_command = ""
 
+
+" Vim's JSON syntax
+let g:vim_json_conceal = 0

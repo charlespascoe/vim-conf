@@ -85,9 +85,6 @@ nmap <expr> <leader>gs &l:spell ? '<Cmd>setlocal nospell<CR>' : '<Cmd>setlocal s
 " Custom vertical split char
 set fillchars+=vert:│
 
-" Custom indent marker
-set listchars=tab:│\  list
-
 " Enable mouse control (useful for scrolling and resizing)
 set mouse=a
 set ttymouse=xterm2
@@ -126,12 +123,15 @@ set shell=/bin/zsh
 " Initialise Dictation
 call dictate#Init()
 
+if exists('$BN_PROJ') && $BN_PROJ == '1'
+    call bulletnotes#InitProject()
+elseif isdirectory('.bnproj')
+    let b:bulletnotes_autosync = v:false
+    call bulletnotes#InitProject()
+endif
+
 " External files
 source ~/.vim-conf/utils.vim
-source ~/.vim-conf/buffer-management.vim
 source ~/.vim-conf/autocomplete.vim
 source ~/.vim-conf/colours.vim
 source ~/.vim-conf/plugin-config.vim
-source ~/.vim-conf/find.vim
-source ~/.vim-conf/bulletnotes.vim
-source ~/.vim-conf/templates.vim
