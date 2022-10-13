@@ -7,9 +7,16 @@ leading_whitespace_re = re.compile(r'^\s+')
 
 def line_startswith(snip, s):
     if isinstance(s, re.Pattern):
-        return s.match(snip.buffer[snip.line])
+        return s.search(snip.buffer[snip.line])
     else:
         return snip.buffer[snip.line].strip().startswith(s)
+
+
+def line_endswith(snip, s):
+    if isinstance(s, re.Pattern):
+        return s.search(snip.buffer[snip.line])
+    else:
+        return snip.buffer[snip.line].strip().endswith(s)
 
 
 def cursor_at_eol(snip):
@@ -27,18 +34,18 @@ def after_cursor(snip, s):
 
 
 def replace_rest_of_line(snip):
-	l = snip.buffer[snip.line]
-	snip.context = l[snip.column+1:].strip()
+    l = snip.buffer[snip.line]
+    snip.context = l[snip.column+1:].strip()
 
-	ws_match = leading_whitespace_re.match(l)
+    ws_match = leading_whitespace_re.match(l)
 
-	if ws_match is None:
-		ws = ''
-	else:
-		ws = ws_match[0]
+    if ws_match is None:
+        ws = ''
+    else:
+        ws = ws_match[0]
 
-	snip.buffer[snip.line] = ws
-	snip.cursor.set(snip.line, len(ws))
+    snip.buffer[snip.line] = ws
+    snip.cursor.set(snip.line, len(ws))
 
 
 # Returns the zero-based index of the first line that matches the regexp
@@ -171,3 +178,7 @@ def get_syntax_name(pos, pattern, behind_pos=False):
         match_col = m.span()[0]
 
     return vim.eval(f'synIDattr(synID({line + 1}, {col + match_col + 1}, 0), "name")')
+
+def in_syntax_group(name):
+    syn_stack = vim.eval('map(synstack(line("."), col(".")), "synIDattr(v:val, \\"name\\")")')
+    return name in syn_stack

@@ -573,22 +573,26 @@ endsnippet
 
 ## F ##
 
-snippet 'F(\[\])?(u?i[136]?|f[36]?|s|b|B)' "Field" bwr
+context "in_syntax_group('goStructTypeBlock')"
+snippet 'F(\[\])?(u?i[136]?|f[36]?|s|b|B) ' "Field" bwreA
 $1 `!p snip.rv = match[1] or ''``!p snip.rv = convert_type_map.get(match[2] or '', '')``!p t[1] = smart_capitalisation(t[1])`
 endsnippet
 
+context "in_syntax_group('goStructTypeBlock')"
 pre_expand "add_import(snip, 'github.com/rs/zerolog')"
-snippet Fl "Field (logger)" bw
+snippet 'Fl ' "Field (logger)" bwreA
 log zerolog.Logger
 endsnippet
 
+context "in_syntax_group('goStructTypeBlock')"
 pre_expand "add_import(snip, 'sync')"
-snippet FL "Field (Lock)" bw
+snippet 'FL ' "Field (Lock)" bwreA
 ${1:lock} sync.Mutex
 endsnippet
 
+context "in_syntax_group('goStructTypeBlock')"
 pre_expand "add_import(snip, 'sync')"
-snippet FLr "Field (RW Lock)" bw
+snippet 'FLr ' "Field (RW Lock)" bwreA
 ${1:lock} sync.RWMutex
 endsnippet
 
@@ -688,6 +692,7 @@ snippet '^type impl ([^\s]+) ' "Implement Interface" brA
 `!p if not snip.c: snip.rv = implement_interface()`
 endsnippet
 
+context "not line_endswith(snip, '{')"
 pre_expand "replace_rest_of_line(snip)"
 snippet 'if ' "If" brA
 if `!p if not snip.c and snip.context: snip.rv = append_err_check(snip.context.replace(' =', ' :=', 1))`$1`!p snip.rv = generate_err_check(t[1])` {
@@ -696,7 +701,7 @@ if `!p if not snip.c and snip.context: snip.rv = append_err_check(snip.context.r
 endsnippet
 
 context "line_startswith(snip, if_re)"
-snippet 'e ' "If Error" rA
+snippet '(?<=\s)e ' "If Error" rA
 err := $1; err != nil
 endsnippet
 
@@ -1173,6 +1178,11 @@ endsnippet
 
 ## T ##
 
+context "not snip.buffer.name.endswith('_test.go')"
+snippet '^t ' "Type" brA
+type $0
+endsnippet
+
 snippet t "Test" bw
 func Test`!p if not snip.c: snip.rv = guess_test_name()`$1(t *testing.T) {
 	$0
@@ -1198,8 +1208,9 @@ for i, test := range tests {
 }
 endsnippet
 
+context "cursor_at_eol(snip)"
 snippet 'td ' "TODO Comment" brA
-// `!p snip.rv = snip.c or start_dictation('TODO:')` $1
+// TODO: $0
 endsnippet
 
 snippet tf "Test File" bw
@@ -1235,11 +1246,6 @@ func Benchmark_$1(b *testing.B) {
 		}
 	})
 }
-endsnippet
-
-
-snippet '^ty' "Type" brA
-type ${1:Name} ${2:Type}
 endsnippet
 
 ## V ##

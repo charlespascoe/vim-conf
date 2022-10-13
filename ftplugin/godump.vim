@@ -18,7 +18,10 @@ fun! UpdateLine()
         " call win_execute(t:dump_go_winid, 'match Highlight /\%'..l:match[2]..'l/')
 
         echom "CURSOR" l:match[2]
-        call win_execute(t:dump_go_winid, 'call winrestview({"lnum": '..l:match[2]..', "col": 1})')
+        let l:line = l:match[2]
+        let l:height = winheight(t:dump_go_winid)
+        let l:topline = min([l:line - (l:height/2), 1])
+        call win_execute(t:dump_go_winid, 'call winrestview('..string({'lnum': l:line, 'col': 1, 'topline': l:topline})..')')
     end
 endfun
 

@@ -3,6 +3,7 @@ https://github.com/christoomey/vim-sort-motion
 https://github.com/christoomey/vim-titlecase
 https://github.com/ctrlpvim/ctrlp.vim
 https://github.com/davidhalter/jedi-vim
+https://github.com/dkarter/bullets.vim
 https://github.com/fatih/vim-go
 https://github.com/habamax/vim-asciidoctor
 https://github.com/ianks/vim-tsx

@@ -34,7 +34,8 @@ let g:airline_symbols.linenr = '☰'
 let g:airline_symbols.maxlinenr = ''
 
 " bullets.vim
-let g:bullets_enabled_file_types = ['markdown', 'text', 'gitcommit', 'asciidoctor']
+let g:bullets_enabled_file_types = ['markdown', 'text', 'asciidoctor']
+let g:bullets_set_mappings = 0
 
 " Bulletnotes
 

@@ -219,3 +219,7 @@ endfun
 
 au BufReadPost * call <SID>SetIndentMarker()
 au OptionSet shiftwidth call <SID>SetIndentMarker()
+
+" Command-line mappings and abbreviations
+cabbr <expr> eh 'e '..expand('%:h')..'/'
+cnoremap <expr> <Space> (getcmdtype() == ':' && getcmdline() == 'eh') ? "\<C-]>" : "\<Space>"

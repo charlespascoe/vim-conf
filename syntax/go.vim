@@ -37,7 +37,7 @@ syntax keyword goUnderscore _
 syntax keyword goCommentTodo    contained TODO FIXME XXX TBD NOTE
 syntax region goComment start=+//+ end=+$+ contains=goCommentTodo keepend
 syntax region goComment start=+/\*+ end=+\*/+ contains=goCommentTodo fold keepend
-syntax match goGenerateComment +//go:generate.*$/+
+syntax match goGenerateComment +//go:generate.*$+
 
 " Literals
 " syntax region goString start='"' skip=/\\"/ end='"\|$' contains=goStringEscape,goDoubleQuoteEscape,goStringFormat
@@ -80,7 +80,7 @@ syntax match goInlineShortVarDecl /\K\k*\%(\s*,\s*\%(\K\k*\)\?\)*\ze\s*:=/ conta
 " Packages
 syntax keyword goPackage package
 syntax keyword goImport import skipwhite nextgroup=goImportItem,goImports
-syntax region goImports matchgroup=goImportParens start='(' end=')' contained contains=goImportItem
+syntax region goImports matchgroup=goImportParens start='(' end=')' contained contains=goImportItem,goComment
 syntax match goImportItem /\(\([\._]\|\K\k*\)\s\+\)\?"[^"]*"/ contained contains=@NoSpell,goString
 
 " Types
@@ -88,7 +88,7 @@ syntax match goPointer /*/ contained nextgroup=@goType
 syntax region goTypeParens start='(' end=')' contained contains=@goType
 
 syntax keyword goTypeKeyword type skipempty skipwhite nextgroup=goTypeDeclName,goTypeDeclGroup
-syntax region goTypeDeclGroup matchgroup=goTypeDeclGroupParens start='(' end=')' contained contains=goTypeDeclName
+syntax region goTypeDeclGroup matchgroup=goTypeDeclGroupParens start='(' end=')' contained contains=goTypeDeclName,goComment
 syntax match goTypeDeclName /\K\k*/ contained skipempty skipwhite nextgroup=goTypeDeclTypeParams,goTypeAssign,@goType
 syntax region goTypeDeclTypeParams matchgroup=goTypeParamBrackets start='\[' end='\]' contained contains=goTypeParam,goComma nextgroup=@goType
 syntax match goTypeAssign /=/ contained skipwhite nextgroup=@goType
@@ -104,8 +104,8 @@ syntax region goTypeArgs matchgroup=goTypeParamBrackets start='\[' end='\]' cont
 syntax keyword goSimpleBuiltinTypes any bool byte complex128 complex64 error float32 float64 int int8 int16 int32 int64 rune string uint uint8 uint16 uint32 uint64 uintptr
 
 " TODO: Can function types have type params?
-syntax keyword goFuncType func contained skipwhite nextgroup=goFuncTypeParens
-syntax region goFuncTypeParens matchgroup=goFuncParens start='(' end=')' contained contains=goFuncTypeParam,goComma skipwhite nextgroup=@goType,goFuncTypeMultiReturnType
+syntax match goFuncType /func\s*(/ contained skipwhite contains=goFuncTypeParens skipwhite nextgroup=@goType,goFuncTypeMultiReturnType
+syntax region goFuncTypeParens matchgroup=goFuncParens start='(' end=')' contained contains=goFuncTypeParam,goComma
 syntax region goFuncTypeMultiReturnType matchgroup=goFuncMultiReturnParens start='(' end=')' contained contains=goNamedReturnValue,goComma
 
 syntax keyword goMap map skipempty skipwhite nextgroup=goMapKeyType
@@ -219,7 +219,7 @@ syntax keyword goElse else
 
 " For
 syntax keyword goFor for skipempty skipwhite nextgroup=goInlineShortVarDecl
-syntax keyword goRange range
+syntax keyword goRepeat range break continue
 
 " Switch and Select
 syntax keyword goSwitch switch skipwhite nextgroup=goInlineShortVarDecl
@@ -297,8 +297,8 @@ hi link goCommentTodo Todo
 
 hi link goUnderscore Special
 
-hi link goFor Repeat
-hi link goRange Repeat
+hi link goRepeat Repeat
+hi link goFor goRepeat
 
 hi link goRuneLiteral Character
 hi link goMap goSimpleBuiltinTypes

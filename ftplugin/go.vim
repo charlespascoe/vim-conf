@@ -134,12 +134,12 @@ fun! FindAllImports()
     let l:pos = getpos('.')
     let l:imports = []
 
-    normal gg
+    keepjumps normal gg
 
     let l:import_line = search('^import\s\+($', 'W')
 
     if l:import_line != 0
-        normal $
+        keepjumps normal $
         let l:end_import_line =  searchpair('(', '', ')', 'Wn')
 
         if l:end_import_line > 0
@@ -147,7 +147,7 @@ fun! FindAllImports()
         end
     else
         " TODO: Check both, not just one?
-        normal gg
+        keepjumps normal gg
 
         let l:import_line = search('^import\s\+[^(]$', 'W')
 
@@ -203,7 +203,6 @@ if !exists('g:REG')
     call RegAutocmds()
     let g:REG = 1
 end
-
 
 fun! DumpObject()
     fun! GetModuleName()
