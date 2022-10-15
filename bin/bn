@@ -193,8 +193,8 @@ case $1 in
 
         cd "$BN_HOME" && \
         git clone "$($BN_GET_REMOTE "$proj")" "$proj" && \
-        git config commit.gpgsign false && \
         cd "$proj" && \
+        git config commit.gpgsign false && \
         rm -f .git/hooks/* && \
         git checkout "$proj"
 

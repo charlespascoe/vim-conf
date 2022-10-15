@@ -6,8 +6,7 @@ endif
 
 let b:current_syntax = 'go'
 
-
-" syntax clear
+syntax clear
 syntax sync fromstart
 syntax case match
 
@@ -24,8 +23,6 @@ syntax case match
 " - Struct and Interface need them so that simple matches (e.g. /struct {/) can
 "   contain complext nested types
 " - No other types should use extend
-
-let b:current_syntax = 'go'
 
 syntax match goDot /\./
 syntax match goSemicolon /;/

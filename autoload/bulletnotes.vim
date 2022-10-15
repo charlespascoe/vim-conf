@@ -140,6 +140,9 @@ fun bulletnotes#InitBuffer()
     setlocal indentexpr=bulletnotes#GetIndent(v:lnum)
     setlocal formatexpr=bulletnotes#Format(v:lnum,v:lnum+v:count-1)
 
+    " TODO: Figure out how to do this in a more generic way
+    call emoji#RegisterAbbr()
+
     inoremap <silent> <buffer> <expr> <C-z> bulletnotes#CanOmniComplete() ? "<C-x><C-o>" : "<C-p>"
     setlocal omnifunc=bulletnotes#Complete
 
@@ -698,13 +701,13 @@ endfun
 " Completion {{{
 
 fun bulletnotes#CanOmniComplete()
-    if !g:bn_project_loaded
-        return 0
-    endif
-
     let lstr = strpart(getline('.'), 0, col('.') - 1)
 
-    let metatext = matchstr(lstr, '\(\[[\[:]\|[#@]\)[^ ]*$')
+    if !g:bn_project_loaded
+        return matchstr(lstr, '[^[]:[^ ]*$') != ''
+    endif
+
+    let metatext = matchstr(lstr, '\%(^\|[^[:alnum:]]\)\zs\%(\[[\[:]\|[#@:]\)[^ ]*$')
 
     return metatext != ''
 endfun
@@ -713,13 +716,13 @@ endfun
 fun bulletnotes#Complete(findstart, base)
     if a:findstart
         " TODO: Fallback behaviour when not in a project
-        if !g:bn_project_loaded
-            return -3
-        endif
+        " if !g:bn_project_loaded
+        "     return -3
+        " endif
 
         let lstr = strpart(getline('.'), 0, col('.') - 1)
 
-        let metatext = matchstr(lstr, '\(\[[\[:]\|[#@]\)[^ ]*$')
+        let metatext = matchstr(lstr, '\%(^\|[^[:alnum:]]\)\zs\%(\[[\[:]\|[#@:]\)[^ ]*$')
 
         if metatext == ''
             " Cancel completion
@@ -729,16 +732,21 @@ fun bulletnotes#Complete(findstart, base)
         return len(lstr) - len(metatext)
     endif
 
-    " TODO: Fallback behaviour when not in a project
-    if !g:bn_project_loaded
-        return []
-    endif
-
     if len(a:base) == 0
         return []
     endif
 
     let type = a:base[0]
+
+    if type == ':'
+        " TODO: Figure out how to do this in a more generic way
+        return emoji#Complete(a:findstart, a:base)
+    endif
+
+    " TODO: Fallback behaviour when not in a project
+    if !g:bn_project_loaded
+        return []
+    endif
 
     if type == '#'
         " TODO: Order by frequency?
