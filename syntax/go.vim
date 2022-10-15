@@ -43,7 +43,7 @@ syntax match goGenerateComment +//go:generate.*$+
 " syntax region goString start='"' skip=/\\"/ end='"\|$' contains=goStringEscape,goDoubleQuoteEscape,goStringFormat
 syntax region goString start='"' skip=/\\\\\|\\"/ end='"' oneline contains=goStringEscape,goDoubleQuoteEscape,goStringFormat
 syntax match goStringEscape /\v\\%(\o{3}|x\x{2}|u\x{4}|U\x{8}|[abfnrtv\\"])/ contained
-syntax region goInvalidRuneLiteral start=+'+ skip=+\\'+ end=+'+ oneline contains=goRuneLiteral
+syntax region goInvalidRuneLiteral start=+'+ skip=+\\'+ end=+'+ oneline keepend contains=goRuneLiteral
 " TODO: Highlight escapes
 syntax match goRuneLiteral /\v'%([^\\]|\\%(\o{3}|x\x{2}|u\x{4}|U\x{8}|[abfnrtv\\']))'/ contained
 syntax region goRawString start='`' end='`'
@@ -258,7 +258,8 @@ hi link goNil Constant
 hi link goRawString String
 
 " Package and Imports
-hi link goImport Include
+" hi link goImport Include TODO: Is this correct?
+hi link goImport Keyword
 
 " Types
 

@@ -47,6 +47,18 @@ fun s:ExportOptions(cur, ...)
     return options
 endfunc
 
+fun s:FindProjectRoot(dir, indicator)
+    if isdirectory(a:dir."/".a:indicator) || filereadable(a:dir."/".a:indicator)
+        return a:dir
+    el
+        if a:dir == "/"
+            return ""
+        el
+            return <SID>FindProjectRoot(fnamemodify(a:dir, ":h"), a:indicator)
+        end
+    end
+endf
+
 fun LocateBullets(type)
     if index(s:bullet_set, a:type[0]) < 0
         echoerr 'Invalid bullet: '.a:type[0]
@@ -211,7 +223,7 @@ fun bulletnotes#InitProject()
         return
     endif
 
-    let root = FindProjectRoot(getcwd(), '.bnproj')
+    let root = <SID>FindProjectRoot(getcwd(), '.bnproj')
 
     if root != ''
         exec "cd ".fnameescape(root)

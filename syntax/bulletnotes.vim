@@ -3,21 +3,17 @@
 
 " Title
 
-syntax match NoteTitle /^## .* ##/ contains=Tag,TitleEnd
-syntax match Subtitle /^:: .* ::/ contains=Tag,SubtitleEnd
-syntax match ContactTitle /^@@ .* @@/ contains=ContactTitleEnd
-
-syntax match TitleEnd /\s*##\s*/ contained conceal
-syntax match SubtitleEnd /\s*::\s*/ contained conceal
-syntax match ContactTitleEnd /\s*@@\s*/ contained conceal
+syntax region NoteTitle matchgroup=TitleEnd start='^## \+' end=' \+##$' oneline concealends contains=Tag
+syntax region Subtitle matchgroup=SubtitleEnd start='^:: \+' end=' \+::$' oneline concealends contains=Tag
+syntax region ContactTitle matchgroup=ContactTitleEnd start='^@@ \+' end=' \+@@$' oneline concealends
 
 hi link NoteTitle Title
-highlight Subtitle cterm=underline ctermfg=140
-highlight ContactTitle cterm=underline ctermfg=51
+hi Subtitle cterm=underline ctermfg=140
+hi ContactTitle cterm=underline ctermfg=51
 
-highlight link TitleEnd NoteTitle
-highlight link SubtitleEnd Subtitle
-highlight link ContactTitleEnd ContactTitle
+hi link TitleEnd NoteTitle
+hi link SubtitleEnd Subtitle
+hi link ContactTitleEnd ContactTitle
 
 " Leading Whitespace (for consistent multi-line highlighting)
 
@@ -96,16 +92,16 @@ syntax match LinkEnds /\[[\[:]\?\|[:\]]\?\]/ contained conceal
 syntax match Contact /@[a-zA-Z\-._]\+/ contains=ContactMarker
 syntax match Anchor /:[a-zA-Z0-9]\+:/ contains=@NoSpell,AnchorMarker
 syntax match AnchorMarker /:/ contained
-syntax match MonospaceEnd /{\|}/ contained conceal
-syntax region Monospace start='{' skip='\\}' end='}' keepend contains=@NoSpell,MonospaceEnd
-syntax match MonospaceEnd /{\|}/ contained conceal
-syntax region HighlightedMonospace start='{{' skip='\\}' end='}}' keepend contains=@NoSpell,HighlightedMonospaceEnd
-syntax match HighlightedMonospaceEnd /{{\|}}/ contained conceal
-syntax region Highlight start='`' end='`' contains=HighlightMark,@Metatext keepend
-syntax match HighlightMark /`/ contained conceal
-" syntax cluster Metatext contains=Tag,Pointer,Link,Contact,Anchor,AnchorPointer,Monospace
-syntax cluster Metatext contains=Anchor,Tag,Link,Contact,Monospace,Highlight,HighlightedMonospace
 syntax match ContactMarker /@/ contained conceal
+
+syntax region Monospace matchgroup=MonospaceEnd start='\\\@1<!{' skip='\\.' end='}' keepend concealends contains=@NoSpell,Escaped
+syntax region HighlightedMonospace matchgroup=HighlightedMonospaceEnd start='\\\@1<!{{' skip='\\.' end='}}' keepend concealends contains=@NoSpell,Escaped
+syntax region Highlight matchgroup=HighlightMark start='`' skip='\\.' end='`' concealends contains=@Metatext,Escape keepend
+" syntax cluster Metatext contains=Anchor,AnchorPointer,Contact,Link,Monospace,Pointer,Tag
+syntax cluster Metatext contains=Anchor,Contact,Highlight,HighlightedMonospace,Link,Monospace,Tag
+
+" A hack to hide escape sequences
+syntax region Escaped matchgroup=Special start='\\' end='.\zs' keepend concealends contained contains=NONE transparent
 
 highlight Tag ctermfg=226 cterm=bold
 " highlight Pointer ctermfg=40

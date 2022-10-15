@@ -146,8 +146,8 @@ case $1 in
         ec 220 "\nCreating empty project directory..." && \
         mkdir "$BN_HOME/$proj" && \
         cd "$BN_HOME/$proj" && \
-        mkdir -p .bnproj inbox ref && \
-        touch {.bnproj,inbox,ref}/.keep && \
+        mkdir -p .bnproj/{spell,snips} inbox ref && \
+        touch {.bnproj/{spell,snips},inbox,ref}/.keep && \
 
         ec 220 "\nInitialising git repo..." && \
         git init && \

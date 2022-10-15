@@ -189,20 +189,13 @@ fun! RefreshPackageHighlighting()
 
     if len(l:packages) > 0
         exec 'syn keyword goPackageCustomNames '.join(l:packages, ' ')
+        hi link goPackageCustomNames goPackageName
     end
 endfun
 
-fun! RegAutocmds()
-    au BufReadPost,CursorHold,CursorHoldI *.go call RefreshPackageHighlighting()
-endfun
-
-" TODO: I know there's a much better way of doing this instead of using a flag
-if !exists('g:REG')
-    " TODO: Figure out where to put this
-    hi link goPackageCustomNames goPackageName
-    call RegAutocmds()
-    let g:REG = 1
-end
+au CursorHold,CursorHoldI <buffer> call RefreshPackageHighlighting()
+au BufReadPost <buffer> call RefreshPackageHighlighting()
+" call RefreshPackageHighlighting()
 
 fun! DumpObject()
     fun! GetModuleName()
