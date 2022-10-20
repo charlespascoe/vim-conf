@@ -1,0 +1,30 @@
+snippet rule "Rule" b
+- desc: '$1'
+	from:
+		key_code: $2
+		modifiers: [$3]
+	to:
+		key_code: $4
+		modifiers: [$5]
+	conditions: $6
+
+endsnippet
+
+
+snippet '\s*frontmost_application_(if|unless)' "" r
+
+	frontmost_application_`!p snip.rv = match[1]`: ['^io\\.alacritty$']
+endsnippet
+
+# device_if
+# device_unless
+# device_exists_if
+# device_exists_unless
+# keyboard_type_if
+# keyboard_type_unless
+# input_source_if
+# input_source_unless
+# variable_if
+# variable_unless
+# event_changed_if
+# event_changed_unless
