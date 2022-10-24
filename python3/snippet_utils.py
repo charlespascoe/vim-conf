@@ -19,6 +19,13 @@ def line_endswith(snip, s):
         return snip.buffer[snip.line].strip().endswith(s)
 
 
+def line_equals(snip, s):
+    if isinstance(s, re.Pattern):
+        return s.match(snip.buffer[snip.line])
+    else:
+        return snip.buffer[snip.line].strip() == s
+
+
 def cursor_at_eol(snip):
     return len(snip.buffer[snip.line])-1 == snip.column
 
@@ -172,7 +179,7 @@ def get_syntax_name(pos, pattern, behind_pos=False):
     if m is None:
         return None
 
-    if len(m.groups() > 0):
+    if len(m.groups()) > 0:
         match_col = m.span(1)[0]
     else:
         match_col = m.span()[0]

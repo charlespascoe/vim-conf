@@ -2,7 +2,9 @@ let s:in_insert_mode = v:false
 
 func dictate#Init()
     if empty(glob('/tmp/dictation'))
+        echohl Error
         echom "Dictation server unavailable"
+        echohl None
         return
     endif
 

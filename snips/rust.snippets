@@ -1,0 +1,45 @@
+global !p
+import re
+from snippet_utils import *
+
+format_arg_re = re.compile(r'\{([a-z]+)\}')
+
+def insert_fomat_keys(snip, format_str):
+	keys = ', '.join(match + '=$' + str(i+1) for i, match in enumerate(format_arg_re.findall(format_str)))
+	snip.expand_anon(keys)
+
+endglobal
+
+## F ##
+
+snippet '^f ' "Function" brA
+fn $1($2)`!p snip.rv = ' -> ' if t[3] else ''`$3 {
+	$0
+}
+endsnippet
+
+## L ##
+
+pre_expand "line_equals(snip, re.compile(r'lm?'))"
+snippet '\bl(m)? ' "Let" brA
+let`!p if match[1]: snip.rv = ' mut'` $1 = $2;
+endsnippet
+
+## M ##
+
+snippet main "Main function" b
+fn main() {
+	$0
+}
+endsnippet
+
+## P ##
+
+snippet pl "Println" b
+println!($0);
+endsnippet
+
+post_jump "if snip.tabstop == 0: insert_fomat_keys(snip, snip.tabstops[1].current_text)"
+snippet pf "Println format" b
+println!("$1", $0);
+endsnippet

@@ -4,8 +4,6 @@ if exists("b:current_syntax")
   finish
 endif
 
-let b:current_syntax = 'go'
-
 syntax clear
 syntax sync fromstart
 syntax case match
@@ -390,3 +388,5 @@ hi link goSliceItemType NONE
 hi link goStructTypeField NONE
 hi link goTypeConstraint NONE
 hi link goTypeParam NONE
+
+let b:current_syntax = 'go'

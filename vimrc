@@ -9,8 +9,6 @@ endif
 
 let mapleader=" "
 
-packadd! matchit
-
 " Set cursor style
 let &t_SI = "\e[6 q"
 let &t_SR = "\e[4 q"
@@ -102,7 +100,6 @@ map Q <Nop>
 
 nmap K <Nop>
 
-" Set options to improve syntax highlighing performance
 set re=2
 
 " Set window split options
@@ -116,7 +113,7 @@ set nofoldenable
 set shell=/bin/zsh
 
 " Initialise Dictation
-call dictate#Init()
+au VimEnter * call dictate#Init()
 
 if exists('$BN_PROJ') && $BN_PROJ == '1'
     call bulletnotes#InitProject()

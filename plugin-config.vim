@@ -128,6 +128,8 @@ let g:go_rename_command = 'gopls'
 " vim-gitgutter
 let g:gitgutter_set_sign_backgrounds = 0
 
+map <leader>gn <Esc>:GitGutterNextHunk<CR>
+
 
 " jedi-vim
 let g:jedi#popup_on_dot = 0
@@ -143,3 +145,7 @@ let g:jedi#completions_command = ""
 
 " Vim's JSON syntax
 let g:vim_json_conceal = 0
+
+" Line spread plugin
+
+let g:line_spread_append_last = 1

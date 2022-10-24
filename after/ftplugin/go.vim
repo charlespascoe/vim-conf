@@ -1,5 +1,5 @@
-set commentstring=/*%s*/
 set foldmethod=expr
+
 fun! FoldIndent()
     let l:lnum = get(v:, 'lnum', line('.'))
 

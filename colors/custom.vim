@@ -38,7 +38,7 @@ hi clear SignColumn
 
 " Colors for syntax highlighting
 
-hi Comment ctermfg=32 ctermbg=235
+hi Comment ctermfg=39 ctermbg=236 cterm=italic
 
 " hi Identifier cterm=none ctermfg=43
 hi Identifier ctermfg=36 cterm=bold
