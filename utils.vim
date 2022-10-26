@@ -53,7 +53,7 @@ noremap <leader>i `iO
 imap <expr> <C-@> match(getline('.'), '^\s\+$') ? '<C-o>o' : '<Enter>'
 
 " Format JSON
-command! FormatJson %!python -m json.tool
+command! FormatJson %!python3 -m json.tool
 
 " This needs to be '<Esc>:' because it expects user input
 noremap <leader>R <Esc>:%s/\<<C-r><C-w>\>//gc<Left><Left><Left>

@@ -594,3 +594,67 @@ server.NoRoute(func(c *gin.Context) {
 	}
 })
 endsnippet
+
+snippet ragel "Ragel" b
+package main
+
+import (
+	"fmt"
+)
+
+%%{
+	machine test;
+
+	action mark {m.mark()}
+
+	main := 'test' >mark %{fmt.Println(string(m.text()))};
+
+	write data;
+}%%
+
+type machine struct {
+	/* Ragel Required Variables */
+	data []byte // The data
+	cs   int    // Current state
+	p    int    // Data Pointer (where to start; will change as the machine runs)
+	pe   int    // Data End Pointer (where to end; can be less than eof)
+	eof  int    // End of File Pointer (absolute end of the data)
+
+	/* Ragel Stack Variables */
+	// stack []int // Array of states; only used with fcall/fret etc.
+	// top   int   // State stack pointer; only used with fcall/fret etc.
+
+	/* Ragel Scanner Variables */
+	// ts int
+	// te int
+
+	/* Custom Variables */
+	mp int // Mark pointer, used when marking a matched region
+}
+
+func (m *machine) mark() {
+	m.mp = m.p
+}
+
+func (m *machine) text() []byte {
+	return m.data[m.mp:m.p]
+}
+
+func (m *machine) Parse(data []byte) {
+	&m := machine{
+		data: data,
+		pe:   len(data),
+		eof:  len(data),
+	}
+
+	%% access m.;
+	%% variable p m.p;
+	%% variable pe m.pe;
+	%% variable eof m.eof;
+
+	%% write init;
+	%% write exec;
+
+	// TODO: Error handling etc.
+}
+endsnippet

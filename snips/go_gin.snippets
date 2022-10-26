@@ -47,6 +47,11 @@ snippet '\.(GET|POST|PUT|DELETE)' "Gin Route" r
 })
 endsnippet
 
+pre_expand "add_import(snip, 'net/http')"
+snippet c.JSON "JSON Response" b
+c.JSON(http.Status${1:OK}, $2)
+endsnippet
+
 snippet serverGroup "Server Group" b
 func ${1:example}Group(router *gin.Router) {
 	$0
