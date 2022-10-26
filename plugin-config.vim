@@ -16,8 +16,21 @@ nmap <silent> <leader>f <Cmd>CtrlPBuffer<CR>
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#tab_min_count = 2
 let g:airline#extensions#tabline#show_buffers = 0
+let g:airline#extensions#tabline#show_splits = 0
+let g:airline#extensions#tabline#show_tab_count = 0
+let g:airline#extensions#tabline#show_close_button = 0
 let g:airline#extensions#obsession#enabled = 1
 let g:airline#extensions#obsession#indicator_text = '∞'
+
+let g:airline_theme_patch_func = 'AirlineThemePatch'
+
+function! AirlineThemePatch(palette)
+    for colors in values(a:palette.inactive)
+        let colors[2] = 250
+    endfor
+
+    let a:palette.normal.airline_c[3] = 235
+endfunction
 
 if !exists('g:airline_symbols')
     let g:airline_symbols = {}

@@ -3,6 +3,125 @@ import vim
 
 
 leading_whitespace_re = re.compile(r'^\s+')
+non_alphanum_underscore = re.compile(r'[^a-zA-Z0-9_]')
+
+
+class Window:
+    def __init__(self, win, buf=None):
+        self.win = win
+        self.buffer = buf or Buffer(self.win.buffer.number)
+
+    @property
+    def number(self):
+        return self.win.number
+
+    @property
+    def cursor(self):
+        # NOTE: Cusor line is zero-based
+        return (self.win.cursor[0] - 1, self.win.cursor[1])
+
+    # NOTE: Cusor line is zero-based
+    @property
+    def line(self):
+        return self.cursor[0]
+
+    @property
+    def col(self):
+        return self.cursor[1]
+
+
+class Buffer:
+    def __init__(self, bufnr=None):
+        if bufnr is None:
+            self.buf = vim.current.window.buffer
+            self.number = self.buf.number
+        else:
+            self.number = bufnr
+            self.buf = vim.buffers[self.number]
+
+    def __iter__(self):
+        for line in self.buf:
+            yield line
+
+    def __getitem__(self, lines):
+        return self.buf[lines]
+
+    def __len__(self):
+        return len(self.buf)
+
+    def lines(self, start=0, end=None, reverse=False):
+        if end is None:
+            end = len(self)
+
+        if reverse:
+            i = end - 1
+            while i >= start:
+                yield i, self[i]
+                i -= 1
+        else:
+            # Note that line_index = line_number - 1
+            for line_index, line in enumerate(self[start:end], start):
+                yield line_index, line
+
+    @property
+    def win(self):
+        if vim.current.window.buffer.number == self.number:
+            return Window(vim.current.window, self)
+        else:
+            raise Exception("TODO: Handle finding best window?")
+
+    def find_line(self, regexp, start=0, end=None, reverse=False):
+        for i, line in self.lines(start, end, reverse):
+            match = regexp.search(line)
+            if match:
+                return (i, line, match)
+
+        return None
+
+    def find_lines(self, regexp, start=0, end=None, reverse=False):
+        for i, lines in self.lines(start, end, reverse):
+            match = regexp.search(line)
+            if match:
+                yield (i, line, match)
+
+
+class Current:
+    def __init__(self):
+        self._win = None
+        self._buf = None
+
+    @property
+    def window(self):
+        if self._win is None or self._win.number != vim.current.window.number:
+            self._win = Window(vim.current.window)
+
+        return self._win
+
+    @property
+    def buffer(self):
+        return self.window.buffer
+
+
+class Buffers:
+    def __getitem__(self, number):
+        return Buffer(number)
+
+    @property
+    def current(self):
+        # A cheat to save coding
+        return current.buffer
+
+    def __len__(self):
+        return len(vim.buffers)
+
+    def __iter__(self):
+        for buf in vim.buffers:
+            yield Buffer(buf.number)
+
+
+buffers = Buffers()
+
+current = Current()
 
 
 def line_startswith(snip, s):
@@ -32,7 +151,6 @@ def cursor_at_eol(snip):
 
 def after_cursor(snip, s):
     ac = snip.buffer[snip.line][snip.column+1:]
-    print(ac)
 
     if isinstance(s, re.Pattern):
         return s.search(ac)
@@ -57,46 +175,33 @@ def replace_rest_of_line(snip):
 
 # Returns the zero-based index of the first line that matches the regexp
 def find_line(regexp):
-    for i in range(len(vim.current.window.buffer)):
-        if regexp.search(vim.current.window.buffer[i]):
-            return i
-
-    return None
+    # Buffer.find_line() returns index, line, and match, whereas this function
+    # originally just returned the index
+    return current.buffer.find_line(regexp)[0]
 
 
 def find_lines(regexp):
-    i = 0
-
-    while i < len(vim.current.window.buffer):
-        line = vim.current.window.buffer[i]
-
-        if regexp.search(line):
-            yield (i, line)
-
-        i += 1
+    # Buffer.find_lines() yields index, line, and match, whereas this function
+    # originally just returned the index and line
+    return current.buffer.find_lines(regexp)[:2]
 
 
-# Note that line is zero-based
-def preceeding_lines(line=None):
-    if line is None:
-        line = vim.current.window.cursor[0] - 1
+# Note that line is zero-based and exclusive
+def preceeding_lines(line_index=None):
+    if line_index is None:
+        line_index = current.window.line
 
-    l = line - 1
+    for _, line in current.buffer.lines(end=line_index, reverse=True):
+        yield line
 
-    while l >= 0:
-        yield vim.current.window.buffer[l]
-        l -= 1
 
-# Note that line is zero-based
+# Note that line is zero-based and exclusive
 def following_lines(line=None):
-    if line is None:
-        line = vim.current.window.cursor[0] - 1
+    if line_index is None:
+        line_index = current.window.line
 
-    l = line + 1
-
-    while l < len(vim.current.window.buffer):
-        yield vim.current.window.buffer[l]
-        l += 1
+    for _, line in current.buffer.lines(start=line+1):
+        yield line
 
 
 def nonempty(strings):
@@ -110,11 +215,17 @@ def top_level(lines):
         if line != '' and not leading_whitespace_re.match(line):
             yield line
 
-non_alphanum_underscore = re.compile(r'[^a-zA-Z0-9_]')
+
+def search(regexp, lines):
+    for line in lines:
+        match = regexp.search(line)
+
+        if match:
+            yield (line, match)
 
 
 def jump():
-	vim.command(r'call feedkeys("\<C-l>")')
+    vim.command(r'call feedkeys("\<C-l>")')
 
 
 def jump_after(ret):

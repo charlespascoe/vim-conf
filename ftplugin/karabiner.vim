@@ -315,7 +315,7 @@ endfun
 
 fun! s:Complete()
     let l = trim(getline('.')[:col('.')-1])
-    let m = matchstr(l, '^[a-z_]\+\ze:')
+    let m = matchstr(l, '^\%(- \)\?\zs[a-z_]\+\ze:')
 
     if has_key(s:completions, m)
         call InsertText(m)

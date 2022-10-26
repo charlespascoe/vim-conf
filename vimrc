@@ -48,6 +48,7 @@ set expandtab     " insert spaces when hitting TABs
 " Text behaviour
 set nowrap
 set nostartofline " when switching between buffers (and certain commands), preserve cursor column position
+set sidescroll=10 " ensures at least 10 characters are visible ahead of the cursor on long lines
 
 " Reads config from first few lines of file
 set modeline
@@ -95,19 +96,11 @@ imap <3-MiddleMouse> <Nop>
 map <4-MiddleMouse> <Nop>
 imap <4-MiddleMouse> <Nop>
 
-" Disable 'Q' from leaving visual mode
-map Q <Nop>
-
-nmap K <Nop>
-
 set re=2
 
 " Set window split options
 set splitright " For vertical splits, the cursor will be on the right pane
 set splitbelow " For horizontal splits, the cursor will be on the bottom pane
-
-" Disable folding (interferes with vim-go)
-set nofoldenable
 
 " Set shell for shell-based commands
 set shell=/bin/zsh

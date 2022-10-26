@@ -1,7 +1,7 @@
 # KEEP IN ALPHABETIC ORDER
 global !p
 from snippet_utils import *
-from go_snippet_utils import import_re, add_import
+from go_snippet_utils import *
 
 type_re = re.compile(r"^type (\w+)")
 struct_re = re.compile(r"^type (\w+) struct")
@@ -425,6 +425,14 @@ def generate_err_check(cond):
 		return '; err != nil'
 
 	return ''
+
+
+def auto_import(snip, pkg):
+	imp = guess_import(pkg)
+
+	if imp is not None:
+		go_import(imp)
+		silence_buffer_mutation_errors(snip)
 endglobal
 
 ## Auto-imports ##
@@ -455,6 +463,11 @@ os.
 endsnippet
 
 ## A ##
+
+post_jump "if snip.tabstop == 0: auto_import(snip, snip.tabstops[1].current_text)"
+snippet '\bai ' "Auto-import" rA
+$1.
+endsnippet
 
 snippet 'as ' "Append to slice" brA
 $1 = append($1, $0)
@@ -525,10 +538,6 @@ endsnippet
 snippet cd "Channel with deferred close" bw
 $1 := make(chan $2)
 defer close($1)
-endsnippet
-
-snippet 'cc ' "Comment with dictation" brA
-`!p snip.rv = snip.c or start_dictation('//')` $1
 endsnippet
 
 snippet '\bc(\[\])?(u?i[136]?|f[36]?|[sbBdr])\b' "Convert to Type" r
@@ -1065,7 +1074,7 @@ endsnippet
 
 pre_expand "add_import(snip, 'fmt')"
 snippet pf "Printf" b
-fmt.Printf("$1", $0)
+fmt.Printf("$1\n", $0)
 endsnippet
 
 pre_expand "add_import(snip, 'fmt')"

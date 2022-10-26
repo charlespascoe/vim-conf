@@ -25,6 +25,7 @@
 
 # General
 /(?i)\bCosta\b/cluster/
+/(?i)\bNeil\b/nil/
 /(?i)Duplicut/duplicate/
 /(?i)Jason/JSON/
 /(?i)Okay/OK/
@@ -37,14 +38,15 @@
 /[Uu]U ID/UUID/
 /\b([Cc])hange log\b/\1hangelog/
 /\bcool\b/call/
+/\bDKA\b/a.k.a./
+/\bgo routine/goroutine/
 /\bi\b/I/
 /\bkit lab\b/GitLab/
+/\brap\b/wrap/
 /bullying|bullion/boolean/
 /can figuration/configuration/
-/can figure/configure/
 /change lo(g|ck)/changelog/
 /couch (TV|[TDdG]B)/CouchDB/
-/DKA/a.k.a./
 /docke[rt]/Docker/
 /double ?checking/double-checking/
 /functional model one\b/Functional Model 1/
@@ -68,7 +70,6 @@
 /TLS-1\.(\d)/TLS 1.\1/
 /web socket/WebSocket/
 /you are I/URI/
-/Neil/nil/
 
 # SIP (Note: the order is important)
 /WhatsApp/SIP/

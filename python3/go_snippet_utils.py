@@ -1,9 +1,11 @@
 import re
 import vim
-from snippet_utils import find_line
+from snippet_utils import *
 
 
 import_re = re.compile(r'^import \($')
+end_import_re = re.compile(r'^\)$')
+quoted_string_re = re.compile(r'"(([^"]|\\.)+)"')
 
 
 def add_import(snip, *imports):
@@ -30,6 +32,39 @@ def add_import(snip, *imports):
 			return
 
 
+def get_imports(buf=None):
+	if buf is None:
+		buf = current.buffer
+
+	start = buf.find_line(import_re)
+
+	if start is None:
+		return None
+
+	end = buf.find_line(end_import_re, start[0])
+
+	if end is None:
+		return None
+
+	start_line = start[0]
+	end_line = end[0]
+
+	for _, match in search(quoted_string_re, buf[start_line+1:end_line]):
+		yield match[1]
+
+
+def get_all_imports():
+	return {imp for buf in buffers for imp in get_imports(buf)}
+
+
+def guess_import(pkg):
+	for imp in get_all_imports():
+		if imp.split('/')[-1] == pkg:
+			return imp
+
+	return None
+
+
 def silence_buffer_mutation_errors(snip):
 	# A **SUPER** hacky-hack that prevents UltiSnips from
 	# complaining that the buffer has changed, even though I know
@@ -39,6 +74,9 @@ def silence_buffer_mutation_errors(snip):
 
 
 def go_import(imports):
+	if isinstance(imports, str):
+		imports = [imports]
+
 	for imp in imports:
 		parts = imp.split(' ')
 

@@ -265,3 +265,9 @@ fun! RunCode()
 
     call win_gotoid(l:winid)
 endfun
+
+if expand('%:t') == 'doc.go'
+    " Make package comments automatically wrap
+    setlocal formatoptions-=c
+    setlocal formatoptions+=a
+endif
