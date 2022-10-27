@@ -25,7 +25,6 @@ nmap <buffer> <leader>tC <Plug>(go-coverage-toggle)
 nmap <buffer> <leader>ta <Cmd>GoAlternate!<CR>
 nmap <buffer> <leader>tR <Esc>:wa<CR><Plug>(go-rename)
 nmap <buffer> <leader>tT <Esc>:wa<CR><Plug>(go-test)
-nmap <buffer> <leader>tI <Plug>(go-import)
 nmap <buffer> <leader>tc <Esc>:wa<CR><Plug>(go-build)
 nmap <buffer> <leader>tv <Plug>(go-vet)
 nmap <buffer> <leader>tF <Cmd>GoFmt<CR>
@@ -271,3 +270,17 @@ if expand('%:t') == 'doc.go'
     setlocal formatoptions-=c
     setlocal formatoptions+=a
 endif
+
+py3 import go_snippet_utils
+
+fun ImportCursorKeyword()
+    let g:__go_import = py3eval('go_snippet_utils.guess_import(vim.eval("expand(\"<cword>\")")) or ""')
+
+    if g:__go_import == ""
+        echoerr "Couldn't figure out import path for ".expand('<cword>')
+    else
+        py3 go_snippet_utils.go_import(vim.eval('g:__go_import'))
+    endif
+endfun
+
+nmap <buffer> <leader>I <Cmd>call ImportCursorKeyword()<CR>
