@@ -2,7 +2,7 @@
 " group
 
 " Set indent level marker for tab-indented files
-set listchars=tab:│\  list
+set listchars+=tab:│\  list
 
 " Set indent level marker based on shiftwidth for space-indented files
 

@@ -14,6 +14,9 @@ let &t_SI = "\e[6 q"
 let &t_SR = "\e[4 q"
 let &t_EI = "\e[2 q"
 
+" Cursor hold timeout (e.g. for autocommands and swap file)
+set updatetime=2000
+
 " Keycode and mapping timeouts
 set timeout timeoutlen=1000 ttimeout ttimeoutlen=0
 
@@ -47,8 +50,10 @@ set expandtab     " insert spaces when hitting TABs
 
 " Text behaviour
 set nowrap
-set nostartofline " when switching between buffers (and certain commands), preserve cursor column position
-set sidescroll=10 " ensures at least 10 characters are visible ahead of the cursor on long lines
+set nostartofline    " when switching between buffers (and certain commands), preserve cursor column position
+set sidescroll=1     " moves sideways by one character when the cursor reachs the edge of the window
+set sidescrolloff=10 " ensures at least 10 characters are visible ahead of the cursor on long lines
+set listchars=extends:…
 
 " Reads config from first few lines of file
 set modeline

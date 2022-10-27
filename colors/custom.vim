@@ -11,13 +11,14 @@ hi CursorLine cterm=none
 hi CursorLineNr ctermfg=238
 hi Directory ctermfg=33
 hi ErrorMsg cterm=bold ctermfg=253 ctermbg=124
-hi FoldColumn ctermbg=236 ctermfg=248
-hi Folded ctermbg=236 ctermfg=248
+hi FoldColumn ctermfg=178 ctermbg=234
+hi Folded ctermfg=178 ctermbg=234 cterm=bold
 hi IncSearch cterm=reverse
 hi LineNr ctermfg=244
 hi ModeMsg cterm=bold
 hi MoreMsg ctermfg=34
-hi NonText cterm=bold ctermfg=26
+" Same as Comment
+hi NonText cterm=bold ctermfg=39
 hi Pmenu ctermfg=255 ctermbg=17
 hi PmenuSel ctermfg=255 ctermbg=21
 hi Question ctermfg=34

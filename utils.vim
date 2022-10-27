@@ -99,10 +99,13 @@ autocmd BufEnter,InsertLeave * :syntax sync fromstart
 
 " Enter Improvements
 
-nmap <Enter> i<Enter><Space><BS><Esc><Right>
+fun! NormalEnter()
+    " For readonly buffers or the command line window, then just use a normal
+    " enter
+    return !&ma || bufexists('[Command Line]')
+endfun
 
-" This prevents the above from interfering with quickfix and location lists
-au FileType qf nnoremap <buffer> <Enter> <Enter>
+nmap <expr> <Enter> NormalEnter() ? "\<Enter>" : "i\<Enter>\<Space>\<BS>\<Esc>\<Right>"
 
 " Note that the two double quote substitutions are very subtly different (open
 " vs close)
