@@ -1,33 +1,33 @@
-https://github.com/airblade/vim-gitgutter
-https://github.com/christoomey/vim-sort-motion
-https://github.com/christoomey/vim-titlecase
-https://github.com/ctrlpvim/ctrlp.vim
-https://github.com/davidhalter/jedi-vim
-https://github.com/dkarter/bullets.vim
-https://github.com/fatih/vim-go
-https://github.com/habamax/vim-asciidoctor
+# https://github.com/airblade/vim-gitgutter
+# https://github.com/christoomey/vim-sort-motion
+# https://github.com/christoomey/vim-titlecase
+# https://github.com/ctrlpvim/ctrlp.vim
+# https://github.com/davidhalter/jedi-vim
+# https://github.com/dkarter/bullets.vim
+# https://github.com/fatih/vim-go
+# https://github.com/habamax/vim-asciidoctor
 https://github.com/ianks/vim-tsx
-https://github.com/kopischke/vim-fetch
-https://github.com/kshenoy/vim-signature
+# https://github.com/kopischke/vim-fetch
+# https://github.com/kshenoy/vim-signature
 https://github.com/leafgarland/typescript-vim
-https://github.com/mbbill/undotree
-https://github.com/michaeljsmith/vim-indent-object
-https://github.com/moll/vim-bbye
-https://github.com/pangloss/vim-javascript
+# https://github.com/mbbill/undotree
+# https://github.com/michaeljsmith/vim-indent-object
+# https://github.com/moll/vim-bbye
+# https://github.com/pangloss/vim-javascript
 https://github.com/Quramy/tsuquyomi
-https://github.com/Raimondi/delimitMate
-https://github.com/scrooloose/nerdtree
-https://github.com/sirver/ultisnips
-https://github.com/tommcdo/vim-exchange
+# https://github.com/Raimondi/delimitMate
+# https://github.com/scrooloose/nerdtree
+# https://github.com/sirver/ultisnips
+# https://github.com/tommcdo/vim-exchange
 https://github.com/tommcdo/vim-lion
-https://github.com/tommcdo/vim-ninja-feet
-https://github.com/tpope/vim-commentary
-https://github.com/tpope/vim-fugitive
-https://github.com/tpope/vim-obsession
-https://github.com/tpope/vim-repeat
-https://github.com/tpope/vim-sleuth
-https://github.com/tpope/vim-surround
-https://github.com/tpope/vim-unimpaired
-https://github.com/vim-airline/vim-airline
-https://github.com/vim-python/python-syntax
-https://github.com/vim-scripts/ReplaceWithRegister
+# https://github.com/tommcdo/vim-ninja-feet
+# https://github.com/tpope/vim-commentary
+# https://github.com/tpope/vim-fugitive
+# https://github.com/tpope/vim-obsession
+# https://github.com/tpope/vim-repeat
+# https://github.com/tpope/vim-sleuth
+# https://github.com/tpope/vim-surround
+# https://github.com/tpope/vim-unimpaired
+# https://github.com/vim-airline/vim-airline
+# https://github.com/vim-python/python-syntax
+# https://github.com/vim-scripts/ReplaceWithRegister
