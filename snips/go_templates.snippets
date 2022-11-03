@@ -2,7 +2,7 @@ global !p
 from go_snippet_utils import add_import
 endglobal
 
-snippet gotempfile "Go Temp File Template" b
+snippet gotempfile "Temp File Template" b
 package main
 
 import (
@@ -570,7 +570,6 @@ func buildBundle() []byte {
 }
 endsnippet
 
-
 pre_expand "add_import(snip, 'github.com/gin-gonic/gin')"
 snippet ginserver "Gin Server" b
 func BuildServer() *gin.Engine {
@@ -579,6 +578,21 @@ func BuildServer() *gin.Engine {
 	$0
 
 	return server
+}
+endsnippet
+
+pre_expand "add_import(snip, 'os', 'strings', 'github.com/gin-gonic/gin')"
+snippet goginbasic "Gin Simple Basic Auth Function" b
+func Auth() gin.Accounts {
+	auth := make(map[string]string)
+
+	for _, entry := range strings.Split(os.Getenv("AUTH"), ",") {
+		if user, password, found := strings.Cut(entry, ":"); found {
+			auth[strings.TrimSpace(user)] = strings.TrimSpace(password)
+		}
+	}
+
+	return auth
 }
 endsnippet
 

@@ -110,7 +110,3 @@ nmap <expr> <Enter> NormalEnter() ? "\<Enter>" : "i\<Enter>\<Space>\<BS>\<Esc>\<
 " Note that the two double quote substitutions are very subtly different (open
 " vs close)
 command FixQuotes %s/’/'/ge | %s/“/"/ge | %s/”/"/ge
-
-" Command-line mappings and abbreviations
-cabbr <expr> eh 'e '..expand('%:h')..'/'
-cnoremap <expr> <Space> (getcmdtype() == ':' && getcmdline() == 'eh') ? "\<C-]>" : "\<Space>"
