@@ -23,6 +23,7 @@ EE's
 EOL
 foobar
 FQDN
+GC
 geo-replication
 GMV
 goroutine
@@ -48,6 +49,7 @@ Phil's
 PID
 PKI
 plaintext
+plugin
 protobuffers
 Ragel
 Redis
@@ -84,4 +86,3 @@ whether or not/!
 whitespace
 xyz
 µs
-GC
