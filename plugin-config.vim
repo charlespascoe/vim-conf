@@ -128,6 +128,7 @@ let g:sleuth_markdown_heuristics = 0
 
 " vim-go
 let g:go_addtags_transform = 'camelcase'
+let g:go_template_use_pkg = 1
 let g:go_def_mapping_enabled = 0
 let g:go_imports_autosave = 0
 " Formatting interfers with jumps and folds; just do it manually

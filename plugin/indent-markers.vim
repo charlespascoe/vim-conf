@@ -21,10 +21,12 @@ fun s:SetIndentMarker()
         let sw = &shiftwidth
     end
 
-    call add(lcopts, 'leadmultispace:│'.repeat(' ', sw-1))
+    if sw > 0
+        call add(lcopts, 'leadmultispace:│'.repeat(' ', sw-1))
+    endif
 
     let &l:listchars = join(lcopts, ',')
 endfun
 
-au BufReadPost * call <SID>SetIndentMarker()
+au BufReadPost,BufEnter * call <SID>SetIndentMarker()
 au OptionSet shiftwidth call <SID>SetIndentMarker()

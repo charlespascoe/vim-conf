@@ -35,8 +35,6 @@ set autoread
 " redrawing, speeds up macros and prevents flashing)
 set lazyredraw
 
-set wildignore+=*.class
-
 " Configure backspace behaviour
 set backspace=indent,eol,start
 

@@ -572,7 +572,7 @@ endsnippet
 
 pre_expand "add_import(snip, 'github.com/gin-gonic/gin')"
 snippet ginserver "Gin Server" b
-func BuildServer() *gin.Engine {
+func NewServer() *gin.Engine {
 	server := gin.New()
 
 	$0

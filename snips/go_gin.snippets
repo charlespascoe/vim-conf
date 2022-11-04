@@ -53,7 +53,7 @@ c.JSON(http.Status${1:OK}, $2)
 endsnippet
 
 snippet serverGroup "Server Group" b
-func ${1:example}Group(router *gin.Router) {
+func ${1:example}Group(router *gin.RouterGroup) {
 	$0
-}`!p vim.command(f'let @" = "\t{t[1]}(server.Group(\\\"/{t[1].lower()}\\\"))\n"')`
+}`!p vim.command(f'let @" = "\t{t[1]}Group(server.Group(\\\"/{t[1].lower()}\\\"))\n"')`
 endsnippet
