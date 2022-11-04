@@ -30,5 +30,7 @@ Plug 'tpope/vim-unimpaired'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-python/python-syntax'
 Plug 'vim-scripts/ReplaceWithRegister'
+Plug '~/repos/vim-ninja-feet'
+Plug '~/repos/vim-serenade'
 
 call plug#end()
