@@ -111,9 +111,12 @@ syntax match goSliceOrArrayType /\[\%(\d\+\|\.\.\.\)\?\]/ contained contains=goN
 " A lookbehind is used to distinguish a new slice value with slice indexing.
 " The lookbehind has variable length, so it has a reasonable 20 character limit
 syntax match goSliceOrArray /\k\@<!\[\%(\d\+\|\.\.\.\)\?\]\ze\%(\K\|\[\|(\)/ contains=goNumber,goDot skipwhite nextgroup=goSliceItemType
+
 " Only look to the end of the line for the item type, and let slices etc. extend
-" across lines as necessary
-syntax match goSliceItemType /\%(\%(interface\|struct\)\s*{\|[^{]\)\+\ze\%({\|$\)/ contained contains=@goType skipwhite nextgroup=goSliceItems
+" across lines as necessary. Note the first '(' is to match the first paren
+" around the type, which is then extended by goTypeParens.
+syntax match goSliceItemType /(\|\%(\%(interface\|struct\)\s*{\|[^{()]\)\+/ contained contains=@goType skipwhite nextgroup=goSliceItems
+
 syntax region goSliceItems matchgroup=goSliceBraces start='{' end='}' contained transparent
 
 " syntax match goChannel /<-chan\|chan\%(<-\)\?/ contains=goOperator skipwhite nextgroup=@goType
@@ -184,8 +187,8 @@ syntax region goStructBlock matchgroup=goStructBraces start='{' end='}' containe
 
 " Interfaces
 syntax keyword goInterfaceType interface skipempty skipwhite nextgroup=goInterfaceBlock
-" TODO: Maybe don't just put goOperator in here, actually look at what the
-" syntax means
+" TODO: Maybe don't just put goOperator in here and instead use the correct
+" symbols
 syntax region goInterfaceBlock matchgroup=goInterfaceBraces start='{' end='}' contained extend contains=@goType,goOperator,goInterfaceFunc,goComment
 syntax match goInterfaceFunc /\K\k*\ze\s*(/ contained skipwhite nextgroup=goInterfaceFuncParams
 syntax region goInterfaceFuncParams matchgroup=goInterfaceFuncParens start='(' end=')' contained contains=goParam,goComma skipwhite nextgroup=@goType,goInterfaceFuncMultiReturn
