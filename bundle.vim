@@ -9,6 +9,7 @@ Plug 'dkarter/bullets.vim'
 Plug 'fatih/vim-go'
 Plug 'habamax/vim-asciidoctor'
 Plug 'junegunn/vim-easy-align'
+Plug 'junegunn/vim-plug'
 Plug 'kopischke/vim-fetch'
 Plug 'kshenoy/vim-signature'
 Plug 'mbbill/undotree'
@@ -31,16 +32,12 @@ Plug 'vim-airline/vim-airline'
 Plug 'vim-python/python-syntax'
 Plug 'vim-scripts/ReplaceWithRegister'
 
-if isdirectory('~/repos/vim-ninja-feet')
-    Plug '~/repos/vim-ninja-feet'
-else
-    Plug 'charlespascoe/vim-ninja-feet'
-endif
+com -nargs=1 DevPlug Plug (isdirectory(expand('~/repos/'..<args>)) ? '~/repos/'..<args> : 'charlespascoe/'..<args>)
 
-if isdirectory('~/repos/vim-serenade')
-    Plug '~/repos/vim-serenade'
-else
-    Plug 'charlespascoe/vim-serenade'
-endif
+DevPlug 'vim-go-syntax'
+DevPlug 'vim-ninja-feet'
+DevPlug 'vim-serenade'
+
+delcom DevPlug
 
 call plug#end()
