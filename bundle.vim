@@ -30,7 +30,17 @@ Plug 'tpope/vim-unimpaired'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-python/python-syntax'
 Plug 'vim-scripts/ReplaceWithRegister'
-Plug '~/repos/vim-ninja-feet'
-Plug '~/repos/vim-serenade'
+
+if isdirectory('~/repos/vim-ninja-feet')
+    Plug '~/repos/vim-ninja-feet'
+else
+    Plug 'charlespascoe/vim-ninja-feet'
+endif
+
+if isdirectory('~/repos/vim-serenade')
+    Plug '~/repos/vim-serenade'
+else
+    Plug 'charlespascoe/vim-serenade'
+endif
 
 call plug#end()
