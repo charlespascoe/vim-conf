@@ -1,5 +1,3 @@
-let s:in_insert_mode = v:false
-
 func dictate#Init()
     if empty(glob('/tmp/dictation'))
         echohl Error
@@ -8,39 +6,27 @@ func dictate#Init()
         return
     endif
 
-    let s:job = job_start('socat - UNIX-CONNECT:/tmp/dictation', {
-    \    'out_io': 'pipe',
-    \    'err_io': 'pipe',
-    \    'in_io': 'pipe',
+    let s:ch = ch_open('unix:/tmp/dictation', {
     \    'mode': 'nl',
     \    'callback': 'dictate#OnOutput',
-    \    'err_cb': 'dictate#OnError',
-    \    'exit_cb': 'dictate#OnExit',
-    \    'stoponexit': 'term'
+    \    'close_cb': 'dictate#OnExit',
     \})
 
-    inoremap <C-d> <C-o>:call dictate#Start()<CR>
-
-    autocmd InsertEnter * call dictate#EnterInsertMode()
-    autocmd InsertLeave * call dictate#LeaveInsertMode()
+    inoremap <C-d> <Cmd>call dictate#Start()<CR>
 
     command! DictationReloadSubstitutions call dictate#ReloadSubstitutions()
 endfun
 
 func dictate#Start()
-    let ch = job_getchannel(s:job)
-
-    call ch_sendraw(ch, "start-dictation\n")
+    call ch_sendraw(s:ch, "start-dictation\n")
 endfun
 
 func dictate#ReloadSubstitutions()
-    let ch = job_getchannel(s:job)
-
-    call ch_sendraw(ch, "reload\n")
+    call ch_sendraw(s:ch, "reload\n")
 endfunc
 
 func dictate#OnOutput(job, msg)
-    if s:in_insert_mode
+    if mode() == 'i'
         let msg = a:msg
 
         " Automatically capitalise the first letter after certain characters
@@ -54,18 +40,6 @@ func dictate#OnOutput(job, msg)
     endif
 endfun
 
-func dictate#OnError(job, msg)
-    echom "Msg: ".a:msg
+func dictate#OnExit(job)
+    echoerr "Dictation socket closed"
 endfun
-
-func dictate#OnExit(job, code)
-    echom "Code: ".a:code
-endfun
-
-func dictate#EnterInsertMode()
-    let s:in_insert_mode = v:true
-endfunc
-
-func dictate#LeaveInsertMode()
-    let s:in_insert_mode = v:false
-endfunc
