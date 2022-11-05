@@ -60,7 +60,7 @@ noremap <leader>R <Esc>:%s/\<<C-r><C-w>\>//gc<Left><Left><Left>
 
 " Edit macros
 
-nnoremap <leader>m :<c-u><c-r><c-r>='let @'. v:register .' = '. string(getreg(v:register))<cr>
+nnoremap <leader>m :<c-u><c-r><c-r>='let @'. v:register .' = '. macroeditor#replace_with_quotes(getreg(v:register))<cr>
 
 " Quick Search
 fun! QuickSearchMap(key, title, pattern)
