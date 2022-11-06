@@ -66,7 +66,8 @@ set nowrapscan    " prevents wrapping around to top of file when searching
 
 " Highlight the 81st column (for character limit)
 " (&ma is true if the current buffer is modifiable)
-autocmd BufNewFile,BufRead * exec "setlocal colorcolumn=".(&ma ? "81" : "0")
+autocmd BufNewFile,BufReadPost * exec "setlocal colorcolumn=".((&ma && &textwidth > 0) ? &textwidth+1 : "0")
+autocmd OptionSet textwidth exec "setlocal colorcolumn=".((&ma && &textwidth > 0) ? &textwidth+1 : "0")
 
 " Set spell correction language
 set spelllang=en_gb

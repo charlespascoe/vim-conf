@@ -12,6 +12,11 @@ set fillchars+=fold:\ ,foldsep:│,foldopen:▼,foldclose:▶,
 set foldlevel=100
 
 fun! s:CheckAnyClosedFolds()
+    " Only check for folds in normal windows
+    if win_gettype() != ''
+        return
+    endif
+
     let g:deepest_fold = 0
 
     let l:winview = winsaveview()

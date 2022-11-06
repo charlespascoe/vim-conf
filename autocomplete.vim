@@ -9,7 +9,7 @@ set completeopt=longest,menu
 set complete-=t
 
 fun! ShouldAutocomplete()
-    return pumvisible() || !(strpart(getline('.'), 0, col('.') - 1) =~ '^\s*$')
+    return pumvisible() || !(strpart(getline('.'), 0, col('.') - 1) =~ '\%(^\|\s\)$')
 endfun
 
 " Map tab to C-z (custom autocomplete) if autocomplete menu is open or there

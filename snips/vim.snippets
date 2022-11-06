@@ -1,5 +1,16 @@
 global !p
 from snippet_utils import *
+import os
+
+def func_name_prefix(path, scope=''):
+	if scope in set('sbgt'):
+		return scope + ':'
+
+	if os.path.basename(os.path.dirname(path)) == 'autoload':
+		return os.path.splitext(os.path.basename(snip.fn))[0] + '#'
+
+	return ''
+
 endglobal
 
 snippet '^def ' "Define Function" brA
@@ -10,8 +21,8 @@ endsnippet
 
 ## F ##
 
-snippet '^f ' "Function" brA
-fun $1($2)
+snippet '^f([!s ])' "Function" brA
+fun`!p if match[1] == '!': snip.rv = '!'` `!p if not snip.c: snip.rv = func_name_prefix(path, match[1])`$1($2)
 	$0
 endfun
 endsnippet
@@ -49,4 +60,17 @@ endsnippet
 ## T ##
 snippet type "Type assertion"
 type($1) == v:t_
+endsnippet
+
+# TODO: Make sure this is the only content on the line
+snippet '\btd ' "Todo" brA
+" TODO: $0
+endsnippet
+
+## W ##
+
+snippet 'w(hile)? ' "While Loop" brA
+while $1
+	$0
+endwhile
 endsnippet

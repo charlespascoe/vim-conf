@@ -37,6 +37,7 @@ com -nargs=1 DevPlug Plug (isdirectory(expand('~/repos/'..<args>)) ? '~/repos/'.
 DevPlug 'vim-go-syntax'
 DevPlug 'vim-ninja-feet'
 DevPlug 'vim-serenade'
+DevPlug 'vim-duplicate'
 
 delcom DevPlug
 

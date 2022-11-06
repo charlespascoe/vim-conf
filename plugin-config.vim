@@ -163,3 +163,15 @@ let g:vim_json_conceal = 0
 " Line spread plugin
 
 let g:line_spread_append_last = 1
+
+
+" vim-easy-align
+
+nmap ga <Plug>(EasyAlign)
+nmap gA <Plug>(LiveEasyAlign)
+
+
+" vim-duplicate
+
+nmap <expr> gD duplicate#with("gc")
+nmap <expr> gDD duplicate#with("gc", 1)

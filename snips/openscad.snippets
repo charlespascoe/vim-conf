@@ -4,13 +4,9 @@ snippet 'cu ' "Cube" brA
 cube([$0]);
 endsnippet
 
-snippet 'ci ' "cirle" brA
+snippet 'ci ' "Circle" brA
 circle(r=$0);
 endsnippet
-
-# snippet 'ci ' "cirle" brA
-# circle(r=$0);
-# endsnippet
 
 snippet 'cy ' "cylinder" brA
 cylinder(r=$1, h=$0);
@@ -22,6 +18,12 @@ snippet 'di ' "Difference" brA
 difference() {
 	${VISUAL}$0
 }
+endsnippet
+
+## F ##
+
+snippet '^f ' "Function" brA
+function $1($2) = $0;
 endsnippet
 
 ## I ##
@@ -57,14 +59,33 @@ module $1($2) {
 }
 endsnippet
 
-snippet mirror_copy "Mirror Copy" b
-module mirror_copy(normal) {
-    union() {
-        children();
+snippet 'mi ' "Mirror" brA
+mirror([$0])
+endsnippet
 
-        mirror(normal)
-        children();
-    }
+snippet '^mi\?' "Conditional Mirror" brA
+module conditional_mirror(flip, normal) {
+	if (flip) {
+		mirror(normal)
+		children();
+	} else {
+		children();
+	}
+}
+endsnippet
+
+snippet '(?<=\s)mi\?' "Conditional Mirror" brA
+conditional_mirror(${1:cond}, [$0])
+endsnippet
+
+snippet '^mcp' "Mirror Copy" brA
+module mirror_copy(normal) {
+	union() {
+		children();
+
+		mirror(normal)
+		children();
+	}
 }
 endsnippet
 
@@ -80,9 +101,18 @@ snippet 'ro ' "Rotate" brA
 rotate([$0])
 endsnippet
 
+snippet '^ra ' "Rotate Around" brA
+module rotate_around(point, rotation) {
+	translate(point)
+	rotate(rotation)
+	translate(-point)
+	children();
+}
+endsnippet
+
 ## S ##
 
-snippet 'su ' "Square" brA
+snippet 'sq ' "Square" brA
 square([$0]);
 endsnippet
 

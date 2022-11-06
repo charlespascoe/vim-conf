@@ -11,7 +11,7 @@ function! InsertModeChanged(mode)
     if a:mode == 'i'
         highlight LineNr ctermfg=45
         highlight CursorLineNr ctermfg=33
-    elseif a:mode == 'r'
+    elseif a:mode == 'r' || a:mode == 'v'
         highlight LineNr ctermfg=202
         highlight CursorLineNr ctermfg=196
     else
