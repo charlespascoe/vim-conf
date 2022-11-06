@@ -31,14 +31,18 @@ Plug 'tpope/vim-unimpaired'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-python/python-syntax'
 Plug 'vim-scripts/ReplaceWithRegister'
+Plug 'wellle/targets.vim'
 
 com -nargs=1 DevPlug Plug (isdirectory(expand('~/repos/'..<args>)) ? '~/repos/'..<args> : 'charlespascoe/'..<args>)
 
+DevPlug 'vim-duplicate'
 DevPlug 'vim-go-syntax'
 DevPlug 'vim-ninja-feet'
 DevPlug 'vim-serenade'
-DevPlug 'vim-duplicate'
 
 delcom DevPlug
 
 call plug#end()
+
+com! PlugSync source ~/.vim-conf/bundle.vim | PlugClean | PlugInstall
+cabbr ps PlugSync
