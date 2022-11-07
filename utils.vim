@@ -45,6 +45,11 @@ nnoremap <expr> ` printf('`%czz', getchar())
 nnoremap ]c <Plug>(GitGutterNextHunk)zz
 nnoremap [c <Plug>(GitGutterPrevHunk)zz
 
+" Move a single line
+
+nmap <silent> <C-j> ]e
+nmap <silent> <C-k> [e
+
 " Jump to imports marker
 
 noremap <leader>i `iO

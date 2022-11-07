@@ -77,7 +77,7 @@ set spellfile=~/.vim/spell/en.utf-8.add
 " See spell-sug-file for how the word suggestions are loaded
 
 " Convenience map for picking best alternative
-nmap <leader>k 1z=
+nmap <leader>c 1z=
 nmap <expr> <leader>gs &l:spell ? '<Cmd>setlocal nospell<CR>' : '<Cmd>setlocal spell<CR>'
 
 " Custom vertical split char

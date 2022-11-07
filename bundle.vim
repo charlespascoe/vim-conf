@@ -45,4 +45,3 @@ delcom DevPlug
 call plug#end()
 
 com! PlugSync source ~/.vim-conf/bundle.vim | PlugClean | PlugInstall
-cabbr ps PlugSync
