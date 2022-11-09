@@ -327,3 +327,5 @@ endfun
 
 
 imap <buffer> <expr> <C-z> <SID>Complete()
+
+let b:autocomplete_on_whitespace = 1

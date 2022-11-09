@@ -548,6 +548,10 @@ snippet '\bc\?\b' "Convert to Arbitrary Type" r
 $1(${VISUAL}$2)
 endsnippet
 
+snippet cont "Continue" b
+continue
+endsnippet
+
 ## D ##
 
 snippet dc "Done Channel" b
@@ -966,6 +970,13 @@ func (`!p snip.rv = snip.c or ' '.join(find_method_type(match[1] == '*'))`) ${1:
 }
 endsnippet
 
+snippet '^mlt?([ *])' "Method - LessThan" brA
+// LessThan TODO: Description.
+func (`!p snip.rv = snip.c or ' '.join(find_method_type(match[1] == '*'))`) LessThan(other `!p snip.rv = snip.c or find_method_type(match[1] == '*')[1]`) bool {
+	$0
+}
+endsnippet
+
 snippet '^mr([ *])' "Method with self return" brA
 // $1 TODO: Description.
 func (`!p snip.rv = snip.c or ' '.join(find_method_type(match[1] == '*'))`) ${1: }($2) `!p snip.rv = snip.c or find_method_type(match[1] == '*')` {
@@ -1045,6 +1056,10 @@ func (`!p snip.rv = snip.c or ' '.join(find_method_type(True))`) Validate() erro
 		v.Field(&`!p snip.rv = snip.c or find_method_type()[0]`.$1),$0
 	)
 }
+endsnippet
+
+snippet Mc "Make channel"
+make(chan $1)
 endsnippet
 
 snippet Ms "Make slice"

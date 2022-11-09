@@ -9,11 +9,8 @@ non_alphanum_underscore = re.compile(r'[^a-zA-Z0-9_]')
 class Window:
     def __init__(self, win, buf=None):
         self.win = win
+        self.number = win.number
         self.buffer = buf or Buffer(self.win.buffer.number)
-
-    @property
-    def number(self):
-        return self.win.number
 
     @property
     def cursor(self):

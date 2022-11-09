@@ -17,8 +17,8 @@ _cur_line = ""
 # TODO: Try using Inspect: https://golang.org/pkg/go/ast/#example_Inspect
 # (Keep universal ctags so that it can work with other languages
 def gen_tags():
-    # os.system('find . -name "*.go" | gotags -L - -f tags')
-    os.system('find . -name "*.go" | ctags -L - > tags')
+   os.system('find . -name "*.go" | gotags -L - -f tags')
+    # os.system('find . -name "*.go" | ctags -L - > tags')
 
 def load_tags():
     global symbols
