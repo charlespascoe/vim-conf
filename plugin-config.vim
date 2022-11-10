@@ -175,3 +175,10 @@ nmap gA <Plug>(LiveEasyAlign)
 
 nmap <expr> gD duplicate#with("gc")
 nmap <expr> gDD duplicate#with("gc", 1)
+
+" vim-serenade
+
+let g:serenade_autostart = 0
+
+" indent-marker
+let g:indent_marker_ignore_filetypes = ['rfc', 'help']

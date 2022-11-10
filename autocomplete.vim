@@ -9,7 +9,8 @@ set completeopt=longest,menu
 set complete-=t
 
 fun! ShouldAutocomplete()
-    return pumvisible() || !(strpart(getline('.'), 0, col('.') - 1) =~ '\%(^\|\s\)$')
+    let pat = get(b:, 'autocomplete_on_whitespace', 0) ? '^\s*$' : '\%(^\|\s\)$'
+    return pumvisible() || !(strpart(getline('.'), 0, col('.') - 1) =~ pat)
 endfun
 
 " Map tab to C-z (custom autocomplete) if autocomplete menu is open or there

@@ -12,7 +12,7 @@ hl_links = {
 	'n': 'NONE',
 }
 
-syntax_re = re.compile(r'^syntax\s+(?:match|keyword|region)\s+([^\s]+).+?(?:matchgroup=([^\s]+))?')
+syntax_re = re.compile(r'^synt?a?x?\s+(?:match|keyword|region)\s+([^\s]+).+?(?:matchgroup=([^\s]+))?')
 hi_re = re.compile(r'^hi\s+(?:def\s+)?link\s+([^\s]+)')
 
 def missing_highlights():

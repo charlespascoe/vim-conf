@@ -26,7 +26,8 @@ hi Search ctermfg=16 ctermbg=220
 hi SpecialKey ctermfg=237
 hi StatusLine cterm=bold,reverse
 hi StatusLineNC cterm=reverse
-hi Title cterm=bold,underline ctermfg=135
+" hi Title cterm=bold,underline ctermfg=135
+hi Title cterm=bold,underline ctermfg=42
 hi TOhtmlProgress ctermbg=28
 hi VertSplit cterm=none ctermbg=none ctermfg=255
 hi Visual cterm=reverse ctermbg=16
@@ -57,6 +58,8 @@ hi Structure ctermfg=34
 hi Error ctermfg=253 ctermbg=124
 hi Special ctermfg=75
 hi Todo ctermfg=16 ctermbg=220
+
+hi Underlined cterm=underline,bold ctermfg=81
 
 " Non-standard
 hi Brackets ctermfg=37

@@ -21,6 +21,10 @@ fun s:SetIndentMarker()
         let sw = &shiftwidth
     end
 
+    if index(get(g:, 'indent_marker_ignore_filetypes', []), &ft) >= 0
+        let sw = 0
+    endif
+
     if sw > 0
         call add(lcopts, 'leadmultispace:│'.repeat(' ', sw-1))
     endif

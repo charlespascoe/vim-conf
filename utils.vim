@@ -112,6 +112,18 @@ endfun
 
 nmap <expr> <Enter> NormalEnter() ? "\<Enter>" : "i\<Enter>\<Space>\<BS>\<Esc>\<Right>"
 
+" Scratch file
+
+fun! Scratch()
+    split
+    noswapfile hide enew
+    setlocal buftype=nofile
+    setlocal bufhidden=hide
+    file scratch
+endfun
+
+command Scratch call Scratch()
+
 " Note that the two double quote substitutions are very subtly different (open
 " vs close)
 command FixQuotes %s/’/'/ge | %s/“/"/ge | %s/”/"/ge

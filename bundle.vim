@@ -31,7 +31,6 @@ Plug 'tpope/vim-unimpaired'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-python/python-syntax'
 Plug 'vim-scripts/ReplaceWithRegister'
-Plug 'wellle/targets.vim'
 
 com -nargs=1 DevPlug Plug (isdirectory(expand('~/repos/'..<args>)) ? '~/repos/'..<args> : 'charlespascoe/'..<args>)
 

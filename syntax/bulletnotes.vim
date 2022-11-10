@@ -7,7 +7,8 @@ syntax region NoteTitle matchgroup=TitleEnd start='^## \+' end=' \+##$' oneline 
 syntax region Subtitle matchgroup=SubtitleEnd start='^:: \+' end=' \+::$' oneline concealends contains=Tag
 syntax region ContactTitle matchgroup=ContactTitleEnd start='^@@ \+' end=' \+@@$' oneline concealends
 
-hi link NoteTitle Title
+" hi link NoteTitle Title
+hi NoteTitle cterm=bold,underline ctermfg=135
 hi Subtitle cterm=underline ctermfg=140
 hi ContactTitle cterm=underline ctermfg=51
 

@@ -76,7 +76,7 @@ class Buffer:
         return None
 
     def find_lines(self, regexp, start=0, end=None, reverse=False):
-        for i, lines in self.lines(start, end, reverse):
+        for i, line in self.lines(start, end, reverse):
             match = regexp.search(line)
             if match:
                 yield (i, line, match)
@@ -174,13 +174,19 @@ def replace_rest_of_line(snip):
 def find_line(regexp):
     # Buffer.find_line() returns index, line, and match, whereas this function
     # originally just returned the index
-    return current.buffer.find_line(regexp)[0]
+    found = current.buffer.find_line(regexp)
+
+    if found:
+        return found[0]
+    else:
+        return None
 
 
 def find_lines(regexp):
     # Buffer.find_lines() yields index, line, and match, whereas this function
     # originally just returned the index and line
-    return current.buffer.find_lines(regexp)[:2]
+    for i, line, match in current.buffer.find_lines(regexp):
+        yield i, line
 
 
 # Note that line is zero-based and exclusive
