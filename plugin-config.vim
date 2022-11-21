@@ -138,6 +138,13 @@ let g:go_gopls_complete_unimported = 0
 let g:go_gopls_deep_completion = 0
 let g:go_rename_command = 'gopls'
 
+" vim-go-syntax
+
+let g:go_highlight_parens = 'Parens'
+let g:go_highlight_dot = 'ctermfg=208 cterm=bold'
+let g:go_highlight_function_parens = 'Operator'
+let g:go_highlight_slice_brackets = 'Special'
+let g:go_highlight_map_brackets = 'Special'
 
 " vim-gitgutter
 let g:gitgutter_set_sign_backgrounds = 0
@@ -174,7 +181,9 @@ nmap gA <Plug>(LiveEasyAlign)
 " vim-duplicate
 
 nmap <expr> gD duplicate#with("gc")
-nmap <expr> gDD duplicate#with("gc", 1)
+nmap <expr> gDD duplicate#with("gc", #{oneline: 1})
+nmap <expr> yd duplicate#with("ys")
+nmap <expr> ydd duplicate#with("ys", #{oneline: 1})
 
 " vim-serenade
 

@@ -42,6 +42,7 @@ nmap <silent> <leader>T <Cmd>Trim<CR>``
 
 " Jumping centres on cursor
 nnoremap <expr> ` printf('`%czz', getchar())
+nnoremap <expr> ' printf("'%czz", getchar())
 nnoremap ]c <Plug>(GitGutterNextHunk)zz
 nnoremap [c <Plug>(GitGutterPrevHunk)zz
 
@@ -119,11 +120,18 @@ fun! Scratch()
     noswapfile hide enew
     setlocal buftype=nofile
     setlocal bufhidden=hide
-    file scratch
 endfun
 
-command Scratch call Scratch()
+command -bar Scratch call Scratch()
 
 " Note that the two double quote substitutions are very subtly different (open
 " vs close)
-command FixQuotes %s/’/'/ge | %s/“/"/ge | %s/”/"/ge
+command -bar FixQuotes %s/’/'/ge | %s/“/"/ge | %s/”/"/ge
+
+command Scriptnames redir @" | silent scriptnames | redir END | Scratch | exec 'normal p'
+
+fun s:ToggleConceal()
+    let &l:conceallevel = &l:conceallevel == 0 ? 2 : 0
+endfun
+
+nmap yoC <Cmd>call <SID>ToggleConceal()<CR>

@@ -1,6 +1,8 @@
 " Settings
 "setlocal conceallevel=3
 
+syn spell toplevel
+
 " Title
 
 syntax region NoteTitle matchgroup=TitleEnd start='^## \+' end=' \+##$' oneline concealends contains=Tag
@@ -103,6 +105,25 @@ syntax cluster Metatext contains=Anchor,Contact,Highlight,HighlightedMonospace,L
 
 " A hack to hide escape sequences
 syntax region Escaped matchgroup=Special start='\\' end='.\zs' keepend concealends contained contains=NONE transparent
+
+" Nested Syntax Highlighting
+
+let main_syntax = 'bulletnotes'
+let b:current_syntax = 'bulletnotes'
+
+syntax include @go syntax/go.vim
+syntax cluster go add=@NoSpell
+syntax region GoCode matchgroup=MonospaceEnd start='^{{{go$' end='^}}}$' keepend contains=@go
+
+syntax include @js syntax/javascript.vim
+syntax cluster js add=@NoSpell
+syntax region JsCode matchgroup=MonospaceEnd start='^{{{js$' end='^}}}$' keepend contains=@js
+
+sign define Foobar linehl=CodeBlock
+
+hi CodeBlock ctermbg=234
+
+" Highlighting Definitions
 
 highlight Tag ctermfg=226 cterm=bold
 " highlight Pointer ctermfg=40
