@@ -1,5 +1,5 @@
 setlocal spell
-hi Comment ctermbg=none
+hi Comment ctermbg=none guibg=#000000
 
 fun! ShowDiff()
     vertical rightbelow terminal git --no-pager diff --cached

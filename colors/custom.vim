@@ -6,81 +6,88 @@ endif
 
 let colors_name = "custom"
 
-hi ColorColumn ctermbg=234
-hi CursorLine cterm=none
-hi CursorLineNr ctermfg=238
-hi Directory ctermfg=33
-hi ErrorMsg cterm=bold ctermfg=253 ctermbg=124
-hi FoldColumn ctermfg=178 ctermbg=234
-hi Folded ctermfg=178 ctermbg=234 cterm=bold
-hi IncSearch cterm=reverse
-hi LineNr ctermfg=244
-hi ModeMsg cterm=bold
-hi MoreMsg ctermfg=34
+hi ColorColumn ctermbg=234 guibg=#1c1c1c
+hi CursorLine cterm=none gui=none
+hi CursorLineNr ctermfg=238 guifg=#444444
+hi Directory ctermfg=33 guifg=#0087ff
+hi ErrorMsg cterm=bold ctermfg=253 ctermbg=124 gui=bold guifg=#dadada guibg=#af0000
+hi FoldColumn ctermfg=178 ctermbg=234 guifg=#d7af00 guibg=#1c1c1c
+hi Folded ctermfg=178 ctermbg=234 cterm=bold guifg=#d7af00 guibg=#1c1c1c gui=bold
+hi IncSearch cterm=reverse gui=reverse
+hi LineNr ctermfg=244 guifg=#808080
+hi ModeMsg cterm=bold gui=bold
+hi MoreMsg ctermfg=34 guifg=#00af00
 " Same as Comment
-hi NonText cterm=bold ctermfg=39
-hi Pmenu ctermfg=255 ctermbg=17
-hi PmenuSel ctermfg=255 ctermbg=21
-hi Question ctermfg=34
-hi Search ctermfg=16 ctermbg=220
-hi SpecialKey ctermfg=237
-hi StatusLine cterm=bold,reverse
-hi StatusLineNC cterm=reverse
-" hi Title cterm=bold,underline ctermfg=135
-hi Title cterm=bold,underline ctermfg=42
-hi TOhtmlProgress ctermbg=28
-hi VertSplit cterm=none ctermbg=none ctermfg=255
-hi Visual cterm=reverse ctermbg=16
-hi VisualNOS cterm=bold,underline,underline
-hi WarningMsg ctermfg=16 ctermbg=214
-hi WildMenu ctermfg=16 ctermbg=220
-hi MatchParen cterm=bold ctermbg=240
+hi NonText cterm=bold ctermfg=39 gui=bold guifg=#00afff
+hi Pmenu ctermfg=255 ctermbg=17 guifg=#eeeeee guibg=#00005f
+hi PmenuSel ctermfg=255 ctermbg=21 guifg=#eeeeee guibg=#0000ff
+hi Question ctermfg=34 guifg=#00af00
+hi Search ctermfg=16 ctermbg=220 guifg=#000000 guibg=#ffd700
+hi SpecialKey ctermfg=237 guifg=#3a3a3a
+hi StatusLine cterm=bold,reverse gui=bold,reverse
+hi StatusLineNC cterm=reverse gui=reverse
+hi Title cterm=bold,underline ctermfg=42 gui=bold,underline guifg=#00d787
+hi TOhtmlProgress ctermbg=28 guibg=#008700
+hi VertSplit cterm=none ctermbg=none ctermfg=255 gui=none guifg=#eeeeee
+hi Visual cterm=reverse ctermbg=16 gui=reverse guibg=#000000
+hi VisualNOS cterm=bold,underline,underline gui=bold,underline,underline
+hi WarningMsg ctermfg=16 ctermbg=214 guifg=#000000 guibg=#ffaf00
+hi WildMenu ctermfg=16 ctermbg=220 guifg=#000000 guibg=#ffd700
+hi MatchParen cterm=bold ctermbg=240 gui=bold guibg=#585858
 
 hi clear SignColumn
 
 " Colors for syntax highlighting
 
-hi Comment ctermfg=39 ctermbg=236 cterm=italic
+hi Comment ctermfg=39 ctermbg=236 cterm=italic guifg=#00afff guibg=#303030
 
-" hi Identifier cterm=none ctermfg=43
-hi Identifier ctermfg=36 cterm=bold
+hi Constant ctermfg=196 guifg=#FF2D2D
 
-hi Constant ctermfg=196
+hi Identifier cterm=none ctermfg=36 guifg=#00CF9F
+hi Function cterm=italic ctermfg=50 guifg=#14D2D2
 
-hi PreProc ctermfg=135
+hi Statement ctermfg=220 guifg=#ffd700
+hi Operator ctermfg=208 guifg=#FF7700
 
-hi Statement ctermfg=220
-hi Operator ctermfg=208
+" hi PreProc ctermfg=135 guifg=#af5fff
+hi PreProc ctermfg=135 guifg=#C23BFF
 
-hi Type ctermfg=47
-hi Structure ctermfg=34
+hi Type ctermfg=46 guifg=#2DFF2D
 
-hi Error ctermfg=253 ctermbg=124
-hi Special ctermfg=75
-hi Todo ctermfg=16 ctermbg=220
+" hi Special ctermfg=75
+" hi Special ctermfg=39 guifg=#00afff
+hi Special ctermfg=39 guifg=#31BEFF
+hi SpecialChar ctermfg=39 guifg=#179BFF
+hi Delimiter ctermfg=37 guifg=#63A5A5
 
-hi Underlined cterm=underline,bold ctermfg=81
+hi Underlined cterm=underline,bold ctermfg=81 guifg=#5fd7ff
+
+hi Error ctermfg=253 ctermbg=124 guifg=#dadada guibg=#af0000
+
+hi Todo ctermfg=16 ctermbg=220 guifg=#000000 guibg=#ffd700
 
 " Non-standard
-hi Brackets ctermfg=37
+" hi Brackets ctermfg=37
+hi link Brackets Delimiter
 hi link Braces Brackets
-" hi Parens ctermfg=39
-hi Parens ctermfg=111
+hi link FunctionBraces Braces
+" hi Parens ctermfg=111 guifg=#87ffff
+hi link Parens Delimiter
 
-hi FunctionBraces ctermfg=37
-hi FunctionCall ctermfg=123
+" hi FunctionCall ctermfg=123 guifg=#87ffff
+hi FunctionCall ctermfg=123 cterm=italic guifg=#78FBFF
 
 hi link FunctionParens Operator
 hi link Noise Operator
 
 " Spelling
-hi SpellBad cterm=none ctermfg=255 ctermbg=88
-hi SpellCap cterm=none ctermfg=255 ctermbg=12
-hi SpellLocal cterm=none ctermfg=255 ctermbg=33
-hi SpellRare cterm=none ctermfg=255 ctermbg=13
+hi SpellBad   cterm=none ctermfg=255 ctermbg=88 guifg=#eeeeee guibg=#870000
+hi SpellCap   cterm=none ctermfg=255 ctermbg=12 guifg=#eeeeee guibg=#ffff87
+hi SpellLocal cterm=none ctermfg=255 ctermbg=33 guifg=#eeeeee guibg=#0087ff
+hi SpellRare  cterm=none ctermfg=255 ctermbg=13 guifg=#eeeeee guibg=#ffffaf
 
 " Diffs (e.g. Git)
-hi DiffAdd ctermfg=40 ctermbg=none
-hi DiffChange ctermfg=220 ctermbg=none
-hi DiffDelete ctermfg=160 ctermbg=none
-hi DiffText ctermbg=58 ctermfg=220 cterm=none
+hi DiffAdd    ctermfg=40  ctermbg=none guifg=#00d700
+hi DiffChange ctermfg=220 ctermbg=none guifg=#ffd700
+hi DiffDelete ctermfg=160 ctermbg=none guifg=#d70000
+hi DiffText   ctermfg=220 ctermbg=58   guifg=#ffd700 guibg=#5f5f00 cterm=none
