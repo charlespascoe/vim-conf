@@ -89,10 +89,7 @@ class Current:
 
     @property
     def window(self):
-        if self._win is None or self._win.number != vim.current.window.number:
-            self._win = Window(vim.current.window)
-
-        return self._win
+        return Window(vim.current.window)
 
     @property
     def buffer(self):

@@ -51,7 +51,10 @@ set nowrap
 set nostartofline    " when switching between buffers (and certain commands), preserve cursor column position
 set sidescroll=1     " moves sideways by one character when the cursor reachs the edge of the window
 set sidescrolloff=10 " ensures at least 10 characters are visible ahead of the cursor on long lines
+set scrolljump=10
 set listchars=extends:…
+
+set linebreak showbreak=\ \ ↪\  breakindent
 
 " Reads config from first few lines of file
 set modeline

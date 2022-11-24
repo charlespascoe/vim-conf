@@ -41,7 +41,7 @@ syn match abnfTerminalChar contained
 
 syn match abnfCoreRules /ALPHA\|BIT\|CHAR\|CR\|CRLF\|CTL\|DIGIT\|DQUOTE\|HEXDIG\|HTAB\|LF\|LWSP\|OCTET\|SP\|VCHAR\|WSP/ contained
 
-syn region abnfBlock start=/^\zs\a\+/ end=/^$/ contains=CONTAINED
+syn region abnfBlock start=/^\s*\zs\a\+/ end=/^$/ contains=CONTAINED
 
 
 if !exists('abnf_ignore_whitespace')
@@ -68,7 +68,7 @@ hi def link abnfTerminalChar Character
 hi def link abnfProduction Identifier
 hi def link abnfQuotedRuleName abnfRuleName
 hi def link abnfRepeat Number
-" hi def link abnfRuleName Identifier
+hi def link abnfRuleName Identifier
 hi def link abnfString String
 hi def link abnfSpecial SpecialChar
 

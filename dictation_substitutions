@@ -32,6 +32,7 @@
 /(?i)Duplicut/duplicate/
 /(?i)Jason/JSON/
 /(?i)Okay/OK/
+/(?i)site for text(s?)/ciphertext\1/
 /([pP])(ram|erram)/\1aram/
 /([Rr])(efracted|eflected)/\1efactored/
 /([zs]ip|city) traffic/SIP traffic/

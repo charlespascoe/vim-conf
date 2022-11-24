@@ -7,6 +7,7 @@ BT
 BT's
 Bulletnotes
 ciphertext
+ciphertexts
 cls
 config
 CouchDB
@@ -41,6 +42,7 @@ JSON
 macOS
 microservice
 microservices
+OAEP
 parsable
 Pascoe
 PEM
@@ -52,6 +54,8 @@ plaintext
 plugin
 protobuffers
 Ragel
+rebased
+rebasing
 Redis
 replaceability
 restrictor
@@ -63,6 +67,8 @@ SHA
 SHA3
 SharePoint
 Siri
+SLA
+SLAs
 struct
 structs
 subsubsection

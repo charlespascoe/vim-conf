@@ -145,6 +145,9 @@ let g:go_highlight_dot = 'ctermfg=208 cterm=bold'
 let g:go_highlight_function_parens = 'Operator'
 let g:go_highlight_slice_brackets = 'Special'
 let g:go_highlight_map_brackets = 'Special'
+let g:go_highlight_function_calls = 'FunctionCall'
+let g:go_highlight_function_parameters = 0
+let g:go_highlight_fields = 1
 
 " vim-gitgutter
 let g:gitgutter_set_sign_backgrounds = 0
@@ -191,3 +194,15 @@ let g:serenade_autostart = 0
 
 " indent-marker
 let g:indent_marker_ignore_filetypes = ['rfc', 'help']
+
+" ale
+
+let g:ale_hover_cursor = 0
+
+" Disable linting in insert mode
+let g:ale_lint_on_text_changed = 0
+let g:ale_lint_on_insert_leave = 0
+
+let g:ale_pattern_options = {
+            \ '.*\.go$': #{ale_enabled: 0},
+            \}

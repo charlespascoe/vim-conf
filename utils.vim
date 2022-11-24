@@ -116,7 +116,7 @@ nmap <expr> <Enter> NormalEnter() ? "\<Enter>" : "i\<Enter>\<Space>\<BS>\<Esc>\<
 " Scratch file
 
 fun! Scratch()
-    split
+    vert split
     noswapfile hide enew
     setlocal buftype=nofile
     setlocal bufhidden=hide

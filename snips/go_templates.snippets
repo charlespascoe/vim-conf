@@ -169,7 +169,7 @@ func ParseAllOptions(flags *flag.FlagSet, args []string) (posArgs []string) {
 
 		args = flags.Args()
 
-		for len(args) > 0 && !strings.HasPrefix(args[0], "-") {
+		for len(args) > 0 && (args[0] == "-" || !strings.HasPrefix(args[0], "-")) {
 			posArgs = append(posArgs, args[0])
 			args = args[1:]
 		}

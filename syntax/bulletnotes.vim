@@ -92,7 +92,7 @@ syntax match LinkEnds /\[[\[:]\?\|[:\]]\?\]/ contained conceal
 " syntax match AnchorPointerMarker /&:/ contained
 " syntax match Link /\(^\|\s\)\[[^\]]\+\]\(\s\|$\)/ contains=@NoSpell,LinkEnds keepend
 " syntax match LinkEnds /\(\[\|\]\)/ contained
-syntax match Contact /@[a-zA-Z\-._]\+/ contains=ContactMarker
+syntax match Contact /@[a-zA-Z\-._]\+/ contains=@NoSpell,ContactMarker
 syntax match Anchor /:[a-zA-Z0-9]\+:/ contains=@NoSpell,AnchorMarker
 syntax match AnchorMarker /:/ contained
 syntax match ContactMarker /@/ contained conceal

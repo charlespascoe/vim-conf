@@ -2,6 +2,12 @@ setlocal shiftwidth=2
 setlocal tabstop=2
 setlocal softtabstop=2
 
+nmap <buffer> <leader>te <Plug>(ale_next)zz
+nmap <buffer> <leader>tE <Plug>(ale_previous)zz
+
+" TODO: Improve matching
+call QuickSearchMap('f', 'Functions', '\w\+(.*)\s\+{$')
+
 fun! RealtimeRepl()
     let g:repl_buf = bufnr("Node REPL", 1)
     call setbufvar(g:repl_buf, '&buftype', 'nofile')

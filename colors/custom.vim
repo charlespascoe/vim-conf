@@ -7,7 +7,7 @@ endif
 let colors_name = "custom"
 
 hi ColorColumn ctermbg=234 guibg=#1c1c1c
-hi CursorLine cterm=none gui=none
+hi CursorLine ctermfg=235 guibg=#262626 cterm=none
 hi CursorLineNr ctermfg=238 guifg=#444444
 hi Directory ctermfg=33 guifg=#0087ff
 hi ErrorMsg cterm=bold ctermfg=253 ctermbg=124 gui=bold guifg=#dadada guibg=#af0000
@@ -44,7 +44,8 @@ hi Comment ctermfg=39 ctermbg=236 cterm=italic guifg=#00afff guibg=#303030
 hi Constant ctermfg=196 guifg=#FF2D2D
 
 hi Identifier cterm=none ctermfg=36 guifg=#00CF9F
-hi Function cterm=italic ctermfg=50 guifg=#14D2D2
+" hi Function cterm=italic ctermfg=50 guifg=#14D2D2
+hi Function ctermfg=50 guifg=#14D2D2
 
 hi Statement ctermfg=220 guifg=#ffd700
 hi Operator ctermfg=208 guifg=#FF7700
@@ -53,6 +54,7 @@ hi Operator ctermfg=208 guifg=#FF7700
 hi PreProc ctermfg=135 guifg=#C23BFF
 
 hi Type ctermfg=46 guifg=#2DFF2D
+hi StorageClass ctermfg=34 guifg=#00af00
 
 " hi Special ctermfg=75
 " hi Special ctermfg=39 guifg=#00afff
@@ -75,7 +77,8 @@ hi link FunctionBraces Braces
 hi link Parens Delimiter
 
 " hi FunctionCall ctermfg=123 guifg=#87ffff
-hi FunctionCall ctermfg=123 cterm=italic guifg=#78FBFF
+" hi FunctionCall ctermfg=123 cterm=italic guifg=#78FBFF
+hi FunctionCall ctermfg=123 guifg=#78FBFF
 
 hi link FunctionParens Operator
 hi link Noise Operator

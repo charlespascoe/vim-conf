@@ -33,7 +33,7 @@ snippet cd "Console Debug" bw
 console.debug($1);
 endsnippet
 
-snippet ee "Console Error" bw
+snippet ce "Console Error" bw
 console.error($1);
 endsnippet
 
@@ -134,6 +134,16 @@ snippet '^im' "Import" brA
 import`!p snip.rv = ' {' if t[2] != '*' else ''` $2 `!p snip.rv = '} ' if t[2] != '*' else ''`from '$1';
 endsnippet
 
+## M ##
+
+# TODO: only when in a class
+context "cursor_at_eol(snip)"
+snippet 'mc ' "Constructor" brA
+constructor($1) {
+	$0
+}
+endsnippet
+
 ## R ##
 
 pre_expand "replace_rest_of_line(snip)"
@@ -159,7 +169,7 @@ endsnippet
 
 ## T ##
 
-snippet tE "Throw Error" bw
+snippet te "Throw Error" bw
 throw new Error($1);
 endsnippet
 
