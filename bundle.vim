@@ -9,11 +9,13 @@ DevPlug 'vim-serenade'
 
 delcom DevPlug
 
+Plug 'vim-python/python-syntax'
+Plug 'davidhalter/jedi-vim'
+
 Plug 'airblade/vim-gitgutter'
 Plug 'christoomey/vim-sort-motion'
 Plug 'christoomey/vim-titlecase'
 Plug 'ctrlpvim/ctrlp.vim'
-Plug 'davidhalter/jedi-vim'
 Plug 'dense-analysis/ale'
 Plug 'dkarter/bullets.vim'
 Plug 'fatih/vim-go'
@@ -38,7 +40,6 @@ Plug 'tpope/vim-sleuth'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-unimpaired'
 Plug 'vim-airline/vim-airline'
-Plug 'vim-python/python-syntax'
 Plug 'vim-scripts/ReplaceWithRegister'
 
 call plug#end()

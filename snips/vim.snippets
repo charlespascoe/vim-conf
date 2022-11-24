@@ -45,6 +45,12 @@ if $1
 endif
 endsnippet
 
+snippet 'ifg ' "If get()" brA
+if get($1:, '$2'$3)
+	$0
+endif
+endsnippet
+
 ## L ##
 
 snippet 'l([lbtwg]) ' "Let" brA
@@ -55,6 +61,14 @@ endsnippet
 
 snippet '\br ' "return" brA
 return $0
+endsnippet
+
+snippet region "Region" bw
+" $1 {{{
+
+$0
+
+" }}} $1
 endsnippet
 
 ## T ##

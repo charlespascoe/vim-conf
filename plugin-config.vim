@@ -143,8 +143,8 @@ let g:go_rename_command = 'gopls'
 let g:go_highlight_parens = 'Parens'
 let g:go_highlight_dot = 'ctermfg=208 cterm=bold'
 let g:go_highlight_function_parens = 'Operator'
-let g:go_highlight_slice_brackets = 'Special'
-let g:go_highlight_map_brackets = 'Special'
+let g:go_highlight_slice_brackets = 'SpecialChar'
+let g:go_highlight_map_brackets = 'SpecialChar'
 let g:go_highlight_function_calls = 'FunctionCall'
 let g:go_highlight_function_parameters = 0
 let g:go_highlight_fields = 1
