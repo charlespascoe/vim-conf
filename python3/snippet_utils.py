@@ -2,8 +2,8 @@ import re
 import vim
 
 
-leading_whitespace_re = re.compile(r'^\s+')
-non_alphanum_underscore = re.compile(r'[^a-zA-Z0-9_]')
+leading_whitespace_re = re.compile(r"^\s+")
+non_alphanum_underscore = re.compile(r"[^a-zA-Z0-9_]")
 
 
 class Window:
@@ -140,11 +140,11 @@ def line_equals(snip, s):
 
 
 def cursor_at_eol(snip):
-    return len(snip.buffer[snip.line])-1 == snip.column
+    return len(snip.buffer[snip.line]) - 1 == snip.column
 
 
 def after_cursor(snip, s):
-    ac = snip.buffer[snip.line][snip.column+1:]
+    ac = snip.buffer[snip.line][snip.column + 1 :]
 
     if isinstance(s, re.Pattern):
         return s.search(ac)
@@ -154,12 +154,12 @@ def after_cursor(snip, s):
 
 def replace_rest_of_line(snip):
     l = snip.buffer[snip.line]
-    snip.context = l[snip.column+1:].strip()
+    snip.context = l[snip.column + 1 :].strip()
 
     ws_match = leading_whitespace_re.match(l)
 
     if ws_match is None:
-        ws = ''
+        ws = ""
     else:
         ws = ws_match[0]
 
@@ -200,19 +200,19 @@ def following_lines(line=None):
     if line_index is None:
         line_index = current.window.line
 
-    for _, line in current.buffer.lines(start=line+1):
+    for _, line in current.buffer.lines(start=line + 1):
         yield line
 
 
 def nonempty(strings):
     for string in strings:
-        if string != '':
+        if string != "":
             yield string
 
 
 def top_level(lines):
     for line in lines:
-        if line != '' and not leading_whitespace_re.match(line):
+        if line != "" and not leading_whitespace_re.match(line):
             yield line
 
 
@@ -256,18 +256,19 @@ def format_camel_case(s, cap_first=False):
 
         cap = True
 
-    return ''.join(out)
+    return "".join(out)
 
 
 def format_snake_case(s, cap=False):
     if cap:
         s = s.upper()
 
-    return '_'.join(word for word in non_alphanum_underscore.split(s) if word)
+    return "_".join(word for word in non_alphanum_underscore.split(s) if word)
 
 
 def start_dictation():
-    vim.command('call dictate#Start()')
+    vim.command("call dictate#Start()")
+
 
 def get_syntax_name(pos, pattern, behind_pos=False):
     # NOTE: pos (in any form) must be zero-based
@@ -297,6 +298,9 @@ def get_syntax_name(pos, pattern, behind_pos=False):
 
     return vim.eval(f'synIDattr(synID({line + 1}, {col + match_col + 1}, 0), "name")')
 
+
 def in_syntax_group(name):
-    syn_stack = vim.eval('map(synstack(line("."), col(".")), "synIDattr(v:val, \\"name\\")")')
+    syn_stack = vim.eval(
+        'map(synstack(line("."), col(".")), "synIDattr(v:val, \\"name\\")")'
+    )
     return name in syn_stack

@@ -45,3 +45,5 @@ noremap <buffer> <leader>i <Cmd>call AddImport()<CR>
 call QuickSearchMap('f', 'Functions', '\<def [a-zA-Z0-9_]\+(\(self\)\@!')
 call QuickSearchMap('c', 'Classes', '\<class [a-zA-Z0-9_]\+')
 call QuickSearchMap('m', 'Methods', '^\s\+\Kdef [a-zA-Z0-9_]\+(self\>')
+
+let b:ale_fix_on_save = 1

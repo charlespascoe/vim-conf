@@ -42,6 +42,7 @@ JSON
 macOS
 microservice
 microservices
+multiline
 OAEP
 parsable
 Pascoe
@@ -76,6 +77,7 @@ subtree
 TBD
 th
 timestamp
+TK/?
 TNOR
 TODO
 toggleable
@@ -85,6 +87,7 @@ unregister
 uploader
 UUID
 UUIDs
+variadic
 verifiably
 WebSocket
 WebSockets

@@ -68,8 +68,8 @@ snippet '(?<=\s)tr ' "Transparent" rA
 transparent $0
 endsnippet
 
-snippet '(?<=\s)s([ewn]+) ' "" rA
-`!p snip.rv = ' '.join('skip' + skip[s] for s in sorted(set(match[1])))` $0
+snippet '(?<=\s)s([ewn]) ' "" rA
+`!p snip.rv = 'skip' + skip[match[1]]` $0
 endsnippet
 
 snippet '(?<=[,=])@ns' "NoSpell" rA

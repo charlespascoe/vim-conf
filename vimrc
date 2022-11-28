@@ -90,8 +90,9 @@ set fillchars+=vert:│
 set mouse=a
 set ttymouse=xterm2
 
-" Disable octal increment (annoying when dealing with telephone numbers)
-set nrformats-=octal
+" Set number formatting options for increment/decrement (not octal - it's
+" annoying when dealing with telephone numbers)
+set nrformats=alpha,hex,bin,unsigned
 
 " Disable middle click paste
 map <MiddleMouse> <Nop>

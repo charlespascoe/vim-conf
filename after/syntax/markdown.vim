@@ -6,3 +6,6 @@ syn region markdownH4 matchgroup=markdownH4Delimiter start="#####\@!\s\+"   end=
 syn region markdownH5 matchgroup=markdownH5Delimiter start="######\@!\s\+"  end="#*\s*$" keepend oneline contains=@markdownInline,markdownAutomaticLink contained
 syn region markdownH6 matchgroup=markdownH6Delimiter start="#######\@!\s\+" end="#*\s*$" keepend oneline contains=@markdownInline,markdownAutomaticLink contained
 
+hi markdownBold cterm=bold ctermfg=51 guifg=#74fffb
+hi link markdownCode Constant
+hi link markdownCodeDelimiter Constant
