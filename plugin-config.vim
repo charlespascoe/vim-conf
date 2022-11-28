@@ -10,7 +10,7 @@ highlight CtrlPBufferHid ctermfg=123
 highlight CtrlPBufferPath ctermfg=15
 highlight CtrlPPrtBase ctermfg=32
 
-nmap <silent> <leader>f <Cmd>CtrlPBuffer<CR>
+nmap <silent> <leader>b <Cmd>CtrlPBuffer<CR>
 
 " Airline
 let g:airline#extensions#tabline#enabled = 1
@@ -48,7 +48,9 @@ let g:airline_symbols.maxlinenr = ''
 
 " bullets.vim
 let g:bullets_enabled_file_types = ['markdown', 'text', 'asciidoctor']
-let g:bullets_set_mappings = 0
+let g:bullets_set_mappings = 1
+let g:bullets_enable_in_empty_buffers = 0
+let g:bullets_outline_levels = ['std-']
 
 " Bulletnotes
 
@@ -197,6 +199,10 @@ let g:indent_marker_ignore_filetypes = ['rfc', 'help']
 
 " ale
 
+let g:ale_python_black_use_global = 1
+
+let g:ale_fixers = {'python': ['black']}
+
 let g:ale_hover_cursor = 0
 
 " Disable linting in insert mode
@@ -206,3 +212,11 @@ let g:ale_lint_on_insert_leave = 0
 let g:ale_pattern_options = {
             \ '.*\.go$': #{ale_enabled: 0},
             \}
+
+" fzf-vim
+
+nmap <leader>f <Cmd>Tags<CR>
+
+" gutentags
+
+let g:gutentags_ctags_exclude = ['.*/*', '*/.*', '*.patch', '*.css', '*.json', 'vendor']

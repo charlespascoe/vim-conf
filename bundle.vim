@@ -9,6 +9,9 @@ DevPlug 'vim-serenade'
 
 delcom DevPlug
 
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
+
 Plug 'vim-python/python-syntax'
 Plug 'davidhalter/jedi-vim'
 
@@ -24,10 +27,13 @@ Plug 'junegunn/vim-easy-align'
 Plug 'junegunn/vim-plug'
 Plug 'kopischke/vim-fetch'
 Plug 'kshenoy/vim-signature'
+Plug 'ludovicchabant/vim-gutentags'
 Plug 'mbbill/undotree'
 Plug 'michaeljsmith/vim-indent-object'
 Plug 'moll/vim-bbye'
+Plug 'morhetz/gruvbox'
 Plug 'pangloss/vim-javascript'
+Plug 'preservim/tagbar'
 Plug 'Raimondi/delimitMate'
 Plug 'scrooloose/nerdtree'
 Plug 'sirver/ultisnips'
