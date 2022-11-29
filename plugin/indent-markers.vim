@@ -6,6 +6,16 @@ set listchars+=tab:│\  list
 
 " Set indent level marker based on shiftwidth for space-indented files
 
+fun s:GetShiftwidth()
+    for v in [&l:shiftwidth, &shiftwidth, &l:tabstop, &tabstop]
+        if v != 0
+            return v
+        endif
+    endfor
+
+    return 0
+endfun
+
 fun s:SetIndentMarker()
     let lc = &l:listchars
 
@@ -15,14 +25,10 @@ fun s:SetIndentMarker()
 
     let lcopts = filter(split(lc, ','), 'v:val !~ "^leadmultispace"')
 
-    let sw = &l:shiftwidth
-
-    if sw == 0
-        let sw = &shiftwidth
-    end
-
     if index(get(g:, 'indent_marker_ignore_filetypes', []), &ft) >= 0
         let sw = 0
+    else
+        let sw = s:GetShiftwidth()
     endif
 
     if sw > 0

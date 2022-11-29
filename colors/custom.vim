@@ -7,9 +7,11 @@ endif
 let colors_name = "custom"
 
 " hi Normal guibg=#1D1B23
-hi Normal guibg=#241927
+hi Normal guifg=#F8F8F2 guibg=#292730
 " hi ColorColumn guibg=#1c1c1c
-hi ColorColumn guibg=#28122E
+" hi ColorColumn guibg=#28122E
+" hi ColorColumn ctermbg=235 guibg=#252733
+hi ColorColumn ctermbg=235 guibg=#262431
 hi CursorLine ctermfg=235 guibg=#262626 cterm=none
 hi CursorLineNr ctermfg=238 guifg=#444444
 hi Directory ctermfg=33 guifg=#0087ff
@@ -40,7 +42,7 @@ hi WildMenu ctermfg=16 ctermbg=220 guifg=#000000 guibg=#ffd700
 hi MatchParen cterm=bold ctermbg=240 gui=bold guibg=#585858
 
 " ALTERNATE VARIATION
-let alternate = 1
+let alternate = 0
 
 if alternate
     hi Normal guifg=#F8F8F2 guibg=#282A36
@@ -61,7 +63,9 @@ hi Constant ctermfg=196 guifg=#FF2D2D
 hi Identifier cterm=none guifg=#9DFFAE
 " hi Function cterm=italic ctermfg=50 guifg=#14D2D2
 " hi Function ctermfg=50 guifg=#14D2D2
-hi Function cterm=bold ctermfg=50 guifg=#00EBEB
+" hi Function cterm=bold ctermfg=50 guifg=#00EBEB
+" hi Function ctermfg=50 guifg=#00EBEB
+hi Function ctermfg=50 guifg=#68FFFF
 
 hi Statement ctermfg=220 guifg=#ffd700
 hi Operator ctermfg=208 guifg=#FF7700

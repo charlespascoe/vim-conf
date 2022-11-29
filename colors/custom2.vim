@@ -1,7 +1,9 @@
 source ~/.vim-conf/colors/custom.vim
 
-
 " finish
+
+hi clear Search
+hi Search cterm=bold guibg=#E2CC54 guifg=#342E09
 
 " hi Normal guibg=#25172A
 " hi ColorColumn guibg=#290E33
@@ -14,6 +16,7 @@ hi LineNr guifg=#8C4A9E
 " hi Constant guifg=#FF6363
 " hi Constant guifg=#FF3030
 hi Constant guifg=#FF3030
+" hi String guifg=#FF3030
 
 " hi Identifier guifg=#00FF2D
 " hi Identifier guifg=#6AFF84
@@ -26,7 +29,8 @@ hi! link FunctionCall Function
 " hi Statement cterm=bold guifg=#FF42C0
 " hi Statement cterm=bold guifg=#FF64E2
 hi Statement cterm=none guifg=#E873D2
-hi Operator ctermfg=208 guifg=#FF8626
+" hi Operator ctermfg=208 guifg=#FF8626
+hi Operator ctermfg=208 guifg=#FFA540
 
 hi PreProc guifg=#377DDB
 
@@ -43,6 +47,8 @@ hi SpecialChar ctermfg=39 guifg=#179BFF
 hi SpecialKey guifg=#3A3E51
 
 
+" Non-standard
+hi FunctionParens guifg=#B79523
 
 
 
@@ -50,13 +56,13 @@ hi SpecialKey guifg=#3A3E51
 let alternate = 1
 
 if alternate
-    hi Visual guibg=#44475A
+    hi Visual cterm=none guibg=#44475A
     hi CursorLine guibg=#44475A
     hi Normal guifg=#F8F8F2 guibg=#282A36
     " hi ColorColumn ctermbg=235 guibg=#21222C
     hi ColorColumn ctermbg=235 guibg=#252733
     hi LineNr guifg=#6272A4
-    hi Operator guifg=#FFAF6F
+    " hi Operator guifg=#FFAF6F
     " hi Type guifg=#FFEC58
     " hi Function guifg=#00E9FF
 
@@ -69,14 +75,25 @@ if alternate
     " hi Special ctermfg=39 guifg=#31BEFF
     " hi Special ctermfg=39 guifg=#9D91FF
     " hi Special ctermfg=39 guifg=#A35DFD
-    hi Special cterm=bold ctermfg=39 guifg=#9087FD
+    " hi Special cterm=bold ctermfg=39 guifg=#9087FD
+    " hi Special ctermfg=39 guifg=#9087FD
+    " hi Special ctermfg=39 guifg=#9F98FD
+    " hi Special cterm=bold,italic ctermfg=39 guifg=#9F98FD
+    hi Special cterm=bold ctermfg=39 guifg=#B18BFF
+    " hi Special ctermfg=39 guifg=#2FA5FF
+    hi SpecialChar ctermfg=39 guifg=#2FA5FF
     hi Function cterm=none guifg=#FFF180
 
     hi Identifier ctermfg=117 guifg=#8BE9FD
+    " hi Identifier ctermfg=117 guifg=#A1EDFD
     " hi PreProc cterm=italic ctermfg=135 guifg=#9087FD
-    hi PreProc cterm=italic guibg=#2F2938 guifg=#A076C2
+    " hi PreProc cterm=italic guibg=#2F2938 guifg=#A076C2
+    hi PreProc guifg=#9087FD
     " hi Comment ctermfg=61 guifg=#6272A4
     " hi Comment ctermfg=61 guibg=#2B1F50 guifg=#9173E3
     hi Comment ctermfg=61 guibg=#3E3853 guifg=#A381FF
-    hi Constant guifg=#FF6C6C
+    " hi Constant guifg=#FF6C6C
+    hi Constant guifg=#FF5C5C
+    " hi Constant guifg=#FF4E4E
+    " hi String guifg=#FF6C6C
 endif

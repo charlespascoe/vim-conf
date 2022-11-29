@@ -1,5 +1,7 @@
 " Varioys abbreviations
 
+iabbr api API
+
 cabbr ps PlugSync
 cabbr pu PlugUpdate
 

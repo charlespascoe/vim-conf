@@ -147,17 +147,20 @@ let g:go_rename_command = 'gopls'
 
 let g:go_highlight_parens = 'Parens'
 let g:go_highlight_dot = 'ctermfg=208 cterm=bold'
-let g:go_highlight_function_parens = 'Operator'
+let g:go_highlight_function_parens = 'FunctionParens'
 let g:go_highlight_slice_brackets = 'SpecialChar'
 let g:go_highlight_map_brackets = 'SpecialChar'
 let g:go_highlight_function_calls = 'FunctionCall'
 let g:go_highlight_function_parameters = 0
 let g:go_highlight_fields = 1
+let g:go_highlight_struct_fields = 1
+let g:go_highlight_builtins = 0
 
 " vim-gitgutter
 let g:gitgutter_set_sign_backgrounds = 0
 
 map <leader>gn <Esc>:GitGutterNextHunk<CR>
+map <leader>ga <Esc>:GitGutterStageHunk<CR>
 
 
 " jedi-vim
@@ -216,9 +219,16 @@ let g:ale_pattern_options = {
             \ '.*\.go$': #{ale_enabled: 0},
             \}
 
+nmap <leader>at <Plug>(ale_toggle)
+nmap <leader>aT <Plug>(ale_toggle_buffer)
+nmap <leader>af <Plug>(ale_fix)
+nmap <leader>ae <Plug>(ale_next_wrap)zz
+nmap <leader>aE <Plug>(ale_previous_wrap)zz
+
 " fzf-vim
 
 nmap <leader>f <Cmd>Tags<CR>
+nmap <leader>F <Cmd>BTags<CR>
 
 " gutentags
 
