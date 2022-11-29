@@ -1,6 +1,8 @@
 " Map autocomplete trigger onto Omnicomplete
 inoremap <buffer> <C-z> <C-x><C-o>
 
+nmap <leader>tR <Cmd>call feedkeys("\<C-r>\"") <bar> call jedi#rename()<CR>
+
 fun! RealtimeRepl()
     let g:repl_buf = bufnr("Node REPL", 1)
     call setbufvar(g:repl_buf, '&buftype', 'nofile')

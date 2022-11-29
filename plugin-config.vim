@@ -168,7 +168,7 @@ let g:jedi#goto_definitions_command = '<leader>tt'
 let g:jedi#goto_command = "<leader>td"
 let g:jedi#documentation_command = "<leader>tD"
 let g:jedi#usages_command = "<leader>tr"
-let g:jedi#rename_command = "<leader>tR"
+let g:jedi#rename_command = ""
 let g:jedi#completions_command = ""
 
 

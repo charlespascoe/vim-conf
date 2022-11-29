@@ -130,6 +130,7 @@ command -bar FixQuotes %s/’/'/ge | %s/“/"/ge | %s/”/"/ge
 
 command Scriptnames redir @" | silent scriptnames | redir END | Scratch | exec 'normal p'
 command SyntimeReport redir @" | silent syntime report | redir END | Scratch | exec 'normal p'
+command Syntax redir @" | exec "silent syntax" | redir END | Scratch | exec 'normal p'
 
 fun s:ToggleConceal()
     let &l:conceallevel = &l:conceallevel == 0 ? 2 : 0
