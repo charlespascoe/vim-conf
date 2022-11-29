@@ -67,6 +67,10 @@ hi Identifier cterm=none guifg=#9DFFAE
 " hi Function ctermfg=50 guifg=#00EBEB
 hi Function ctermfg=50 guifg=#68FFFF
 
+" Non-standard
+hi FunctionParens guifg=#B79523
+
+
 hi Statement ctermfg=220 guifg=#ffd700
 hi Operator ctermfg=208 guifg=#FF7700
 

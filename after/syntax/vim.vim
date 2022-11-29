@@ -2,6 +2,10 @@
 syntax match LeadingWhitespace /^[ \t]*/ contained
 syntax match vimLineComment /^[ \t:]*".*$/  contains=@vimCommentGroup,vimCommentString,vimCommentTitle,LeadingWhitespace
 
+hi vimFuncName  cterm=bold,italic  guifg=#FFF180
+
+hi link vimFunction Function
+hi link vimUserFunc Function
 hi link vimSynType Statement
 hi link vimFgBgAttrib Special
 hi link vimHiAttrib Special
@@ -14,3 +18,46 @@ hi link vimSource Statement
 
 syntax match vimPath /\S\+/ contained
 hi link vimPath Constant
+
+syn match vimEchoHL "echohl\=" skipwhite nextgroup=vimGroup,vimHiGroup,vimHLGroup,vimEchoHLNone
+
+syntax match vimSyntaxClusterRef /@\w\+/ contained containedin=vimGroupList
+hi link vimSyntaxClusterRef Identifier
+
+syntax match vimComma /,/ containedin=vimGroupList,vimFuncArgs,@vimOperGroup
+hi link vimComma Operator
+
+syntax match vimAmp /&/ containedin=vimGroupList,@vimOperGroup
+hi link vimAmp SpecialChar
+
+syntax match vimAnd /&&/ containedin=vimGroupList,@vimOperGroup
+hi link vimAnd Operator
+
+
+" Include autoload functions in function highlighting
+syntax match vimFunc     /\c\%(\%([sgbwtl]:\|<s[i]d>\)\=\%(\w\+\.\)*\I[a-z0-9_.]*\)\ze\s*(/ contains=vimFuncEcho,vimFuncName,vimUserFunc,vimExecute nextgroup=vimFuncArgs
+syntax match vimFunc     /\c\h[a-z0-9_.]*\%(#\h[a-z0-9_.]*\)\+\ze(/                         contains=vimFuncEcho,vimFuncName,vimUserFunc,vimExecute nextgroup=vimFuncArgs
+syntax match vimUserFunc /\c\h[a-z0-9_.]*\%(#\h[a-z0-9_.]*\)\+/                             contains=vimFuncEcho,vimFuncName,vimUserFunc,vimExecute nextgroup=vimFuncArgs
+
+syntax region vimFuncArgs matchgroup=FunctionParens start='(' end=')' contained contains=vimoperStar,@vimOperGroup,vimNotation
+hi link vimFuncArgs FunctionParens
+
+" hi link vimAmp SpecialChar
+
+" TODO: Raise this as a fix in Vim repo
+syn keyword vimHiClear contained containedin=vimHighlightCluster clear skipwhite  nextgroup=vimHiGroup
+
+
+syntax keyword vimCommand match skipwhite nextgroup=vimMatchHiGroup
+syntax match vimMatchHiGroup /\i\+/ contained skipwhite nextgroup=vimSynRegPat
+hi link vimMatchHiGroup vimHiGroup
+
+hi link vimHiKeyList Operator
+
+hi link vimHiBang Operator
+
+hi link vimHiTerm Identifier
+
+
+" TODO: Raise this as a fix, but make the hi bang optional
+syn region	vimHiLink	contained oneline matchgroup=vimCommand start="\(\<hi\%[ghlight]!\s\+\)\@<=\(\(def\%[ault]\s\+\)\=link\>\|\<def\>\)" end="$"	contains=@vimHiCluster

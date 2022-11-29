@@ -1,8 +1,11 @@
-source ~/.vim-conf/colors/custom.vim
+set background=dark
+hi clear
+if exists("syntax_on")
+  syntax reset
+endif
 
-" finish
+let colors_name = "custom2"
 
-hi clear Search
 hi Search cterm=bold guibg=#E2CC54 guifg=#342E09
 
 " hi Normal guibg=#25172A
@@ -32,6 +35,8 @@ hi Statement cterm=none guifg=#E873D2
 " hi Operator ctermfg=208 guifg=#FF8626
 hi Operator ctermfg=208 guifg=#FFA540
 
+hi NonText cterm=bold ctermfg=39 gui=bold guifg=#00afff
+
 hi PreProc guifg=#377DDB
 
 " hi Type cterm=italic,bold guifg=#00E9FF
@@ -43,6 +48,10 @@ hi! link StorageClass Statement
 hi Special guifg=#9D5EFF
 hi SpecialChar ctermfg=39 guifg=#179BFF
 
+hi Delimiter ctermfg=37 guifg=#63A5A5
+
+hi Underlined cterm=underline,bold ctermfg=81 guifg=#5fd7ff
+
 
 hi SpecialKey guifg=#3A3E51
 
@@ -50,6 +59,11 @@ hi SpecialKey guifg=#3A3E51
 " Non-standard
 hi FunctionParens guifg=#B79523
 
+hi Error cterm=bold guifg=#FFFFFF guibg=#DE4141
+" hi Todo guifg=#111111 guibg=#ffd700
+" hi Todo cterm=bold,italic guifg=#111111 guibg=#E3CB4C
+hi Todo cterm=bold,italic guifg=#3D3400 guibg=#E3CB4C
+" hi Todo cterm=bold,italic guifg=#471451 guibg=#E149FF
 
 
 " ALTERNATE VARIATION
@@ -97,3 +111,65 @@ if alternate
     " hi Constant guifg=#FF4E4E
     " hi String guifg=#FF6C6C
 endif
+
+
+hi Conceal guifg=#BCBEC6 guibg=#40424B
+hi Directory cterm=bold guifg=#BD93F9
+
+" " TODO: Maybe link to similar classes?
+hi DiffAdd guifg=#6FFF88
+" hi DiffChange guifg=#FFA540
+hi DiffChange guifg=#FFB86C
+hi DiffDelete guifg=#FF5C5C
+
+hi! link ErrorMsg Error
+
+hi VertSplit cterm=none guifg=#6272A4
+
+" hi Folded guifg=#6272A4 guibg=#21222C
+hi Folded guifg=#8B97BC guibg=#21222C
+hi FoldColumn guifg=#8B97BC guibg=#21222C
+
+" hi MatchParen cterm=bold,underline guibg=#585858
+hi MatchParen cterm=bold,underline guibg=#424D71
+
+
+" hi Pmenu guifg=#cccccc guibg=#21222C
+hi Pmenu guifg=#cccccc guibg=#261D30
+hi PmenuSel guifg=#ffffff guibg=#44475A
+
+" hi PmenuSbar       guibg=#21222C
+" hi PmenuSbar       guibg=#2C2D3B
+hi PmenuSbar       guibg=#3B2D4A
+" hi PmenuThumb      guibg=#44475A
+" hi PmenuThumb      guibg=#787D99
+hi PmenuThumb      guibg=#AB97C0
+
+hi SpellBad cterm=undercurl,underline guifg=#FF5555 guibg=#3D0000
+hi SpellCap cterm=undercurl,underline guifg=#8BE9FD guibg=#024958
+hi SpellRare cterm=undercurl,underline guifg=#8BE9FD guibg=#024958
+hi SpellLocal cterm=undercurl,underline guifg=#FFB86C guibg=#5C2F00
+
+hi WarningMsg guifg=#FFB86C guibg=#5C2F00
+
+
+hi StatusLine     cterm=bold guibg=#424450
+hi StatusLineNC   guibg=#343746
+hi StatusLineTerm cterm=bold guibg=#424450
+hi StatusLineTermNC guibg=#343746
+hi TabLine        guifg=#6272A4 guibg=#21222C
+
+
+hi TabLineFill     guifg=#ffffff guibg=#21222C
+
+hi! link TabLineSel     Normal
+
+hi Title         cterm=bold,underline guifg=#50FA7B
+
+
+hi SignColumn     guifg=#6272A4 guibg=#282A36
+
+hi! link Question Type
+hi! link MoreMsg Type
+
+hi EndOfBuffer  guifg=#424450
