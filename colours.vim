@@ -5,19 +5,19 @@ else
 endif
 
 set termguicolors
-colorscheme custom
+colorscheme custom2
 
 " Change line number colours to indicate mode
 function! InsertModeChanged(mode)
     if a:mode == 'i'
-        highlight LineNr ctermfg=45 guifg=#00d7ff
-        highlight CursorLineNr ctermfg=33 guifg=#0087ff
+        highlight LineNr guifg=#2EDEFF
+        " highlight CursorLineNr ctermfg=33 guifg=#0087ff
     elseif a:mode == 'r' || a:mode == 'v'
-        highlight LineNr ctermfg=202 guifg=#ff5f00
-        highlight CursorLineNr ctermfg=196 guifg=#ff0000
+        highlight LineNr guifg=#FFB45C
+        " highlight CursorLineNr ctermfg=196 guifg=#ff0000
     else
-        highlight LineNr ctermfg=244 guifg=#808080
-        highlight CursorLineNr ctermfg=238 guifg=#444444
+        highlight LineNr guifg=#6272A4
+        " highlight CursorLineNr ctermfg=238 guifg=#444444
     endif
 endfunction
 

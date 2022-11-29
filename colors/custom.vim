@@ -6,7 +6,10 @@ endif
 
 let colors_name = "custom"
 
-hi ColorColumn ctermbg=234 guibg=#1c1c1c
+" hi Normal guibg=#1D1B23
+hi Normal guibg=#241927
+" hi ColorColumn guibg=#1c1c1c
+hi ColorColumn guibg=#28122E
 hi CursorLine ctermfg=235 guibg=#262626 cterm=none
 hi CursorLineNr ctermfg=238 guifg=#444444
 hi Directory ctermfg=33 guifg=#0087ff
@@ -14,7 +17,8 @@ hi ErrorMsg cterm=bold ctermfg=253 ctermbg=124 gui=bold guifg=#dadada guibg=#af0
 hi FoldColumn ctermfg=178 ctermbg=234 guifg=#d7af00 guibg=#1c1c1c
 hi Folded ctermfg=178 ctermbg=234 cterm=bold guifg=#d7af00 guibg=#1c1c1c gui=bold
 hi IncSearch cterm=reverse gui=reverse
-hi LineNr ctermfg=244 guifg=#808080
+" hi LineNr ctermfg=244 guifg=#808080
+hi LineNr guifg=#8C4A9E
 hi ModeMsg cterm=bold gui=bold
 hi MoreMsg ctermfg=34 guifg=#00af00
 " Same as Comment
@@ -35,6 +39,15 @@ hi WarningMsg ctermfg=16 ctermbg=214 guifg=#000000 guibg=#ffaf00
 hi WildMenu ctermfg=16 ctermbg=220 guifg=#000000 guibg=#ffd700
 hi MatchParen cterm=bold ctermbg=240 gui=bold guibg=#585858
 
+" ALTERNATE VARIATION
+let alternate = 1
+
+if alternate
+    hi Normal guifg=#F8F8F2 guibg=#282A36
+    hi ColorColumn ctermbg=235 guibg=#21222C
+    hi LineNr guifg=#6272A4
+endif
+
 hi clear SignColumn
 
 " Colors for syntax highlighting
@@ -43,9 +56,12 @@ hi Comment ctermfg=39 ctermbg=236 cterm=italic guifg=#00afff guibg=#303030
 
 hi Constant ctermfg=196 guifg=#FF2D2D
 
-hi Identifier cterm=none ctermfg=36 guifg=#00CF9F
+" hi Identifier cterm=none ctermfg=36 guifg=#00CF9F
+" hi Identifier cterm=none ctermfg=36 guifg=#00CF9F
+hi Identifier cterm=none guifg=#9DFFAE
 " hi Function cterm=italic ctermfg=50 guifg=#14D2D2
-hi Function ctermfg=50 guifg=#14D2D2
+" hi Function ctermfg=50 guifg=#14D2D2
+hi Function cterm=bold ctermfg=50 guifg=#00EBEB
 
 hi Statement ctermfg=220 guifg=#ffd700
 hi Operator ctermfg=208 guifg=#FF7700
@@ -53,6 +69,7 @@ hi Operator ctermfg=208 guifg=#FF7700
 " hi PreProc ctermfg=135 guifg=#af5fff
 hi PreProc ctermfg=135 guifg=#C23BFF
 
+" hi Type ctermfg=46 guifg=#2DFF2D
 hi Type ctermfg=46 guifg=#2DFF2D
 hi StorageClass ctermfg=34 guifg=#00af00
 
@@ -78,7 +95,8 @@ hi link Parens Delimiter
 
 " hi FunctionCall ctermfg=123 guifg=#87ffff
 " hi FunctionCall ctermfg=123 cterm=italic guifg=#78FBFF
-hi FunctionCall ctermfg=123 guifg=#78FBFF
+" hi FunctionCall ctermfg=123 guifg=#78FBFF
+hi link FunctionCall Function
 
 hi link FunctionParens Operator
 hi link Noise Operator
@@ -87,7 +105,7 @@ hi link Noise Operator
 hi SpellBad   cterm=none ctermfg=255 ctermbg=88 guifg=#eeeeee guibg=#870000
 hi SpellCap   cterm=none ctermfg=255 ctermbg=12 guifg=#eeeeee guibg=#ffff87
 hi SpellLocal cterm=none ctermfg=255 ctermbg=33 guifg=#eeeeee guibg=#0087ff
-hi SpellRare  cterm=none ctermfg=255 ctermbg=13 guifg=#eeeeee guibg=#ffffaf
+hi SpellRare  cterm=none ctermfg=255 ctermbg=13 guifg=#eeeeee guibg=#bb54c6
 
 " Diffs (e.g. Git)
 hi DiffAdd    ctermfg=40  ctermbg=none guifg=#00d700

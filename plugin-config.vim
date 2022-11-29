@@ -13,6 +13,9 @@ highlight CtrlPPrtBase ctermfg=32
 nmap <silent> <leader>b <Cmd>CtrlPBuffer<CR>
 
 " Airline
+
+let g:airline_theme='dracula'
+
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#tab_min_count = 2
 let g:airline#extensions#tabline#show_buffers = 0

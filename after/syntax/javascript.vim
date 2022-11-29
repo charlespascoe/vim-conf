@@ -6,8 +6,10 @@ hi link jsArrowFunction       Noise
 hi link jsBrackets            Brackets
 hi link jsBuiltins            Function
 hi link jsClassDefinition     Type
+hi link jsDestructuringAssignment None
 hi link jsDestructuringBlock  Identifier
 hi link jsDestructuringBraces Braces
+hi link jsDestructuringPropertyValue Identifier
 hi link jsExceptions          Type
 hi link jsExportDefault       PreProc
 hi link jsFuncArgCommas       Operator
