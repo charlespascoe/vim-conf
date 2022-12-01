@@ -159,8 +159,10 @@ let g:go_highlight_builtins = 0
 " vim-gitgutter
 let g:gitgutter_set_sign_backgrounds = 0
 
-map <leader>gn <Esc>:GitGutterNextHunk<CR>
-map <leader>ga <Esc>:GitGutterStageHunk<CR>
+map <leader>gN <Cmd>GitGutterPrevHunk<CR>zz
+map <leader>gn <Cmd>GitGutterNextHunk<CR>zz
+map <leader>ga <Cmd>GitGutterStageHunk<CR>
+map <leader>gp <Cmd>GitGutterPreviewHunk<CR>
 
 
 " jedi-vim

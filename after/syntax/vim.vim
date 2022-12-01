@@ -4,14 +4,14 @@ syntax match vimLineComment /^[ \t:]*".*$/  contains=@vimCommentGroup,vimComment
 
 hi vimFuncName  cterm=bold,italic  guifg=#FFF180
 
-hi link vimFunction Function
-hi link vimUserFunc Function
-hi link vimSynType Statement
+hi link vimFunction   Function
+hi link vimUserFunc   Function
+hi link vimSynType    Statement
 hi link vimFgBgAttrib Special
-hi link vimHiAttrib Special
-hi link vimOption Special
-hi link vimEscape SpecialChar
-hi link vimEnvvar Identifier
+hi link vimHiAttrib   Special
+hi link vimOption     Special
+hi link vimEscape     SpecialChar
+hi link vimEnvvar     Identifier
 
 syntax keyword vimSource source skipwhite nextgroup=vimPath
 hi link vimSource Statement
@@ -40,9 +40,6 @@ syntax match vimFunc     /\c\h[a-z0-9_.]*\%(#\h[a-z0-9_.]*\)\+\ze(/             
 syntax match vimUserFunc /\c\h[a-z0-9_.]*\%(#\h[a-z0-9_.]*\)\+/                             contains=vimFuncEcho,vimFuncName,vimUserFunc,vimExecute nextgroup=vimFuncArgs
 
 syntax region vimFuncArgs matchgroup=FunctionParens start='(' end=')' contained contains=vimoperStar,@vimOperGroup,vimNotation
-hi link vimFuncArgs FunctionParens
-
-" hi link vimAmp SpecialChar
 
 " TODO: Raise this as a fix in Vim repo
 syn keyword vimHiClear contained containedin=vimHighlightCluster clear skipwhite  nextgroup=vimHiGroup
@@ -58,6 +55,5 @@ hi link vimHiBang Operator
 
 hi link vimHiTerm Identifier
 
-
 " TODO: Raise this as a fix, but make the hi bang optional
-syn region	vimHiLink	contained oneline matchgroup=vimCommand start="\(\<hi\%[ghlight]!\s\+\)\@<=\(\(def\%[ault]\s\+\)\=link\>\|\<def\>\)" end="$"	contains=@vimHiCluster
+syn region vimHiLink contained oneline matchgroup=vimCommand start="\(\<hi\%[ghlight]!\s\+\)\@<=\(\(def\%[ault]\s\+\)\=link\>\|\<def\>\)" end="$" contains=@vimHiCluster

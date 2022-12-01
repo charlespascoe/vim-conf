@@ -98,7 +98,7 @@ if alternate
     hi SpecialChar ctermfg=39 guifg=#2FA5FF
     hi Function cterm=none guifg=#FFF180
 
-    hi Identifier ctermfg=117 guifg=#8BE9FD
+    hi Identifier cterm=none ctermfg=117 guifg=#8BE9FD
     " hi Identifier ctermfg=117 guifg=#A1EDFD
     " hi PreProc cterm=italic ctermfg=135 guifg=#9087FD
     " hi PreProc cterm=italic guibg=#2F2938 guifg=#A076C2
