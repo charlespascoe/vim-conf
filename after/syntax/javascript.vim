@@ -2,6 +2,11 @@ syntax clear  jsFuncCall
 syntax match  jsFuncCall /\<\K\k*\ze[\s\n]*(/ nextgroup=jsFuncCallArgBlock
 syntax region jsFuncCallArgBlock matchgroup=jsFuncCallParens start='(' end=')' contained transparent nextgroup=jsFuncCallArgBlock
 
+hi link Braces Delimiter
+hi link Brackets Delimiter
+hi link Parens Delimiter
+hi link Noise Operator
+
 " syntax match jsSemicolon /;/
 " hi jsSemicolon guifg=#BC8C57
 

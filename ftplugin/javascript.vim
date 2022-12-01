@@ -2,11 +2,16 @@ setlocal shiftwidth=2
 setlocal tabstop=2
 setlocal softtabstop=2
 
+setlocal foldenable
+setlocal foldmethod=syntax
+
+nmap <buffer> <leader>td <C-]>
 nmap <buffer> <leader>te <Plug>(ale_next)zz
 nmap <buffer> <leader>tE <Plug>(ale_previous)zz
 
 " TODO: Improve matching
 call QuickSearchMap('f', 'Functions', '\w\+(.*)\s\+{$')
+call QuickSearchMap('c', 'Classes', 'class\s\+\zs\w\+')
 
 fun! RealtimeRepl()
     let g:repl_buf = bufnr("Node REPL", 1)

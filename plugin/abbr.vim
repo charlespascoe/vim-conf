@@ -1,6 +1,7 @@
 " Varioys abbreviations
 
-iabbr api API
+" TODO: Make these only enabled where text is expected, likely based on filetype
+" iabbr api API
 
 cabbr ps PlugSync
 cabbr pu PlugUpdate
