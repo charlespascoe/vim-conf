@@ -8,7 +8,7 @@ fun! TagFunc(pattern, flags, info)
     elseif a:pattern =~ '\[\w\+\]'
         let ref = matchlist(a:pattern, '\[\(\w\+\)\]')
         return [{'name': 'Reference '.a:pattern, 'filename': a:info['buf_ffname'], 'cmd': '$?^\s\+\zs\['.ref[1].'\]\s'}]
-    elseif a:pattern =~ '^\%(\d\+\.\)\+$'
+    elseif a:pattern =~ '^\%(\d\+\.\)\+\d*$'
         return [{'name': 'Section '.a:pattern, 'filename': a:info['buf_ffname'], 'cmd': '1/^'.escape(a:pattern, '.').'\s'}]
     elseif synIDattr(synID(line('.'), col('.'), 1), 'name') == 'abnfRuleName'
         let pat = substitute(a:pattern, '^\d\+', '', '')
@@ -18,5 +18,7 @@ fun! TagFunc(pattern, flags, info)
     return []
 endfun
 
+setlocal spelllang=en
+setlocal spellfile^=~/rfcs/.en.utf-8.add
 setlocal iskeyword+=.,[,]
 setlocal tagfunc=TagFunc

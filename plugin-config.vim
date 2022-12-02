@@ -252,10 +252,7 @@ let g:ale_hover_cursor = 0
 let g:ale_lint_on_text_changed = 0
 let g:ale_lint_on_insert_leave = 0
 
-let g:ale_pattern_options = {
-            \ '.*\.go$': #{ale_enabled: 0},
-            \}
-
+nmap <leader>al <Plug>(ale_lint)
 nmap <leader>at <Plug>(ale_toggle)
 nmap <leader>aT <Plug>(ale_toggle_buffer)
 nmap <leader>af <Plug>(ale_fix)

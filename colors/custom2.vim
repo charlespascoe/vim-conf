@@ -151,10 +151,15 @@ hi PmenuSbar       guibg=#3B2D4A
 " hi PmenuThumb      guibg=#787D99
 hi PmenuThumb      guibg=#AB97C0
 
-hi SpellBad cterm=undercurl guifg=#FF5555 guisp=#FF5555 guibg=#3D0000
-hi SpellCap cterm=undercurl guifg=#8BE9FD guisp=#8BE9FD guibg=#024958
-hi SpellRare cterm=undercurl guifg=#8BE9FD guisp=#8BE9FD guibg=#024958
-hi SpellLocal cterm=undercurl guifg=#FFB86C guisp=#FFB86C guibg=#5C2F00
+" hi SpellBad cterm=undercurl guifg=#FF5555 guisp=#FF5555 guibg=#3D0000
+" hi SpellCap cterm=undercurl guifg=#8BE9FD guisp=#8BE9FD guibg=#024958
+" hi SpellRare cterm=undercurl guifg=#8BE9FD guisp=#8BE9FD guibg=#024958
+" hi SpellLocal cterm=undercurl guifg=#FFB86C guisp=#FFB86C guibg=#5C2F00
+
+hi SpellBad cterm=undercurl guisp=#FF5555 guibg=#3D0000
+hi SpellCap cterm=undercurl guisp=#8BE9FD ctermbg=NONE guibg=NONE
+hi SpellRare cterm=undercurl guisp=#8BE9FD ctermbg=NONE guibg=NONE
+hi SpellLocal cterm=undercurl guisp=#FFB86C ctermbg=NONE guibg=NONE
 
 hi WarningMsg guifg=#FFB86C guibg=#5C2F00
 

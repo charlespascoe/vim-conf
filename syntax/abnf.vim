@@ -12,6 +12,7 @@
 "   finish
 " endif
 
+" TODO: Use syntax iskeyword instead
 setlocal iskeyword+=-
 " syn case ignore
 " setlocal ignorecase

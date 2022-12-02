@@ -1,8 +1,10 @@
-/regions=usaucagbnz
+/regions=usgb
 abc
 ABNF
+Alacritty
 ansible
 base64
+BNF
 BT
 BT's
 Bulletnotes
@@ -35,6 +37,7 @@ HMAC
 iff
 INVCS
 IPv4
+IPv6
 IUser
 Jira
 Jiras
@@ -86,6 +89,7 @@ undercurl
 unparsable
 unregister
 uploader
+URIs
 UUID
 UUIDs
 variadic
