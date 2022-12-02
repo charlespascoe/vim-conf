@@ -1,3 +1,5 @@
+finish
+
 " Adds space after hashes so that only the header text itself is underlined
 syn region markdownH1 matchgroup=markdownH1Delimiter start="##\@!\s\+"      end="#*\s*$" keepend oneline contains=@markdownInline,markdownAutomaticLink contained
 syn region markdownH2 matchgroup=markdownH2Delimiter start="###\@!\s\+"     end="#*\s*$" keepend oneline contains=@markdownInline,markdownAutomaticLink contained
