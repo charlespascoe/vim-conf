@@ -33,6 +33,8 @@ hi link vimAmp SpecialChar
 syntax match vimAnd /&&/ containedin=vimGroupList
 hi link vimAnd Operator
 
+" TODO: Fix this in Vim repo
+syntax keyword vimHiAttrib contained underdouble underdotted underdashed
 
 " Include autoload functions in function highlighting
 syntax match vimFunc     /\c\%(\%([sgbwtl]:\|<s[i]d>\)\=\%(\w\+\.\)*\I[a-z0-9_.]*\)\ze\s*(/ contains=vimFuncEcho,vimFuncName,vimUserFunc,vimExecute nextgroup=vimFuncArgs

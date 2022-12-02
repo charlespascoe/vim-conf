@@ -4,6 +4,9 @@ if exists("syntax_on")
   syntax reset
 endif
 
+" TODO: Tidy
+" TODO: Set guibg=NONE as necessary
+
 let colors_name = "custom2"
 
 hi Search cterm=bold guibg=#E2CC54 guifg=#342E09
@@ -97,7 +100,7 @@ if alternate
     " hi Special ctermfg=39 guifg=#2FA5FF
     hi SpecialChar ctermfg=39 guifg=#2FA5FF
 
-    hi! link Tag Underlined
+    hi Tag cterm=bold,underdashed guifg=#5fd7ff
 
     hi Function cterm=none guifg=#FFF180
 
@@ -120,10 +123,10 @@ hi Conceal guifg=#BCBEC6 guibg=#40424B
 hi Directory cterm=bold guifg=#BD93F9
 
 " " TODO: Maybe link to similar classes?
-hi DiffAdd guifg=#6FFF88
+hi DiffAdd guifg=#6FFF88 guibg=NONE
 " hi DiffChange guifg=#FFA540
-hi DiffChange guifg=#FFB86C
-hi DiffDelete guifg=#FF5C5C
+hi DiffChange guifg=#FFB86C guibg=NONE
+hi DiffDelete guifg=#FF5C5C guibg=NONE
 
 hi! link ErrorMsg Error
 
@@ -148,10 +151,10 @@ hi PmenuSbar       guibg=#3B2D4A
 " hi PmenuThumb      guibg=#787D99
 hi PmenuThumb      guibg=#AB97C0
 
-hi SpellBad cterm=undercurl,underline guifg=#FF5555 guibg=#3D0000
-hi SpellCap cterm=undercurl,underline guifg=#8BE9FD guibg=#024958
-hi SpellRare cterm=undercurl,underline guifg=#8BE9FD guibg=#024958
-hi SpellLocal cterm=undercurl,underline guifg=#FFB86C guibg=#5C2F00
+hi SpellBad cterm=undercurl guifg=#FF5555 guisp=#FF5555 guibg=#3D0000
+hi SpellCap cterm=undercurl guifg=#8BE9FD guisp=#8BE9FD guibg=#024958
+hi SpellRare cterm=undercurl guifg=#8BE9FD guisp=#8BE9FD guibg=#024958
+hi SpellLocal cterm=undercurl guifg=#FFB86C guisp=#FFB86C guibg=#5C2F00
 
 hi WarningMsg guifg=#FFB86C guibg=#5C2F00
 
@@ -167,7 +170,7 @@ hi TabLineFill     guifg=#ffffff guibg=#21222C
 
 hi! link TabLineSel     Normal
 
-hi Title         cterm=bold,underline guifg=#FF79C6
+hi Title         cterm=bold,underdouble guifg=#FF79C6
 
 
 hi SignColumn     guifg=#6272A4 guibg=#282A36

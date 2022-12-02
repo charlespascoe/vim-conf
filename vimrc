@@ -14,6 +14,14 @@ let &t_SI = "\e[6 q"
 let &t_SR = "\e[4 q"
 let &t_EI = "\e[2 q"
 
+" Terminal support for more underline support (4:1m is normal underline)
+
+let &t_Ce = "\e[4:0m" " Extended underline end
+let &t_Us = "\e[4:2m" " Double unerline
+let &t_Cs = "\e[4:3m" " Undercurl
+let &t_ds = "\e[4:4m" " Dotted underline (not sure if Alacritty/tmux support this)
+let &t_Ds = "\e[4:5m" " Dashed underline
+
 " Cursor hold timeout (e.g. for autocommands and swap file)
 set updatetime=2000
 
