@@ -9,7 +9,7 @@ DevPlug 'vim-serenade'
 
 delcom DevPlug
 
-Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf', #{do: { -> fzf#install() }}
 Plug 'junegunn/fzf.vim'
 
 Plug 'vim-python/python-syntax'
@@ -20,8 +20,7 @@ Plug 'christoomey/vim-sort-motion'
 Plug 'christoomey/vim-titlecase'
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'dense-analysis/ale'
-Plug 'dkarter/bullets.vim'
-Plug 'dracula/vim'
+Plug 'dracula/vim', #{as: 'dracula'}
 Plug 'fatih/vim-go'
 Plug 'habamax/vim-asciidoctor'
 Plug 'junegunn/vim-easy-align'

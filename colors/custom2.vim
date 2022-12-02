@@ -167,7 +167,7 @@ hi TabLineFill     guifg=#ffffff guibg=#21222C
 
 hi! link TabLineSel     Normal
 
-hi Title         cterm=bold,underline guifg=#50FA7B
+hi Title         cterm=bold,underline guifg=#FF79C6
 
 
 hi SignColumn     guifg=#6272A4 guibg=#282A36

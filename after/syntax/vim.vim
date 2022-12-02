@@ -24,13 +24,13 @@ syn match vimEchoHL "echohl\=" skipwhite nextgroup=vimGroup,vimHiGroup,vimHLGrou
 syntax match vimSyntaxClusterRef /@\w\+/ contained containedin=vimGroupList
 hi link vimSyntaxClusterRef Identifier
 
-syntax match vimComma /,/ containedin=vimGroupList,vimFuncArgs,@vimOperGroup
+syntax match vimComma /,/ containedin=vimGroupList,vimFuncArgs
 hi link vimComma Operator
 
-syntax match vimAmp /&/ containedin=vimGroupList,@vimOperGroup
+syntax match vimAmp /&/ containedin=vimGroupList
 hi link vimAmp SpecialChar
 
-syntax match vimAnd /&&/ containedin=vimGroupList,@vimOperGroup
+syntax match vimAnd /&&/ containedin=vimGroupList
 hi link vimAnd Operator
 
 
