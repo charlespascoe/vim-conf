@@ -14,6 +14,32 @@ let &t_SI = "\e[6 q"
 let &t_SR = "\e[4 q"
 let &t_EI = "\e[2 q"
 
+
+fun s:SetTitle()
+    set title
+    " The -1 argument to getcwd() returns the global working directory
+    let &titlestring=pathshorten(fnamemodify(getcwd(-1), ':~'))
+
+    " Keep this for now, but I think I prefer the above
+
+    " let l:cwd = fnamemodify(getcwd(), ':~')
+    " let l:parent_dir = fnamemodify(l:cwd, ':h')
+    " let l:dirname = fnamemodify(l:cwd, ':t')
+
+    " if len(l:dirname) > 8
+    "     if filereadable('.shortname')
+    "         let l:dirname = readfile('.shortname')[0]
+    "     else
+    "         let l:dirname = substitute(l:dirname, '\h\zs\w\+-\?', '', 'g')
+    "     endif
+    " endif
+
+    " let &titlestring=pathshorten(l:parent_dir.'/'.l:dirname)
+endfun
+
+call s:SetTitle()
+au DirChanged * call <SID>SetTitle()
+
 " Terminal support for more underline support (4:1m is normal underline)
 
 let &t_Ce = "\e[4:0m" " Extended underline end
@@ -62,6 +88,12 @@ set sidescrolloff=10 " ensures at least 10 characters are visible ahead of the c
 set scrolljump=10
 set listchars=extends:…
 
+" Enable mouse control (useful for scrolling and resizing)
+set mouse=a
+set ttymouse=sgr
+
+" See plugin/mousefix.vim for more mouse behaviour tweaks
+
 set linebreak showbreak=\ \ ↪\  breakindent
 
 " Reads config from first few lines of file
@@ -93,10 +125,6 @@ nmap <leader>c 1z=
 " Custom vertical split char
 set fillchars+=vert:│
 
-" Enable mouse control (useful for scrolling and resizing)
-set mouse=a
-set ttymouse=xterm2
-
 " Set number formatting options for increment/decrement (not octal - it's
 " annoying when dealing with telephone numbers)
 set nrformats=alpha,hex,bin,unsigned
@@ -123,6 +151,7 @@ set shell=/bin/zsh
 " Enable viewing man pages in Vim
 runtime ftplugin/man.vim
 set keywordprg=:Man
+let g:ft_man_open_mode = 'vert'
 
 " Initialise Dictation
 au VimEnter * call dictate#Init()

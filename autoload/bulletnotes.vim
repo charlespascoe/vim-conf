@@ -242,6 +242,9 @@ fun bulletnotes#InitProject()
         command! UpgradeProject call bulletnotes#UpgradeProject()
     end
 
+    " TODO: Make this an option?
+    let &titlestring = fnamemodify(getcwd(), ':t')
+
     call bulletnotes#ImportPythonUtils()
 
     command! ProcessTasks call bulletnotes#ProcessTasks()

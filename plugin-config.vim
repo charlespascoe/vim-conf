@@ -24,15 +24,14 @@ let g:airline#extensions#tabline#show_splits = 0
 let g:airline#extensions#tabline#show_tab_count = 0
 let g:airline#extensions#tabline#show_close_button = 0
 let g:airline#extensions#obsession#enabled = 1
-" let g:airline#extensions#obsession#indicator_text = '∞'
-let g:airline#extensions#obsession#indicator_text = 'S'
+let g:airline#extensions#obsession#indicator_text = '§'
 let g:airline#parts#ffenc#skip_expected_string='utf-8[unix]'
 " Truncate branch names with slashes (e.g. 'foo/bar' -> 'f/bar')
 let g:airline#extensions#branch#format = 2
 
 fun s:CheckResize()
     if !exists('w:width')
-        let w:width = 0
+        let w:width = winwidth(0)
     endif
 
     let l:width = winwidth(0)
@@ -44,12 +43,6 @@ fun s:CheckResize()
 endfun
 
 au CursorHold * call <SID>CheckResize()
-
-" let g:airline#extensions#whitespace#trailing_format = 'tr'
-" let g:airline#extensions#whitespace#mixed_indent_format = 'mixindnt'
-" let g:airline#extensions#whitespace#long_format = 'long'
-" let g:airline#extensions#whitespace#mixed_indent_file_format = 'mix-indent-file[%s]'
-" let g:airline#extensions#whitespace#conflicts_format = 'cnflct'
 
 let g:airline#extensions#default#section_truncate_width = {
     \ 'c': 0,
