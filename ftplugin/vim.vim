@@ -28,6 +28,8 @@ setlocal foldenable
 setlocal foldexpr=FoldIndent()
 setlocal foldmethod=expr
 
+setlocal iskeyword+=:
+
 fun s:ToggleGuiCol()
     py3 import col
 
@@ -53,3 +55,6 @@ fun s:ToggleGuiCol()
 endfun
 
 command -buffer ToggleGuiCol call <SID>ToggleGuiCol()
+
+" Search tags by including scope
+nnoremap <buffer> <C-]> <Cmd>set iskeyword+=<,> <bar> let name = expand('<cword>') <bar> set iskeyword-=<,> <bar> exec "tag" substitute(name, '<'.'SID'.'>', 's:', '')<CR>

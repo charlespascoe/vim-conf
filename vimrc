@@ -120,6 +120,10 @@ set splitbelow " For horizontal splits, the cursor will be on the bottom pane
 " Set shell for shell-based commands
 set shell=/bin/zsh
 
+" Enable viewing man pages in Vim
+runtime ftplugin/man.vim
+set keywordprg=:Man
+
 " Initialise Dictation
 au VimEnter * call dictate#Init()
 

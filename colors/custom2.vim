@@ -72,10 +72,17 @@ hi Todo cterm=bold,italic guifg=#3D3400 guibg=#E3CB4C
 " ALTERNATE VARIATION
 let alternate = 1
 
+hi clear Normal
+
+if get(g:, 'colorscheme_transparent_background', 0)
+    hi Normal guifg=#F8F8F2
+else
+    hi Normal guifg=#F8F8F2    guibg=#282A36
+endif
+
 if alternate
     hi Visual cterm=none guibg=#44475A
     hi CursorLine guibg=#44475A
-    hi Normal guifg=#F8F8F2 guibg=#282A36
     " hi ColorColumn ctermbg=235 guibg=#21222C
     hi ColorColumn ctermbg=235 guibg=#252733
     hi LineNr guifg=#6272A4
@@ -173,7 +180,7 @@ hi TabLine        guifg=#6272A4 guibg=#21222C
 
 hi TabLineFill     guifg=#ffffff guibg=#21222C
 
-hi! link TabLineSel     Normal
+hi TabLineSel guifg=#F8F8F2    guibg=#282A36
 
 hi Title         cterm=bold,underdouble guifg=#FF79C6
 

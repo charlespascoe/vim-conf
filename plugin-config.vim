@@ -252,6 +252,10 @@ let g:ale_hover_cursor = 0
 let g:ale_lint_on_text_changed = 0
 let g:ale_lint_on_insert_leave = 0
 
+" It seems ALE breaks the location list - use quickfix instead
+let g:ale_set_loclist = 0
+let g:ale_set_quickfix = 1
+
 nmap <leader>al <Plug>(ale_lint)
 nmap <leader>at <Plug>(ale_toggle)
 nmap <leader>aT <Plug>(ale_toggle_buffer)

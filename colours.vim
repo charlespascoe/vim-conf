@@ -4,11 +4,13 @@ else
     syntax enable
 endif
 
+let g:colorscheme_transparent_background = 1
+
 set termguicolors
 colorscheme custom2
 
 " Change line number colours to indicate mode
-function! InsertModeChanged(mode)
+fun s:InsertModeChanged(mode)
     if a:mode == 'i'
         highlight LineNr guifg=#2EDEFF
         " highlight CursorLineNr ctermfg=33 guifg=#0087ff
@@ -19,12 +21,12 @@ function! InsertModeChanged(mode)
         highlight LineNr guifg=#6272A4
         " highlight CursorLineNr ctermfg=238 guifg=#444444
     endif
-endfunction
+endfun
 
 
-autocmd InsertEnter * call InsertModeChanged(v:insertmode)
-autocmd InsertLeave * call InsertModeChanged('')
-call InsertModeChanged('')
+autocmd InsertEnter * call <SID>InsertModeChanged(v:insertmode)
+autocmd InsertLeave * call <SID>InsertModeChanged('')
+call s:InsertModeChanged('')
 
 " Trailing Whitespace
 highlight TrailingWhitespace ctermfg=1 guifg=#870000 ctermbg=none cterm=underline
