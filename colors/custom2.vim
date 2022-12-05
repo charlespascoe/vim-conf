@@ -110,6 +110,7 @@ if alternate
     hi Tag cterm=bold,underdashed guifg=#5fd7ff
 
     hi Function cterm=none guifg=#FFF180
+    hi FunctionBuiltin cterm=bold,italic  guifg=#FFF180
 
     hi Identifier cterm=none guifg=#8BE9FD
     " hi Identifier ctermfg=117 guifg=#A1EDFD

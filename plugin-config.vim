@@ -249,6 +249,10 @@ let g:ale_lint_on_insert_leave = 0
 let g:ale_set_loclist = 0
 let g:ale_set_quickfix = 1
 
+let g:ale_pattern_options = {
+            \ '.*\.go$': #{ale_enabled: 0},
+            \}
+
 nmap <leader>al <Plug>(ale_lint)
 nmap <leader>at <Plug>(ale_toggle)
 nmap <leader>aT <Plug>(ale_toggle_buffer)
@@ -264,3 +268,7 @@ nmap <leader>F <Cmd>BTags<CR>
 " gutentags
 
 let g:gutentags_ctags_exclude = ['.*/*', '*/.*', '*.patch', '*.css', '*.json', 'vendor']
+
+" vim-markdown
+
+let g:vim_markdown_new_list_item_indent = 2

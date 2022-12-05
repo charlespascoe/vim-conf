@@ -64,9 +64,32 @@ command! FormatJson %!python3 -m json.tool
 " This needs to be '<Esc>:' because it expects user input
 noremap <leader>R <Esc>:%s/\<<C-r><C-w>\>//gc<Left><Left><Left>
 
-" Edit macros
+" Macros
 
-nnoremap <leader>m :<c-u><c-r><c-r>='let @'. v:register .' = '. macroeditor#replace_with_quotes(getreg(v:register))<cr>
+fun s:RepeatMacroUntilDone()
+    let l:reg = getcharstr()
+
+    if l:reg !~ '[a-z]'
+        return
+    endif
+
+    let l:repeat_reg = 'x'
+
+    if l:reg == l:repeat_reg
+        let l:repeat_reg = 'y'
+    endif
+
+    let l:prev_reg = getreg(l:repeat_reg)
+
+    call setreg(l:repeat_reg, '@'.l:reg.'@'.l:repeat_reg)
+
+    exec 'normal' '@'.l:repeat_reg
+
+    call setreg(l:repeat_reg, l:prev_reg)
+endfun
+
+nnoremap <silent> <leader>me :<c-u><c-r><c-r>='let @'. v:register .' = '. macroeditor#replace_with_quotes(getreg(getcharstr()))<cr>
+nnoremap <leader>mr <Cmd>call <SID>RepeatMacroUntilDone()<CR>
 
 " Quick Search
 fun! QuickSearchMap(key, title, pattern)
