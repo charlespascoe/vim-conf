@@ -7,7 +7,7 @@ syntax region pythonParenBlock   matchgroup=Delimiter start='('  end=')'  transp
 syntax region pythonBraceBlock   matchgroup=Delimiter start='{'  end='}'  transparent extend
 
 syntax clear pythonRawString
-syntax region pythonCustomRawString start='r"' skip='\\"' end='"'
+syntax region pythonCustomRawString start='r"\(""\)' skip='\\"' end='"\z1'
 hi link pythonCustomRawString String
 
 hi link pythonStrFormat Operator

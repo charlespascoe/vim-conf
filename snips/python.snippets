@@ -206,7 +206,7 @@ with open($1) as f:
 		$0
 endsnippet
 
-snippet Ow "Object Wrapper" b
+snippet ow "Object Wrapper" b
 class ObjectWrapper:
 	def __init__(self, obj):
 		self.obj = obj
@@ -240,6 +240,10 @@ snippet rl "Read lines (strip whitespace)" b
 for line in $1:
 	line = line.strip()
 	$0
+endsnippet
+
+snippet re "Raise Exception" b
+raise Exception($0)
 endsnippet
 
 ## W ##

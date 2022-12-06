@@ -3,12 +3,27 @@
 " TODO: Make these only enabled where text is expected, likely based on filetype
 " iabbr api API
 
-cabbr ps PlugSync
-cabbr pu PlugUpdate
+fun s:SetupAbbrs(entered)
+    if !a:entered
+        cabclear
+        return
+    endif
 
-cabbr m messages
+    if getcmdtype() != ':'
+        return
+    endif
 
-cabbr <expr> eh 'e '..expand('%:h')..'/'
+
+    cabbr ps PlugSync
+    cabbr pu PlugUpdate
+
+    cabbr m messages
+
+    cabbr <expr> eh 'e '..expand('%:h')..'/'
+endfun
 
 " This prevents eh abbr from having a space when expanding
 cmap <expr> <Space> (getcmdtype() == ':' && getcmdline() == 'eh') ? "\<C-]>" : "\<Space>"
+
+au CmdlineEnter * call <SID>SetupAbbrs(1)
+au CmdlineLeave * call <SID>SetupAbbrs(0)

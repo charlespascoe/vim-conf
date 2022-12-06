@@ -4,6 +4,7 @@ let s:items = {
     \'thumbsup': '👍',
     \'joy': '😂',
     \'grimace': '😬',
+    \'thinking': '🤔',
 \}
 
 fun emoji#RegisterAbbr()
