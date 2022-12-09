@@ -14,31 +14,33 @@ let &t_SI = "\e[6 q"
 let &t_SR = "\e[4 q"
 let &t_EI = "\e[2 q"
 
+" Title
 
 fun s:SetTitle()
-    set title
-    " The -1 argument to getcwd() returns the global working directory
-    let &titlestring=pathshorten(fnamemodify(getcwd(-1), ':~'))
+    if &ft == 'man' && len(getbufinfo(#{buflist: 1})) == 1
+        let l:match = matchstr(getline(1), '^\c[a-z]\+')
 
-    " Keep this for now, but I think I prefer the above
+        if l:match != ''
+            let &titlestring = tolower(l:match)
+            return
+        endif
+    endif
 
-    " let l:cwd = fnamemodify(getcwd(), ':~')
-    " let l:parent_dir = fnamemodify(l:cwd, ':h')
-    " let l:dirname = fnamemodify(l:cwd, ':t')
+    let l:path = bufname()
 
-    " if len(l:dirname) > 8
-    "     if filereadable('.shortname')
-    "         let l:dirname = readfile('.shortname')[0]
-    "     else
-    "         let l:dirname = substitute(l:dirname, '\h\zs\w\+-\?', '', 'g')
-    "     endif
-    " endif
+    " TODO Make this more generic
+    " TODO Still show buffer name if file is outside of cwd
+    if l:path == '' || isdirectory('.git')
+        " The -1 argument to getcwd() returns the global working directory
+        let l:path = getcwd(-1)
+    endif
 
-    " let &titlestring=pathshorten(l:parent_dir.'/'.l:dirname)
+    let &titlestring = pathshorten(fnamemodify(l:path, ':~'))
 endfun
 
+set title
 call s:SetTitle()
-au DirChanged * call <SID>SetTitle()
+au DirChanged,BufEnter,FileType * call <SID>SetTitle()
 
 " Terminal support for more underline support (4:1m is normal underline)
 
@@ -115,7 +117,8 @@ autocmd OptionSet textwidth exec "setlocal colorcolumn=".((&ma && &textwidth > 0
 " Set spell correction language
 set spelllang=en_gb
 set nospell " Off by default, turned on by relevant file types
-set spellfile=~/.vim/spell/en.utf-8.add
+" The second is a local spell file for host-specific spellings
+set spellfile=~/.vim/spell/en.utf-8.add,~/.vim-local/spell/en.utf-8.add
 
 " See spell-sug-file for how the word suggestions are loaded
 

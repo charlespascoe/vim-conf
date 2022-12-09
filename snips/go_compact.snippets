@@ -781,7 +781,7 @@ endsnippet
 
 snippet 'ifv ' "If Validate" brA
 if err := $1.Validate(); err != nil {
-	$0
+	return ${2:err}
 }
 endsnippet
 

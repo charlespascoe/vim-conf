@@ -7,6 +7,8 @@ endif
 " TODO: Tidy
 " TODO: Set guibg=NONE as necessary
 
+hi clear Statement
+
 let colors_name = "custom2"
 
 hi Search cterm=bold guibg=#E2CC54 guifg=#342E09

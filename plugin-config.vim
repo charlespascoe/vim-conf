@@ -150,6 +150,7 @@ let g:netrw_ftp_cmd="ftp -p"   " passive mode by default
 " Vim's TOhtml
 
 let g:html_pre_wrap = 1 " Ensures the content can wrap
+let g:html_font = 'JetBrains Mono'
 
 " vim-exchange
 let g:exchange_indent = 1
@@ -166,15 +167,19 @@ let g:go_template_use_pkg = 1
 let g:go_def_mapping_enabled = 0
 let g:go_imports_autosave = 0
 " Formatting interfers with jumps and folds; just do it manually
-let g:go_fmt_autosave = 0
+let g:go_fmt_autosave = 1
 let g:go_gopls_matcher = 'caseSensitive'
 let g:go_gopls_complete_unimported = 0
 let g:go_gopls_deep_completion = 0
 let g:go_rename_command = 'gopls'
+let g:go_fmt_command='gopls'
+let g:go_gopls_gofumpt=1
 
 " vim-go-syntax
 
 let g:go_highlight_dot = 'ctermfg=208 cterm=bold'
+let g:go_highlight_comma = 'Operator'
+let g:go_highlight_semicolon = 'Operator'
 let g:go_highlight_function_parens = 'FunctionParens'
 let g:go_highlight_slice_brackets = 'SpecialChar'
 let g:go_highlight_map_brackets = 'SpecialChar'

@@ -17,7 +17,7 @@ function! ShowHead()
     normal zz
 endfunction
 
-command! -nargs=1 -complete=help Help tab help <args>
+command! -nargs=1 -complete=help Help Split help <args>
 
 command! ShowHead call ShowHead()
 
@@ -138,6 +138,10 @@ fun! NormalEnter()
 endfun
 
 nmap <expr> <Enter> NormalEnter() ? "\<Enter>" : "i\<Enter>\<Space>\<BS>\<Esc>\<Right>"
+
+" Smart Split
+
+command -nargs=* -complete=command Split exec ((winwidth(0)*0.5) > winheight(0) ? 'vert' : '') <q-args>
 
 " Scratch file
 

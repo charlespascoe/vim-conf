@@ -1,3 +1,5 @@
+hi link mkdHeading Title
+
 finish
 
 " Adds space after hashes so that only the header text itself is underlined
