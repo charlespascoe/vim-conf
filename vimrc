@@ -35,7 +35,13 @@ fun s:SetTitle()
         let l:path = getcwd(-1)
     endif
 
-    let &titlestring = pathshorten(fnamemodify(l:path, ':~'))
+    let l:path = fnamemodify(l:path, ':~')
+
+    if l:path =~ '^\~/go/src'
+        let &titlestring = substitute(l:path, '^\~/go/src', 'go', '')
+    else
+        let &titlestring = pathshorten(l:path)
+    endif
 endfun
 
 set title

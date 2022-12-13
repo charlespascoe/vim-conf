@@ -17,9 +17,28 @@ function! ShowHead()
     normal zz
 endfunction
 
+" command! -nargs=1 -complete=help Help tab help <args>
 command! -nargs=1 -complete=help Help Split help <args>
 
 command! ShowHead call ShowHead()
+
+fun s:MoveBuf(to) abort
+    let l:altbuf = bufnr('#')
+    let l:curfile = expand('%')
+
+    exec 'saveas' fnameescape(a:to)
+    " 'saveas' command creates an unlisted buffer with the old name, which it sets
+    " as the alternate buffer. We want to completely remove it with :bw
+    exec 'bw' bufnr('#')
+
+    " Delete the old file
+    call delete(l:curfile)
+
+    " Restore the original alternate buffer
+    let @# = l:altbuf
+endfun
+
+command -nargs=+ -complete=file Move call <SID>MoveBuf(<f-args>)
 
 " Syntax highlighting debugging
 map <leader>S <Cmd>echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
