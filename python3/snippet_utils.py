@@ -118,6 +118,13 @@ buffers = Buffers()
 current = Current()
 
 
+def expand(snip, jump_pos=1):
+    if snip.tabstop != jump_pos:
+        return
+
+    vim.eval('feedkeys("\<C-R>=UltiSnips#ExpandSnippet()\<CR>")')
+
+
 def line_startswith(snip, s):
     if isinstance(s, re.Pattern):
         return s.search(snip.buffer[snip.line])
@@ -150,6 +157,15 @@ def after_cursor(snip, s):
         return s.search(ac)
     else:
         return ac.strip().startswith(s)
+
+
+def before_cursor(snip, s):
+    bc = snip.buffer[snip.line][: snip.column + 1]
+
+    if isinstance(s, re.Pattern):
+        return s.search(bc)
+    else:
+        return bc.strip().startswith(s)
 
 
 def replace_rest_of_line(snip):

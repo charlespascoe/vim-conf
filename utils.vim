@@ -74,6 +74,11 @@ nmap <silent> <C-k> [e
 
 noremap <leader>i `iO
 
+" Undo history navigation
+
+nmap - g-<Cmd>echo "Change "..changenr()<CR>
+nmap + g+<Cmd>echo "Change "..changenr()<CR>
+
 " Add and jump to new line below while in insert mode (<C-Space>)
 imap <expr> <C-@> match(getline('.'), '^\s\+$') ? '<C-o>o' : '<Enter>'
 

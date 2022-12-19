@@ -12,6 +12,8 @@ ws_re = re.compile(r'\s+')
 err_re = re.compile(r'\berr\b')
 err_assignment_re = re.compile(r'\berr\s+:=\s+')
 if_re = re.compile(r'^\s*(}\s+else\s+)?if ')
+ident_re = re.compile(r'^\w+')
+return_simple = re.compile(r'r([ntf]) ')
 
 
 convert_type_map = {
@@ -435,7 +437,7 @@ def auto_import(snip, pkg):
 		silence_buffer_mutation_errors(snip)
 endglobal
 
-## Auto-imports ##
+## Imports ##
 
 pre_expand "add_import(snip, 'errors')"
 snippet errors. "Errors auto-import" bwA
@@ -462,6 +464,17 @@ snippet os. "OS auto-import" bwA
 os.
 endsnippet
 
+pre_expand "add_import(snip, 'regexp')"
+snippet re. "regexp"
+regexp.
+endsnippet
+
+pre_expand "add_import(snip, 'strconv')"
+snippet sc. "strconv"
+strconv.
+endsnippet
+
+
 ## A ##
 
 post_jump "if snip.tabstop == 0: auto_import(snip, snip.tabstops[1].current_text)"
@@ -471,6 +484,11 @@ endsnippet
 
 snippet 'as ' "Append to slice" brA
 $1 = append($1, $0)
+endsnippet
+
+pre_expand "add_import(snip, 'strconv')"
+snippet '\batoi\b' "Atoi" rA
+x, err := strconv.Atoi($1)
 endsnippet
 
 snippet 'Ae ' "Assert Equal" brA
@@ -677,8 +695,15 @@ for ${1:_}, $2 := range $3 {
 endsnippet
 
 context "cursor_at_eol(snip)"
-snippet 'fori ' "For counter (i)" brA
-for i := ${1:0}; i < $2; i++ {
+snippet 'fori([a-z]?) ' "For counter (i)" brA
+for `!p snip.rv = match[1] or 'i'` := ${1:0}; `!p snip.rv = match[1] or 'i'` < $2; `!p snip.rv = match[1] or 'i'`++ {
+	$0
+}
+endsnippet
+
+context "cursor_at_eol(snip)"
+snippet 'forI([a-z]?) ' "For counter (i) reversed" brA
+for `!p snip.rv = match[1] or 'i'` := ${1:n}; `!p snip.rv = match[1] or 'i'` >= 0; `!p snip.rv = match[1] or 'i'`-- {
 	$0
 }
 endsnippet
@@ -749,7 +774,7 @@ if err != nil {
 }
 endsnippet
 
-snippet 'ifeP ' "If error, panic" brA
+snippet 'ifep ' "If error, panic" brA
 if err != nil {
 	panic(err)
 }
@@ -1117,27 +1142,23 @@ endsnippet
 
 ## R ##
 
-context "cursor_at_eol(snip)"
+context "before_cursor(snip, return_simple) and cursor_at_eol(snip)"
 snippet 'r([ntf]) ' "Return Simple Value" brA
 return `!p snip.rv = simple_value_map[match[1]]`
 endsnippet
 
+context "before_cursor(snip, 'r') and (cursor_at_eol(snip) or after_cursor(snip, ident_re))"
 snippet 'r ' "Return" brA
 return $0
 endsnippet
 
-pre_expand "add_import(snip, 'regexp')"
-snippet re. "regexp" b
-regexp.
-endsnippet
-
-context "cursor_at_eol(snip)"
+context "line_equals(snip, 're')"
 pre_expand "add_import(snip, 'errors')"
 snippet 're ' "Return new error" brA
 return $1`!p snip.rv = ', ' if t[1] else ''`errors.New("$0")
 endsnippet
 
-context "cursor_at_eol(snip)"
+context "line_equals(snip, 'ref')"
 pre_expand "add_import(snip, 'fmt')"
 snippet '\bref ' "Return new formatted error" brA
 return $1`!p snip.rv = ', ' if t[1] else ''`fmt.Errorf("$2", ${3:err})
@@ -1203,6 +1224,21 @@ case $3:
 	$0
 default:
 	``
+}
+endsnippet
+
+pre_expand "add_import(snip, 'bufio')"
+snippet scan "Scanner" b
+scanner := bufio.NewScanner($1)
+
+for scanner.Scan() {
+	line := scanner.Text()
+
+	$0
+}
+
+if err := scanner.Err(); err != nil {
+	// TODO
 }
 endsnippet
 

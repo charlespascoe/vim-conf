@@ -19,6 +19,8 @@ fun s:SetupAbbrs(entered)
 
     cabbr m messages
 
+    cabbr ue UltiSnipsEdit
+
     cabbr <expr> eh 'e '..expand('%:h')..'/'
 endfun
 

@@ -17,6 +17,20 @@ fun! IndexSpellings()
     py3 check_spelling()
 endfun
 
+if !exists("*<SID>TogglePrivate()")
+    fun s:TogglePrivate()
+        let l:name = expand('<cword>')
+
+        if l:name =~ '^[A-Z]'
+            let l:name = tolower(l:name[0])..l:name[1:]
+        else
+            let l:name = toupper(l:name[0])..l:name[1:]
+        endif
+
+        exec "GoRename" l:name
+    endfun
+endif
+
 nmap <buffer> <leader>tt <Plug>(go-info)
 nmap <buffer> <leader>td <Plug>(go-def)
 nmap <buffer> <leader>tD <Plug>(go-doc)
@@ -29,6 +43,7 @@ nmap <buffer> <leader>tc <Esc>:wa<CR><Plug>(go-build)
 nmap <buffer> <leader>tv <Plug>(go-vet)
 nmap <buffer> <leader>tF <Cmd>GoFmt<CR>
 nmap <buffer> <leader>tfs <Cmd>GoFillStruct<CR>
+nmap <buffer> <leader>tP <Cmd>call <SID>TogglePrivate()<Cr>
 
 let b:serenade_go_to_definition_command = 'GoDef'
 let b:serenade_style_command = 'exec "GoFmt" | w'

@@ -83,6 +83,8 @@ let g:bullets_enabled_file_types = ['markdown', 'text', 'asciidoctor']
 let g:bullets_set_mappings = 1
 let g:bullets_enable_in_empty_buffers = 0
 let g:bullets_outline_levels = ['std-']
+" Prevent bullets from breaking my dictation shortcut
+let g:bullets_custom_mappings = [['imap', '<C-d>', '<Cmd>call dictate#Start()<CR>']]
 
 " Bulletnotes
 
@@ -117,7 +119,7 @@ let g:python_highlight_all = 1
 let g:python_highlight_space_errors = 0
 
 " Undotree
-nmap <silent> <leader>ut <Cmd>UndotreeToggle<CR>
+nmap <silent> <leader>u <Cmd>UndotreeToggle<CR>
 
 " tsuquyomi
 let g:tsuquyomi_single_quote_import = 1
@@ -127,7 +129,7 @@ let g:UltiSnipsExpandTrigger = "<c-l>"
 let g:UltiSnipsJumpForwardTrigger = "<c-l>"
 let g:UltiSnipsSnippetsDir = $HOME."/.vim/snips/"
 let g:UltiSnipsSnippetDirectories = ["snips"]
-nmap <leader>ue <Cmd>UltiSnipsEdit<CR>
+let g:UltiSnipsEditSplit = "vertical"
 
 fun! VisualExpandSnippet(type = '')
     if a:type == ''
@@ -167,13 +169,20 @@ let g:go_template_use_pkg = 1
 let g:go_def_mapping_enabled = 0
 let g:go_imports_autosave = 0
 " Formatting interfers with jumps and folds; just do it manually
-let g:go_fmt_autosave = 1
+let g:go_fmt_autosave = 0
 let g:go_gopls_matcher = 'caseSensitive'
 let g:go_gopls_complete_unimported = 0
 let g:go_gopls_deep_completion = 0
 let g:go_rename_command = 'gopls'
 let g:go_fmt_command='gopls'
 let g:go_gopls_gofumpt=1
+
+
+autocmd FileType go let b:go_fmt_options = {
+        \ 'goimports': '-local ' .
+            \ trim(system('{cd '. shellescape(expand('%:h')) .' && go list -m;}')),
+    \ }
+
 
 " vim-go-syntax
 
@@ -187,7 +196,7 @@ let g:go_highlight_function_calls = 'FunctionCall'
 let g:go_highlight_function_parameters = 0
 let g:go_highlight_fields = 1
 let g:go_highlight_struct_fields = 1
-let g:go_highlight_builtins = 0
+let g:go_highlight_builtins = 'FunctionBuiltin'
 
 " vim-gitgutter
 let g:gitgutter_set_sign_backgrounds = 0
@@ -242,13 +251,17 @@ let g:indent_marker_ignore_filetypes = ['rfc', 'help']
 
 let g:ale_python_black_use_global = 1
 
-let g:ale_fixers = {'python': ['black']}
+let g:ale_fixers = {
+    \    'python': ['black'],
+    \    'go': ['gofmt', 'gofumpt', 'goimports', 'golines'],
+    \}
 
 let g:ale_hover_cursor = 0
 
 " Disable linting in insert mode
 let g:ale_lint_on_text_changed = 0
 let g:ale_lint_on_insert_leave = 0
+let g:ale_linters_ignore = {'go': ['golint']}
 
 " It seems ALE breaks the location list - use quickfix instead
 let g:ale_set_loclist = 0
@@ -264,6 +277,7 @@ nmap <leader>aT <Plug>(ale_toggle_buffer)
 nmap <leader>af <Plug>(ale_fix)
 nmap <leader>ae <Plug>(ale_next_wrap)zz
 nmap <leader>aE <Plug>(ale_previous_wrap)zz
+nmap <leader>ar <Plug>(ale_reset)
 
 " fzf-vim
 

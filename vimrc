@@ -17,7 +17,11 @@ let &t_EI = "\e[2 q"
 " Title
 
 fun s:SetTitle()
-    if &ft == 'man' && len(getbufinfo(#{buflist: 1})) == 1
+    if $MAN
+        if &ft != 'man'
+            return
+        endif
+
         let l:match = matchstr(getline(1), '^\c[a-z]\+')
 
         if l:match != ''
@@ -69,6 +73,17 @@ set formatlistpat=^\\s*\\d\\+[\\]:.)}\\t\ ]\\s*\\\|^\\s*-\\s*
 
 " Allow the cursor to go past the last character
 set ve+=onemore
+
+" Persistent undo
+set undolevels=100
+set undodir=~/.undo
+set noundofile " Ensure off by default, enable for specific files
+
+au FileType bash,go,help,javascript,markdown,python,text,vim,yaml,zsh,tmux setlocal undofile
+
+" Backup
+au FileType bash,go,help,javascript,markdown,python,text,vim,yaml,zsh,tmux
+    \ au BufWritePost <buffer> call system('cp '..shellescape(expand('%:p'))..' '..shellescape(expand('~/.backup/')..strftime('%Y-%m-%d_%H%M')..'_'..substitute(expand('%:p'), '/', '%', 'g')..'.bak'))
 
 " Reload files when they change outside of Vim
 set autoread
