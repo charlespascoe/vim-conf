@@ -12,6 +12,9 @@ fun! ShouldIndentBullet()
     return strpart(getline('.'), col('.') - 3, 1) == '-'
 endfun
 
+py3 import mdjoin
+command! Export let @+ = py3eval('mdjoin.join()')
+
 " Convert selected text to a link
 
 fun! FormatLinkSlug(type)
