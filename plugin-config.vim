@@ -186,7 +186,7 @@ autocmd FileType go let b:go_fmt_options = {
 
 " vim-go-syntax
 
-let g:go_highlight_dot = 'ctermfg=208 cterm=bold'
+let g:go_highlight_dot = 'guifg=#FFA540 cterm=bold'
 let g:go_highlight_comma = 'Operator'
 let g:go_highlight_semicolon = 'Operator'
 let g:go_highlight_function_parens = 'FunctionParens'

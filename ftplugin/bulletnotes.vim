@@ -1,5 +1,7 @@
 call QuickSearchMap('s', 'Sections', '^:: .\+ ::$')
 
+let b:delimitMate_expand_cr = 0
+
 iabbr rsa RSA
 iabbr crc CRC
 

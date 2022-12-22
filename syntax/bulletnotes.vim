@@ -3,6 +3,8 @@
 
 syn spell toplevel
 
+setlocal iskeyword+=:
+
 " Title
 
 syntax region NoteTitle matchgroup=TitleEnd start='^## \+' end=' \+##$' oneline concealends contains=Tag

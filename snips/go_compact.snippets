@@ -3,9 +3,7 @@ global !p
 from snippet_utils import *
 from go_snippet_utils import *
 
-type_re = re.compile(r"^type (\w+)")
 struct_re = re.compile(r"^type (\w+) struct")
-method_re = re.compile(r"^func \(([^)]+)\)\s+(\w+)\(")
 func_re = re.compile(r"^func (\w+)\(")
 test_re = re.compile(r"^func Test([^)]*)\(")
 ws_re = re.compile(r'\s+')
@@ -45,32 +43,10 @@ simple_value_map = {
 	'f': 'false',
 }
 
-def find_method_type(pointer=False):
-	for line in preceeding_lines():
-		match = method_re.match(line)
-
-		if match:
-			rec_name, _, rec_type = match[1].partition(' ')
-
-			if pointer and '*' not in rec_type:
-				rec_type = '*' + rec_type
-
-			return (rec_name, rec_type)
-
-		match = type_re.match(line)
-
-		if match:
-			name = match[1]
-			rec_type = name
-
-			if pointer:
-				rec_type = '*' + rec_type
-
-			rec_name = (name[0] + re.sub('[a-z]', '', name[1:])).lower()
-
-			return (rec_name, rec_type)
-
-	return ('', 'nil')
+def skip_receiver_name(snip, pos=1):
+	# Note: snip.context = find_method_type()
+	if snip.context.real and snip.tabstop == pos:
+		jump()
 
 
 def find_type():
@@ -162,7 +138,7 @@ def get_interface_type(name):
 def implement_interface():
 	interface = get_interface_type(match[1])
 	method_type = find_method_type(True)
-	vim.command(f'GoImpl {" ".join(method_type)} {interface}')
+	vim.command(f'GoImpl {str(method_type)} {interface}')
 
 	# Part of the reason this function returns a comment is so that the snippet
 	# doesn't run this function multiple times
@@ -994,53 +970,67 @@ func main() {
 }
 endsnippet
 
+# // $1 TODO: Description.
+pre_expand "snip.context = find_method_type(match[1] == '*')"
+post_jump "skip_receiver_name(snip)"
 snippet '^m([ *])' "Method" brA
-// $1 TODO: Description.
-func (`!p snip.rv = snip.c or ' '.join(find_method_type(match[1] == '*'))`) ${1: }($2)$3 {
+func (${1:`!p snip.rv = snip.context[0]`}${1/.+/ /}`!p snip.rv = snip.context[1]`) ${2: }($3)$4 {
 	$0
 }
 endsnippet
 
+# // LessThan TODO: Description.
+pre_expand "snip.context = find_method_type(match[1] == '*')"
+post_jump "skip_receiver_name(snip)"
 snippet '^mlt?([ *])' "Method - LessThan" brA
-// LessThan TODO: Description.
-func (`!p snip.rv = snip.c or ' '.join(find_method_type(match[1] == '*'))`) LessThan(other `!p snip.rv = snip.c or find_method_type(match[1] == '*')[1]`) bool {
+func (${1:`!p snip.rv = snip.context.rec_name`}${1/.+/ /}`!p snip.rv = snip.context.rec_type`) LessThan(other `!p snip.rv = snip.context.rec_type`) bool {
 	$0
 }
 endsnippet
 
+# // $1 TODO: Description.
+pre_expand "snip.context = find_method_type(match[1] == '*')"
+post_jump "skip_receiver_name(snip)"
 snippet '^mr([ *])' "Method with self return" brA
-// $1 TODO: Description.
-func (`!p snip.rv = snip.c or ' '.join(find_method_type(match[1] == '*'))`) ${1: }($2) `!p snip.rv = snip.c or find_method_type(match[1] == '*')` {
+func (${1:`!p snip.rv = snip.context.rec_name`}${1/.+/ /}`!p snip.rv = snip.context.rec_type`) ${2: }($3) `!p snip.rv = snip.context.rec_type` {
 	$0
 
-	return `!p snip.rv = snip.c or find_method_type(match[1] == '*')[0]`
+	return $1
 }
 endsnippet
 
+pre_expand "snip.context = find_method_type()"
+post_jump "skip_receiver_name(snip)"
 snippet mmj "Method - MarshalJSON" bw
-func (`!p snip.rv = snip.c or ' '.join(find_method_type())`) MarshalJSON() ([]byte, error) {
+func (${1:`!p snip.rv = snip.context.rec_name`}${1/.+/ /}`!p snip.rv = snip.context.rec_type`) MarshalJSON() ([]byte, error) {
 	$0
 }
 endsnippet
 
+pre_expand "snip.context = find_method_type()"
+post_jump "skip_receiver_name(snip)"
 snippet mmy "Method - MarshalYAML" bw
-func (`!p snip.rv = snip.c or ' '.join(find_method_type())`) MarshalYAML() (interface{}, error) {
+func (${1:`!p snip.rv = snip.context.rec_name`}${1/.+/ /}`!p snip.rv = snip.context.rec_type`) MarshalYAML() (interface{}, error) {
 	$0
 }
 endsnippet
 
+pre_expand "snip.context = find_method_type(True)"
+post_jump "skip_receiver_name(snip)"
 snippet muj "Method - UnmarshalJSON" bw
-func (`!p snip.rv = snip.c or ' '.join(find_method_type(True))`) UnmarshalJSON(data []byte) error {
+func (${1:`!p snip.rv = snip.context.rec_name`}${1/.+/ /}`!p snip.rv = snip.context.rec_type`) UnmarshalJSON(data []byte) error {
 	$0
 }
 endsnippet
 
-pre_expand "add_import(snip, 'fmt')"
+# pre_expand "add_import(snip, 'fmt')"
+pre_expand "add_import(snip, 'fmt'); snip.context = find_method_type(True)"
+post_jump "skip_receiver_name(snip)"
 snippet muy "Method - UnmarshalYAML" bw
-func (`!p snip.rv = snip.c or ' '.join(find_method_type(True))`) UnmarshalYAML(unmarshal func(interface{}) error) error {
+func (${1:`!p snip.rv = snip.context.rec_name`}${1/.+/ /}`!p snip.rv = snip.context.rec_type`) UnmarshalYAML(unmarshal func(interface{}) error) error {
 	var ${1:val} ${2:interface{}}
 
-	if err := unmarshal(&`!p snip.rv = snip.c or find_method_type()[0]`); err != nil {
+	if err := unmarshal(&`!p snip.rv = snip.context.rec_type`); err != nil {
 		return fmt.Errorf("invalid YAML: %s", err)
 	}
 
@@ -1067,24 +1057,30 @@ snippet '([A-Za-z0-9_]+_Mock)(:)?' "Mock Test Method" r
 endsnippet
 
 pre_expand "add_import(snip, 'fmt')"
+pre_expand "snip.context = find_method_type()"
+post_jump "skip_receiver_name(snip)"
 snippet ms "Method - String" bw
-func (`!p snip.rv = snip.c or ' '.join(find_method_type())`) String() string {
-	return fmt.Sprintf("$1", $0)
+func (${1:`!p snip.rv = snip.context.rec_name`}${1/.+/ /}`!p snip.rv = snip.context.rec_type`) String() string {
+	$0
 }
 endsnippet
 
+pre_expand "snip.context = find_method_type()"
+post_jump "skip_receiver_name(snip)"
 snippet mE "Method - Error" bw
-func (`!p snip.rv = snip.c or ' '.join(find_method_type())`) Error() string {
+func (${1:`!p snip.rv = snip.context.rec_name`}${1/.+/ /}`!p snip.rv = snip.context.rec_type`) Error() string {
 	return $0
 }
 endsnippet
 
 pre_expand "add_import(snip, 'v github.com/go-ozzo/ozzo-validation')"
+pre_expand "snip.context = find_method_type(True)"
+post_jump "skip_receiver_name(snip)"
 snippet '^mv' "Method - Validation" brA
 // Validate returns an error if any of the fields are invalid.
-func (`!p snip.rv = snip.c or ' '.join(find_method_type(True))`) Validate() error {
-	return v.ValidateStruct(`!p snip.rv = snip.c or find_method_type()[0]`,
-		v.Field(&`!p snip.rv = snip.c or find_method_type()[0]`.$1),$0
+func (${1:`!p snip.rv = snip.context.rec_name`}${1/.+/ /}`!p snip.rv = snip.context.rec_type`) Validate() error {
+	return v.ValidateStruct(`!p snip.rv = snip.context.rec_name`,
+		v.Field(&`!p snip.rv = snip.context.rec_name`.$1),$0
 	)
 }
 endsnippet
@@ -1102,7 +1098,7 @@ make([]`!p snip.rv = convert_type_map.get(match[1] or '', '')`, 0$1)
 endsnippet
 
 snippet MS "Make set"
-make(map[${1:value}]struct{})
+make(map[${1:value}]bool)
 endsnippet
 
 snippet Mm "Make map"

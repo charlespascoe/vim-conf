@@ -112,7 +112,8 @@ fun s:RepeatMacroUntilDone()
     call setreg(l:repeat_reg, l:prev_reg)
 endfun
 
-nnoremap <silent> <leader>me :<c-u><c-r><c-r>='let @'. v:register .' = '. macroeditor#replace_with_quotes(getreg(getcharstr()))<cr>
+
+nnoremap <leader>me :<c-u><c-r><c-r>='let @'. v:register .' = '. macroeditor#replace_with_quotes(getreg(v:register))<cr>
 nnoremap <leader>mr <Cmd>call <SID>RepeatMacroUntilDone()<CR>
 
 " Quick Search

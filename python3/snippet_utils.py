@@ -212,12 +212,23 @@ def preceeding_lines(line_index=None):
 
 
 # Note that line is zero-based and exclusive
-def following_lines(line=None):
+def following_lines(line_index=None):
     if line_index is None:
         line_index = current.window.line
 
-    for _, line in current.buffer.lines(start=line + 1):
+    for _, line in current.buffer.lines(start=line_index + 1):
         yield line
+
+
+def scan(lines, *funcs):
+    for line in lines:
+        for func in funcs:
+            res = func(line)
+
+            if res is not None:
+                return res
+
+    return None
 
 
 def nonempty(strings):
@@ -241,7 +252,7 @@ def search(regexp, lines):
 
 
 def jump():
-    vim.command(r'call feedkeys("\<C-l>")')
+    vim.command("call UltiSnips#JumpForwards()")
 
 
 def jump_after(ret):

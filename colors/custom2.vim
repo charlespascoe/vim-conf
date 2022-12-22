@@ -7,7 +7,14 @@ endif
 " TODO: Tidy
 " TODO: Set guibg=NONE as necessary
 
+hi clear Comment
+hi clear Constant
+hi clear Identifier
 hi clear Statement
+hi clear PreProc
+hi clear Type
+hi clear Special
+hi clear Underlined
 
 let colors_name = "custom2"
 
