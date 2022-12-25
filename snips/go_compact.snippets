@@ -974,7 +974,7 @@ endsnippet
 pre_expand "snip.context = find_method_type(match[1] == '*')"
 post_jump "skip_receiver_name(snip)"
 snippet '^m([ *])' "Method" brA
-func (${1:`!p snip.rv = snip.context[0]`}${1/.+/ /}`!p snip.rv = snip.context[1]`) ${2: }($3)$4 {
+func (${1:`!p snip.rv = snip.context.rec_name`}${1/.+/ /}`!p snip.rv = snip.context.rec_type`) ${2: }($3)$4 {
 	$0
 }
 endsnippet
@@ -1056,27 +1056,33 @@ snippet '([A-Za-z0-9_]+_Mock)(:)?' "Mock Test Method" r
 }`!p snip.rv = ',' if match[2] == ':' else ''`
 endsnippet
 
-pre_expand "add_import(snip, 'fmt')"
-pre_expand "snip.context = find_method_type()"
+## I don't know why, but `skip_receiver_name()` doesn't work for this snippet -
+## calling UltiSnips#JumpForwards() seems to have a bug that means it won't
+## actually jump unless the next position has a default value, e.g ${2: }, which
+## is why it ends with ${2: }
+# post_jump "skip_receiver_name(snip)"
+pre_expand "snip.context = find_method_type(True)"
 post_jump "skip_receiver_name(snip)"
-snippet ms "Method - String" bw
+# ${2: }
+snippet '^ms ' "Method - String" brA
 func (${1:`!p snip.rv = snip.context.rec_name`}${1/.+/ /}`!p snip.rv = snip.context.rec_type`) String() string {
 	$0
 }
 endsnippet
 
+## See above
+# post_jump "skip_receiver_name(snip)"
 pre_expand "snip.context = find_method_type()"
-post_jump "skip_receiver_name(snip)"
-snippet mE "Method - Error" bw
-func (${1:`!p snip.rv = snip.context.rec_name`}${1/.+/ /}`!p snip.rv = snip.context.rec_type`) Error() string {
-	return $0
+snippet '^mE ' "Method - Error" brA
+func (`!p snip.rv = str(snip.context)`) Error() string {
+	return ${2: }
 }
 endsnippet
 
 pre_expand "add_import(snip, 'v github.com/go-ozzo/ozzo-validation')"
 pre_expand "snip.context = find_method_type(True)"
 post_jump "skip_receiver_name(snip)"
-snippet '^mv' "Method - Validation" brA
+snippet '^mv ' "Method - Validation" brA
 // Validate returns an error if any of the fields are invalid.
 func (${1:`!p snip.rv = snip.context.rec_name`}${1/.+/ /}`!p snip.rv = snip.context.rec_type`) Validate() error {
 	return v.ValidateStruct(`!p snip.rv = snip.context.rec_name`,
@@ -1187,6 +1193,13 @@ defer func() {
 endsnippet
 
 ## S ##
+
+pre_expand "add_import(snip, 'strings')"
+snippet sb "String Builder" bw
+var str strings.Builder
+
+$0
+endsnippet
 
 pre_expand "add_import(snip, 'fmt')"
 snippet 'spf' "Sprintf" r

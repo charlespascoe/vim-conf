@@ -38,7 +38,9 @@ fun s:MoveBuf(to) abort
     let @# = l:altbuf
 endfun
 
-command -nargs=+ -complete=file Move call <SID>MoveBuf(<f-args>)
+if !exists(':Move')
+    command -nargs=+ -complete=file Move call <SID>MoveBuf(<f-args>)
+endif
 
 " Syntax highlighting debugging
 map <leader>S <Cmd>echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'

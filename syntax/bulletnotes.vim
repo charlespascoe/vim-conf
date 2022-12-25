@@ -7,16 +7,16 @@ setlocal iskeyword+=:
 
 " Title
 
-syntax region NoteTitle matchgroup=TitleEnd start='^## \+' end=' \+##$' oneline concealends contains=Tag
+syntax region bnNoteTitle matchgroup=TitleEnd start='^## \+' end=' \+##$' oneline concealends contains=Tag
 syntax region Subtitle matchgroup=SubtitleEnd start='^:: \+' end=' \+::$' oneline concealends contains=Tag
 syntax region ContactTitle matchgroup=ContactTitleEnd start='^@@ \+' end=' \+@@$' oneline concealends
 
-" hi link NoteTitle Title
-hi NoteTitle cterm=bold,underline ctermfg=135
+hi link bnNoteTitle Title
+" hi bnNoteTitle cterm=bold,underline ctermfg=135
 hi Subtitle cterm=underline ctermfg=140
 hi ContactTitle cterm=underline ctermfg=51
 
-hi link TitleEnd NoteTitle
+hi link TitleEnd bnNoteTitle
 hi link SubtitleEnd Subtitle
 hi link ContactTitleEnd ContactTitle
 
@@ -26,87 +26,91 @@ syntax match LeadingWhitespace /^\s\+/ contained
 
 highlight LeadingWhitespace cterm=none
 
-" Note Bullets
+if !exists('g:bulletnote_bullets')
+    let g:bulletnote_bullets = #{
+        \Note: #{
+            \char: '-',
+            \bhl: 'ctermfg=220 cterm=bold',
+        \},
+        \Task: #{
+            \char: '*',
+            \bhl: 'DiffAdd',
+            \hl: 'Type',
+        \},
+        \ProcessedTask: #{
+            \char: '+',
+            \bhl: 'DiffAdd',
+            \hl: 'ctermfg=243 cterm=italic,strikethrough',
+        \},
+        \Question: #{
+            \char: '?',
+            \bhl: 'DiffDelete',
+            \hl: 'DiffChange',
+        \},
+        \AnsweredQuestion: #{
+            \char: '>',
+            \bhl: 'DiffDelete',
+            \hl: 'cterm=bold,italic',
+        \},
+        \Answer: #{
+            \char: '<',
+            \bhl: 'ctermfg=70 cterm=bold',
+            \hl: 'cterm=bold',
+        \},
+        \Comment: #{
+            \char: '#',
+            \bhl: 'Special',
+            \hl: 'Comment',
+        \},
+    \}
+endif
 
-syntax match NoteBullet /^\(\s\{4\}\)*-/
+let bulletset = '\['
 
-highlight NoteBullet ctermfg=220 cterm=bold
+for opts in values(g:bulletnote_bullets)
+    if opts.char == '-'
+        let bulletset .= '\'
+    endif
+    let bulletset .= opts.char
+endfor
 
-" Task Bullets
+let bulletset .= ']'
 
-syntax match TaskBullet /^\(\s\{4\}\)*\*/ contained
-syntax region Task start=/^\(\s\{4\}\)*\*\s\+/hs=e+1 end=/^\s*$\|^\(\s\{4\}\)*[-*+?<>#]/me=s-1 contains=TaskBullet,LeadingWhitespace,@Metatext
+let indent = '\(\s\{4\}\)\*'
 
-highlight TaskBullet ctermfg=70 cterm=bold
-highlight Task ctermfg=84
+fun s:highlight(name, hl)
+    if a:hl =~ '^\w\+$'
+        exec 'hi link '..a:name..' '..a:hl
+    elseif a:hl != ''
+        exec 'hi '..a:name..' '..a:hl
+    endif
+endfun
 
-" Processed Tasks
+for [name, opts] in items(g:bulletnote_bullets)
+    exec 'syntax region bn'..name..' matchgroup=bn'..name..'Bullet start=/\V\^'..indent..opts.char..'\s\+/ end=/\V\^\s\*\$\|\^'..indent..bulletset..'/me=s-1 contains=bn'..name..'Bullet,LeadingWhitespace,@bnMetatext'
+    call s:highlight('bn'..name..'Bullet', get(opts, 'bhl', ''))
+    call s:highlight('bn'..name, get(opts, 'hl', ''))
+endfor
 
-syntax match ProcessedTaskBullet /^\(\s\{4\}\)*+/ contained
-syntax region ProcessedTask start=/^\(\s\{4\}\)*+\s\+/hs=e+1 end=/^\s*$\|^\(\s\{4\}\)*[-*+?<>#]/me=s-1 contains=ProcessedTaskBullet,LeadingWhitespace,@Metatext
-
-"highlight ProcessedTaskBullet ctermfg=25 cterm=bold
-highlight ProcessedTaskBullet ctermfg=70 cterm=bold
-highlight ProcessedTask ctermfg=243
-
-" Question Bullets
-
-syntax match QuestionBullet /^\(\s\{4\}\)*?/ contained
-syntax region Question start=/^\(\s\{4\}\)*?\s\+/hs=e+1 end=/^\s*$\|^\(\s\{4\}\)*[-*+?<>#]/me=s-1 contains=QuestionBullet,LeadingWhitespace,@Metatext
-
-highlight QuestionBullet ctermfg=196 cterm=bold
-highlight Question ctermfg=214
-
-" Answered Question Bullets
-
-syntax match AnsweredQuestionBullet /^\(\s\{4\}\)*</ contained
-syntax region AnsweredQuestion start=/^\(\s\{4\}\)*<\s\+/hs=e+1 end=/^\s*$\|^\(\s\{4\}\)*[-*+?<>#]/me=s-1 contains=AnsweredQuestionBullet,LeadingWhitespace,@Metatext
-
-"highlight AnsweredQuestionBullet ctermfg=25 cterm=bold
-highlight AnsweredQuestionBullet ctermfg=196 cterm=bold
-highlight AnsweredQuestion cterm=bold,italic
-
-" Answer Bullets
-syntax match AnswerBullet /^\(\s\{4\}\)*>/ contained
-syntax region Answer start=/^\(\s\{4\}\)*>\s\+/hs=e+1 end=/^\s*$\|^\(\s\{4\}\)*[-*+?<>#]/me=s-1 contains=AnswerBullet,LeadingWhitespace,@Metatext
-
-highlight AnswerBullet ctermfg=70 cterm=bold
-highlight Answer cterm=bold
-
-" Comment Bullets
-syntax match CommentBullet /^\(\s\{4\}\)*#/ contained
-syntax region CommentItem start=/^\(\s\{4\}\)*#\s\+/hs=e+1 end=/^\s*$\|^\(\s\{4\}\)*[-*+?<>#]/me=s-1 contains=CommentBullet,LeadingWhitespace,@Metatext
-
-highlight CommentBullet ctermfg=39 cterm=bold
-highlight CommentItem ctermfg=117 ctermbg=235 cterm=italic
-
-" Metatext (annotations to text that add meaning, e.g. tags)
+" bnMetatext (annotations to text that add meaning, e.g. tags)
 
 let pointerRegexp = bulletnotes#BuildPointerRegexp()
 
-syntax match Tag /#[a-zA-Z0-9_\-]\+/ contains=@NoSpell
+syntax match bnTag /#[a-zA-Z0-9_\-]\+/ contains=@NoSpell
 
-exec 'syntax match Link /'.pointerRegexp.'/ contains=@NoSpell,LinkEnds'
-syntax match LinkEnds /\[[\[:]\?\|[:\]]\?\]/ contained conceal
-" syntax match Pointer /&[a-zA-Z0-9_\-.]\+\(\/[a-zA-Z0-9_\-.]\+\)*/ contains=@NoSpell,PointerMarker
-" syntax match PointerMarker /&/ contained
-" syntax match AnchorPointer /&:[a-zA-Z0-9]\+/ contains=@NoSpell,AnchorPointerMarker
-" syntax match AnchorPointerMarker /&:/ contained
-" syntax match Link /\(^\|\s\)\[[^\]]\+\]\(\s\|$\)/ contains=@NoSpell,LinkEnds keepend
-" syntax match LinkEnds /\(\[\|\]\)/ contained
-syntax match Contact /@[a-zA-Z\-._]\+/ contains=@NoSpell,ContactMarker
-syntax match Anchor /:[a-zA-Z0-9]\+:/ contains=@NoSpell,AnchorMarker
-syntax match AnchorMarker /:/ contained
-syntax match ContactMarker /@/ contained conceal
+exec 'syntax match bnLink /'.pointerRegexp.'/ contains=@NoSpell,bnLinkEnds'
+syntax match bnLinkEnds /\[[\[:]\?\|[:\]]\?\]/ contained conceal
+syntax match bnContact /@[a-zA-Z\-._]\+/ contains=@NoSpell,bnContactMarker
+syntax match bnAnchor /:[a-zA-Z0-9]\+:/ contains=@NoSpell
+syntax match bnContactMarker /@/ contained conceal
 
-syntax region Monospace matchgroup=MonospaceEnd start='\\\@1<!{' skip='\\.' end='}' keepend concealends contains=@NoSpell,Escaped
-syntax region HighlightedMonospace matchgroup=HighlightedMonospaceEnd start='\\\@1<!{{' skip='\\.' end='}}' keepend concealends contains=@NoSpell,Escaped
-syntax region Highlight matchgroup=HighlightMark start='`' skip='\\.' end='`' concealends contains=@Metatext,Escape keepend
-" syntax cluster Metatext contains=Anchor,AnchorPointer,Contact,Link,Monospace,Pointer,Tag
-syntax cluster Metatext contains=Anchor,Contact,Highlight,HighlightedMonospace,Link,Monospace,Tag
+syntax region Monospace matchgroup=MonospaceEnd start='\\\@1<!{' skip='\\.' end='}' keepend concealends contains=@NoSpell,bnEscaped
+syntax region HighlightedMonospace matchgroup=HighlightedMonospaceEnd start='\\\@1<!{{' skip='\\.' end='}}' keepend concealends contains=@NoSpell,bnEscaped
+syntax region bnHighlight matchgroup=bnHighlightMark start='`' skip='\\.' end='`' concealends contains=@bnMetatext,bnEscaped keepend
+syntax cluster bnMetatext contains=bnAnchor,bnContact,bnHighlight,HighlightedMonospace,bnLink,Monospace,bnTag
 
 " A hack to hide escape sequences
-syntax region Escaped matchgroup=Special start='\\' end='.\zs' keepend concealends contained contains=NONE transparent
+syntax region bnEscaped matchgroup=SpecialChar start='\\' end='.\zs' keepend concealends contained contains=NONE transparent
 
 " Nested Syntax Highlighting
 
@@ -115,46 +119,46 @@ let b:current_syntax = 'bulletnotes'
 
 syntax include @go syntax/go.vim
 syntax cluster go add=@NoSpell
-syntax region GoCode matchgroup=MonospaceEnd start='^{{{go$' end='^}}}$' keepend contains=@go
+syntax region bnGoCode matchgroup=MonospaceEnd start='^{{{go$' end='^}}}$' keepend contains=@go
 
 syntax include @js syntax/javascript.vim
 syntax cluster js add=@NoSpell
-syntax region JsCode matchgroup=MonospaceEnd start='^{{{js$' end='^}}}$' keepend contains=@js
-
-sign define Foobar linehl=CodeBlock
-
-hi CodeBlock ctermbg=234
+syntax region bnJsCode matchgroup=MonospaceEnd start='^{{{js$' end='^}}}$' keepend contains=@js
 
 " Highlighting Definitions
 
-highlight Tag ctermfg=226 cterm=bold
+" highlight Tag ctermfg=226 cterm=bold
 " highlight Pointer ctermfg=40
 " highlight link PointerMarker Pointer
-" highlight Link ctermfg=42
-highlight Link ctermfg=40
-highlight LinkEnds ctermfg=23
-" highlight link LinkEnds Link
-highlight Contact cterm=bold ctermfg=39
-highlight link ContactMarker Contact
-highlight link Monospace constant
-highlight MonospaceEnd ctermfg=88
-highlight HighlightedMonospaceEnd ctermfg=124 cterm=bold
-" highlight link HighlightedMonospace Monospace
-highlight HighlightedMonospace cterm=bold,underline ctermfg=196
+hi link bnTag Function
+hi link bnLink Tag
+hi link bnLinkEnds bnLink
+" hi bnContact cterm=bold ctermfg=39
+hi link bnContact PreProc
+hi link bnContactMarker bnContact
+hi link Monospace String
+" highlight MonospaceEnd ctermfg=88
+hi link MonospaceEnd String
+hi link HighlightedMonospaceEnd String
+hi link HighlightedMonospace String
 
-highlight Anchor ctermfg=0 ctermbg=24
-highlight link AnchorMarker Anchor
+" highlight bnAnchor ctermfg=0 ctermbg=24
+highlight link bnAnchor Conceal
+highlight link bnAnchorMarker bnAnchor
 highlight link AnchorPointer Pointer
 highlight link AnchorPointerMarker AnchorPointer
 
 " Contact Fields
-syntax match FieldName /[A-Za-z]\+:/ contained
-syntax match Field /^- \(Email\|Name\|Role\): .*/ contains=NoteBullet,FieldName,@NoSpell
+" syntax match bnFieldName /[A-Za-z]\+:/ contained
+" syntax match bnField /^- \(Email\|Name\|Role\): .*/ contains=NoteBullet,bnFieldName,@NoSpell
 
-highlight FieldName ctermfg=39
-highlight link Field Link
+" hi bnFieldName ctermfg=39
+" hi link bnField Special
 
 " Text Styles
 
-highlight Highlight ctermfg=51 cterm=bold
-highlight HighlightMark ctermfg=33
+" highlight bnHighlight ctermfg=51 cterm=bold
+" highlight bnHighlightMark ctermfg=33
+
+hi link bnHighlight Todo
+hi link bnHighlightMark bnHighlight

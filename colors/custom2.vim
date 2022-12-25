@@ -15,10 +15,19 @@ hi clear PreProc
 hi clear Type
 hi clear Special
 hi clear Underlined
+hi clear Search
+hi clear CursorLine
+hi clear CursorLineNr
 
 let colors_name = "custom2"
 
-hi Search cterm=bold guibg=#E2CC54 guifg=#342E09
+" hi Search cterm=bold guibg=#E2CC54 guifg=#342E09
+" hi Search guibg=#635711
+hi Search guibg=#4E4827
+" hi CurSearch guibg=#625A31 cterm=bold
+hi CurSearch cterm=bold guibg=#BBA843 guifg=#342E09
+
+" hi Cursor guibg=#4D3553 cterm=none
 
 " hi Normal guibg=#25172A
 " hi ColorColumn guibg=#290E33
@@ -89,51 +98,49 @@ else
     hi Normal guifg=#F8F8F2    guibg=#282A36
 endif
 
-if alternate
-    hi Visual cterm=none guibg=#44475A
-    hi CursorLine guibg=#44475A
-    " hi ColorColumn ctermbg=235 guibg=#21222C
-    hi ColorColumn ctermbg=235 guibg=#252733
-    hi LineNr guifg=#6272A4
-    " hi Operator guifg=#FFAF6F
-    " hi Type guifg=#FFEC58
-    " hi Function guifg=#00E9FF
+hi Visual cterm=none guibg=#44475A
+hi CursorLine guibg=#44475A
+" hi ColorColumn ctermbg=235 guibg=#21222C
+hi ColorColumn ctermbg=235 guibg=#252733
+hi LineNr guifg=#6272A4
+" hi Operator guifg=#FFAF6F
+" hi Type guifg=#FFEC58
+" hi Function guifg=#00E9FF
 
 
 
-    " hi Type cterm=italic ctermfg=117 gui=italic guifg=#8BE9FD
-    " hi Type cterm=italic ctermfg=117 gui=italic guifg=#9DFFAE
-    hi Type ctermfg=117 guifg=#6FFF88
-    " hi Special guifg=#27D6FB
-    " hi Special ctermfg=39 guifg=#31BEFF
-    " hi Special ctermfg=39 guifg=#9D91FF
-    " hi Special ctermfg=39 guifg=#A35DFD
-    " hi Special cterm=bold ctermfg=39 guifg=#9087FD
-    " hi Special ctermfg=39 guifg=#9087FD
-    " hi Special ctermfg=39 guifg=#9F98FD
-    " hi Special cterm=bold,italic ctermfg=39 guifg=#9F98FD
-    hi Special cterm=bold ctermfg=39 guifg=#B18BFF
-    " hi Special ctermfg=39 guifg=#2FA5FF
-    hi SpecialChar ctermfg=39 guifg=#2FA5FF
+" hi Type cterm=italic ctermfg=117 gui=italic guifg=#8BE9FD
+" hi Type cterm=italic ctermfg=117 gui=italic guifg=#9DFFAE
+hi Type ctermfg=117 guifg=#6FFF88
+" hi Special guifg=#27D6FB
+" hi Special ctermfg=39 guifg=#31BEFF
+" hi Special ctermfg=39 guifg=#9D91FF
+" hi Special ctermfg=39 guifg=#A35DFD
+" hi Special cterm=bold ctermfg=39 guifg=#9087FD
+" hi Special ctermfg=39 guifg=#9087FD
+" hi Special ctermfg=39 guifg=#9F98FD
+" hi Special cterm=bold,italic ctermfg=39 guifg=#9F98FD
+hi Special cterm=bold ctermfg=39 guifg=#B18BFF
+" hi Special ctermfg=39 guifg=#2FA5FF
+hi SpecialChar ctermfg=39 guifg=#2FA5FF
 
-    hi Tag cterm=bold,underdashed guifg=#5fd7ff
+hi Tag cterm=bold,underdashed guifg=#5fd7ff
 
-    hi Function cterm=none guifg=#FFF180
-    hi FunctionBuiltin cterm=bold,italic  guifg=#FFF180
+hi Function cterm=none guifg=#FFF180
+hi FunctionBuiltin cterm=bold,italic  guifg=#FFF180
 
-    hi Identifier cterm=none guifg=#8BE9FD
-    " hi Identifier ctermfg=117 guifg=#A1EDFD
-    " hi PreProc cterm=italic ctermfg=135 guifg=#9087FD
-    " hi PreProc cterm=italic guibg=#2F2938 guifg=#A076C2
-    hi PreProc guifg=#9087FD
-    " hi Comment ctermfg=61 guifg=#6272A4
-    " hi Comment ctermfg=61 guibg=#2B1F50 guifg=#9173E3
-    hi Comment ctermfg=61 guibg=#3E3853 guifg=#A381FF
-    " hi Constant guifg=#FF6C6C
-    hi Constant guifg=#FF5C5C
-    " hi Constant guifg=#FF4E4E
-    " hi String guifg=#FF6C6C
-endif
+hi Identifier cterm=none guifg=#8BE9FD
+" hi Identifier ctermfg=117 guifg=#A1EDFD
+" hi PreProc cterm=italic ctermfg=135 guifg=#9087FD
+" hi PreProc cterm=italic guibg=#2F2938 guifg=#A076C2
+hi PreProc guifg=#9087FD
+" hi Comment ctermfg=61 guifg=#6272A4
+" hi Comment ctermfg=61 guibg=#2B1F50 guifg=#9173E3
+hi Comment ctermfg=61 guibg=#3E3853 guifg=#A381FF
+" hi Constant guifg=#FF6C6C
+hi Constant guifg=#FF5C5C guibg=NONE
+" hi Constant guifg=#FF4E4E
+" hi String guifg=#FF6C6C
 
 
 hi Conceal guifg=#BCBEC6 guibg=#40424B

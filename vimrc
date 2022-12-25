@@ -31,21 +31,30 @@ fun s:SetTitle()
     endif
 
     let l:path = bufname()
+    " The -1 argument to getcwd() returns the global working directory
+    let l:cwd = getcwd(-1)
 
-    " TODO Make this more generic
-    " TODO Still show buffer name if file is outside of cwd
-    if l:path == '' || isdirectory('.git')
-        " The -1 argument to getcwd() returns the global working directory
-        let l:path = getcwd(-1)
+    if l:path == '' || (isdirectory('.git') && s:startswith(fnamemodify(l:path, ':p'), l:cwd))
+        let l:path = l:cwd
     endif
 
     let l:path = fnamemodify(l:path, ':~')
 
-    if l:path =~ '^\~/go/src'
+    if s:startswith(l:path, '~/go/src')
         let &titlestring = substitute(l:path, '^\~/go/src', 'go', '')
+    elseif s:startswith(l:path, '~/.vim-conf')
+        let &titlestring = substitute(l:path, '^\~/\.vim-conf', 'vim-conf', '')
     else
         let &titlestring = pathshorten(l:path)
     endif
+endfun
+
+fun s:startswith(str, prefix)
+    if len(a:str) < len(a:prefix)
+        return 0
+    endif
+
+    return a:str[:len(a:prefix)-1] == a:prefix
 endfun
 
 set title
@@ -82,8 +91,11 @@ set noundofile " Ensure off by default, enable for specific files
 au FileType bash,go,help,javascript,markdown,python,text,vim,yaml,zsh,tmux setlocal undofile
 
 " Backup
+au BufRead *.bak set filetype=bak
+let g:backup_dir = expand('~/.backup/')..strftime('%Y-%m')..'/'
+call system('mkdir -p '..shellescape(g:backup_dir))
 au FileType bash,go,help,javascript,markdown,python,text,vim,yaml,zsh,tmux
-    \ au BufWritePost <buffer> call system('cp '..shellescape(expand('%:p'))..' '..shellescape(expand('~/.backup/')..strftime('%Y-%m-%d_%H%M')..'_'..substitute(expand('%:p'), '/', '%', 'g')..'.bak'))
+    \ au BufWritePost <buffer> call system('cp '..shellescape(expand('%:p'))..' '..shellescape(g:backup_dir..substitute(expand('%:p'), '/', '%', 'g')..'.'..strftime('%Y-%m-%d_%H%M')..'.bak'))
 
 " Reload files when they change outside of Vim
 set autoread

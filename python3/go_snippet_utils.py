@@ -2,13 +2,15 @@ import re
 import vim
 from snippet_utils import *
 from dataclasses import dataclass
+from typing import List
 
 
+ws_re = re.compile(r"\s+")
 import_re = re.compile(r"^import \($")
 end_import_re = re.compile(r"^\)$")
 quoted_string_re = re.compile(r'"(([^"]|\\.)+)"')
-method_re = re.compile(r"^func \((?:(\w+)\s+)?([^)]+)\)\s+(\w+)\(")
-type_re = re.compile(r"^type (\w+)")
+method_re = re.compile(r"^func \((?:(\w+)\s+)?([^)]+)\)\s+(\w+)[\[(]")
+type_re = re.compile(r"^type (\w+)(?:\[(.*)\])? ")
 
 
 @dataclass
@@ -25,6 +27,15 @@ class MethodMatch:
 @dataclass
 class TypeMatch:
     name: str
+    type_params: List[str]
+
+    def __str__(self):
+        params = ",".join(self.type_params)
+
+        if params:
+            return f"{self.name}[{params}]"
+
+        return self.name
 
 
 def match_method(line):
@@ -39,10 +50,15 @@ def match_method(line):
 def match_type(line):
     match = type_re.match(line)
 
-    if match:
-        return TypeMatch(match[1])
+    if not match:
+        return None
 
-    return None
+    type_params = []
+
+    if match[2]:
+        type_params = [ws_re.split(part.strip())[0] for part in match[2].split(",")]
+
+    return TypeMatch(match[1], type_params)
 
 
 def add_import(snip, *imports):
@@ -126,6 +142,15 @@ def go_import(imports):
             vim.command(f"GoImport {imp}")
 
 
+def type_to_method(type_match: TypeMatch) -> MethodMatch:
+    return MethodMatch(
+        rec_name=type_match.name[0].lower() + type_match.name[1:],
+        rec_type=str(type_match),
+        name="",
+        real=False,
+    )
+
+
 def find_method_type(pointer=False):
     m = scan(preceeding_lines(), match_method, match_type)
 
@@ -136,10 +161,10 @@ def find_method_type(pointer=False):
 
     if isinstance(m, TypeMatch):
         m2 = scan(following_lines(), match_method)
-        if m2:
+        if m2 and m2.rec_type.replace("*", "") == m.name:
             method = m2
         else:
-            method = MethodMatch(m.name[0].lower() + m.name[1:], m.name, "", real=False)
+            method = type_to_method(m)
 
     if pointer and not method.rec_type.startswith("*"):
         method.rec_type = "*" + method.rec_type

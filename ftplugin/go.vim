@@ -175,7 +175,15 @@ fun! DumpObject()
         return
     end
 
-    let l:path = l:mod.'/'.expand('%:h').'\.'.l:item_name
+    let l:dir = expand('%:h')
+    if l:dir == '.'
+        let l:dir = ''
+    else
+        let l:dir = '/'.l:dir
+    endif
+
+    let l:path = l:mod.l:dir.'\.'.l:item_name
+    let l:path = '^'.l:mod.l:dir.'\.'
 
     " TODO: Make this a background job
     " make! build
@@ -188,13 +196,13 @@ fun! DumpObject()
     au CursorMoved <buffer> call win_execute(t:dump_term_winid, 'match CursorLine /^\s\+'..expand('%:t')..':'..line('.')..'\s.*$/ | call search("'..expand('%:t')..':'..line('.')..'", "wc") | normal zz')
 
     " TODO: Figure out where the binary is properly
-    let l:term_buf = term_start(['go', 'tool', 'objdump', '-s', l:path, l:mod], {'vertical': 1, 'norestore': 1})
+    let l:term_buf = term_start(['go', 'tool', 'objdump', '-s', l:path, l:filename], {'vertical': 1, 'norestore': 1})
 
     call setbufvar(l:term_buf, '&ft', 'godump')
     let t:dump_term_winid = win_getid()
 endfun
 
-command! DumpObject call DumpObject()
+command! -nargs=? DumpObject call DumpObject(<f-args>)
 
 
 fun! RunCode()
