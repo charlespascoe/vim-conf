@@ -18,19 +18,24 @@ func dictate#Init()
         echohl Error
         echom "Couldn't connect to dictation server:" v:exception
         echohl None
-        return
+        return 0
     endtry
 
     inoremap <C-d> <Cmd>call dictate#Start()<CR>
 
     command! DictationReloadSubstitutions call dictate#ReloadSubstitutions()
 
-    au FocusGained * call dictate#FocusGained()
-    au FocusLost * call dictate#FocusLost()
+    augroup dictation
+        au!
+        au FocusGained * call dictate#FocusGained()
+        au FocusLost * call dictate#FocusLost()
+    augroup END
+
+    return 1
 endfun
 
 fun s:send(msg)
-    if !exists('s:ch') || ch_status(s:ch) != "open"
+    if !exists('s:ch') || (ch_status(s:ch) != "open" && !dictate#Init())
         return
     endif
 
