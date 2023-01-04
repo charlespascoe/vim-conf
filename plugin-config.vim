@@ -68,7 +68,6 @@ if !exists('g:airline_symbols')
     let g:airline_symbols = {}
 endif
 
-let g:airline_section_b = '%{airline#util#wrap(airline#extensions#branch#get_head(),0)}'
 let g:airline_left_sep = ''
 let g:airline_left_alt_sep = ''
 let g:airline_right_sep = ''
@@ -76,7 +75,11 @@ let g:airline_right_alt_sep = ''
 let g:airline_symbols.branch = ''
 let g:airline_symbols.readonly = ''
 
-let g:airline_section_z = '%#__accent_bold#%{airline#util#wrap(airline#extensions#obsession#get_status(),0)}%l/%L:%v%#__restore__#'
+call airline#parts#define_function('dictation', 'dictate#GetStatusText')
+
+let g:airline_section_b = '%{airline#util#wrap(airline#extensions#branch#get_head(),0)}'
+let g:airline_section_y = airline#section#create_right(['ffenc','dictation'])
+let g:airline_section_z = '%#__accent_bold#%{airline#util#wrap(airline#extensions#obsession#get_status(),0)}%2l/%L:%02v%#__restore__#'
 
 " bullets.vim
 let g:bullets_enabled_file_types = ['markdown', 'text', 'asciidoctor']
@@ -177,7 +180,6 @@ let g:go_rename_command = 'gopls'
 let g:go_fmt_command='gopls'
 let g:go_gopls_gofumpt=1
 
-
 autocmd FileType go let b:go_fmt_options = {
         \ 'goimports': '-local ' .
             \ trim(system('{cd '. shellescape(expand('%:h')) .' && go list -m;}')),
@@ -249,6 +251,7 @@ let g:indent_marker_ignore_filetypes = ['rfc', 'help']
 
 " ale
 
+let g:ale_virtualtext_cursor = 0
 let g:ale_python_black_use_global = 1
 
 let g:ale_fixers = {

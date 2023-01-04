@@ -55,7 +55,7 @@ let b:format_dictated_text = function('s:FormatDictatedText')
 
 nmap <buffer> <leader>tt <Plug>(go-info)
 nmap <buffer> <leader>td <Plug>(go-def)
-nmap <buffer> <leader>tD <Plug>(go-doc)
+nmap <buffer> <leader>tD <Plug>(go-def-type)
 nmap <buffer> <leader>tr <Plug>(go-referrers)
 nmap <buffer> <leader>tC <Plug>(go-coverage-toggle)
 nmap <buffer> <leader>ta <Cmd>GoAlternate!<CR>

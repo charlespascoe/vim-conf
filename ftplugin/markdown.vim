@@ -13,7 +13,7 @@ fun! ShouldIndentBullet()
 endfun
 
 py3 import mdjoin
-command! Export let @+ = py3eval('mdjoin.join()')
+command! -range=% Export let @+ = py3eval('mdjoin.join(<line1>, <line2>)')
 
 " Convert selected text to a link
 

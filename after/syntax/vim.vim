@@ -48,6 +48,9 @@ syntax region vimFuncArgs matchgroup=FunctionParens start='(' end=')' contained 
 " TODO: Raise this as a fix in Vim repo
 syn keyword vimHiClear contained containedin=vimHighlightCluster clear skipwhite  nextgroup=vimHiGroup
 
+" syn region vimSynMatchRegion contained matchgroup=vimGroupName start="\h\w*" skip=/\n\s*\\/ matchgroup=vimSep end="|\|$" contains=@vimSynMtchGroup
+syn region vimSynMatchRegion contained matchgroup=vimGroupName start="\h\w*" skip=/\n\s*\\/ matchgroup=vimSep end="|\|$" contains=@vimSynMtchGroup,vimContinue
+syn region vimSynRegion contained matchgroup=vimGroupName start="\h\w*" skip="\\\\\|\\|\|\n\s*\\/" end="|\|$" contains=@vimSynRegGroup
 
 syntax keyword vimCommand match skipwhite nextgroup=vimMatchHiGroup
 syntax match vimMatchHiGroup /\i\+/ contained skipwhite nextgroup=vimSynRegPat

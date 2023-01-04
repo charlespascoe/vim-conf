@@ -22,6 +22,8 @@ fun s:SetupAbbrs(entered)
     cabbr ue UltiSnipsEdit
 
     cabbr <expr> eh 'e '..expand('%:h')..'/'
+
+    cabbr <expr> ds trim(system("date +'%Y-%m-%d_%H%M'"))
 endfun
 
 " This prevents eh abbr from having a space when expanding

@@ -4,7 +4,7 @@ nmap <silent> <leader>d <Cmd>Bdelete<CR>
 nmap <silent> <leader><BS> <Cmd>q<CR>
 nmap <silent> <leader><space> <Cmd>b#<CR>zz
 nmap <leader>w <C-w>p
-nmap <C-w>\| <C-w>v
+nmap <C-w><bar> <C-w>v
 nmap <C-w>\ <C-w>s
 
 fun! CloseBuffer()

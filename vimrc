@@ -42,6 +42,8 @@ fun s:SetTitle()
 
     if s:startswith(l:path, '~/go/src')
         let &titlestring = substitute(l:path, '^\~/go/src', 'go', '')
+    elseif s:startswith(l:path, '~/repos')
+        let &titlestring = substitute(l:path, '^\~/repos', 'repos', '')
     elseif s:startswith(l:path, '~/.vim-conf')
         let &titlestring = substitute(l:path, '^\~/\.vim-conf', 'vim-conf', '')
     else
@@ -88,7 +90,7 @@ set undolevels=100
 set undodir=~/.undo
 set noundofile " Ensure off by default, enable for specific files
 
-au FileType bash,go,help,javascript,markdown,python,text,vim,yaml,zsh,tmux setlocal undofile
+au FileType bash,go,help,javascript,markdown,python,swift,text,tmux,vim,yaml,zsh setlocal undofile
 
 " Backup
 au BufRead *.bak set filetype=bak

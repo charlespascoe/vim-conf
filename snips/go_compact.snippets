@@ -746,7 +746,7 @@ endsnippet
 pre_expand "add_import(snip, 'fmt')"
 snippet 'ifer ' "If error, return" brA
 if err != nil {
-	return $1fmt.Errorf("$2: %s",$3 err)
+	return $1err
 }
 endsnippet
 
