@@ -69,7 +69,7 @@ func dictate#Stop()
 endfun
 
 func dictate#ReloadSubstitutions()
-    " call ch_sendraw(s:ch, "reload\n")
+    call s:send(#{type: "reload-substitutions"})
 endfunc
 
 fun dictate#GetStatusText()
@@ -100,19 +100,27 @@ fun s:onInput()
 endfun
 
 fun s:handleTrascriptionMessage(msg)
-    if mode() != 'i'
+    if mode() != 'i' && mode() != 's'
         return
     endif
 
-    let text = a:msg.text
+    let text = ''
 
-    " Automatically capitalise the first letter after certain characters
-    if search('\v(^|[.!?/#]\_s*|")%#', 'bcn') != 0 || search('^\s\+[-*+?<>]\s\+\%#', 'bcn') != 0
-        let text = toupper(text[0])..text[1:]
+    if exists('b:format_dictated_text')
+        let text = b:format_dictated_text(a:msg.text)
     endif
 
-    if text =~ '^\c[a-z]' && search('\v\S%#', 'bcn')
-        let text = ' '..text
+    if text == ''
+        let text = a:msg.text
+
+        " Automatically capitalise the first letter after certain characters
+        if search('\v(^|[.!?/#]\_s*|")%#', 'bcn') != 0 || search('^\s\+[-*+?<>]\s\+\%#', 'bcn') != 0
+            let text = toupper(text[0])..text[1:]
+        endif
+
+        if text =~ '^\c[a-z]' && search('\v([^ \t"])%#', 'bcn')
+            let text = ' '..text
+        endif
     endif
 
     if !a:msg.final

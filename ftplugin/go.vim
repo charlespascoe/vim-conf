@@ -31,6 +31,28 @@ if !exists("*<SID>TogglePrivate()")
     endfun
 endif
 
+fun s:FormatDictatedText(text)
+    if synIDattr(synIDtrans(synID(line("."),max([col(".")-1,1]),1)),"name") =~ '^\%(Comment\|String\|Constant\)$'
+        return ''
+    endif
+
+    echom synIDattr(synID(line("."),col("."),1),"name")
+
+    let result = substitute(substitute(a:text, '\<\a', '\U&', 'g'), '\W', '', 'g')
+
+    let synName = synIDattr(synID(line("."),max([col(".")-1,1]),1),"name")
+
+    echom "SYN" synName
+
+    if len(result) > 0 && synName =~ '\v^go%(Func%(Block|Params|Parens|Call%(Parens|Args)))$'
+        let result = tolower(result[0])..result[1:]
+    endif
+
+    return result
+endfun
+
+let b:format_dictated_text = function('s:FormatDictatedText')
+
 nmap <buffer> <leader>tt <Plug>(go-info)
 nmap <buffer> <leader>td <Plug>(go-def)
 nmap <buffer> <leader>tD <Plug>(go-doc)
