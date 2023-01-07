@@ -77,8 +77,23 @@ let g:airline_symbols.readonly = ''
 
 call airline#parts#define_function('dictation', 'dictate#GetStatusText')
 
+fun! AirlineFixFfenc(ffenc)
+    if a:ffenc == ''
+        return ''
+    endif
+
+    let l:ffenc = &fileencoding == '' ? &encoding.a:ffenc : a:ffenc
+
+    if l:ffenc == g:airline#parts#ffenc#skip_expected_string
+        return ''
+    endif
+
+    return l:ffenc
+endfun
+
 let g:airline_section_b = '%{airline#util#wrap(airline#extensions#branch#get_head(),0)}'
-let g:airline_section_y = airline#section#create_right(['ffenc','dictation'])
+" TODO: raise this as an issue, and when it gets fixed, replace this line
+let g:airline_section_y = '%{airline#util#prepend(AirlineFixFfenc(airline#parts#ffenc()),0)}%{airline#util#wrap(dictate#GetStatusText(),0)}'
 let g:airline_section_z = '%#__accent_bold#%{airline#util#wrap(airline#extensions#obsession#get_status(),0)}%2l/%L:%02v%#__restore__#'
 
 " bullets.vim
@@ -217,6 +232,7 @@ let g:jedi#goto_definitions_command = '<leader>tt'
 let g:jedi#goto_command = "<leader>td"
 let g:jedi#documentation_command = "<leader>tD"
 let g:jedi#usages_command = "<leader>tr"
+let g:jedi#rename_command_keep_name = '<leader>tR'
 let g:jedi#rename_command = ""
 let g:jedi#completions_command = ""
 
@@ -269,10 +285,6 @@ let g:ale_linters_ignore = {'go': ['golint']}
 " It seems ALE breaks the location list - use quickfix instead
 let g:ale_set_loclist = 0
 let g:ale_set_quickfix = 1
-
-let g:ale_pattern_options = {
-            \ '.*\.go$': #{ale_enabled: 0},
-            \}
 
 nmap <leader>al <Plug>(ale_lint)
 nmap <leader>at <Plug>(ale_toggle)

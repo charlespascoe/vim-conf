@@ -1,5 +1,7 @@
 source ~/.vim-conf/bundle.vim
 
+set encoding=utf-8
+
 set nocompatible
 filetype plugin indent on
 

@@ -100,8 +100,15 @@ fun s:onInput()
 endfun
 
 fun s:handleTrascriptionMessage(msg)
-    if mode() != 'i' && mode() != 's'
+    let md = mode()
+
+    if md != 'i' && md != 's' && md != 'v'
         return
+    endif
+
+    if md == 'v'
+        " Replace the text and enter insert mode
+        call feedkeys('c')
     endif
 
     let text = ''

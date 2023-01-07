@@ -73,6 +73,7 @@
 /TLS-1\.(\d)/TLS 1.\1/
 /web socket/WebSocket/
 /you are I/URI/
+/scarlett/Scala/
 
 # SIP (Note: the order is important)
 /WhatsApp/SIP/
