@@ -156,6 +156,7 @@ set spelllang=en_gb
 set nospell " Off by default, turned on by relevant file types
 " The second is a local spell file for host-specific spellings
 set spellfile=~/.vim/spell/en.utf-8.add,~/.vim-local/spell/en.utf-8.add
+set spellsuggest=best,file:~/.vim/spell/suggestions
 
 " See spell-sug-file for how the word suggestions are loaded
 

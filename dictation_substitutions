@@ -33,13 +33,14 @@
 /(\d+) ([mµn])?s/\1\2s/
 /(\d+) calls per second/\1cps/
 /(sorry for|psycho|cipher) sweets/cipher suites/
-/uu id/UUID/i
 /bullying|bullion/boolean/
 /can figuration/configuration/
 /change lo(g|ck)/changelog/
+/convicts/configs/
 /cool/call/
 /Costa/cluster/i
 /couch (TV|[TDdG]B)/CouchDB/
+/de Burgh/debug/
 /DKA/a.k.a./
 /docke[rt]/Docker/
 /double ?check(ing)/double-check\1/
@@ -47,15 +48,17 @@
 /functional model one/functional model 1/
 /functional model t[wo]?o/functional model 2/
 /go routine/goroutine/
+/GRP C/gRPC/
 /hardcoded/hard-coded/
 /i/I/
 /in Cryptid/encrypted/
+/insures/ensures/i
 /item potent/idempotent/
 /Jason/JSON/i
 /juror|jeera|dura/Jira/i
 /kit lab/GitLab/
 /lock rotation/log rotation/
-/Logik/logic/
+/Logik/logic/i
 /Neil/nil/i
 /Okay/OK/i
 /One Direction/one direction/
@@ -64,16 +67,24 @@
 /Pinterest/pen test/
 /Prince/prints/
 /rap(per)?/wrap\1/
+/re-tried/retry/
 /read ?only/read-only/
 /refracturing|re-factor(y|ing)/refactoring/
-/rest API/REST API/
-/rooted via/routed via/
+/rooted/routed/
 /Sarah Nate/Serenade/
 /site for text(s?)/ciphertext\1/i
+/sub commands/subcommands/
 /TLS-1\.(\d)/TLS 1.\1/
+/uu id/UUID/i
+/valet/valid/
 /web socket/WebSocket/
 /you are I/URI/
 /scarlett/Scala/
+
+/EPI/API
+/APO/API/
+/rest API/REST API/
+/API roots/API routes/
 
 # SIP (Note: the order is important)
 /WhatsApp/SIP/

@@ -226,6 +226,9 @@ endfun
 
 command! -nargs=? DumpObject call DumpObject(<f-args>)
 
+if expand('%:~') =~ glob2regpat('~/gotemp/*.go')
+    au BufWritePost <buffer> call RunCode()
+endif
 
 fun! RunCode()
     let l:winid = win_getid()

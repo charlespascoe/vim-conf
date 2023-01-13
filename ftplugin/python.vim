@@ -47,3 +47,13 @@ call QuickSearchMap('c', 'Classes', '\<class [a-zA-Z0-9_]\+')
 call QuickSearchMap('m', 'Methods', '^\s\+\Kdef [a-zA-Z0-9_]\+(self\>')
 
 let b:ale_fix_on_save = 1
+
+fun s:FormatDictatedText(text)
+    if synIDattr(synIDtrans(synID(line("."),max([col(".")-1,1]),1)),"name") =~ '^\%(Comment\|String\|Constant\)$'
+        return ''
+    endif
+
+    return substitute(substitute(trim(tolower(a:text)), '\s\+', '_', 'g'), '\W', '', 'g')
+endfun
+
+let b:format_dictated_text = function('s:FormatDictatedText')
