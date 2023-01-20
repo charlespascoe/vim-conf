@@ -24,7 +24,7 @@ fun! s:CheckAnyClosedFolds()
 
     if g:deepest_fold > 0
         call winrestview(l:winview)
-        let &l:foldcolumn = g:deepest_fold+1
+        let &l:foldcolumn = min([g:deepest_fold+1, 5])
     else
         setlocal foldcolumn=0
     endif

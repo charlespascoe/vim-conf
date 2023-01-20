@@ -1,8 +1,11 @@
 # CRC
-/(?:great|bridge|brakes?|writes?) control(ler)?/rate control\1/i
+/(?:great|bridge|brakes?|writes?) control(ler)?(s)?/rate control\1\2/i
+/r(?:each|ich|oute|o?ach|ight|oot) control(ler)?(s)?/rate control\1\2/i
+
 /(sea RC|cRC|C[LI]C|siya see|COCE?)/CRC/i
-/r(?:each|ich|oute|o?ach|ight|oot) control(ler)?/rate control\1/i
+/DCSE/the CRC/
 /CR([CE]) note(s?)/CR\1 node\2/
+
 /manag(ing|er) no[dt]e/manager node/
 /MER se[ea]s/MARCs/
 /M a RC/MARC/
@@ -10,7 +13,7 @@
 /the from/the From/
 /paid or from/PAID or From/
 
-/Tino/TNOR/
+/Tino(s)?/TNOR\1/i
 /pseudo TNOR/pseudo-TNOR/
 
 # DISC
@@ -24,9 +27,11 @@
 /([A-Z]+) ?([0-9]+)/\1-\2/
 /(iron|I am) VCS/INVCS/
 /[pP]T/BT/
+/[pP]Ts/BT's/
 /EI N/EIN/
 
 # General
+/(?:(?:ASCII|S key) (?:dock?|talk)|(?:husky|ask your) dog)(s)?/AsciiDoc\1/i
 /([pP])(ram|erram)/\1aram/
 /([Rr])(efracted|eflected)/\1efactored/
 /([zs]ip|city) traffic/SIP traffic/
@@ -50,6 +55,7 @@
 /go routine/goroutine/
 /GRP C/gRPC/
 /hardcoded/hard-coded/
+/hey/a/
 /i/I/
 /in Cryptid/encrypted/
 /insures/ensures/i
@@ -60,11 +66,13 @@
 /lock rotation/log rotation/
 /Logik/logic/i
 /Neil/nil/i
+/off by one/off-by-one/
 /Okay/OK/i
 /One Direction/one direction/
 /percent Di?/%d/
 /percent S/%s/
 /Pinterest/pen test/
+/platform specific/platform-specific/
 /Prince/prints/
 /rap(per)?/wrap\1/
 /re-tried/retry/
@@ -72,22 +80,30 @@
 /refracturing|re-factor(y|ing)/refactoring/
 /rooted/routed/
 /Sarah Nate/Serenade/
+/scarlett/Scala/
 /site for text(s?)/ciphertext\1/i
 /sub commands/subcommands/
+/sweet/suite/
 /TLS-1\.(\d)/TLS 1.\1/
 /uu id/UUID/i
 /valet/valid/
 /web socket/WebSocket/
 /you are I/URI/
-/scarlett/Scala/
 
-/EPI/API
+/EPI/API/
 /APO/API/
 /rest API/REST API/
 /API roots/API routes/
 
+/iso/ISO/
+/ISO 860 one/ISO 8601/
+
+# This is an odd one - whenever a transcription starts with "is", it seems to
+# misinterpret it as "he's"
+/^he's\b/is/B
+
 # SIP (Note: the order is important)
-/WhatsApp/SIP/
+/WhatsApp|soup/SIP/i
 /sip/SIP/
 /SIP pa[us]sing/SIP parsing/
 /SIP Pazza/SIP parser/

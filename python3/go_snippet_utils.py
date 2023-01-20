@@ -9,8 +9,27 @@ ws_re = re.compile(r"\s+")
 import_re = re.compile(r"^import \($")
 end_import_re = re.compile(r"^\)$")
 quoted_string_re = re.compile(r'"(([^"]|\\.)+)"')
+func_re = re.compile(r"^func (\w+)\(")
+test_re = re.compile(r"^func Test([^(]*)\(")
 method_re = re.compile(r"^func \((?:(\w+)\s+)?([^)]+)\)\s+(\w+)[\[(]")
 type_re = re.compile(r"^type (\w+)(?:\[(.*)\])? ")
+
+
+@dataclass
+class FunctionMatch:
+    name: str
+
+    def __str__(self):
+        return self.name
+
+
+@dataclass
+class TestFunctionMatch:
+    name: str
+    parts: List[str]
+
+    def __str__(self):
+        return self.name
 
 
 @dataclass
@@ -36,6 +55,26 @@ class TypeMatch:
             return f"{self.name}[{params}]"
 
         return self.name
+
+
+def match_func(line):
+    match = func_re.match(line)
+
+    if match:
+        return FunctionMatch(match[1])
+
+    return None
+
+
+def match_test(line):
+    match = test_re.match(line)
+
+    if match:
+        name = match[1]
+        parts = [part for part in name.split("_") if len(part) > 0]
+        return TestFunctionMatch(name, parts)
+
+    return None
 
 
 def match_method(line):
@@ -170,3 +209,31 @@ def find_method_type(pointer=False):
         method.rec_type = "*" + method.rec_type
 
     return method
+
+
+def guess_test_name():
+    # NOTE: It is VERY important that this function ALWAYS returns a non-empty
+    # string, so that the snippet pluging doesn't run this function more than
+    # once per template
+
+    reg = vim.eval('@"')
+
+    method = match_method(reg)
+
+    if method:
+        vim.command('let @" = ""')
+        return f"_{method.rec_type.replace('*', '')}_{method.name}_"
+
+    func = match_func(reg)
+
+    if func and not func.name.startswith("Test"):
+        vim.command('let @" = ""')
+        return f"_{func.name}_"
+
+    test = scan(preceeding_lines(), match_test)
+
+    if test and len(test.parts) > 1:
+        # All but the last item
+        return "_" + "_".join(test.parts[:-1]) + "_"
+
+    return "_"

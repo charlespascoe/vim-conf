@@ -4,8 +4,6 @@ from snippet_utils import *
 from go_snippet_utils import *
 
 struct_re = re.compile(r"^type (\w+) struct")
-func_re = re.compile(r"^func (\w+)\(")
-test_re = re.compile(r"^func Test([^)]*)\(")
 ws_re = re.compile(r'\s+')
 err_re = re.compile(r'\berr\b')
 err_assignment_re = re.compile(r'\berr\s+:=\s+')
@@ -88,44 +86,6 @@ def guess_log_var():
 	return 'log'
 
 
-def guess_test_name():
-	# NOTE: It is VERY important that this function ALWAYS returns a non-empty
-	# string, so that the snippet pluging doesn't run this function more than
-	# once per template
-
-	reg = vim.eval('@"')
-
-	match = method_re.match(reg)
-
-	if match:
-		vim.command('let @" = ""')
-		type_name = match[1].split(' ')[1]
-
-		if type_name.startswith('*'):
-			type_name = type_name[1:]
-
-		return f'_{type_name}_{match[2]}_'
-
-	match = func_re.match(reg)
-
-	if match and not match[1].startswith('Test'):
-		vim.command('let @" = ""')
-		return f'_{match[1]}_'
-
-	for line in preceeding_lines():
-		match = test_re.match(line)
-
-		if match:
-			parts = [part for part in match[1].split('_') if len(part) > 0]
-
-			if len(parts) > 1:
-				# All but the last item
-				return '_' + '_'.join(parts[:-1]) + '_'
-			else:
-				break
-
-	return '_'
-
 def get_package_name():
 	return vim.current.window.buffer[0].split(' ')[1]
 
@@ -142,7 +102,7 @@ def implement_interface():
 
 	# Part of the reason this function returns a comment is so that the snippet
 	# doesn't run this function multiple times
-	return f'// {method_type[1]} implements {interface}'
+	return f'// {method_type.rec_type} implements {interface}'
 
 def get_function_name():
 	for line in preceeding_lines():

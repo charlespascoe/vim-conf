@@ -3,6 +3,7 @@ abc
 ABNF
 Alacritty
 ansible
+AsciiDoc
 base64
 BNF
 BT
@@ -42,6 +43,7 @@ JSON
 macOS
 microservice
 microservices
+monospace
 multiline
 OAEP
 parsable
@@ -64,6 +66,7 @@ scrypt
 SHA
 SHA3
 Siri
+standalone
 struct
 structs
 subpackage

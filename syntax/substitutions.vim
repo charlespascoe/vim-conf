@@ -1,3 +1,4 @@
+setlocal commentstring=#%s
 syntax match subComment /^#.*/
 hi link subComment Comment
 
