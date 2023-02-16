@@ -33,6 +33,7 @@ goroutine
 goroutines
 GPG
 gRPC
+handwire
 HMAC
 iff
 IPv4
@@ -40,11 +41,14 @@ IPv6
 Jira
 Jiras
 JSON
+keycaps
+lexing
 macOS
 microservice
 microservices
 monospace
 multiline
+MX
 OAEP
 parsable
 Pascoe

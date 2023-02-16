@@ -31,7 +31,7 @@ endsnippet
 
 pre_expand "add_import(snip, 'net/http')"
 snippet c.err "Error (Gin)" bA
-c.Status(http.Status${1:InternalServerError}, gin.H{
+c.JSON(http.Status${1:InternalServerError}, gin.H{
 	"error": err.Error(),
 })
 return

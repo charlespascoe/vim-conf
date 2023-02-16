@@ -14,7 +14,7 @@ def join(start, end):
 
 def merge(buf_iter):
     for line in buf_iter:
-        if line == "```":
+        if line.startswith("```"):
             yield line
             yield from read_code(buf_iter)
         else:
@@ -23,7 +23,7 @@ def merge(buf_iter):
 
 def read_code(buf_iter):
     for line in buf_iter:
-        yield line
+        yield line.replace("\t", "    ")
 
         if line == "```":
             return

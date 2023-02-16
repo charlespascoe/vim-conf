@@ -306,3 +306,7 @@ let g:gutentags_define_advanced_commands = 1
 " vim-markdown
 
 let g:vim_markdown_new_list_item_indent = 2
+
+" tsuquyomi
+
+let g:tsuquyomi_disable_quickfix = 1

@@ -703,7 +703,6 @@ if err != nil {
 }
 endsnippet
 
-pre_expand "add_import(snip, 'fmt')"
 snippet 'ifer ' "If error, return" brA
 if err != nil {
 	return $1err
@@ -818,42 +817,49 @@ endsnippet
 
 ## L ##
 
+pre_expand "add_import(snip, 'github.com/rs/zerolog')"
 snippet ld "Log Debug" bw
 `!p snip.rv = guess_log_var()`.Debug().
 	Str("func", "`!p snip.rv = get_function_name()`").
 	Msg("$1")
 endsnippet
 
+pre_expand "add_import(snip, 'github.com/rs/zerolog')"
 snippet ldf "Log Debug Format" bw
 `!p snip.rv = guess_log_var()`.Debug().
 	Str("func", "`!p snip.rv = get_function_name()`").
 	Msgf("$1", $2)
 endsnippet
 
+pre_expand "add_import(snip, 'github.com/rs/zerolog')"
 snippet li "Log Info" bw
 `!p snip.rv = guess_log_var()`.Info().
 	Str("func", "`!p snip.rv = get_function_name()`").
 	Msg("$1")
 endsnippet
 
+pre_expand "add_import(snip, 'github.com/rs/zerolog')"
 snippet lif "Log Info Format" bw
 `!p snip.rv = guess_log_var()`.Info().
 	Str("func", "`!p snip.rv = get_function_name()`").
 	Msgf("$1", $2)
 endsnippet
 
+pre_expand "add_import(snip, 'github.com/rs/zerolog')"
 snippet lw "Log Warn" bw
 `!p snip.rv = guess_log_var()`.Warn().
 	Str("func", "`!p snip.rv = get_function_name()`").
 	Msg("$1")
 endsnippet
 
+pre_expand "add_import(snip, 'github.com/rs/zerolog')"
 snippet lwf "Log Warn Format" bw
 `!p snip.rv = guess_log_var()`.Warn().
 	Str("func", "`!p snip.rv = get_function_name()`").
 	Msgf("$1", $2)
 endsnippet
 
+pre_expand "add_import(snip, 'github.com/rs/zerolog')"
 snippet le "Log Error" bw
 `!p snip.rv = guess_log_var()`.Error().
 	Str("func", "`!p snip.rv = get_function_name()`").
@@ -861,6 +867,7 @@ snippet le "Log Error" bw
 	Msg("$1")
 endsnippet
 
+pre_expand "add_import(snip, 'github.com/rs/zerolog')"
 snippet lef "Log Error Format" bw
 `!p snip.rv = guess_log_var()`.Error().
 	Str("func", "`!p snip.rv = get_function_name()`").
@@ -868,6 +875,7 @@ snippet lef "Log Error Format" bw
 	Msgf("$1", $2)
 endsnippet
 
+pre_expand "add_import(snip, 'github.com/rs/zerolog')"
 snippet lf "Log Fatal" bw
 `!p snip.rv = guess_log_var()`.Fatal().
 	Str("func", "`!p snip.rv = get_function_name()`").
@@ -875,6 +883,7 @@ snippet lf "Log Fatal" bw
 	Msg("$1")
 endsnippet
 
+pre_expand "add_import(snip, 'github.com/rs/zerolog')"
 snippet lff "Log Fatal Format" bw
 `!p snip.rv = guess_log_var()`.Fatal().
 	Str("func", "`!p snip.rv = get_function_name()`").
@@ -882,7 +891,7 @@ snippet lff "Log Fatal Format" bw
 	Msgf("$1", $2)
 endsnippet
 
-pre_expand "add_import(snip, 'fmt')"
+pre_expand "add_import(snip, 'fmt', 'github.com/rs/zerolog')"
 snippet lp "Log Panic" bw
 `!p snip.rv = guess_log_var()`.Error().
 	Str("func", "`!p snip.rv = get_function_name()`").
@@ -891,7 +900,7 @@ snippet lp "Log Panic" bw
 	Msg("A panic occurred$1")
 endsnippet
 
-pre_expand "add_import(snip, 'fmt')"
+pre_expand "add_import(snip, 'fmt', 'github.com/rs/zerolog')"
 snippet lpf "Log Panic Format" bw
 `!p snip.rv = guess_log_var()`.Error().
 	Str("func", "`!p snip.rv = get_function_name()`").
@@ -1027,14 +1036,13 @@ func (`!p snip.rv = str(snip.context)`) Error() string {
 }
 endsnippet
 
-pre_expand "add_import(snip, 'v github.com/go-ozzo/ozzo-validation')"
-pre_expand "snip.context = find_method_type(True)"
+pre_expand "add_import(snip, 'v github.com/go-ozzo/ozzo-validation'); snip.context = find_method_type(True)"
 post_jump "skip_receiver_name(snip)"
 snippet '^mv ' "Method - Validation" brA
 // Validate returns an error if any of the fields are invalid.
 func (${1:`!p snip.rv = snip.context.rec_name`}${1/.+/ /}`!p snip.rv = snip.context.rec_type`) Validate() error {
 	return v.ValidateStruct(`!p snip.rv = snip.context.rec_name`,
-		v.Field(&`!p snip.rv = snip.context.rec_name`.$1),$0
+		v.Field(&`!p snip.rv = snip.context.rec_name`.$2),$0
 	)
 }
 endsnippet
@@ -1268,6 +1276,13 @@ func Benchmark_$1(b *testing.B) {
 			$0
 		}
 	})
+}
+endsnippet
+
+snippet tx "buntdb Transaction" w
+func(tx *buntdb.Tx) error {
+	$0
+	return nil
 }
 endsnippet
 

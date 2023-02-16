@@ -176,9 +176,9 @@ def go_import(imports):
 
         if len(parts) > 1:
             alias, path = parts[0], parts[1]
-            vim.command(f"GoImportAs {alias} {path}")
+            vim.command(f"GoImportAs! {alias} {path}")
         else:
-            vim.command(f"GoImport {imp}")
+            vim.command(f"GoImport! {imp}")
 
 
 def type_to_method(type_match: TypeMatch) -> MethodMatch:

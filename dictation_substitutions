@@ -77,6 +77,8 @@
 /lock rotation/log rotation/
 /Logik/logic/i
 /Neil/nil/i
+/off by one/off-by-one/
+/offended/appended/
 /Okay/OK/i
 /One Direction/one direction/
 /one.(\d+)/1.\1/i
@@ -93,6 +95,7 @@
 /refracturing|re-factor(y|ing)|refectory/refactoring/
 /rooted/routed/
 /Sarah Nate/Serenade/
+/scarlett/Scala/
 /scarlett/Scala/
 /site for text(s?)/ciphertext\1/i
 /sub commands/subcommands/

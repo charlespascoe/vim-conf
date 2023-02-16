@@ -165,7 +165,7 @@ endfun
 imap <buffer> <C-g>t <C-o>:call <SID>InsertDateFormat()<CR>
 
 
-fun! DumpObject()
+fun! DumpObject(filename='')
     fun! GetModuleName()
         for l:line in readfile('go.mod')
             if l:line =~# '^module'
@@ -176,7 +176,8 @@ fun! DumpObject()
         return ''
     endfun
 
-    let l:mod = GetModuleName()
+    let l:mod = a:filename == '' ? GetModuleName() : a:filename
+    let l:filename = l:mod
 
     let l:item_name = expand('<cword>')
 

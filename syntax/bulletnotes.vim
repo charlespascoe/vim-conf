@@ -7,8 +7,8 @@ setlocal iskeyword+=:
 
 " Title
 
-syntax region bnNoteTitle matchgroup=TitleEnd start='^## \+' end=' \+##$' oneline concealends contains=Tag
-syntax region Subtitle matchgroup=SubtitleEnd start='^:: \+' end=' \+::$' oneline concealends contains=Tag
+syntax region bnNoteTitle matchgroup=TitleEnd start='^## \+' end=' \+##$' oneline concealends contains=@bnMetatext
+syntax region Subtitle matchgroup=SubtitleEnd start='^:: \+' end=' \+::$' oneline concealends contains=@bnMetatext
 syntax region ContactTitle matchgroup=ContactTitleEnd start='^@@ \+' end=' \+@@$' oneline concealends
 
 hi link bnNoteTitle Title
