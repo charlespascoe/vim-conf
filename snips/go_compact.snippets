@@ -728,18 +728,6 @@ if $1 != nil {
 }
 endsnippet
 
-snippet '\b([lg][et]) ' "Less/greater than" wrA
-`!p snip.rv = snip.c or to_comparison(match[1])` ${0:0}
-endsnippet
-
-snippet '\bl([lg][et]) ' "Length less/greater than" wrA
-len($1) `!p snip.rv = snip.c or to_comparison(match[1])` ${0:0}
-endsnippet
-
-snippet '\bl([ne])e ' "Length (not) equal" wrA
-len($1) `!p snip.rv = '!' if match[1] == 'n' else '='`= ${0:0}
-endsnippet
-
 snippet 'ifv ' "If Validate" brA
 if err := $1.Validate(); err != nil {
 	return ${2:err}
@@ -866,14 +854,14 @@ snippet lwf "Log Warn Format" bw
 	Msgf("$1", $2)
 endsnippet
 
-snippet lE "Log Error" bw
+snippet le "Log Error" bw
 `!p snip.rv = guess_log_var()`.Error().
 	Str("func", "`!p snip.rv = get_function_name()`").
 	Err(err).
 	Msg("$1")
 endsnippet
 
-snippet lEf "Log Error Format" bw
+snippet lef "Log Error Format" bw
 `!p snip.rv = guess_log_var()`.Error().
 	Str("func", "`!p snip.rv = get_function_name()`").
 	Err(err).

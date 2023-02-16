@@ -42,8 +42,9 @@ endsnippet
 
 ## C ##
 
+# TODO: do this in the dictation utility, not here
 snippet '^cls' "Class" brA
-class $1:`!p t[1] = format_camel_case(t[1], True)`
+class $1:`!p t[1] = format_camel_case(t[1].replace('_', ' '), True)`
 	$0
 endsnippet
 
@@ -74,7 +75,7 @@ def $1($2):`!p t[1] = format_snake_case(t[1])`
 endsnippet
 
 context "is_in_imports()"
-snippet '^fr' "From" breA
+snippet '^fr ' "From" breA
 from $1 import ${0:*}
 endsnippet
 
@@ -99,7 +100,7 @@ endsnippet
 ## I ##
 
 context "is_in_imports()"
-snippet '^im' "Import" breA
+snippet '^im ' "Import" breA
 import $0
 endsnippet
 

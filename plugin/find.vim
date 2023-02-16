@@ -4,9 +4,9 @@ if executable("ag")
         let l:pattern = shellescape(a:term)
         " NOTE: lgetexpr has a bug where after a while, it doesn't work at all
         " or only includes certain lines, though I'm not sure what triggers it.
-        lgetexpr system("ag --vimgrep".l:args." -- ".l:pattern)
+        let l:results = systemlist("ag --vimgrep".l:args." -- ".l:pattern)
         let l:title = (a:as_regex ? 'FindReg' : 'Find').' '.a:term
-        call setloclist(0, [], 'a', {'title': l:title})
+        call setloclist(0, [], 'a', {'title': l:title, 'lines': l:results})
         lopen
     endfun
 

@@ -2,9 +2,9 @@
 let g:ctrlp_working_path_mode = 0 " Always work from current working directory
 let g:ctrlp_use_caching = 1
 let g:ctrlp_clear_cache_on_exit = 1
-let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
 let g:ctrlp_map = '<leader>o'
 let g:ctrlp_switch_buffer = ''
+let g:ctrlp_custom_ignore = '\.pdf$'
 
 highlight CtrlPBufferHid ctermfg=123
 highlight CtrlPBufferPath ctermfg=15
@@ -223,7 +223,6 @@ map <leader>gn <Cmd>GitGutterNextHunk<CR>zz
 map <leader>ga <Cmd>GitGutterStageHunk<CR>
 map <leader>gp <Cmd>GitGutterPreviewHunk<CR>
 
-
 " jedi-vim
 let g:jedi#popup_on_dot = 0
 let g:jedi#case_insensitive_completion = 0
@@ -302,6 +301,7 @@ nmap <leader>F <Cmd>BTags<CR>
 " gutentags
 
 let g:gutentags_ctags_exclude = ['.*/*', '*/.*', '*.patch', '*.css', '*.json', 'vendor']
+let g:gutentags_define_advanced_commands = 1
 
 " vim-markdown
 

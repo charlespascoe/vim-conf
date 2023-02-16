@@ -92,13 +92,14 @@ set undolevels=100
 set undodir=~/.undo
 set noundofile " Ensure off by default, enable for specific files
 
-au FileType asciidoctor,bash,go,help,javascript,markdown,python,swift,text,tmux,vim,yaml,zsh setlocal undofile
+au FileType asciidoctor,bash,go,help,javascript,markdown,python,sh,swift,text,tmux,vim,yaml,zsh setlocal undofile
 
 " Backup
 au BufRead *.bak set filetype=bak
 let g:backup_dir = expand('~/.backup/')..strftime('%Y-%m')..'/'
 call system('mkdir -p '..shellescape(g:backup_dir))
-au FileType asciidoctor,bash,go,help,javascript,markdown,python,text,vim,yaml,zsh,tmux
+" TODO: Ignore /private and /tmp
+au FileType asciidoctor,bash,go,help,javascript,markdown,python,sh,swift,text,tmux,vim,yaml,zsh
     \ au BufWritePost <buffer> call system('cp '..shellescape(expand('%:p'))..' '..shellescape(g:backup_dir..substitute(expand('%:p'), '/', '%', 'g')..'.'..strftime('%Y-%m-%d_%H%M')..'.bak'))
 
 " Reload files when they change outside of Vim

@@ -87,7 +87,7 @@ fun s:highlight(name, hl)
 endfun
 
 for [name, opts] in items(g:bulletnote_bullets)
-    exec 'syntax region bn'..name..' matchgroup=bn'..name..'Bullet start=/\V\^'..indent..opts.char..'\s\+/ end=/\V\^\s\*\$\|\^'..indent..bulletset..'/me=s-1 contains=bn'..name..'Bullet,LeadingWhitespace,@bnMetatext'
+    exec 'syntax region bn'..name..' matchgroup=bn'..name..'Bullet start=/\V\^'..indent..opts.char..'\s\+/ end=/\V\^\s\*\$\|\^'..indent..bulletset..'/me=s-1 contains=bn'..name..'Bullet,LeadingWhitespace,@bnMetatext,@Spell'
     call s:highlight('bn'..name..'Bullet', get(opts, 'bhl', ''))
     call s:highlight('bn'..name, get(opts, 'hl', ''))
 endfor

@@ -1,5 +1,6 @@
 setlocal textwidth=80
 setlocal spell
+setlocal comments=://
 
 " TODO: Fix this momumental hack
 fun! FixFormatOptions(timer)

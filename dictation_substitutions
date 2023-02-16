@@ -1,9 +1,12 @@
 # CRC
 /(?:great|bridge|brakes?|writes?) control(ler)?(s)?/rate control\1\2/i
-/r(?:each|ich|oute|o?ach|ight|oot) control(ler)?(s)?/rate control\1\2/i
+/r(?:each|ich|oute|o?ach|ight|oot|ita) control(ler)?(s)?/rate control\1\2/i
+
+/blocked control(ler)?(s)?/block control\1\2/i
 
 /(sea RC|cRC|C[LI]C|siya see|COCE?)/CRC/i
 /DCSE/the CRC/
+/oh CRC|OCOC/all CRC/
 /CR([CE]) note(s?)/CR\1 node\2/
 
 /manag(ing|er) no[dt]e/manager node/
@@ -16,6 +19,8 @@
 /Tino(s)?/TNOR\1/i
 /pseudo TNOR/pseudo-TNOR/
 
+/([Mm])anually allocated/\1anually-allocated/
+
 # DISC
 /disc/DISC/i
 /DISC note(s?)/DISC node\1/
@@ -26,21 +31,25 @@
 # Work Stuff
 /([A-Z]+) ?([0-9]+)/\1-\2/
 /(iron|I am) VCS/INVCS/
+/INVC S/INVCS/
 /[pP]T/BT/
 /[pP]Ts/BT's/
 /EI N/EIN/
+/fire flow/Fireflow/
 
 # General
-/(?:(?:ASCII|S key) (?:dock?|talk)|(?:husky|ask your) dog)(s)?/AsciiDoc\1/i
+/(?:(?:ASCII|S key) (?:dock?|talk)|(?:husky|ask your) dog|ask you talk|ask(?: a)? duck)(s)?/AsciiDoc\1/i
 /([pP])(ram|erram)/\1aram/
 /([Rr])(efracted|eflected)/\1efactored/
-/([zs]ip|city) traffic/SIP traffic/
 /(\d+) ([mµn])?s/\1\2s/
 /(\d+) calls per second/\1cps/
+/(little|big) Indian/\1-endian/
 /(sorry for|psycho|cipher) sweets/cipher suites/
+/arthy/are the/i
 /bullying|bullion/boolean/
 /can figuration/configuration/
 /change lo(g|ck)/changelog/
+/cognizant/cognisant/
 /convicts/configs/
 /cool/call/
 /Costa/cluster/i
@@ -50,15 +59,17 @@
 /docke[rt]/Docker/
 /double ?check(ing)/double-check\1/
 /duplicut/duplicate/i
+/fitch/fetch/i
 /functional model one/functional model 1/
 /functional model t[wo]?o/functional model 2/
 /go routine/goroutine/
 /GRP C/gRPC/
 /hardcoded/hard-coded/
+/heather/header/i
 /hey/a/
 /i/I/
 /in Cryptid/encrypted/
-/insures/ensures/i
+/insure(s)?/ensure\1/i
 /item potent/idempotent/
 /Jason/JSON/i
 /juror|jeera|dura/Jira/i
@@ -66,24 +77,27 @@
 /lock rotation/log rotation/
 /Logik/logic/i
 /Neil/nil/i
-/off by one/off-by-one/
 /Okay/OK/i
 /One Direction/one direction/
+/one.(\d+)/1.\1/i
 /percent Di?/%d/
 /percent S/%s/
 /Pinterest/pen test/
 /platform specific/platform-specific/
+/prams/params/
 /Prince/prints/
+/python/Python/
 /rap(per)?/wrap\1/
 /re-tried/retry/
 /read ?only/read-only/
-/refracturing|re-factor(y|ing)/refactoring/
+/refracturing|re-factor(y|ing)|refectory/refactoring/
 /rooted/routed/
 /Sarah Nate/Serenade/
 /scarlett/Scala/
 /site for text(s?)/ciphertext\1/i
 /sub commands/subcommands/
 /sweet/suite/
+/the get repo/the git repo/
 /TLS-1\.(\d)/TLS 1.\1/
 /uu id/UUID/i
 /valet/valid/
@@ -98,12 +112,17 @@
 /iso/ISO/
 /ISO 860 one/ISO 8601/
 
+/(\d+) to the power of (\d+)/\1^\2/
+
 # This is an odd one - whenever a transcription starts with "is", it seems to
 # misinterpret it as "he's"
 /^he's\b/is/B
 
 # SIP (Note: the order is important)
+/zip message('?s)?/SIP message\1/i
+/zip passing/SIP parsing/i
+/([zs]ip|city) traffic/SIP traffic/
 /WhatsApp|soup/SIP/i
 /sip/SIP/
 /SIP pa[us]sing/SIP parsing/
-/SIP Pazza/SIP parser/
+/SIP [Pp](azza|oza|owder)/SIP parser/

@@ -30,7 +30,7 @@ var invert_binary_subs = [
 ]
 
 def Invert(s: string): string
-    for item in invert_binary_subs
+    for item in get(b:, 'invert_binary_subs', []) + invert_binary_subs
         if type(item) == v:t_func
             var Replace: func(string): string = item
             var result = Replace(s)

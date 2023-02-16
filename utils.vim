@@ -194,3 +194,8 @@ fun s:ToggleConceal()
 endfun
 
 nmap yoC <Cmd>call <SID>ToggleConceal()<CR>
+
+" Tags
+
+" Jumps if there's one match, otherwise opens 'tselect' list
+nnoremap <C-]> g<C-]>
