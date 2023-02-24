@@ -14,6 +14,13 @@ def is_in_imports():
 
 endglobal
 
+## A ##
+
+snippet asel "Async self-executing (?) lambda" w
+await (async () => {
+	$0
+})()
+endsnippet
 
 ## C ##
 
@@ -152,6 +159,12 @@ return $0`!p if not snip.c: snip.rv = snip.context or ';'`
 endsnippet
 
 ## S ##
+
+snippet sel "Self-executing (?) lambda" w
+(() => {
+	$0
+})()
+endsnippet
 
 snippet 'case ' "Switch Case" brA
 case $1:

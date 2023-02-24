@@ -151,6 +151,7 @@ hi DiffAdd guifg=#6FFF88 guibg=NONE
 " hi DiffChange guifg=#FFA540
 hi DiffChange guifg=#FFB86C guibg=NONE
 hi DiffDelete guifg=#FF5C5C guibg=NONE
+hi DiffText cterm=underdashed guibg=#3D0000 guisp=#8BE9FD
 
 hi! link ErrorMsg Error
 

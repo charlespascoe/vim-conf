@@ -23,6 +23,7 @@
 
 # DISC
 /disc/DISC/i
+/disk (system|no[td]es?)/DISC \1/
 /DISC note(s?)/DISC node\1/
 
 # BSC
@@ -50,7 +51,7 @@
 /can figuration/configuration/
 /change lo(g|ck)/changelog/
 /cognizant/cognisant/
-/convicts/configs/
+/convict(s?)/config\1/
 /cool/call/
 /Costa/cluster/i
 /couch (TV|[TDdG]B)/CouchDB/
@@ -59,6 +60,7 @@
 /docke[rt]/Docker/
 /double ?check(ing)/double-check\1/
 /duplicut/duplicate/i
+/DVM(s?)/the VM\1/
 /fitch/fetch/i
 /functional model one/functional model 1/
 /functional model t[wo]?o/functional model 2/

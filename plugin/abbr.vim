@@ -17,7 +17,8 @@ fun s:SetupAbbrs(entered)
     cabbr ps PlugSync
     cabbr pu PlugUpdate
 
-    cabbr m messages
+    cabbr m make
+    cabbr ms messages
 
     cabbr ue UltiSnipsEdit
 
