@@ -6,8 +6,8 @@ if executable("ag")
         " or only includes certain lines, though I'm not sure what triggers it.
         let l:results = systemlist("ag --vimgrep".l:args." -- ".l:pattern)
         let l:title = (a:as_regex ? 'FindReg' : 'Find').' '.a:term
-        call setloclist(0, [], 'f')
-        call setloclist(0, [], ' ', {'title': l:title, 'lines': l:results, 'efm:': '%f:%l:%c:'})
+        call setloclist(0, l:results, 'r')
+        call setloclist(0, [], 'a', {'title': l:title, 'efm:': '%f:%l:%c:'})
         lopen
     endfun
 
@@ -31,5 +31,5 @@ if executable("ag")
 
     nnoremap <Leader>* <Cmd>call Find(0, expand('<cword>'))<CR>
     vnoremap <Leader>* <Cmd>FindSelection<CR>
-    nnoremap <Leader>l <Cmd>call setloclist(0, [], 'f') <bar> lclose<CR>
+    nnoremap <Leader>l <Cmd>lclose<CR>
 endif
