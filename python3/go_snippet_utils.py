@@ -166,19 +166,22 @@ def silence_buffer_mutation_errors(snip):
 
 
 def go_import(imports):
-    # Why am I using GoImport again? Do I need this?
-
     if isinstance(imports, str):
         imports = [imports]
+
+    # TODO: Only install if it's not in go.mod (maybe grep the file?)
+
+    install = False
+    bang = "!" if install else ""
 
     for imp in imports:
         parts = imp.split(" ")
 
         if len(parts) > 1:
             alias, path = parts[0], parts[1]
-            vim.command(f"GoImportAs! {alias} {path}")
+            vim.command(f"GoImportAs{bang} {alias} {path}")
         else:
-            vim.command(f"GoImport! {imp}")
+            vim.command(f"GoImport{bang} {imp}")
 
 
 def type_to_method(type_match: TypeMatch) -> MethodMatch:

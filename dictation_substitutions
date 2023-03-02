@@ -46,6 +46,7 @@
 /(\d+) calls per second/\1cps/
 /(little|big) Indian/\1-endian/
 /(sorry for|psycho|cipher) sweets/cipher suites/
+/\bi\b([^.]|$)/I\1/B
 /arthy/are the/i
 /bullying|bullion/boolean/
 /can figuration/configuration/
@@ -61,6 +62,7 @@
 /double ?check(ing)/double-check\1/
 /duplicut/duplicate/i
 /DVM(s?)/the VM\1/
+/et cetera/etc./
 /fitch/fetch/i
 /functional model one/functional model 1/
 /functional model t[wo]?o/functional model 2/
@@ -69,7 +71,7 @@
 /hardcoded/hard-coded/
 /heather/header/i
 /hey/a/
-/i/I/
+/I\.e\./i.e./
 /in Cryptid/encrypted/
 /insure(s)?/ensure\1/i
 /item potent/idempotent/
@@ -92,6 +94,7 @@
 /Prince/prints/
 /python/Python/
 /rap(per)?/wrap\1/
+/re-factor/refactor/
 /re-tried/retry/
 /read ?only/read-only/
 /refracturing|re-factor(y|ing)|refectory/refactoring/

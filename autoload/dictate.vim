@@ -125,7 +125,7 @@ fun s:handleTrascriptionMessage(msg)
             let text = toupper(text[0])..text[1:]
         endif
 
-        if text =~ '^\c[a-z]' && search('\v([^ \t"])%#', 'bcn')
+        if text =~ '^\c[a-z]' && search('\v([^ \t"(])%#', 'bcn')
             let text = ' '..text
         endif
     endif
