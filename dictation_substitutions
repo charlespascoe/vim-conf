@@ -21,6 +21,8 @@
 
 /([Mm])anually allocated/\1anually-allocated/
 
+/material element/criteria element/
+
 # DISC
 /disc/DISC/i
 /disk (system|no[td]es?)/DISC \1/

@@ -483,6 +483,16 @@ snippet 'At ' "Assert True" brA
 assert.True(${1:actual})
 endsnippet
 
+## B ##
+
+snippet b.RunParallel "Parallel Benchmark" b
+b.RunParallel(func (pb *testing.PB) {
+	for pb.Next() {
+		$0
+	}
+})
+endsnippet
+
 ## C ##
 
 snippet c "Channel" bw
