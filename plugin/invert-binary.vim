@@ -15,6 +15,8 @@ var invert_binary_subs = [
     ['YES', 'NO'],
     ['Required', 'Optional'],
     ['required', 'optional'],
+    ['positive', 'negative'],
+    ['Positive', 'Negative'],
     ['==', '!='],
     ['-=', '+='],
     ['===', '!=='],

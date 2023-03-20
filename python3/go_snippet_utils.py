@@ -12,6 +12,7 @@ quoted_string_re = re.compile(r'"(([^"]|\\.)+)"')
 func_re = re.compile(r"^func (\w+)\(")
 test_re = re.compile(r"^func Test([^(]*)\(")
 method_re = re.compile(r"^func \((?:(\w+)\s+)?([^)]+)\)\s+(\w+)[\[(]")
+generic_type_re = re.compile(f"(\w+)(?:\[(.*)\])?")
 type_re = re.compile(r"^type (\w+)(?:\[(.*)\])? ")
 
 
@@ -33,17 +34,6 @@ class TestFunctionMatch:
 
 
 @dataclass
-class MethodMatch:
-    rec_name: str
-    rec_type: str
-    name: str
-    real: bool = True
-
-    def __str__(self):
-        return f"{self.rec_name} {self.rec_type}".strip()
-
-
-@dataclass
 class TypeMatch:
     name: str
     type_params: List[str]
@@ -55,6 +45,33 @@ class TypeMatch:
             return f"{self.name}[{params}]"
 
         return self.name
+
+    @classmethod
+    def from_string(self, string):
+        match = generic_type_re.match(string)
+
+        if not match:
+            return TypeMatch(string, [])
+
+        type_params = []
+
+        if match[2]:
+            type_params = [ws_re.split(part.strip())[0] for part in match[2].split(",")]
+
+        return TypeMatch(match[1], type_params)
+
+
+@dataclass
+class MethodMatch:
+    rec_name: str
+    rec_type: TypeMatch
+    rec_ptr: bool
+    name: str
+    real: bool = True
+
+    def __str__(self):
+        # TODO figure out if I can remove this because it's not correct
+        return f"{self.rec_name} {self.rec_type}".strip()
 
 
 def match_func(line):
@@ -80,10 +97,22 @@ def match_test(line):
 def match_method(line):
     match = method_re.match(line)
 
-    if match:
-        return MethodMatch(match[1], match[2], match[3])
+    if not match:
+        return None
 
-    return None
+    rec_ptr = False
+    type_str = match[2].strip()
+
+    if type_str.startswith("*"):
+        type_str = type_str[1:]
+        rec_ptr = True
+
+    return MethodMatch(
+        match[1].strip(),
+        TypeMatch.from_string(type_str),
+        rec_ptr,
+        match[3].strip(),
+    )
 
 
 def match_type(line):
@@ -187,7 +216,7 @@ def go_import(imports):
 def type_to_method(type_match: TypeMatch) -> MethodMatch:
     return MethodMatch(
         rec_name=type_match.name[0].lower() + type_match.name[1:],
-        rec_type=str(type_match),
+        rec_type=type_match,
         name="",
         real=False,
     )
@@ -196,27 +225,27 @@ def type_to_method(type_match: TypeMatch) -> MethodMatch:
 def find_method_type(pointer=False):
     m = scan(preceeding_lines(), match_method, match_type)
 
-    method = MethodMatch("", "nil", "", real=False)
+    method = MethodMatch("", TypeMatch("", []), False, "", real=False)
 
     if isinstance(m, MethodMatch):
         method = m
 
     if isinstance(m, TypeMatch):
         m2 = scan(following_lines(), match_method)
-        if m2 and m2.rec_type.replace("*", "") == m.name:
+        if m2 and m2.rec_type.name == m.name:
             method = m2
         else:
             method = type_to_method(m)
 
-    if pointer and not method.rec_type.startswith("*"):
-        method.rec_type = "*" + method.rec_type
+    if pointer and not method.rec_ptr:
+        method.rec_ptr = True
 
     return method
 
 
 def guess_test_name():
     # NOTE: It is VERY important that this function ALWAYS returns a non-empty
-    # string, so that the snippet pluging doesn't run this function more than
+    # string, so that the snippet plugin doesn't run this function more than
     # once per template
 
     reg = vim.eval('@"')
@@ -225,7 +254,7 @@ def guess_test_name():
 
     if method:
         vim.command('let @" = ""')
-        return f"_{method.rec_type.replace('*', '')}_{method.name}_"
+        return f"_{method.rec_type.name}_{method.name}_"
 
     func = match_func(reg)
 

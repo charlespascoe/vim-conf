@@ -21,7 +21,7 @@
 
 /([Mm])anually allocated/\1anually-allocated/
 
-/material element/criteria element/
+/material element(s?)/criteria element\1/
 
 # DISC
 /disc/DISC/i
