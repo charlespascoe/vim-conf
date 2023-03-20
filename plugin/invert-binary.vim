@@ -58,16 +58,36 @@ def InvertBinary()
     var replacement = Invert(expand('<cWORD>'))
 
     if replacement != ''
-        exec 'normal' 'ciW' .. replacement
+        exec 'normal!' 'ciW' .. replacement
     else
         replacement = Invert(expand('<cword>'))
 
         if replacement != ''
-            exec 'normal' 'ciw' .. replacement
+            exec 'normal!' 'ciw' .. replacement
+        else
+            InvertBinaryLiteral()
         endif
     endif
 
     call repeat#set("\<Plug>(InvertBinary)", 1)
+enddef
+
+def InvertBinaryLiteral()
+    var word = expand('<cword>')
+
+    if word !~ '^0b[01]\+$'
+        return
+    endif
+
+    var line = getline('.')
+
+    var i = col('.') - 1
+    var chr = line[i]
+
+    if chr =~ '[01]' && strpart(line, i) !~ '^0b'
+        chr = chr == '0' ? '1' : '0'
+        exec 'normal!' 'r' .. chr
+    endif
 enddef
 
 nmap <Plug>(InvertBinary) <ScriptCmd>call InvertBinary()<CR>

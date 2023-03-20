@@ -12,6 +12,23 @@ def remove_line_terminator(line):
 def is_in_imports():
 	return import_re.match(next(nonempty(preceeding_lines()), 'import'))
 
+def guess_class_assignments(snip, args_str):
+	args = (arg.split('=')[0].strip() for arg in args_str.split(',') if arg.strip() != '')
+
+	first = True
+
+	snip.rv = ''
+
+	for arg in args:
+		snip.rv += snip.mkline(f'this.{arg} = {arg};') + '\n'
+
+		if first:
+			first = False
+			snip.shift(1)
+
+	if not first:
+		snip.rv += snip.mkline('')
+
 endglobal
 
 ## A ##
@@ -20,6 +37,17 @@ snippet asel "Async self-executing (?) lambda" w
 await (async () => {
 	$0
 })()
+endsnippet
+
+context "cursor_at_eol(snip)"
+snippet '\bam ' "Async Method" brA
+async $1($2) {
+	$0
+}
+endsnippet
+
+snippet at "Assign to this" b
+this.$1 = $1;
 endsnippet
 
 ## C ##
@@ -147,6 +175,14 @@ endsnippet
 context "cursor_at_eol(snip)"
 snippet 'mc ' "Constructor" brA
 constructor($1) {
+	`!p guess_class_assignments(snip, t[1])`$0
+}
+endsnippet
+
+# TODO: only when in a class
+context "cursor_at_eol(snip)"
+snippet '\bm ' "Constructor" brA
+$1($2) {
 	$0
 }
 endsnippet
@@ -154,8 +190,20 @@ endsnippet
 ## R ##
 
 pre_expand "replace_rest_of_line(snip)"
-snippet 'r ' "Return" brA
+snippet '\br ' "Return" brA
 return $0`!p if not snip.c: snip.rv = snip.context or ';'`
+endsnippet
+
+snippet '\brf ' "Return false" brA
+return false;
+endsnippet
+
+snippet '\brt ' "Return true" brA
+return true;
+endsnippet
+
+snippet '\brn ' "Return null" brA
+return null;
 endsnippet
 
 ## S ##
@@ -190,6 +238,7 @@ snippet 'try ' "Try" brA
 try {
 	$0
 } catch (err) {
+	console.error(err);
 	// TODO
 }
 endsnippet

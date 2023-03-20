@@ -81,7 +81,7 @@ call QuickSearchMap('m', 'Methods', '^func ([^)]\+) [a-zA-Z]\+(.*)')
 call QuickSearchMap('T', 'Tests', '^func Test')
 call QuickSearchMap('R', 'Routes', '\.\(HEAD\\|GET\\|POST\\|PUT\\|PATCH\\|DELETE\)(')
 
-fun! AddImport()
+fun! s:AddImport()
     let l:pos = getpos('.')
 
     normal gg
@@ -102,7 +102,7 @@ fun! AddImport()
     call setpos('.', l:pos)
 endfun
 
-nmap <buffer> <leader>i <Cmd>call AddImport()<CR>
+nmap <buffer> <leader>i <Cmd>call <SID>AddImport()<CR>
 
 hi SpecialKey ctermfg=236
 

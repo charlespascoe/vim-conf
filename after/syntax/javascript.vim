@@ -46,4 +46,5 @@ hi link jsSwitchBraces               Braces
 hi link jsTaggedTemplate             Special
 hi link jsTemplateBraces             Operator
 hi link jsTryCatchBraces             Braces
+hi link jsFinallyBraces              jsTryCatchBraces
 hi link jsUndefined                  Constant

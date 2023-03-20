@@ -55,3 +55,7 @@ endsnippet
 snippet randid
 `!p if not snip.c: snip.rv = rand_id()`
 endsnippet
+
+snippet '\brandid(\d+)' "Random ID of length" r
+`!p if not snip.c: snip.rv = rand_id(int(match[1]))`
+endsnippet

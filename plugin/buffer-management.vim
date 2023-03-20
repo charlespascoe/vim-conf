@@ -7,6 +7,18 @@ nmap <leader>w <C-w>p
 nmap <C-w><bar> <C-w>v
 nmap <C-w>\ <C-w>s
 
+noremap <C-w><C-w> <Cmd>call SwitchWindow()<CR>
+
+fun! SwitchWindow()
+    let winid = win_getid()
+
+    exec "normal!" "\<C-w>\<C-p>"
+
+    if winid == win_getid()
+        exec "normal!" "\<C-w>\<C-w>"
+    endif
+endfun
+
 fun! CloseBuffer()
     Bdelete
 

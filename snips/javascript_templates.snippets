@@ -113,6 +113,25 @@ async function withError(promise, message) {
   }
 }
 
+function url(strings, ...values) {
+  if (strings.length !== values.length + 1) {
+    return '';
+  }
+
+  const result = [];
+
+  for (let i = 0; i < values.length; i++) {
+    result.push(
+      strings[i],
+      encodeURIComponent(values[i]),
+    );
+  }
+
+  result.push(strings[strings.length - 1]);
+
+  return result.join('');
+}
+
 export class Client {
   getApiKey() {
     let apiKey = localStorage.getItem('api-key');
@@ -173,10 +192,10 @@ export class Client {
     }
   }
 
-  async post(desc, url, reqBody, validator) {
+  async _putOrPost(kind, desc, url, reqBody, validator) {
     try {
       const opts = {
-        method: 'POST',
+        method: kind,
       };
 
       if (reqBody !== undefined) {
@@ -207,8 +226,16 @@ export class Client {
         validator,
       );
     } catch (err) {
-      throw new Error(\`Couldn't post ${desc} because ${err.message || err || 'of unknown reasons'}\`);
+      throw new Error(\`Couldn't ${kind.toLowerCose()} ${desc} because ${err.message || err || 'of unknown reasons'}\`);
     }
+  }
+
+  post(desc, url, reqBody, validator) {
+    return this._putOrPost('POST', desc, url, reqBody, validator);
+  }
+
+  put(desc, url, reqBody, validator) {
+    return this._putOrPost('PUT', desc, url, reqBody, validator);
   }
 
   async delete(desc, url) {

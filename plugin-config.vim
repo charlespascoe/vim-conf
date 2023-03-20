@@ -272,6 +272,7 @@ let g:ale_python_black_use_global = 1
 let g:ale_fixers = {
     \    'python': ['black'],
     \    'go': ['gofmt', 'gofumpt', 'goimports', 'golines'],
+    \    'javascript': ['eslint'],
     \}
 
 let g:ale_hover_cursor = 0
@@ -300,7 +301,7 @@ nmap <leader>F <Cmd>BTags<CR>
 
 " gutentags
 
-let g:gutentags_ctags_exclude = ['.*/*', '*/.*', '*.patch', '*.css', '*.json', 'vendor']
+let g:gutentags_ctags_exclude = ['.*/*', '*/.*', '*.patch', '*.css', '*.json', 'vendor', 'static']
 let g:gutentags_define_advanced_commands = 1
 
 " vim-markdown
