@@ -941,7 +941,7 @@ endsnippet
 pre_expand "snip.context = find_method_type(match[1] == '*')"
 post_jump "skip_receiver_name(snip)"
 snippet '^m([ *])' "Method" brA
-func (${1:`!p snip.rv = snip.context.rec_name`}${1/.+/ /}`!p snip.rv = snip.context.rec_type.name`) ${2: }($3)$4 {
+func (${1:`!p snip.rv = snip.context.rec_name`}${1/.+/ /}`!p snip.rv = snip.context.rec_type_str`) ${2: }($3)$4 {
 	$0
 }
 endsnippet
@@ -950,7 +950,7 @@ endsnippet
 pre_expand "snip.context = find_method_type(match[1] == '*')"
 post_jump "skip_receiver_name(snip)"
 snippet '^mlt?([ *])' "Method - LessThan" brA
-func (${1:`!p snip.rv = snip.context.rec_name`}${1/.+/ /}`!p snip.rv = snip.context.rec_type.name`) LessThan(other `!p snip.rv = snip.context.rec_type.name`) bool {
+func (${1:`!p snip.rv = snip.context.rec_name`}${1/.+/ /}`!p snip.rv = snip.context.rec_type_str`) LessThan(other `!p snip.rv = snip.context.rec_type_str`) bool {
 	$0
 }
 endsnippet
@@ -959,7 +959,7 @@ endsnippet
 pre_expand "snip.context = find_method_type(match[1] == '*')"
 post_jump "skip_receiver_name(snip)"
 snippet '^mr([ *])' "Method with self return" brA
-func (${1:`!p snip.rv = snip.context.rec_name`}${1/.+/ /}`!p snip.rv = snip.context.rec_type.name`) ${2: }($3) `!p snip.rv = snip.context.rec_type.name` {
+func (${1:`!p snip.rv = snip.context.rec_name`}${1/.+/ /}`!p snip.rv = snip.context.rec_type_str`) ${2: }($3) `!p snip.rv = snip.context.rec_type_str` {
 	$0
 
 	return $1
@@ -969,7 +969,7 @@ endsnippet
 pre_expand "snip.context = find_method_type()"
 post_jump "skip_receiver_name(snip)"
 snippet mmj "Method - MarshalJSON" bw
-func (${1:`!p snip.rv = snip.context.rec_name`}${1/.+/ /}`!p snip.rv = snip.context.rec_type.name`) MarshalJSON() ([]byte, error) {
+func (${1:`!p snip.rv = snip.context.rec_name`}${1/.+/ /}`!p snip.rv = snip.context.rec_type_str`) MarshalJSON() ([]byte, error) {
 	$0
 }
 endsnippet
@@ -977,7 +977,7 @@ endsnippet
 pre_expand "snip.context = find_method_type()"
 post_jump "skip_receiver_name(snip)"
 snippet mmy "Method - MarshalYAML" bw
-func (${1:`!p snip.rv = snip.context.rec_name`}${1/.+/ /}`!p snip.rv = snip.context.rec_type.name`) MarshalYAML() (interface{}, error) {
+func (${1:`!p snip.rv = snip.context.rec_name`}${1/.+/ /}`!p snip.rv = snip.context.rec_type_str`) MarshalYAML() (interface{}, error) {
 	$0
 }
 endsnippet
@@ -985,7 +985,7 @@ endsnippet
 pre_expand "snip.context = find_method_type(True)"
 post_jump "skip_receiver_name(snip)"
 snippet muj "Method - UnmarshalJSON" bw
-func (${1:`!p snip.rv = snip.context.rec_name`}${1/.+/ /}`!p snip.rv = snip.context.rec_type.name`) UnmarshalJSON(data []byte) error {
+func (${1:`!p snip.rv = snip.context.rec_name`}${1/.+/ /}`!p snip.rv = snip.context.rec_type_str`) UnmarshalJSON(data []byte) error {
 	$0
 }
 endsnippet
@@ -994,10 +994,10 @@ endsnippet
 pre_expand "add_import(snip, 'fmt'); snip.context = find_method_type(True)"
 post_jump "skip_receiver_name(snip)"
 snippet muy "Method - UnmarshalYAML" bw
-func (${1:`!p snip.rv = snip.context.rec_name`}${1/.+/ /}`!p snip.rv = snip.context.rec_type.name`) UnmarshalYAML(unmarshal func(interface{}) error) error {
-	var ${1:val} ${2:interface{}}
+func (${1:`!p snip.rv = snip.context.rec_name`}${1/.+/ /}`!p snip.rv = snip.context.rec_type_str`) UnmarshalYAML(unmarshal func(interface{}) error) error {
+	var ${2:val} ${3:interface{}}
 
-	if err := unmarshal(&`!p snip.rv = snip.context.rec_type.name`); err != nil {
+	if err := unmarshal(&$2); err != nil {
 		return fmt.Errorf("invalid YAML: %s", err)
 	}
 
@@ -1032,7 +1032,7 @@ pre_expand "snip.context = find_method_type(True)"
 post_jump "skip_receiver_name(snip)"
 # ${2: }
 snippet '^ms ' "Method - String" brA
-func (${1:`!p snip.rv = snip.context.rec_name`}${1/.+/ /}`!p snip.rv = snip.context.rec_type.name`) String() string {
+func (${1:`!p snip.rv = snip.context.rec_name`}${1/.+/ /}`!p snip.rv = snip.context.rec_type_str`) String() string {
 	$0
 }
 endsnippet
@@ -1050,7 +1050,7 @@ pre_expand "add_import(snip, 'v github.com/go-ozzo/ozzo-validation'); snip.conte
 post_jump "skip_receiver_name(snip)"
 snippet '^mv ' "Method - Validation" brA
 // Validate returns an error if any of the fields are invalid.
-func (${1:`!p snip.rv = snip.context.rec_name`}${1/.+/ /}`!p snip.rv = snip.context.rec_type.name`) Validate() error {
+func (${1:`!p snip.rv = snip.context.rec_name`}${1/.+/ /}`!p snip.rv = snip.context.rec_type_str`) Validate() error {
 	return v.ValidateStruct(`!p snip.rv = snip.context.rec_name`,
 		v.Field(&`!p snip.rv = snip.context.rec_name`.$2),$0
 	)

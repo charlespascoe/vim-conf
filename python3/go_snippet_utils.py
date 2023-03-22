@@ -71,7 +71,11 @@ class MethodMatch:
 
     def __str__(self):
         # TODO figure out if I can remove this because it's not correct
-        return f"{self.rec_name} {self.rec_type}".strip()
+        return f"{self.rec_name} {self.rec_type_str}".strip()
+
+    @property
+    def rec_type_str(self):
+        return f"{'*' if self.rec_ptr else ''}{self.rec_type}"
 
 
 def match_func(line):
@@ -213,10 +217,11 @@ def go_import(imports):
             vim.command(f"GoImport{bang} {imp}")
 
 
-def type_to_method(type_match: TypeMatch) -> MethodMatch:
+def type_to_method(type_match: TypeMatch, pointer: bool) -> MethodMatch:
     return MethodMatch(
         rec_name=type_match.name[0].lower() + type_match.name[1:],
         rec_type=type_match,
+        rec_ptr=pointer,
         name="",
         real=False,
     )
@@ -235,7 +240,7 @@ def find_method_type(pointer=False):
         if m2 and m2.rec_type.name == m.name:
             method = m2
         else:
-            method = type_to_method(m)
+            method = type_to_method(m, pointer)
 
     if pointer and not method.rec_ptr:
         method.rec_ptr = True
