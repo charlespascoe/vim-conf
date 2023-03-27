@@ -56,4 +56,19 @@ fun s:FormatDictatedText(text)
     return substitute(substitute(trim(tolower(a:text)), '\s\+', '_', 'g'), '\W', '', 'g')
 endfun
 
+fun s:GetDictationPrompt()
+    let syn = synIDattr(synIDtrans(synID(line("."),max([col(".")-1,1]),1)),"name")
+
+    if syn == 'Comment'
+        return dictate#GetLeadingComment()
+    elseif syn == 'String'
+        return dictate#GetLeadingString()
+    elseif syn == 'Function'
+        return 'The function name is:'
+    endif
+
+    return ''
+endfun
+
 let b:format_dictated_text = function('s:FormatDictatedText')
+let b:get_dictation_prompt = function('s:GetDictationPrompt')

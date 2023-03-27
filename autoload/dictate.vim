@@ -35,6 +35,8 @@ func dictate#Init()
         au CursorMovedI * call <SID>onInput()
     augroup END
 
+    py3 import dictate
+
     return 1
 endfun
 
@@ -158,6 +160,16 @@ let s:cols = #{
 
 fun s:updateStatus(status)
     let s:status = a:status
+
+    if s:status == 'dictate' && exists('*b:get_dictation_prompt')
+        let prompt = b:get_dictation_prompt()
+
+        " TODO: Check that the prompt is a string
+
+        " This is a simple dictation test
+        call s:send(#{type: "prompt", prompt: prompt})
+    endif
+
     let l:col = get(s:cols, s:status, g:dracula#palette.comment[0])
     for [name, colours] in items(g:airline#themes#{g:airline_theme}#palette)
         if name == 'inactive'
@@ -183,3 +195,15 @@ func dictate#OnExit(ch)
     echohl None
     call s:updateStatus("error")
 endfun
+
+function! dictate#GetLeadingComment()
+    return py3eval('dictate.get_leading_comment()')
+endfunction
+
+function! dictate#GetLeadingString()
+    return py3eval('dictate.get_leading_string()')
+endfunction
+
+function! dictate#GetLeadingParagraph()
+    return py3eval('dictate.get_leading_paragraph()')
+endfunction

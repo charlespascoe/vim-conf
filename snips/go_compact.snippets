@@ -1120,10 +1120,15 @@ snippet 'r ' "Return" brA
 return $0
 endsnippet
 
+# context "line_equals(snip, 're')"
+# pre_expand "add_import(snip, 'errors')"
+# snippet 're ' "Return new error" brA
+# return $1`!p snip.rv = ', ' if t[1] else ''`errors.New("$0")
+# endsnippet
+
 context "line_equals(snip, 're')"
-pre_expand "add_import(snip, 'errors')"
-snippet 're ' "Return new error" brA
-return $1`!p snip.rv = ', ' if t[1] else ''`errors.New("$0")
+snippet 're ' "Return error" brA
+return $1`!p snip.rv = ', ' if t[1] else ''`err
 endsnippet
 
 context "line_equals(snip, 'ref')"

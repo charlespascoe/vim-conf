@@ -39,7 +39,7 @@ hi LineNr guifg=#8C4A9E
 
 " hi Constant guifg=#FF6363
 " hi Constant guifg=#FF3030
-hi Constant guifg=#FF3030
+" hi Constant guifg=#FF3030
 " hi String guifg=#FF3030
 
 " hi Identifier guifg=#00FF2D
@@ -139,6 +139,8 @@ hi PreProc guifg=#9087FD
 hi Comment ctermfg=61 guibg=#3E3853 guifg=#A381FF
 " hi Constant guifg=#FF6C6C
 hi Constant guifg=#FF5C5C guibg=NONE
+" Having a separate String highlight allows for synIDtrans to resolve to String
+hi String guifg=#FF5C5C guibg=NONE
 " hi Constant guifg=#FF4E4E
 " hi String guifg=#FF6C6C
 

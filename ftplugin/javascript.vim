@@ -76,3 +76,35 @@ fun! s:AddImport()
         call feedkeys("ggOim\<C-l>")
     end
 endfun
+
+fun s:FormatDictatedText(text)
+    if synIDattr(synIDtrans(synID(line("."),max([col(".")-1,1]),1)),"name") =~ '^\%(Comment\|String\|Constant\)$'
+        return ''
+    endif
+
+    echom synIDattr(synID(line("."),col("."),1),"name")
+
+    let result = substitute(substitute(a:text, '\<\a', '\U&', 'g'), '\W', '', 'g')
+    " TODO: only do this conditionally - perhaps it's worth doing the formatting
+    " in the daemon rather than doing it here
+    let result = tolower(result[0])..result[1:]
+
+    return result
+endfun
+
+fun s:GetDictationPrompt()
+    let syn = synIDattr(synIDtrans(synID(line("."),max([col(".")-1,1]),1)),"name")
+
+    if syn == 'Comment'
+        return dictate#GetLeadingComment()
+    elseif syn == 'String'
+        return dictate#GetLeadingString()
+    elseif syn == 'Function'
+        return 'The function name is:'
+    endif
+
+    return ''
+endfun
+
+let b:format_dictated_text = function('s:FormatDictatedText')
+let b:get_dictation_prompt = function('s:GetDictationPrompt')

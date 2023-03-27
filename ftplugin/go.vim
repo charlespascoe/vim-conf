@@ -51,7 +51,22 @@ fun s:FormatDictatedText(text)
     return result
 endfun
 
+fun s:GetDictationPrompt()
+    let syn = synIDattr(synIDtrans(synID(line("."),max([col(".")-1,1]),1)),"name")
+
+    if syn == 'Comment'
+        return dictate#GetLeadingComment()
+    elseif syn == 'String'
+        return dictate#GetLeadingString()
+    elseif syn == 'Function'
+        return 'The function name is:'
+    endif
+
+    return ''
+endfun
+
 let b:format_dictated_text = function('s:FormatDictatedText')
+let b:get_dictation_prompt = function('s:GetDictationPrompt')
 
 nmap <buffer> <leader>tt <Plug>(go-info)
 nmap <buffer> <leader>td <Plug>(go-def)

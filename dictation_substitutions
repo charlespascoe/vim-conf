@@ -1,3 +1,6 @@
+# Formatting
+/to do:/TODO:/
+
 # CRC
 /(?:great|bridge|brakes?|writes?) control(ler)?(s)?/rate control\1\2/i
 /r(?:each|ich|oute|o?ach|ight|oot|ita) control(ler)?(s)?/rate control\1\2/i
