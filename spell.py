@@ -6,7 +6,7 @@ symbols = set()
 
 # TODO: Make language-independent (currently Go only)
 
-symbol_re = re.compile(r'^([A-Za-z0-9_.-]+)\t')
+symbol_re = re.compile(r"^([A-Za-z0-9_.-]+)\t")
 
 field_tag_re = re.compile(r'`(?:json|yaml):"([^"]+)"')
 
@@ -17,20 +17,21 @@ _cur_line = ""
 # TODO: Try using Inspect: https://golang.org/pkg/go/ast/#example_Inspect
 # (Keep universal ctags so that it can work with other languages
 def gen_tags():
-   os.system('find . -name "*.go" | gotags -L - -f tags')
+    os.system('find . -name "*.go" | gotags -L - -f tags')
     # os.system('find . -name "*.go" | ctags -L - > tags')
+
 
 def load_tags():
     global symbols
 
     symbols = set()
 
-    symbols.add('json')
-    symbols.add('yaml')
+    symbols.add("json")
+    symbols.add("yaml")
 
-    with open('tags', 'r') as tags:
+    with open("tags", "r") as tags:
         for line in tags:
-            if line.startswith('!'):
+            if line.startswith("!"):
                 continue
 
             match = symbol_re.match(line)
@@ -38,16 +39,19 @@ def load_tags():
             if match:
                 symbols.add(match.group(1))
 
-                for part in match.group(1).split('.'):
+                for part in match.group(1).split("."):
                     symbols.add(part)
 
+
 def add_word(word):
-    vim.command(f'silent spellgood! {word}')
+    if word:
+        vim.command(f"silent spellgood! {word}")
+
 
 def check_spelling():
     global _cur_line
 
-    add_word('func')
+    add_word("func")
 
     for line in vim.current.buffer:
         _cur_line = line
@@ -55,7 +59,7 @@ def check_spelling():
         tag_match = field_tag_re.search(_cur_line)
 
         if tag_match:
-            for part in tag_match.group(1).split(','):
+            for part in tag_match.group(1).split(","):
                 add_word(part)
 
         url_match = gin_url_re.search(_cur_line)
@@ -72,7 +76,7 @@ def check_spelling():
                     break
 
                 add_word(badword)
-                _cur_line = _cur_line.replace(badword, '')
+                _cur_line = _cur_line.replace(badword, "")
 
             _cur_line = prev_cur_line
 
@@ -82,7 +86,9 @@ def check_spelling():
             if not badword:
                 break
 
-            if badword in symbols or (badword.endswith('s') and badword[:-1] in symbols):
+            if badword in symbols or (
+                badword.endswith("s") and badword[:-1] in symbols
+            ):
                 add_word(badword)
 
-            _cur_line = _cur_line.replace(badword, '')
+            _cur_line = _cur_line.replace(badword, "")
