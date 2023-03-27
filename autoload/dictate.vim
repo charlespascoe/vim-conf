@@ -84,7 +84,7 @@ func dictate#OnOutput(ch, msg)
     if msg.type == "transcription"
         call s:handleTrascriptionMessage(msg)
     elseif msg.type == "status"
-        call s:updateStatus(msg.status)
+        call s:updateStatus(msg.status, msg.activeClient)
     else
         echom a:msg
     endif
@@ -141,10 +141,10 @@ let s:cols = #{
     \ paused: '#037E98',
 \}
 
-fun s:updateStatus(status)
+fun s:updateStatus(status, active_client)
     let s:status = a:status
 
-    if s:status == 'dictate' && exists('*b:get_dictation_context')
+    if s:status == 'dictate' && a:active_client && exists('*b:get_dictation_context')
         let context = b:get_dictation_context()
 
         " TODO: Check that the context is a dictionary
