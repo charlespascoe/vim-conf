@@ -1,11 +1,34 @@
 # Formatting
 /to do:/TODO:/
 
-# # CRC
+# CRC
+/(?:route|reach) control(ler)?(s)?/rate control\1\2/i
 # /(?:great|bridge|brakes?|writes?) control(ler)?(s)?/rate control\1\2/i
 # /r(?:each|ich|oute|o?ach|ight|oot|ita) control(ler)?(s)?/rate control\1\2/i
-/(?:route|reach) control(ler)?(s)?/rate control\1\2/i
+
+/(?:Tino|T-Naw)(s)?/TNOR\1/i
+/pseudo TNOR/pseudo-TNOR/
 
 # General
 /(?:ASCII|asky)[ -]dock?(s)?/AsciiDoc\1/i
 /(\d+) calls per second/\1cps/
+/(little|big) Indian/\1-endian/
+/change log/changelog/
+/aka/a.k.a./
+/Boolean/boolean/
+/couch ?DB/CouchDB/
+/G[ui]ra]/Jira/
+
+# Numbers
+/(\d+) microseconds/\1µs/
+/(\d+) milliseconds/\1ms/
+
+# SIP
+/the sip/the SIP/
+/sip (traffic|messages?)/SIP \1/
+/the paid/the PAID/
+/the from/the From/
+/paid or from/PAID or From/
+
+/sipped puzzel/SIP parser/
+/SIP[ -](PASA|PAHTA)/SIP parser/
