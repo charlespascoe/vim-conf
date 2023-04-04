@@ -113,24 +113,7 @@ fun s:handleTrascriptionMessage(msg)
         call feedkeys('c')
     endif
 
-    let text = ''
-
-    if exists('b:format_dictated_text')
-        let text = b:format_dictated_text(a:msg.text)
-    endif
-
-    if text == ''
-        let text = a:msg.text
-
-        " Automatically capitalise the first letter after certain characters
-        if search('\v(^|[.!?/#]\_s*|")%#', 'bcn') != 0 || search('^\s\+[-*+?<>]\s\+\%#', 'bcn') != 0
-            let text = toupper(text[0])..text[1:]
-        endif
-
-        if text =~ '^\c[a-z]' && search('\v([^ \t"(])%#', 'bcn')
-            let text = ' '..text
-        endif
-    endif
+    let text = a:msg.text
 
     if !a:msg.final
         if !exists('b:_dictate_popup')
@@ -161,13 +144,15 @@ let s:cols = #{
 fun s:updateStatus(status)
     let s:status = a:status
 
-    if s:status == 'dictate' && exists('*b:get_dictation_prompt')
-        let prompt = b:get_dictation_prompt()
+    if s:status == 'dictate' && exists('*b:get_dictation_context')
+        let context = b:get_dictation_context()
 
-        " TODO: Check that the prompt is a string
+        " TODO: Check that the context is a dictionary
+        let context["type"] = "context"
 
-        " This is a simple dictation test
-        call s:send(#{type: "prompt", prompt: prompt})
+        call s:send(context)
+    elseif s:status == 'dictate' && exists('*b:get_dictation_prompt')
+        call s:send(#{type: 'context', prompt: b:get_dictation_prompt()})
     endif
 
     let l:col = get(s:cols, s:status, g:dracula#palette.comment[0])
@@ -196,14 +181,14 @@ func dictate#OnExit(ch)
     call s:updateStatus("error")
 endfun
 
-function! dictate#GetLeadingComment()
+func! dictate#GetLeadingComment()
     return py3eval('dictate.get_leading_comment()')
-endfunction
+endfunc
 
-function! dictate#GetLeadingString()
+func! dictate#GetLeadingString()
     return py3eval('dictate.get_leading_string()')
-endfunction
+endfunc
 
-function! dictate#GetLeadingParagraph()
+func! dictate#GetLeadingParagraph()
     return py3eval('dictate.get_leading_paragraph()')
-endfunction
+endfunc

@@ -23,6 +23,8 @@ var invert_binary_subs = [
     ['>', '<='],
     ['<', '>='],
     ['||', '&&'],
+    ['and', 'or'],
+    ['AND', 'OR'],
     ['+', '-'],
     ['1', '0'],
     ReSub('enabl\(ing\|e[sd]\?\)', 'disabl\1'),

@@ -22,7 +22,9 @@ def get_leading_comment():
 
     start = prev.index(l)
 
-    contents = [prev[start + len(l) :].strip()]
+    # Note the use of lstrip() to only remove white space from the left side,
+    # because we want to keep white space that is just before the cursor.
+    contents = [prev[start + len(l) :].lstrip()]
 
     if prev[:start].strip() != "":
         # Comment is at the end of some statement
@@ -30,7 +32,7 @@ def get_leading_comment():
 
     lnum -= 1
 
-    while lnum > 1:
+    while lnum >= 1:
         line = vim.current.buffer[lnum - 1].strip()
 
         if not line.startswith(l):
@@ -45,11 +47,14 @@ def get_leading_comment():
 
 def get_leading_paragraph():
     lnum, col = vim.current.window.cursor
-    contents = [vim.current.buffer[lnum - 1][:col].strip()]
+
+    # Note the use of lstrip() to only remove white space from the left side,
+    # because we want to keep white space that is just before the cursor.
+    contents = [vim.current.buffer[lnum - 1][:col].lstrip()]
 
     lnum -= 1
 
-    while lnum > 1:
+    while lnum >= 1:
         line = vim.current.buffer[lnum - 1].strip()
 
         if line == "":

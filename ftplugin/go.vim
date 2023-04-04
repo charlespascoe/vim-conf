@@ -31,42 +31,32 @@ if !exists("*<SID>TogglePrivate()")
     endfun
 endif
 
-fun s:FormatDictatedText(text)
-    if synIDattr(synIDtrans(synID(line("."),max([col(".")-1,1]),1)),"name") =~ '^\%(Comment\|String\|Constant\)$'
-        return ''
-    endif
-
-    echom synIDattr(synID(line("."),col("."),1),"name")
-
-    let result = substitute(substitute(a:text, '\<\a', '\U&', 'g'), '\W', '', 'g')
-
-    let synName = synIDattr(synID(line("."),max([col(".")-1,1]),1),"name")
-
-    echom "SYN" synName
-
-    if len(result) > 0 && synName =~ '\v^go%(Func%(Block|Params|Parens|Call%(Parens|Args)))$'
-        let result = tolower(result[0])..result[1:]
-    endif
-
-    return result
-endfun
-
-fun s:GetDictationPrompt()
+fun s:GetDictationContext()
     let syn = synIDattr(synIDtrans(synID(line("."),max([col(".")-1,1]),1)),"name")
 
+    let prompt = ''
+    let transforms = ['camelcase']
+
     if syn == 'Comment'
-        return dictate#GetLeadingComment()
+        let prompt = dictate#GetLeadingComment()
+        let transforms = ['comment']
     elseif syn == 'String'
-        return dictate#GetLeadingString()
+        let prompt = dictate#GetLeadingString()
+        " TODO: Check to see if it's actually a double-quoted string and not a
+        " raw string
+        let transforms = ['default', 'dqesc']
     elseif syn == 'Function'
-        return 'The function name is:'
+        let prompt = 'The function name is: '
+        let transforms = ['pascalcase']
+    elseif syn == 'Type'
+        let prompt = 'The class name is: '
+        let transforms = ['pascalcase']
     endif
 
-    return ''
+    return #{prompt: prompt, transforms: transforms}
 endfun
 
-let b:format_dictated_text = function('s:FormatDictatedText')
-let b:get_dictation_prompt = function('s:GetDictationPrompt')
+let b:get_dictation_context = function('s:GetDictationContext')
 
 nmap <buffer> <leader>tt <Plug>(go-info)
 nmap <buffer> <leader>td <Plug>(go-def)

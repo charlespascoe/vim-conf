@@ -45,7 +45,7 @@
 
 # General
 /(?:(?:ASCII|S key) (?:dock?|talk)|(?:husky|ask your) dog|ask you talk|ask(?: a)? duck)(s)?/AsciiDoc\1/i
-/([pP])(ram|erram)/\1aram/
+/([Pp])(ram|erram)/\1aram/
 /([Rr])(efracted|eflected)/\1efactored/
 /(\d+) ([mµn])?s/\1\2s/
 /(\d+) calls per second/\1cps/

@@ -1,5 +1,6 @@
 # Formatting
-/to do:/TODO:/
+/toodoo/todo/i
+/\bto ?do:/TODO:/Bi
 
 # CRC
 /(?:route|reach) control(ler)?(s)?/rate control\1\2/i
@@ -18,6 +19,7 @@
 /Boolean/boolean/
 /couch ?DB/CouchDB/
 /G[ui]ra]/Jira/
+/%S\b/%s/B
 
 # Numbers
 /(\d+) microseconds/\1µs/

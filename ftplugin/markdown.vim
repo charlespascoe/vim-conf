@@ -24,3 +24,5 @@ fun! FormatLinkSlug(type)
         echom "FormatLinkSlug: Unhandled type ".a:type
     endif
 endfun
+
+let b:get_dictation_prompt = function('dictate#GetLeadingParagraph')

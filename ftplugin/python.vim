@@ -48,27 +48,29 @@ call QuickSearchMap('m', 'Methods', '^\s\+\Kdef [a-zA-Z0-9_]\+(self\>')
 
 let b:ale_fix_on_save = 1
 
-fun s:FormatDictatedText(text)
-    if synIDattr(synIDtrans(synID(line("."),max([col(".")-1,1]),1)),"name") =~ '^\%(Comment\|String\|Constant\)$'
-        return ''
-    endif
-
-    return substitute(substitute(trim(tolower(a:text)), '\s\+', '_', 'g'), '\W', '', 'g')
-endfun
-
-fun s:GetDictationPrompt()
+fun s:GetDictationContext()
     let syn = synIDattr(synIDtrans(synID(line("."),max([col(".")-1,1]),1)),"name")
 
+    let prompt = ''
+    let transforms = ['snakecase']
+
     if syn == 'Comment'
-        return dictate#GetLeadingComment()
+        let prompt = dictate#GetLeadingComment()
+        let transforms = ['comment']
     elseif syn == 'String'
-        return dictate#GetLeadingString()
+        let prompt = dictate#GetLeadingString()
+        " TODO: Check to see if it's actually a double-quoted versus a
+        " single-quoted string
+        let transforms = ['default', 'dqesc']
     elseif syn == 'Function'
-        return 'The function name is:'
+        let prompt = 'The function name is:'
+        let transforms = ['snakecase']
+    elseif syn == 'Type'
+        let prompt = 'The class name is:'
+        let transforms = ['pascalcase']
     endif
 
-    return ''
+    return #{prompt: prompt, transforms: transforms}
 endfun
 
-let b:format_dictated_text = function('s:FormatDictatedText')
-let b:get_dictation_prompt = function('s:GetDictationPrompt')
+let b:get_dictation_context = function('s:GetDictationContext')
