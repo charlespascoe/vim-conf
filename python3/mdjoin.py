@@ -5,10 +5,16 @@ bullet_re = re.compile(r"^(\s{4})*[-*] ")
 repeated_ws_re = re.compile(r"(?<=[^ \t])\s{2,}(?=[^ \t])")
 
 
-def join(start, end):
+def join(start=None, end=None):
+    lines = vim.current.buffer
+
+    if start is not None or end is not None:
+        start = start or 1
+        end = end or len(lines)
+        lines = lines[start - 1 : end]
+
     return "\n".join(
-        repeated_ws_re.sub(" ", line.rstrip())
-        for line in merge(iter(vim.current.buffer[start - 1 : end]))
+        repeated_ws_re.sub(" ", line.rstrip()) for line in merge(iter(lines))
     )
 
 

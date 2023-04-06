@@ -101,8 +101,13 @@ au BufRead *.bak set filetype=bak
 let g:backup_dir = expand('~/.backup/')..strftime('%Y-%m')..'/'
 call system('mkdir -p '..shellescape(g:backup_dir))
 " TODO: Ignore /private and /tmp
-au FileType asciidoctor,bash,go,help,javascript,markdown,python,robot,sh,swift,text,tmux,typescript,vim,yaml,zsh
-    \ au BufWritePost <buffer> call system('cp '..shellescape(expand('%:p'))..' '..shellescape(g:backup_dir..substitute(expand('%:p'), '/', '%', 'g')..'.'..strftime('%Y-%m-%d_%H%M')..'.bak'))
+au FileType asciidoctor,bash,go,help,javascript,markdown,python,robot,sh,swift,text,tmux,typescript,vim,yaml,zsh call RegisterBackup()
+
+fun! RegisterBackup()
+    if expand('%') !~ '^/\(private\|tmp\)'
+       au BufWritePost <buffer> call system('cp '..shellescape(expand('%:p'))..' '..shellescape(g:backup_dir..substitute(expand('%:p'), '/', '%', 'g')..'.'..strftime('%Y-%m-%d_%H%M')..'.bak'))
+    endif
+endfun
 
 " Reload files when they change outside of Vim
 set autoread
