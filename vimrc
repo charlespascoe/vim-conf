@@ -203,7 +203,9 @@ set keywordprg=:Man
 let g:ft_man_open_mode = 'vert'
 
 " Initialise Dictation
-au VimEnter * call dictate#Init()
+if !empty(glob('/tmp/dictation.sock'))
+    au VimEnter * call dictate#Init()
+endif
 
 if exists('$BN_PROJ') && $BN_PROJ == '1'
     call bulletnotes#InitProject()
