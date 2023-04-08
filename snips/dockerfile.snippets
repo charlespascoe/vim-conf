@@ -1,0 +1,9 @@
+snippet go "Go"
+FROM scratch
+
+COPY ${1:binary} $1
+
+HEALTHCHECK CMD /$1 --healthcheck
+
+ENTRYPOINT ["/$1"$0]
+endsnippet

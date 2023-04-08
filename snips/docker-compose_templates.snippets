@@ -1,0 +1,24 @@
+snippet simple "Simple Docker Compose File"
+services:
+	${1:name}:
+		image: ${2:$1}
+		ports:
+			- "127.0.0.1:${4:8000}:${5:8000}"
+		deploy:
+			restart_policy:
+				condition: on-failure
+				max_attempts: 3
+				window: 120s
+
+		# environment:
+		# 	EXAMPLE: test
+		# env_file: .env
+
+		configs:
+			- source: conf
+			  target: /conf.yml
+
+configs:
+	conf:
+		file: ./conf.yml
+endsnippet
