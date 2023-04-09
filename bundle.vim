@@ -9,6 +9,12 @@ DevPlug 'vim-serenade'
 
 delcom DevPlug
 
+if isdirectory(expand('~/go/src/vim-chatgpt'))
+    Plug '~/go/src/vim-chatgpt'
+else
+    Plug 'charlespascoe/vim-chatgpt'
+endif
+
 Plug 'junegunn/fzf', #{do: { -> fzf#install() }}
 Plug 'junegunn/fzf.vim'
 
@@ -23,6 +29,7 @@ Plug 'dense-analysis/ale'
 Plug 'dkarter/bullets.vim'
 Plug 'dracula/vim', #{as: 'dracula'}
 Plug 'fatih/vim-go'
+Plug 'preservim/vim-markdown'
 Plug 'habamax/vim-asciidoctor'
 Plug 'junegunn/vim-easy-align'
 Plug 'junegunn/vim-plug'
