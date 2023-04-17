@@ -1,5 +1,26 @@
-fun tasks#init()
+fun tasks#temp(chgdir=1) abort
+    if $TMPDIR == ''
+        echoerr "TMPDIR must be set"
+        return
+    else
+        call system('mkdir $TMPDIR/tasks')
+    endif
+
+    let prefix = ""
+
+    if a:chgdir
+        cd $TMPDIR/tasks
+    else
+        let prefix = "$TMPDIR/"
+    endif
+
+    exec "edit" prefix..(strftime("%Y-%m-%d_%H:%M:%S", localtime()))..'.md'
+
     let b:get_dictation_context = function('tasks#context')
+
+    au BufUnload <buffer> call tasks#quickadd()
+
+    startinsert
 endfun
 
 fun tasks#quickadd()

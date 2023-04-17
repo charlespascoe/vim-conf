@@ -2,6 +2,7 @@
 /toodoo/todo/i
 /\bto ?do:/TODO:/Bi
 /^Hi,? (\w+)\.?\s*$/Hi \1,\n\n/B
+/\)\.\s*$/ /B
 
 # CRC
 /(?:route|reach) control(ler)?(s)?/rate control\1\2/i
@@ -22,13 +23,15 @@
 /aka/a.k.a./
 /Boolean/boolean/
 /change log/changelog/
-/couch ?DB/CouchDB/
+/draughts/drafts/i
 /G[ui]ra]/Jira/
 /philtre/filter/i
 /robots? framework/Robot Framework/i
 /robots? manager/Robot Manager/i
 
-# Numbers
+/couch TVs/CouchDB's/
+/couch ?(DB|TV)/CouchDB/
+
 /(\d+) microseconds/\1µs/
 /(\d+) milliseconds/\1ms/
 
@@ -41,3 +44,5 @@
 
 /sipped puzzel/SIP parser/
 /SIP[ -](PASA|PAHTA)/SIP parser/
+
+/(\d+) ?CPS/\1cps/i
