@@ -1,34 +1,26 @@
 import re
 
 
-emphasis_regex = re.compile('`([^`]+)`')
-tag_regex = re.compile(r'#([a-zA-Z0-9_\-]+)')
-contact_regex = re.compile(r'(?<!\w)@([a-zA-Z0-9_\-.]+)')
+emphasis_regex = re.compile("`([^`]+)`")
+tag_regex = re.compile(r"#([a-zA-Z0-9_\-]+)")
+contact_regex = re.compile(r"(?<!\w)@([a-zA-Z0-9_\-.]+)")
 link_regex = re.compile(r'(?<!\w)\[(http[^"\]]+)\](?!\w)')
-ref_regex = re.compile(r'&amp;([a-zA-Z0-9_\-.:]+(/[a-zA-Z0-9_\-.:]+)*)')
-monospace_regex = re.compile(r'(?<!\\)\{((\\\}|\\\{|[^}])*)\}')
-highlighted_monospace_regex = re.compile(r'(?<!\\)\{\{((\\\}|\\\{|[^}])*)\}\}')
-anchor_regex = re.compile(r':([a-zA-Z0-9]+):')
-anchor_pointer_regex = re.compile(r'\[:([a-zA-Z0-9]+):\]')
+ref_regex = re.compile(r"&amp;([a-zA-Z0-9_\-.:]+(/[a-zA-Z0-9_\-.:]+)*)")
+monospace_regex = re.compile(r"(?<!\\)\{((\\\}|\\\{|[^}])*)\}")
+highlighted_monospace_regex = re.compile(r"(?<!\\)\{\{((\\\}|\\\{|[^}])*)\}\}")
+anchor_regex = re.compile(r":([a-zA-Z0-9]+):")
+anchor_pointer_regex = re.compile(r"\[:([a-zA-Z0-9]+):\]")
 
 
 def escape_html(text):
-    return (
-        text
-            .replace('&', '&amp;')
-            .replace('<', '&lt;')
-            .replace('>', '&gt;')
-    )
+    return text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 
 
 def format_style(style):
     if style is None:
-        return ''
+        return ""
 
-    return (
-        ' '.join(f'{key}: {style[key]};' for key in style)
-            .replace('"', '\\"')
-    )
+    return " ".join(f"{key}: {style[key]};" for key in style).replace('"', '\\"')
 
 
 class BulletFormatter:
@@ -51,17 +43,17 @@ class BulletFormatter:
         content = self.text_formatter.to_html(bullet.content)
         children = self.build_children(bullet)
 
-        return f'<li{style}>{content}{children}</li>'
+        return f"<li{style}>{content}{children}</li>"
 
     def build_children(self, bullet):
         if len(bullet.subbullets) == 0:
-            return ''
+            return ""
 
-        subbullets_html = ''.join(
+        subbullets_html = "".join(
             self.bullets_formatter.to_html(b) for b in bullet.subbullets
         )
 
-        return f'{self.bullets_formatter.build_ul()}{subbullets_html}</ul>'
+        return f"{self.bullets_formatter.build_ul()}{subbullets_html}</ul>"
 
     def build_style(self):
         if self.style:
@@ -71,10 +63,10 @@ class BulletFormatter:
 
 
 BulletFormatter.default_style = {
-    'color': 'initial',
-    'font-weight': 'initial',
-    'font-style': 'initial',
-    'background-color': 'initial',
+    "color": "initial",
+    "font-weight": "initial",
+    "font-style": "initial",
+    "background-color": "initial",
 }
 
 
@@ -98,18 +90,18 @@ class BulletsFormatter:
     def default(text_formatter):
         bf = BulletsFormatter(text_formatter)
 
-        bf.register('-', {'color': 'black'})
-        bf.register('*+', {'color': 'green'}, lambda s : f'<b>AP:</b> {s}')
-        bf.register('?<', {'color': '#FF5722'})
-        bf.register('>', {'color': 'initial', 'font-weight': 'bold'})
-        bf.register('#', {'color': '#0070ff', 'font-style': 'italic'})
+        bf.register("-", {"color": "black"})
+        bf.register("*+", {"color": "green"}, lambda s: f"<b>AP:</b> {s}")
+        bf.register("?<", {"color": "#FF5722"})
+        bf.register(">", {"color": "initial", "font-weight": "bold"})
+        # bf.register('#', {'color': '#0070ff', 'font-style': 'italic'})
 
         return bf
 
     def to_html(self, bullet):
         if bullet.bullet_type not in self.formatters:
             if self.default_formatter is None:
-                return ''
+                return ""
 
             return self.default_formatter.to_html(bullet)
 
@@ -122,26 +114,26 @@ class BulletsFormatter:
 
 
 BulletsFormatter.list_style = {
-    'margin': '0',
-    'margin-bottom': '5px',
+    "margin": "0",
+    "margin-bottom": "5px",
 }
 
 
 contact_style = {
-    'color': 'blue',
-    'font-weight': 'bold',
+    "color": "blue",
+    "font-weight": "bold",
 }
 
 
 def contact_format(contact_match):
-    contact = contact_match.group(1).replace('_', ' ')
+    contact = contact_match.group(1).replace("_", " ")
     style = format_style(contact_style)
     return f'<span style="{style}">{contact}</span>'
 
 
 def tag_format(tag_match):
-    tag = tag_match.group(1).replace('_', ' ')
-    return f'<b>{tag}</b>'
+    tag = tag_match.group(1).replace("_", " ")
+    return f"<b>{tag}</b>"
 
 
 class TextFormatter:
@@ -150,30 +142,33 @@ class TextFormatter:
 
     @staticmethod
     def default():
-        return TextFormatter([
-            lambda s : emphasis_regex.sub(r'<b>\1</b>', s),
-            lambda s : tag_regex.sub(tag_format, s),
-            lambda s : contact_regex.sub(contact_format, s),
-            lambda s : link_regex.sub(r'<a href="\1" target="_blank">\1</a>', s),
-            lambda s : anchor_pointer_regex.sub(r'<a href="#\1">\1</a>', s),
-            lambda s : anchor_regex.sub(r'<span id="\1" style="color: teal;">:\1:</span>', s),
-            lambda s : ref_regex.sub(r'<span style="color: red">\1</span>', s),
-            lambda s : highlighted_monospace_regex
-                .sub(r'<span style="font-family: monospace; color: crimson;">\1</span>', s),
-            lambda s : monospace_regex
-                .sub(r'<span style="font-family: monospace;">\1</span>', s),
-            lambda s : s
-                .replace('\\{', '{')
-                .replace('\\}', '}'),
-        ])
+        return TextFormatter(
+            [
+                lambda s: emphasis_regex.sub(r"<b>\1</b>", s),
+                lambda s: tag_regex.sub(tag_format, s),
+                lambda s: contact_regex.sub(contact_format, s),
+                lambda s: link_regex.sub(r'<a href="\1" target="_blank">\1</a>', s),
+                lambda s: anchor_pointer_regex.sub(r'<a href="#\1">\1</a>', s),
+                lambda s: anchor_regex.sub(
+                    r'<span id="\1" style="color: teal;">:\1:</span>', s
+                ),
+                lambda s: ref_regex.sub(r'<span style="color: red">\1</span>', s),
+                lambda s: highlighted_monospace_regex.sub(
+                    r'<span style="font-family: monospace; color: crimson;">\1</span>',
+                    s,
+                ),
+                lambda s: monospace_regex.sub(
+                    r'<span style="font-family: monospace;">\1</span>', s
+                ),
+                lambda s: s.replace("\\{", "{").replace("\\}", "}"),
+            ]
+        )
 
     def extend(self, *transforms):
         if len(transforms) == 0:
             return self
 
-        return TextFormatter(
-            self.transforms + list(transforms)
-        )
+        return TextFormatter(self.transforms + list(transforms))
 
     def to_html(self, text):
         interim = escape_html(text)
@@ -191,9 +186,7 @@ class SectionFormatter:
         self.text_formatter = text_formatter
         self.append_br_to_paragraphs = False
         self.append_br_to_bullet_lists = False
-        self.heading_style = {
-            'font-size': '1.2em'
-        }
+        self.heading_style = {"font-size": "1.2em"}
 
     @staticmethod
     def default():
@@ -207,9 +200,11 @@ class SectionFormatter:
     def to_html(self, section):
         output = []
 
-        if section.title != '':
+        if section.title != "":
             formatted_title = self.text_formatter.to_html(section.title)
-            output.append(f'<h2 style="{format_style(self.heading_style)}">{formatted_title}</h2>')
+            output.append(
+                f'<h2 style="{format_style(self.heading_style)}">{formatted_title}</h2>'
+            )
 
         in_ul = False
 
@@ -217,21 +212,21 @@ class SectionFormatter:
 
         for item in section.contents:
             if previous_was_para and self.append_br_to_paragraphs:
-                output.append('<br/>')
+                output.append("<br/>")
 
             if type(item) is str:
                 previous_was_para = True
 
                 if in_ul:
-                    output.append('</ul>')
+                    output.append("</ul>")
 
                     if self.append_br_to_bullet_lists:
-                        output.append('<br/>')
+                        output.append("<br/>")
 
                     in_ul = False
 
                 formatted_text = self.text_formatter.to_html(item)
-                output.append(f'<p>{formatted_text}</p>')
+                output.append(f"<p>{formatted_text}</p>")
             else:
                 previous_was_para = False
 
@@ -242,14 +237,14 @@ class SectionFormatter:
                 output.append(self.bullets_formatter.to_html(item))
 
         if in_ul:
-            output.append('</ul>')
+            output.append("</ul>")
 
             if self.append_br_to_bullet_lists:
-                output.append('<br/>')
+                output.append("<br/>")
 
             in_ul = False
 
-        return ''.join(output)
+        return "".join(output)
 
 
 class DocumentFormatter:
@@ -267,10 +262,10 @@ class DocumentFormatter:
         )
 
         df.global_styles = {
-            'body': {
-                'font-family': 'Arial',
+            "body": {
+                "font-family": "Arial",
                 # NOTE: May need to have different values for each platform
-                'font-size': '11pt',
+                "font-size": "11pt",
             }
         }
 
@@ -279,17 +274,21 @@ class DocumentFormatter:
     def to_html(self, document):
         output = []
 
-        if document.title != '':
+        if document.title != "":
             formatted_title = self.text_formatter.to_html(document.title)
-            output.append(f'<h1 style="{format_style(self.header_style)}">{formatted_title}</h1>')
+            output.append(
+                f'<h1 style="{format_style(self.header_style)}">{formatted_title}</h1>'
+            )
 
-        output += [self.section_formatter.to_html(section) for section in document.sections]
+        output += [
+            self.section_formatter.to_html(section) for section in document.sections
+        ]
 
-        return ''.join(output)
+        return "".join(output)
 
     def format_global_styles(self):
-        return ' '.join(
-            f'{selector} {{ {format_style(style)} }}'
+        return " ".join(
+            f"{selector} {{ {format_style(style)} }}"
             for selector, style in self.global_styles.items()
         )
 
@@ -297,4 +296,4 @@ class DocumentFormatter:
         inner_html = self.to_html(document)
         global_styles = self.format_global_styles()
 
-        return f'<html><head><style>{global_styles}</style></head><body>{inner_html}</body></html>'
+        return f"<html><head><style>{global_styles}</style></head><body>{inner_html}</body></html>"

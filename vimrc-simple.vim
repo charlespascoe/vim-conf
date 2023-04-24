@@ -1,5 +1,6 @@
 set nocompatible
 filetype plugin indent on
+let mapleader=" "
 set hidden
 set number
 set relativenumber

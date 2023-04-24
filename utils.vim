@@ -124,8 +124,8 @@ fun! QuickSearchMap(key, title, pattern)
 endfun
 
 " Make n and N move through location list when open
-nnoremap <expr> n get(getloclist(0, {'winid':0}), 'winid', 0) ? '<Cmd>lnext<CR>zz' : '<Cmd>setlocal hlsearch<CR>nzz'
-nnoremap <expr> N get(getloclist(0, {'winid':0}), 'winid', 0) ? '<Cmd>lprev<CR>zz' : '<Cmd>setlocal hlsearch<CR>Nzz'
+nnoremap <expr> n get(getloclist(0, {'winid':0}), 'winid', 0) ? '<Cmd>lnext<CR>zz' : '<Cmd>setlocal hlsearch<CR>'..v:count..'nzz'
+nnoremap <expr> N get(getloclist(0, {'winid':0}), 'winid', 0) ? '<Cmd>lprev<CR>zz' : '<Cmd>setlocal hlsearch<CR>'..v:count..'Nzz'
 
 " Disable search hl after editing
 au TextChanged,InsertEnter * set nohlsearch

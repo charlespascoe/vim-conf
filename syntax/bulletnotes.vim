@@ -160,5 +160,5 @@ highlight link AnchorPointerMarker AnchorPointer
 " highlight bnHighlight ctermfg=51 cterm=bold
 " highlight bnHighlightMark ctermfg=33
 
-hi link bnHighlight Todo
+hi bnHighlight cterm=bold guifg=#E3CB4C guibg=#3D3400
 hi link bnHighlightMark bnHighlight

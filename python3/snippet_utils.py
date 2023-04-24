@@ -261,7 +261,6 @@ def jump_after(ret):
 
     return ret
 
-
 def format_camel_case(s, cap_first=False):
     if s == "":
         return s

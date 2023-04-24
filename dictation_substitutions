@@ -10,6 +10,7 @@
 # /r(?:each|ich|oute|o?ach|ight|oot|ita) control(ler)?(s)?/rate control\1\2/i
 
 /CLC/CRC/
+/CRC note(s?)/CRC node\1/
 
 /(?:Tino|T-Naw)(s)?/TNOR\1/i
 /pseudo TNOR/pseudo-TNOR/
@@ -20,11 +21,12 @@
 /([Cc])hange log/\1hangelog/i
 /(\d+) calls per second/\1cps/
 /(little|big) Indian/\1-endian/
+/[Ss]toreys/\1tories/
 /aka/a.k.a./
 /Boolean/boolean/
 /change log/changelog/
 /draughts/drafts/i
-/G[ui]ra]/Jira/
+/G[ui]ra/Jira/
 /philtre/filter/i
 /robots? framework/Robot Framework/i
 /robots? manager/Robot Manager/i
