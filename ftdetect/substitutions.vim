@@ -1,1 +1,1 @@
-au BufNewFile,BufRead dictation_substitutions set filetype=substitutions
+au BufNewFile,BufRead dictation_substitutions,*.subs set filetype=substitutions
