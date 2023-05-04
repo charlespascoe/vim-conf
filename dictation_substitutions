@@ -25,6 +25,8 @@
 /aka/a.k.a./
 /Boolean/boolean/
 /change log/changelog/
+/chat GPT/ChatGPT/i
+/couch ?DB/CouchDB/
 /draughts/drafts/i
 /G[ui]ra/Jira/
 /philtre/filter/i
@@ -34,6 +36,14 @@
 /couch TVs/CouchDB's/
 /couch ?(DB|TV)/CouchDB/
 
+/christian mark/?/i
+/\?+/?/
+
+# Vim
+/VI[NM]/Vim/
+/Vim script/VimScript/
+
+# Numbers
 /(\d+) microseconds/\1µs/
 /(\d+) milliseconds/\1ms/
 
