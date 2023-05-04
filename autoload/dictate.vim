@@ -122,9 +122,9 @@ fun s:handleTrascriptionMessage(msg)
             call popup_settext(b:_dictate_popup, text)
         endif
     else
-        let @" = text
+        let g:_dictate_insert = text
         let s:disable_pause = 1
-        call feedkeys("\<C-r>"..'"')
+        silent call feedkeys("\<C-r>=g:_dictate_insert\<CR>")
 
         if exists('b:_dictate_popup')
             call popup_close(b:_dictate_popup)
