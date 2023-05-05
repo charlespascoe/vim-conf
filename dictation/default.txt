@@ -1,0 +1,5 @@
+british
+spokenpunc
+newlines
+common
+leadspace

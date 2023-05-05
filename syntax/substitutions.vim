@@ -5,7 +5,7 @@ hi link subComment Comment
 syntax match subPattern /^\/\%([^\/]\|\\.\)\+\// contains=subEscape,subPatternDiv,subGroup,subRepeat,subSpecialChar,subFlags,subCharset nextgroup=subReplacement
 hi link subPattern Constant
 
-syntax match subReplacement /\%([^\/]\|\\.\)\+\// contained contains=subPatternDiv,subGroupRef,subEscape nextgroup=subEndFlags
+syntax match subReplacement /\%([^\/]\|\\.\)*\// contained contains=subPatternDiv,subGroupRef,subEscape nextgroup=subEndFlags
 
 syntax match subGroupRef /\\\d\+\|\${\d\+}/ contained
 hi link subGroupRef SpecialChar

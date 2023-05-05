@@ -598,6 +598,13 @@ func($1)$2 {
 }
 endsnippet
 
+snippet '(?<=.)\bfe' "Anonymous Function with error return" wr
+func($1) `!p snip.rv = "(" if t[2] else ""`$2`!p snip.rv = ", " if t[2] else ""`error`!p snip.rv = ")" if t[2] else ""` {
+	$0
+	return nil
+}
+endsnippet
+
 snippet '(?<=.)\bfr' "Anonymous Function with Return" wr
 func($1) $2 {
 	return $0
