@@ -13,7 +13,7 @@ fun! ShouldIndentBullet()
 endfun
 
 py3 import mdjoin
-command! -range=% Export let @+ = py3eval('mdjoin.join(<line1>, <line2>)')
+command! -range=% Export let @+ = py3eval('mdjoin.join(start=<line1>, end=<line2>)')
 
 " Convert selected text to a link
 
@@ -25,4 +25,8 @@ fun! FormatLinkSlug(type)
     endif
 endfun
 
-let b:get_dictation_prompt = function('dictate#GetLeadingParagraph')
+fun s:GetLeadingParagraph()
+    return py3eval('dictate.get_leading_block()')
+endfun
+
+let b:get_dictation_prompt = function('s:GetLeadingParagraph')

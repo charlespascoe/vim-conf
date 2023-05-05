@@ -1,5 +1,6 @@
 global !p
 import random
+import uuid
 from snippet_utils import start_dictation, jump_after, format_camel_case, format_snake_case
 
 def rand_id(l=16):
@@ -52,8 +53,12 @@ snippet '\b(sc|SC)\b' "Snake case" ri
 $1`!p t[1] = jump_after(format_snake_case(t[1], match[1] == 'SC'))`
 endsnippet
 
-snippet randid
+snippet randid "Random ID" w
 `!p if not snip.c: snip.rv = rand_id()`
+endsnippet
+
+snippet randuuid "Random UUID" w
+`!p if not snip.c: snip.rv = str(uuid.uuid4())`
 endsnippet
 
 snippet '\brandid(\d+)' "Random ID of length" r

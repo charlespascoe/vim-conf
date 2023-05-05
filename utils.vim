@@ -93,9 +93,10 @@ noremap <leader>R <Esc>:%s/\<<C-r><C-w>\>//gc<Left><Left><Left>
 " Macros
 
 fun s:RepeatMacroUntilDone()
-    let l:reg = getcharstr()
+    let l:reg = v:register
 
     if l:reg !~ '[a-z]'
+        echoerr "You need to supply a register"
         return
     endif
 
@@ -109,7 +110,7 @@ fun s:RepeatMacroUntilDone()
 
     call setreg(l:repeat_reg, '@'.l:reg.'@'.l:repeat_reg)
 
-    exec 'normal' '@'.l:repeat_reg
+    exec 'silent' 'normal' '@'.l:repeat_reg
 
     call setreg(l:repeat_reg, l:prev_reg)
 endfun
@@ -124,8 +125,8 @@ fun! QuickSearchMap(key, title, pattern)
 endfun
 
 " Make n and N move through location list when open
-nnoremap <expr> n get(getloclist(0, {'winid':0}), 'winid', 0) ? '<Cmd>lnext<CR>zz' : '<Cmd>setlocal hlsearch<CR>'..v:count..'nzz'
-nnoremap <expr> N get(getloclist(0, {'winid':0}), 'winid', 0) ? '<Cmd>lprev<CR>zz' : '<Cmd>setlocal hlsearch<CR>'..v:count..'Nzz'
+nnoremap <expr> n get(getloclist(0, {'winid':0}), 'winid', 0) ? '<Cmd>lnext<CR>zz' : '<Cmd>setlocal hlsearch<CR>'..v:count1..'nzz'
+nnoremap <expr> N get(getloclist(0, {'winid':0}), 'winid', 0) ? '<Cmd>lprev<CR>zz' : '<Cmd>setlocal hlsearch<CR>'..v:count1..'Nzz'
 
 " Disable search hl after editing
 au TextChanged,InsertEnter * set nohlsearch

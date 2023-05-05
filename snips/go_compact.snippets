@@ -376,37 +376,42 @@ endglobal
 ## Imports ##
 
 pre_expand "add_import(snip, 'errors')"
-snippet errors. "Errors auto-import" bwA
+snippet errors. "Errors auto-import" wA
 errors.
 endsnippet
 
 pre_expand "add_import(snip, 'fmt')"
-snippet fmt. "Format auto-import" bwA
+snippet fmt. "Format auto-import" wA
 fmt.
 endsnippet
 
 pre_expand "add_import(snip, 'net/http')"
-snippet http. "HTTP auto-import" bwA
+snippet http. "HTTP auto-import" wA
 http.
 endsnippet
 
 pre_expand "add_import(snip, 'encoding/json')"
-snippet json. "JSON auto-import" bwA
+snippet json. "JSON auto-import" wA
 json.
 endsnippet
 
 pre_expand "add_import(snip, 'os')"
-snippet os. "OS auto-import" bwA
+snippet os. "OS auto-import" wA
 os.
 endsnippet
 
+pre_expand "add_import(snip, 'time')"
+snippet time. "time" w
+time.
+endsnippet
+
 pre_expand "add_import(snip, 'regexp')"
-snippet re. "regexp"
+snippet re. "regexp" w
 regexp.
 endsnippet
 
 pre_expand "add_import(snip, 'strconv')"
-snippet sc. "strconv"
+snippet sc. "strconv" w
 strconv.
 endsnippet
 
@@ -824,6 +829,27 @@ pre_expand "add_import(snip, 'encoding/json')"
 snippet ju "JSON Unmarshal" bw
 err := json.Unmarshal(${1:data}, $2)
 endsnippet
+
+## K ##
+
+snippet ks "Kong Subcommand" b
+type $1Cmd struct {
+	$0
+}
+
+func (`!p snip.rv = t[1].lower()` *$1Cmd) Run(ctx *Context) error {
+	// TODO
+	return nil
+}
+endsnippet
+
+snippet 'k([fa])(d?)' "Kong Flag" br
+${1:Arg} ${2:string} \``!p snip.rv = 'arg:"" ' if match[1] == 'a' else ''``!p snip.rv = 'default:"" ' if match[2] else ''`help:"$3"\`
+endsnippet
+
+# snippet kfd "Kong Argument (with Default)" b
+# ${1:Arg} ${2:string} \`default:"$3" help:"$4"\`
+# endsnippet
 
 ## L ##
 

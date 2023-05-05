@@ -4,7 +4,8 @@
 /^Hi,? (\w+)\.?\s*$/Hi \1,\n\n/B
 /\)\.\s*$/ /B
 
-# CRC
+# Work
+
 /(?:route|reach) control(ler)?(s)?/rate control\1\2/i
 # /(?:great|bridge|brakes?|writes?) control(ler)?(s)?/rate control\1\2/i
 # /r(?:each|ich|oute|o?ach|ight|oot|ita) control(ler)?(s)?/rate control\1\2/i
@@ -14,6 +15,22 @@
 
 /(?:Tino|T-Naw)(s)?/TNOR\1/i
 /pseudo TNOR/pseudo-TNOR/
+
+/dis[ck]/DISC/
+
+/Est[eio]n/SDIN/
+
+# SIP
+/the sip/the SIP/
+/sip (traffic|messages?)/SIP \1/
+/the paid/the PAID/
+/the from/the From/
+/paid or from/PAID or From/
+
+/sipped puzzel/SIP parser/
+/SIP[ -](PASA|PAHTA)/SIP parser/
+
+/(\d+) ?CPS/\1cps/i
 
 # General
 /%S\b/%s/B
@@ -46,15 +63,3 @@
 # Numbers
 /(\d+) microseconds/\1µs/
 /(\d+) milliseconds/\1ms/
-
-# SIP
-/the sip/the SIP/
-/sip (traffic|messages?)/SIP \1/
-/the paid/the PAID/
-/the from/the From/
-/paid or from/PAID or From/
-
-/sipped puzzel/SIP parser/
-/SIP[ -](PASA|PAHTA)/SIP parser/
-
-/(\d+) ?CPS/\1cps/i

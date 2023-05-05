@@ -66,6 +66,29 @@ def get_leading_paragraph():
     return " ".join(contents[::-1])
 
 
+def get_leading_block():
+    lnum, col = vim.current.window.cursor
+
+    contents = [vim.current.buffer[lnum - 1][:col]]
+
+    if contents[0].strip() == "":
+        # Continue from the previous non-empty line by clearing the current line
+        contents = []
+
+    lnum -= 1
+
+    while lnum >= 1:
+        line = vim.current.buffer[lnum - 1]
+
+        if line == "":
+            break
+
+        contents.append(line)
+        lnum -= 1
+
+    return "\n".join(contents[::-1])
+
+
 string_re = re.compile("[\"'`]")
 
 
