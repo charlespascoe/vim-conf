@@ -203,21 +203,39 @@ def find_lines(regexp):
 
 
 # Note that line is zero-based and exclusive
-def preceeding_lines(line_index=None):
+def preceeding_lines(line_index=None, limit=None):
     if line_index is None:
         line_index = current.window.line
 
-    for _, line in current.buffer.lines(end=line_index, reverse=True):
+    end = line_index
+
+    if limit is None:
+        start = 0
+    else:
+        start = end - limit
+
+    for _, line in current.buffer.lines(start, end, reverse=True):
         yield line
 
 
 # Note that line is zero-based and exclusive
-def following_lines(line_index=None):
+def following_lines(line_index=None, limit=None):
     if line_index is None:
         line_index = current.window.line
 
-    for _, line in current.buffer.lines(start=line_index + 1):
+    start = line_index + 1
+
+    if limit is None:
+        end = None
+    else:
+        end = start + limit
+
+    for _, line in current.buffer.lines(start, end):
         yield line
+
+
+def is_empty(s):
+    return s.strip() == ""
 
 
 def scan(lines, *funcs):
@@ -260,6 +278,7 @@ def jump_after(ret):
         jump()
 
     return ret
+
 
 def format_camel_case(s, cap_first=False):
     if s == "":
