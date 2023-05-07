@@ -584,10 +584,8 @@ snippet 'FLr ' "Field (RW Lock)" bwreA
 ${1:lock} sync.RWMutex
 endsnippet
 
-# Removed comment
-# // $1 ${4:TODO: Description}.
 snippet '^f ' "Function" brA
-func ${1: }($2)$3 {
+func $1($2)$3 {
 	$0
 }
 endsnippet
@@ -814,15 +812,13 @@ import (
 endsnippet
 
 snippet '^in' "Interface" brA
-// $1 ${2:TODO: Description}.
-type ${1: } interface {
+type $1 interface {
 	$0
 }
 endsnippet
 
 snippet '^\tim' "Interface Method" brA
-	// $1 TODO: Description.
-	${1: }($2)$0
+	$1($2)$0
 endsnippet
 
 ## J ##
@@ -970,7 +966,6 @@ func main() {
 }
 endsnippet
 
-# // $1 TODO: Description.
 pre_expand "snip.context = find_method_type(match[1] == '*')"
 post_jump "skip_receiver_name(snip)"
 snippet '^m([ *])' "Method" brA
@@ -979,7 +974,6 @@ func (${1:`!p snip.rv = snip.context.rec_name`}${1/.+/ /}`!p snip.rv = snip.cont
 }
 endsnippet
 
-# // LessThan TODO: Description.
 pre_expand "snip.context = find_method_type(match[1] == '*')"
 post_jump "skip_receiver_name(snip)"
 snippet '^mlt?([ *])' "Method - LessThan" brA
@@ -988,7 +982,6 @@ func (${1:`!p snip.rv = snip.context.rec_name`}${1/.+/ /}`!p snip.rv = snip.cont
 }
 endsnippet
 
-# // $1 TODO: Description.
 pre_expand "snip.context = find_method_type(match[1] == '*')"
 post_jump "skip_receiver_name(snip)"
 snippet '^mr([ *])' "Method with self return" brA
@@ -1218,7 +1211,6 @@ sort.Slice($1, func(i, j int) bool {
 endsnippet
 
 snippet '^st' "Struct" brA
-// $1 ${2:TODO: Description}.
 type ${1:Name} struct {
 	$0
 }
