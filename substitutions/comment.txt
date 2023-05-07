@@ -1,5 +1,6 @@
 british
-spokenpunc
+strip-trailing-punc
+spoken-punc
 newlines
 common
 leadspace

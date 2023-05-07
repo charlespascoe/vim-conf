@@ -117,8 +117,12 @@ fun s:handleTrascriptionMessage(msg)
 
     if !a:msg.final
         if !exists('b:_dictate_popup')
-            let b:_dictate_popup = popup_atcursor(text, #{pos: 'topleft', line: 'cursor', col: 'cursor'})
+            " The use of 'wrap: false' and 'fixed: false' is to force the left
+            " edge of the pop-up to shift to the left when the text reaches the
+            " edge of the screen
+            let b:_dictate_popup = popup_atcursor(text, #{pos: 'topleft', line: 'cursor', col: 'cursor', wrap: v:false, fixed: v:false})
         else
+            " TODO: manually wrap text beyond 80 characters
             call popup_settext(b:_dictate_popup, text)
         endif
     else

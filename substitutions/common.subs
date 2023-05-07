@@ -3,12 +3,14 @@
 /\bto ?do:/TODO:/Bi
 /^Hi,? (\w+)\.?\s*$/Hi \1,\n\n/B
 /\)\.\s*$/ /B
+/(\d+) microseconds/\1µs/
+/(\d+) milliseconds/\1ms/
+/(\d+) ?CPS/\1cps/i
+/%S\b/%s/B
 
 # Work
 
 /(?:route|reach) control(ler)?(s)?/rate control\1\2/i
-# /(?:great|bridge|brakes?|writes?) control(ler)?(s)?/rate control\1\2/i
-# /r(?:each|ich|oute|o?ach|ight|oot|ita) control(ler)?(s)?/rate control\1\2/i
 
 /CLC/CRC/
 /CRC note(s?)/CRC node\1/
@@ -30,10 +32,7 @@
 /sipped puzzel/SIP parser/
 /SIP[ -](PASA|PAHTA)/SIP parser/
 
-/(\d+) ?CPS/\1cps/i
-
 # General
-/%S\b/%s/B
 /(?:ASCII|asky)[ -]dock?(s)?/AsciiDoc\1/i
 /([Cc])hange log/\1hangelog/i
 /(\d+) calls per second/\1cps/
@@ -50,16 +49,14 @@
 /robots? framework/Robot Framework/i
 /robots? manager/Robot Manager/i
 
+/rap/wrap/
+/Rap/Wrap/
+
 /couch TVs/CouchDB's/
 /couch ?(DB|TV)/CouchDB/
 
 /christian mark/?/i
 /\?+/?/
 
-# Vim
 /VI[NM]/Vim/
 /Vim script/VimScript/
-
-# Numbers
-/(\d+) microseconds/\1µs/
-/(\d+) milliseconds/\1ms/
