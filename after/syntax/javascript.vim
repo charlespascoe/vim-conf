@@ -2,6 +2,9 @@ syntax clear  jsFuncCall
 syntax match  jsFuncCall /\<\K\k*\ze[\s\n]*(/ nextgroup=jsFuncCallArgBlock
 syntax region jsFuncCallArgBlock matchgroup=jsFuncCallParens start='(' end=')' contained transparent nextgroup=jsFuncCallArgBlock
 
+syntax clear jsBuiltins
+syntax keyword jsBuiltins decodeURI decodeURIComponent encodeURI encodeURIComponent eval isFinite isNaN parseFloat parseInt uneval nextgroup=jsFuncCallArgBlock
+
 hi link Braces Delimiter
 hi link Brackets Delimiter
 hi link Parens Delimiter
@@ -13,7 +16,7 @@ hi link Noise Operator
 hi link jsArrowFunction              Noise
 hi link jsBraces                     Delimiter
 hi link jsBrackets                   Brackets
-hi link jsBuiltins                   Function
+hi link jsBuiltins                   FunctionBuiltin
 hi link jsClassDefinition            Type
 hi link jsDestructuringAssignment    None
 hi link jsDestructuringBlock         Identifier

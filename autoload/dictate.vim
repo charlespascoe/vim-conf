@@ -138,11 +138,12 @@ fun s:handleTrascriptionMessage(msg)
 endfun
 
 let s:cols = #{
-    \ idle: g:dracula#palette.comment[0],
-    \ listen: '#DD69AB',
+    \ idle:    '#6272A4',
+    \ listen:  '#DD69AB',
     \ dictate: '#FF5555',
-    \ error: '#FF5555',
-    \ paused: '#037E98',
+    \ working: '#7F6794',
+    \ error:   '#FF5555',
+    \ paused:  '#037E98',
 \}
 
 fun s:updateStatus(status, active_client)

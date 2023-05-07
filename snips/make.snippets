@@ -104,6 +104,7 @@ endsnippet
 snippet docker "Docker" bw
 .PHONY: docker
 ## docker: Builds a docker image; set TAGS variable to the space-separated list of tags
+# TODO: Add build/package/Dockerfile
 docker: linux
 	@mv $(BINARY_NAME)-linux build/package/$(BINARY_NAME); \
 	tags=($${TAGS:-snapshot}); \
@@ -111,7 +112,7 @@ docker: linux
 	for t in $${tags[@]}; do \
 		opts="$$opts -t $(BINARY_NAME):$$t"; \
 	done; \
-	echo docker build build/package/ $$opts; \
-	docker build build/package/ $$opts; \
+	echo docker build --platform linux/amd64 build/package/ $$opts; \
+	docker build --platform linux/amd64 build/package/ $$opts; \
 	rm build/package/$(BINARY_NAME)
 endsnippet

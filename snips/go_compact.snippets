@@ -1255,6 +1255,21 @@ if err := scanner.Err(); err != nil {
 }
 endsnippet
 
+pre_expand "add_import(snip, 'bufio', 'os')"
+snippet stdin "Scanner" b
+scanner := bufio.NewScanner(os.Stdin)
+
+for scanner.Scan() {
+	line := scanner.Text()
+
+	$0
+}
+
+if err := scanner.Err(); err != nil {
+	// TODO
+}
+endsnippet
+
 ## T ##
 
 context "not snip.buffer.name.endswith('_test.go')"

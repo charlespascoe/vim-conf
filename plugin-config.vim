@@ -307,6 +307,7 @@ let g:gutentags_define_advanced_commands = 1
 " vim-markdown
 
 let g:vim_markdown_new_list_item_indent = 2
+let g:vim_markdown_conceal = 0
 
 " tsuquyomi
 

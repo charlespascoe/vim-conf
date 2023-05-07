@@ -189,9 +189,10 @@ imap <4-MiddleMouse> <Nop>
 
 set re=2
 
-" Set window split options
+" Set window split and resize options
 set splitright " For vertical splits, the cursor will be on the right pane
 set splitbelow " For horizontal splits, the cursor will be on the bottom pane
+set eadirection=hor " Only automatically resize horizontally, leave height the same
 
 " Set shell for shell-based commands
 set shell=/bin/zsh

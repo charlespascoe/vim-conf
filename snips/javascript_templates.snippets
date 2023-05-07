@@ -81,22 +81,19 @@ import {
 class ${1:Example}Viewmodel extends Viewmodel {
 	constructor() {
 		super({
-			text: 'Hello, world',$0
+			$0
 		});
 	}
 }
 
 const `!p snip.rv = custom_camel_case(t[1])`View = component(({viewmodel}, {div}) => (
-	div()(
-		viewmodel.observable.text,
-	)
+	div()()
 ));
 
-export default ({nav, setPageInfo, mount}) => {
-	nav.route('/`!p snip.rv = t[1].lower()`').do(() => {
+export default (app) => {
+	app.nav.route('/`!p snip.rv = t[1].lower()`').do(() => {
 		const viewmodel = new $1Viewmodel();
-		setPageInfo({title: '$1'});
-		mount(`!p snip.rv = custom_camel_case(t[1])`View({viewmodel})());
+		app.mountPage(`!p snip.rv = custom_camel_case(t[1])`View({viewmodel})());
 	});
 };
 endsnippet
