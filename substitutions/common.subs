@@ -45,9 +45,11 @@
 /couch ?DB/CouchDB/
 /draughts/drafts/i
 /G[ui]ra/Jira/
+/go[ -]dock/Godoc/i
 /philtre/filter/i
 /robots? framework/Robot Framework/i
 /robots? manager/Robot Manager/i
+/snip[ -]it/snippet/
 
 /rap/wrap/
 /Rap/Wrap/
