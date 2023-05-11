@@ -58,3 +58,27 @@ command -buffer ToggleGuiCol call <SID>ToggleGuiCol()
 
 " Search tags by including scope
 nnoremap <buffer> <C-]> <Cmd>set iskeyword+=<,> <bar> let name = expand('<cword>') <bar> set iskeyword-=<,> <bar> exec "tag" substitute(name, '<'.'SID'.'>', 's:', '')<CR>
+
+fun s:GetDictationContext()
+    let syn = synIDattr(synIDtrans(synID(line("."),max([col(".")-1,1]),1)),"name")
+
+    let prompt = ''
+    let transforms = ['camelcase']
+
+    if syn == 'Comment'
+        let prompt = dictate#GetLeadingComment()
+        let transforms = ['comment']
+    elseif syn == 'String'
+        let prompt = dictate#GetLeadingString()
+        " TODO: Check to see if it's actually a double-quoted versus a
+        " single-quoted string
+        let transforms = ['default', 'dqesc']
+    elseif syn == 'Function'
+        let prompt = 'The function name is:'
+        let transforms = ['camelcase']
+    endif
+
+    return #{prompt: prompt, transforms: transforms}
+endfun
+
+let b:get_dictation_context = function('s:GetDictationContext')

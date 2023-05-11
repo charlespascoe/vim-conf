@@ -39,6 +39,12 @@ linux: gencode
 test: fmtchk vet
 	go test ./...
 
+.PHONY: godoc
+## godoc: Runs a local godoc server on port 6060
+godoc:
+	@(sleep 0.5 && open http://localhost:6060/pkg/$(PROJECT_NAME)) &
+	godoc -http=localhost:6060
+
 .PHONY: benchmark
 ## benchmark: Run tests and benchmarks
 benchmark: fmtchk vet

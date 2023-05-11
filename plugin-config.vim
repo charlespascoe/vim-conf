@@ -312,3 +312,7 @@ let g:vim_markdown_conceal = 0
 " tsuquyomi
 
 let g:tsuquyomi_disable_quickfix = 1
+
+" vim-chatgpt
+
+let g:vim_chatgpt_system_prompt = "You are a proffessional assistant to a software developer. Do not provide explanations unless you are asked to. Always provide answers using correct Markdown syntax."

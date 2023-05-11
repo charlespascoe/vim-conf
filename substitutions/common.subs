@@ -43,13 +43,23 @@
 /change log/changelog/
 /chat GPT/ChatGPT/i
 /couch ?DB/CouchDB/
+/docker/Docker/
 /draughts/drafts/i
-/G[ui]ra/Jira/
 /go[ -]dock/Godoc/i
 /philtre/filter/i
 /robots? framework/Robot Framework/i
 /robots? manager/Robot Manager/i
 /snip[ -]it/snippet/
+
+/G[ui]r[ao]/Jira/
+/Dura/Jira/
+
+# TODO: figure out a better way of doing this rather than replacing all of them
+/console/Consul/i
+
+/Ri(dd|tt)iss?/Redis/
+/radish/Redis/
+/Redis streams/Redis Streams/
 
 /rap/wrap/
 /Rap/Wrap/

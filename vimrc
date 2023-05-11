@@ -82,7 +82,7 @@ set updatetime=2000
 set timeout timeoutlen=1000 ttimeout ttimeoutlen=0
 
 " Set global formatting options, primarily for comments
-set formatoptions=crqjn
+set formatoptions=crqj
 set textwidth=80
 set formatlistpat=^\\s*\\d\\+[\\]:.)}\\t\ ]\\s*\\\|^\\s*-\\s*
 

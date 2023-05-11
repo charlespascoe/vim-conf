@@ -20,6 +20,7 @@ fun s:SetupAbbrs(entered)
     cabbr m make
     cabbr ms messages
     cabbr tn tabnew
+    cabbr T Task
 
     cabbr ue UltiSnipsEdit
 

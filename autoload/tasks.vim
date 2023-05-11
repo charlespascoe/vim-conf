@@ -1,4 +1,4 @@
-fun tasks#temp(chgdir=1) abort
+fun tasks#temp(edit="edit", chgdir=1) abort
     if $TMPDIR == ''
         echoerr "TMPDIR must be set"
         return
@@ -9,16 +9,22 @@ fun tasks#temp(chgdir=1) abort
     let prefix = ""
 
     if a:chgdir
-        cd $TMPDIR/tasks
+        lcd $TMPDIR/tasks
     else
         let prefix = "$TMPDIR/"
     endif
 
-    exec "edit" prefix..(strftime("%Y-%m-%d_%H:%M:%S", localtime()))..'.md'
+    exec a:edit prefix..'Task_'..(strftime("%Y-%m-%d_%H:%M:%S", localtime()))..'.md'
 
     let b:get_dictation_context = function('tasks#context')
 
+    setlocal bufhidden=wipe
+    setlocal nobuflisted
+    setlocal winfixwidth
+
+    au WinClosed <buffer> w
     au BufUnload <buffer> call tasks#quickadd()
+    nmap <Enter> <Cmd>w <bar> call tasks#temp()<CR>
 
     startinsert
 endfun
@@ -34,6 +40,11 @@ fun tasks#quickadd()
     let title = lines[0]
     let notes = trim(join(lines[1:], "\n"))
 
+    if title == ''
+        let @+ = md
+        return
+    endif
+
     let url = 'things:///add?title='..UrlEncode(title)
 
     if notes != ''
@@ -42,7 +53,8 @@ fun tasks#quickadd()
 
     let @+ = notes
 
-    call system('open -g '..shellescape(url))
+    " Use job_start to add the task asynchronously
+    call job_start(['open', '-g', url])
 endfun
 
 fun tasks#context()

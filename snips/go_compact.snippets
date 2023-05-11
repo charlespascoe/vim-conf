@@ -418,6 +418,13 @@ endsnippet
 
 ## A ##
 
+snippet ae "Assign Error" b
+$1, err := $2
+if err != nil {
+	$0
+}
+endsnippet
+
 post_jump "if snip.tabstop == 0: auto_import(snip, snip.tabstops[1].current_text)"
 snippet '\bai ' "Auto-import" rA
 $1.

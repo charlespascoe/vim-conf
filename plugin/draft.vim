@@ -1,12 +1,12 @@
 fun s:NewDraft(ext, rtf=0) abort
-    if $TMPDIR == ''
-        echoerr "TMPDIR must be set"
+    if $DRAFTS == ''
+        echoerr "DRAFTS must be set"
         return
     endif
 
-    call system("mkdir $TMPDIR/drafts")
+    call system("mkdir -p $DRAFTS")
 
-    cd $TMPDIR/drafts
+    cd $DRAFTS
 
     exec "edit" (strftime("%Y-%m-%d_%H:%M:%S", localtime()))..'.'..a:ext
 
