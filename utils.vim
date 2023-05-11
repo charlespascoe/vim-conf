@@ -17,7 +17,6 @@ function! ShowHead()
     normal zz
 endfunction
 
-" command! -nargs=1 -complete=help Help tab help <args>
 command! -nargs=1 -complete=help Help Split help <args>
 
 command! ShowHead call ShowHead()
@@ -80,9 +79,6 @@ noremap <leader>i `iO
 
 nmap - g-<Cmd>echo "Change "..changenr()<CR>
 nmap + g+<Cmd>echo "Change "..changenr()<CR>
-
-" Add and jump to new line below while in insert mode (<C-Space>)
-imap <expr> <C-@> match(getline('.'), '^\s\+$') ? '<C-o>o' : '<Enter>'
 
 " Format JSON
 command! FormatJson %!python3 -m json.tool
@@ -155,17 +151,17 @@ nnoremap <expr> <silent> zg ConfirmSpellGood() ? 'zg' : ''
 " command SyntaxSync syntax sync fromstart
 
 " This autocommand may cause performance issues
-autocmd BufEnter,InsertLeave * :syntax sync fromstart
+" autocmd BufEnter,InsertLeave * :syntax sync fromstart
 
 " Enter Improvements
 
-fun! NormalEnter()
-    " For readonly buffers or the command line window, then just use a normal
-    " enter
-    return !&ma || bufexists('[Command Line]')
-endfun
+" fun! NormalEnter()
+"     " For readonly buffers or the command line window, then just use a normal
+"     " enter
+"     return !&ma || bufexists('[Command Line]')
+" endfun
 
-nmap <expr> <Enter> NormalEnter() ? "\<Enter>" : "i\<Enter>\<Space>\<BS>\<Esc>\<Right>"
+" nmap <expr> <Enter> NormalEnter() ? "\<Enter>" : "i\<Enter>\<Space>\<BS>\<Esc>\<Right>"
 
 " Smart Split
 
@@ -182,9 +178,8 @@ endfun
 
 command -bar Scratch call Scratch()
 
-" Note that the two double quote substitutions are very subtly different (open
-" vs close)
-command -bar FixQuotes %s/’/'/ge | %s/“/"/ge | %s/”/"/ge
+" Note that the two double quotes are very subtly different (open vs close)
+command -bar FixQuotes %s/’/'/ge | %s/[“”]/"/ge
 
 command Scriptnames redir @" | silent scriptnames | redir END | Scratch | exec 'normal p'
 command SyntimeReport redir @" | silent syntime report | redir END | Scratch | exec 'normal p'
@@ -196,7 +191,5 @@ endfun
 
 nmap yoC <Cmd>call <SID>ToggleConceal()<CR>
 
-" Tags
-
-" Jumps if there's one match, otherwise opens 'tselect' list
+" Jumps if there's one tag match, otherwise opens 'tselect' list
 nnoremap <C-]> g<C-]>

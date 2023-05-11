@@ -1,5 +1,9 @@
 source ~/.vim-conf/bundle.vim
 
+if isdirectory($HOME..'/.vim-local')
+    set rtp+=$HOME/.vim-local
+endif
+
 set encoding=utf-8
 
 packadd cfilter
