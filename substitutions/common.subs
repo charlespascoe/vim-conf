@@ -8,6 +8,10 @@
 /(\d+) ?CPS/\1cps/i
 /%S\b/%s/B
 
+/(\d) kilobytes/\1KB/
+/(\d) megabytes/\1MB/
+/(\d) gigabytes/\1GB/
+
 # Work
 
 /(?:route|reach) control(ler)?(s)?/rate control\1\2/i
