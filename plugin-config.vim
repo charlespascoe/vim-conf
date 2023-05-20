@@ -189,7 +189,7 @@ let g:go_imports_autosave = 0
 " Formatting interfers with jumps and folds; just do it manually
 let g:go_fmt_autosave = 0
 let g:go_gopls_matcher = 'caseSensitive'
-let g:go_gopls_complete_unimported = 0
+let g:go_gopls_complete_unimported = 1
 let g:go_gopls_deep_completion = 0
 let g:go_rename_command = 'gopls'
 let g:go_fmt_command='gopls'
@@ -315,4 +315,33 @@ let g:tsuquyomi_disable_quickfix = 1
 
 " vim-chatgpt
 
-let g:vim_chatgpt_system_prompt = "You are a proffessional assistant to a software developer. Do not provide explanations unless you are asked to. Always provide answers using correct Markdown syntax."
+let g:vim_chatgpt_system_prompt = "You are a professional assistant to a software developer. Do not provide explanations unless you are asked to. Always provide answers using correct Markdown syntax."
+
+" copilot.vim
+
+imap <C-Left> <Plug>(copilot-next)
+imap <C-Right> <Plug>(copilot-previous)
+imap <script><silent><nowait><expr> <S-Tab> copilot#Accept()
+
+" Disable default tab mapping
+let g:copilot_no_tab_map = 1
+
+let g:copilot_filetypes = {
+        \'*': 0,
+        \'bash': 1,
+        \'cpp': 1,
+        \'css': 1,
+        \'dockerfile': 1,
+        \'go': 1,
+        \'html': 0,
+        \'javascript': 1,
+        \'json': 0,
+        \'lua': 1,
+        \'python': 1,
+        \'sql': 1,
+        \'swift': 1,
+        \'typescript': 1,
+        \'vim': 1,
+        \'xml': 0,
+        \'yaml': 0,
+    \}

@@ -1,16 +1,18 @@
 # Formatting
 /toodoo/todo/i
 /\bto ?do:/TODO:/Bi
-/^Hi,? (\w+)\.?\s*$/Hi \1,\n\n/B
+/^Hi,? (\w+)[!.,]?\s*$/Hi \1,\n\n/B
 /\)\.\s*$/ /B
 /(\d+) microseconds/\1µs/
 /(\d+) milliseconds/\1ms/
 /(\d+) ?CPS/\1cps/i
 /%S\b/%s/B
 
-/(\d) kilobytes/\1KB/
-/(\d) megabytes/\1MB/
-/(\d) gigabytes/\1GB/
+/(\d) (KB|kilobytes)/\1KB/
+/(\d) (MB|megabytes)/\1MB/
+/(\d) (GB|gigabytes)/\1GB/
+
+/\betc$/etc./B
 
 # Work
 
@@ -22,23 +24,26 @@
 /(?:Tino|T-Naw)(s)?/TNOR\1/i
 /pseudo TNOR/pseudo-TNOR/
 
-/dis[ck]/DISC/
-
-/Est[eio]n/SDIN/
+/dis[ck]/DISC/i
 
 # SIP
+/([Pp])(?:arza|asa|atha)/\1arser/i
+/PARS-/parse /i
+/PARS/parse/i
+
 /the sip/the SIP/
 /sip (traffic|messages?)/SIP \1/
 /the paid/the PAID/
 /the from/the From/
 /paid or from/PAID or From/
 
+/PARS[ -][SC]IP/parse SIP/i
 /sipped puzzel/SIP parser/
-/SIP[ -](PASA|PAHTA)/SIP parser/
 
 # General
-/(?:ASCII|asky)[ -]dock?(s)?/AsciiDoc\1/i
+/(?:ASCII|aske?y)[ -]?dock?(s)?/AsciiDoc\1/i
 /([Cc])hange log/\1hangelog/i
+/([Cc])onnexion(s?)/\1onnection\2/
 /(\d+) calls per second/\1cps/
 /(little|big) Indian/\1-endian/
 /[Ss]toreys/\1tories/
@@ -50,10 +55,12 @@
 /docker/Docker/
 /draughts/drafts/i
 /go[ -]dock/Godoc/i
+/Jason/JSON/i
 /philtre/filter/i
 /robots? framework/Robot Framework/i
 /robots? manager/Robot Manager/i
 /snip[ -]it/snippet/
+
 
 /G[ui]r[ao]/Jira/
 /Dura/Jira/
@@ -62,7 +69,7 @@
 /console/Consul/i
 
 /Ri(dd|tt)iss?/Redis/
-/radish/Redis/
+/radish/Redis/i
 /Redis streams/Redis Streams/
 
 /rap/wrap/

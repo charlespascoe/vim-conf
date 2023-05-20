@@ -36,12 +36,13 @@ fun tasks#quickadd()
         return
     endif
 
+    let @+ = md
+
     let lines = split(md, "\n")
     let title = lines[0]
     let notes = trim(join(lines[1:], "\n"))
 
     if title == ''
-        let @+ = md
         return
     endif
 
@@ -51,10 +52,9 @@ fun tasks#quickadd()
         let url .= '&notes='..UrlEncode(notes)
     endif
 
-    let @+ = notes
-
-    " Use job_start to add the task asynchronously
-    call job_start(['open', '-g', url])
+    " Use job_start to add the task asynchronously, and do not stop the job when
+    " Vim exits
+    call job_start(['open', '-g', url], #{stoponexit: ""})
 endfun
 
 fun tasks#context()

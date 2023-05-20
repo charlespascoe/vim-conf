@@ -29,7 +29,7 @@ Plug 'dense-analysis/ale'
 Plug 'dkarter/bullets.vim'
 Plug 'dracula/vim', #{as: 'dracula'}
 Plug 'fatih/vim-go'
-Plug 'preservim/vim-markdown'
+Plug 'github/copilot.vim'
 Plug 'habamax/vim-asciidoctor'
 Plug 'junegunn/vim-easy-align'
 Plug 'junegunn/vim-plug'
