@@ -86,9 +86,6 @@ def guess_log_var():
 	return 'log'
 
 
-def get_package_name():
-	return vim.current.window.buffer[0].split(' ')[1]
-
 def get_interface_type(name):
 	if '.' in name:
 		return name
@@ -109,7 +106,7 @@ def get_function_name():
 		match = func_re.match(line)
 
 		if match:
-			return match[1]
+			return f"{get_package_name() or 'unknown'}.{match[1]}"
 
 		match = method_re.match(line)
 
@@ -867,75 +864,75 @@ pre_expand "add_import(snip, 'github.com/rs/zerolog')"
 snippet ld "Log Debug" bw
 `!p snip.rv = guess_log_var()`.Debug().
 	Str("func", "`!p snip.rv = get_function_name()`").
-	Msg("$1")
+	Msg`!p snip.rv = 'f' if '%' in t[1] else ''`("$1"`!p snip.rv = ', ' if '%' in t[1] else ''`$0)
 endsnippet
 
-pre_expand "add_import(snip, 'github.com/rs/zerolog')"
-snippet ldf "Log Debug Format" bw
-`!p snip.rv = guess_log_var()`.Debug().
-	Str("func", "`!p snip.rv = get_function_name()`").
-	Msgf("$1", $2)
-endsnippet
+# pre_expand "add_import(snip, 'github.com/rs/zerolog')"
+# snippet ldf "Log Debug Format" bw
+# `!p snip.rv = guess_log_var()`.Debug().
+# 	Str("func", "`!p snip.rv = get_function_name()`").
+# 	Msgf("$1", $2)
+# endsnippet
 
 pre_expand "add_import(snip, 'github.com/rs/zerolog')"
 snippet li "Log Info" bw
 `!p snip.rv = guess_log_var()`.Info().
 	Str("func", "`!p snip.rv = get_function_name()`").
-	Msg("$1")
+	Msg`!p snip.rv = 'f' if '%' in t[1] else ''`("$1"`!p snip.rv = ', ' if '%' in t[1] else ''`$0)
 endsnippet
 
-pre_expand "add_import(snip, 'github.com/rs/zerolog')"
-snippet lif "Log Info Format" bw
-`!p snip.rv = guess_log_var()`.Info().
-	Str("func", "`!p snip.rv = get_function_name()`").
-	Msgf("$1", $2)
-endsnippet
+# pre_expand "add_import(snip, 'github.com/rs/zerolog')"
+# snippet lif "Log Info Format" bw
+# `!p snip.rv = guess_log_var()`.Info().
+# 	Str("func", "`!p snip.rv = get_function_name()`").
+# 	Msgf("$1", $2)
+# endsnippet
 
 pre_expand "add_import(snip, 'github.com/rs/zerolog')"
 snippet lw "Log Warn" bw
 `!p snip.rv = guess_log_var()`.Warn().
 	Str("func", "`!p snip.rv = get_function_name()`").
-	Msg("$1")
+	Msg`!p snip.rv = 'f' if '%' in t[1] else ''`("$1"`!p snip.rv = ', ' if '%' in t[1] else ''`$0)
 endsnippet
 
-pre_expand "add_import(snip, 'github.com/rs/zerolog')"
-snippet lwf "Log Warn Format" bw
-`!p snip.rv = guess_log_var()`.Warn().
-	Str("func", "`!p snip.rv = get_function_name()`").
-	Msgf("$1", $2)
-endsnippet
+# pre_expand "add_import(snip, 'github.com/rs/zerolog')"
+# snippet lwf "Log Warn Format" bw
+# `!p snip.rv = guess_log_var()`.Warn().
+# 	Str("func", "`!p snip.rv = get_function_name()`").
+# 	Msgf("$1", $2)
+# endsnippet
 
 pre_expand "add_import(snip, 'github.com/rs/zerolog')"
 snippet le "Log Error" bw
 `!p snip.rv = guess_log_var()`.Error().
 	Str("func", "`!p snip.rv = get_function_name()`").
 	Err(err).
-	Msg("$1")
+	Msg`!p snip.rv = 'f' if '%' in t[1] else ''`("$1"`!p snip.rv = ', ' if '%' in t[1] else ''`$0)
 endsnippet
 
-pre_expand "add_import(snip, 'github.com/rs/zerolog')"
-snippet lef "Log Error Format" bw
-`!p snip.rv = guess_log_var()`.Error().
-	Str("func", "`!p snip.rv = get_function_name()`").
-	Err(err).
-	Msgf("$1", $2)
-endsnippet
+# pre_expand "add_import(snip, 'github.com/rs/zerolog')"
+# snippet lef "Log Error Format" bw
+# `!p snip.rv = guess_log_var()`.Error().
+# 	Str("func", "`!p snip.rv = get_function_name()`").
+# 	Err(err).
+# 	Msgf("$1", $2)
+# endsnippet
 
 pre_expand "add_import(snip, 'github.com/rs/zerolog')"
 snippet lf "Log Fatal" bw
 `!p snip.rv = guess_log_var()`.Fatal().
 	Str("func", "`!p snip.rv = get_function_name()`").
 	Err(err).
-	Msg("$1")
+	Msg`!p snip.rv = 'f' if '%' in t[1] else ''`("$1"`!p snip.rv = ', ' if '%' in t[1] else ''`$0)
 endsnippet
 
-pre_expand "add_import(snip, 'github.com/rs/zerolog')"
-snippet lff "Log Fatal Format" bw
-`!p snip.rv = guess_log_var()`.Fatal().
-	Str("func", "`!p snip.rv = get_function_name()`").
-	Err(err).
-	Msgf("$1", $2)
-endsnippet
+# pre_expand "add_import(snip, 'github.com/rs/zerolog')"
+# snippet lff "Log Fatal Format" bw
+# `!p snip.rv = guess_log_var()`.Fatal().
+# 	Str("func", "`!p snip.rv = get_function_name()`").
+# 	Err(err).
+# 	Msgf("$1", $2)
+# endsnippet
 
 pre_expand "add_import(snip, 'fmt', 'github.com/rs/zerolog')"
 snippet lp "Log Panic" bw
@@ -943,17 +940,18 @@ snippet lp "Log Panic" bw
 	Str("func", "`!p snip.rv = get_function_name()`").
 	Stack().
 	Err(fmt.Errorf("%s", r)).
-	Msg("A panic occurred$1")
+	Msg`!p snip.rv = 'f' if '%' in t[1] else ''`("A panic occurred$1"`!p snip.rv = ', ' if '%' in t[1] else ''`$0)
 endsnippet
+# Msg("A panic occurred$1")
 
-pre_expand "add_import(snip, 'fmt', 'github.com/rs/zerolog')"
-snippet lpf "Log Panic Format" bw
-`!p snip.rv = guess_log_var()`.Error().
-	Str("func", "`!p snip.rv = get_function_name()`").
-	Stack().
-	Err(fmt.Errorf("%s", r)).
-	Msgf("A panic occurred$1", $2)
-endsnippet
+# pre_expand "add_import(snip, 'fmt', 'github.com/rs/zerolog')"
+# snippet lpf "Log Panic Format" bw
+# `!p snip.rv = guess_log_var()`.Error().
+# 	Str("func", "`!p snip.rv = get_function_name()`").
+# 	Stack().
+# 	Err(fmt.Errorf("%s", r)).
+# 	Msgf("A panic occurred$1", $2)
+# endsnippet
 
 snippet L "Lock" bw
 `!p snip.rv = get_receiver_name()`.${1:lock}.Lock()
@@ -1119,14 +1117,19 @@ endsnippet
 
 ## P ##
 
-pre_expand "add_import(snip, 'fmt')"
-snippet pf "Printf" b
-fmt.Printf("$1\n", $0)
-endsnippet
+# pre_expand "add_import(snip, 'fmt')"
+# snippet pf "Printf" b
+# fmt.Printf("$1\n", $0)
+# endsnippet
+
+# pre_expand "add_import(snip, 'fmt')"
+# snippet pl "Println" b
+# fmt.Println("$0")
+# endsnippet
 
 pre_expand "add_import(snip, 'fmt')"
-snippet pl "Println" b
-fmt.Println("$0")
+snippet pf "Printf" b
+fmt.Print`!p snip.rv = 'f' if '%' in t[1] else 'ln'`("$1`!p snip.rv = '\\n", ' if '%' in t[1] else '"'`$0)
 endsnippet
 
 snippet p "panic" bw

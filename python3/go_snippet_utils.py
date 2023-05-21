@@ -14,6 +14,7 @@ test_re = re.compile(r"^func Test([^(]*)\(")
 method_re = re.compile(r"^func \((?:(\w+)\s+)?([^)]+)\)\s+(\w+)[\[(]")
 generic_type_re = re.compile(f"(\w+)(?:\[(.*)\])?")
 type_re = re.compile(r"^type (\w+)(?:\[(.*)\])? ")
+package_re = re.compile(r"^package (\w+)")
 
 
 @dataclass
@@ -176,6 +177,15 @@ def get_imports(buf=None):
 
     for _, match in search(quoted_string_re, buf[start_line + 1 : end_line]):
         yield match[1]
+
+
+def get_package_name():
+    match = next(search(package_re, current.buffer), None)
+
+    if match:
+        return match[1]
+
+    return ""
 
 
 def get_all_imports():

@@ -81,5 +81,6 @@
 /christian mark/?/i
 /\?+/?/
 
-/VI[NM]/Vim/
-/Vim script/VimScript/
+/VI[NM]/Vim/i
+/VI[NM]S/Vim's/i
+/Vim script/VimScript/i
