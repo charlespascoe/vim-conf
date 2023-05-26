@@ -120,7 +120,8 @@ fun! s:ToggleNERDTree()
         if bufname() == ''
             NERDTreeFocus
         else
-            NERDTreeFind
+            " Workaround for NERDTree bug
+            exec "NERDTreeFind" bufname()
         end
 
         NERDTreeRefreshRoot
@@ -321,6 +322,7 @@ let g:vim_chatgpt_system_prompt = "You are a professional assistant to a softwar
 
 imap <C-Left> <Plug>(copilot-next)
 imap <C-Right> <Plug>(copilot-previous)
+imap <C-Down> <Plug>(copilot-dismiss)
 imap <script><silent><nowait><expr> <S-Tab> copilot#Accept()
 
 " Disable default tab mapping

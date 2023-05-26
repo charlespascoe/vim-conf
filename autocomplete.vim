@@ -25,11 +25,10 @@ imap <expr> <Down> pumvisible() ? '<C-n>' : '<Down>'
 " (TODO: Fix delimitMate problem; this imap set before delimitMate does on
 " line 330, meaning it doesn't set its own binding. Need to find way of
 " setting after delimitMate)
-autocmd BufRead * imap <expr> <buffer> <BS> pumvisible() ? '<C-e>' : (AfterCommentLeader() ? '<C-w>' : '<Plug>delimitMateBS')
+autocmd BufRead,BufNew * imap <expr> <buffer> <BS> pumvisible() ? '<C-e>' : (AfterCommentLeader() ? '<C-w>' : '<Plug>delimitMateBS')
 
 function! AfterCommentLeader()
     let comment_leader = trim(split(&commentstring, '%s', 1)[0])
-    echom comment_leader
 
     let before_cursor = py3eval('vim.current.buffer[vim.current.window.cursor[0]-1][0:vim.current.window.cursor[1]]')
 

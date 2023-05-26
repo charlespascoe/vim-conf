@@ -327,7 +327,7 @@ func chProjDir(proj string) error {
 		return fmt.Errorf("Project '%s' does not exist", proj)
 	}
 
-	cd(projDir(proj))
+	cd(pd)
 
 	return nil
 }

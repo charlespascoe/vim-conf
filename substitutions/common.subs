@@ -44,6 +44,7 @@
 /(?:ASCII|aske?y)[ -]?dock?(s)?/AsciiDoc\1/i
 /([Cc])hange log/\1hangelog/i
 /([Cc])onnexion(s?)/\1onnection\2/
+/([Ii])tempotent/\1demponent/i
 /(\d+) calls per second/\1cps/
 /(little|big) Indian/\1-endian/
 /[Ss]toreys/\1tories/
@@ -56,6 +57,7 @@
 /draughts/drafts/i
 /go[ -]dock/Godoc/i
 /Jason/JSON/i
+/Kefka/Kafka/i
 /philtre/filter/i
 /robots? framework/Robot Framework/i
 /robots? manager/Robot Manager/i
@@ -71,6 +73,8 @@
 /Ri(dd|tt)iss?/Redis/
 /radish/Redis/i
 /Redis streams/Redis Streams/
+
+/RODIUS/RADIUS/
 
 /rap/wrap/
 /Rap/Wrap/

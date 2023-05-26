@@ -180,7 +180,7 @@ def get_imports(buf=None):
 
 
 def get_package_name():
-    match = next(search(package_re, current.buffer), None)
+    _, match = next(search(package_re, current.buffer), None)
 
     if match:
         return match[1]
