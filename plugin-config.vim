@@ -276,6 +276,9 @@ let g:ale_fixers = {
     \    'javascript': ['eslint'],
     \}
 
+" Prevent ALE from breaking when a Copilot panel is closed
+let g:ale_pattern_options = {'^copilot://': {'ale_enabled': 0}}
+
 let g:ale_hover_cursor = 0
 
 " Disable linting in insert mode

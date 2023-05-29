@@ -206,6 +206,16 @@ runtime ftplugin/man.vim
 set keywordprg=:Man
 let g:ft_man_open_mode = 'vert'
 
+" Open file where it was last edited
+" (see :help restore-cursor)
+" TODO: Check interaction with vim-obsession
+autocmd BufReadPost *
+    \ if line("'\"") >= 1 && line("'\"") <= line("$") && &ft !~# 'commit'
+    \ |   exe "normal! g`\""
+    \ | endif
+
+au VimEnter * normal! zz
+
 " Initialise Dictation
 if !empty(glob('/tmp/dictation.sock'))
     au VimEnter * call dictate#Init()
