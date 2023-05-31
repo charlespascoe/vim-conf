@@ -106,7 +106,7 @@ fun s:RepeatMacroUntilDone()
 
     call setreg(l:repeat_reg, '@'.l:reg.'@'.l:repeat_reg)
 
-    exec 'silent' 'normal' '@'.l:repeat_reg
+    exec 'silent!' 'normal' '@'.l:repeat_reg
 
     call setreg(l:repeat_reg, l:prev_reg)
 endfun

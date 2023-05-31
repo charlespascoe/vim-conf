@@ -48,6 +48,7 @@
 /(\d+) calls per second/\1cps/
 /(little|big) Indian/\1-endian/
 /[Ss]toreys/\1tories/
+/[Ss]torey/\1tory/
 /aka/a.k.a./
 /Boolean/boolean/
 /change log/changelog/
@@ -62,7 +63,6 @@
 /robots? framework/Robot Framework/i
 /robots? manager/Robot Manager/i
 /snip[ -]it/snippet/
-
 
 /G[ui]r[ao]/Jira/
 /Dura/Jira/
