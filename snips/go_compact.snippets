@@ -1364,9 +1364,8 @@ v.By(func(val interface{}) error {
 endsnippet
 
 ## Symbols ##
-context "scan(following_lines(limit=1), match_method, match_type, match_func) if is_empty(next(preceeding_lines(limit=1), "")) else False"
 snippet '^//' "Godoc comment" brA
-// `!p snip.rv = snip.context.name` $0
+// `!p if not snip.c: snip.rv = guess_godoc_string()`
 endsnippet
 
 snippet '(?<![^\s])/\*' "Comment" rA

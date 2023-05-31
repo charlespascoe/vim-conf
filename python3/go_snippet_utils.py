@@ -3,6 +3,7 @@ import vim
 from snippet_utils import *
 from dataclasses import dataclass
 from typing import List
+from os import path
 
 
 ws_re = re.compile(r"\s+")
@@ -15,6 +16,20 @@ method_re = re.compile(r"^func \((?:(\w+)\s+)?([^)]+)\)\s+(\w+)[\[(]")
 generic_type_re = re.compile(f"(\w+)(?:\[(.*)\])?")
 type_re = re.compile(r"^type (\w+)(?:\[(.*)\])? ")
 package_re = re.compile(r"^package (\w+)")
+
+
+@dataclass
+class Package:
+    name: str
+
+    def __str__(self):
+        return self.name
+
+    @classmethod
+    def match(cls, line: str):
+        match = package_re.match(line)
+
+        return Package(match[1]) if match else None
 
 
 @dataclass
@@ -284,3 +299,27 @@ def guess_test_name():
         return "_" + "_".join(test.parts[:-1]) + "_"
 
     return "_"
+
+
+def guess_godoc_string():
+    if not is_empty(next(preceeding_lines(limit=1), "")):
+        return ""
+
+    match = scan(
+        following_lines(limit=1),
+        match_method,
+        match_type,
+        match_func,
+        Package.match,
+    )
+
+    if not match:
+        return ""
+
+    if isinstance(match, Package):
+        if match.name == "main":
+            return f"Command {path.basename(path.dirname(vim.current.buffer.name))} "
+        else:
+            return f"Package {match.name} "
+
+    return f"{match.name} "

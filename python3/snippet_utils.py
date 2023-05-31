@@ -212,7 +212,7 @@ def preceeding_lines(line_index=None, limit=None):
     if limit is None:
         start = 0
     else:
-        start = end - limit
+        start = max(end - limit, 0)
 
     for _, line in current.buffer.lines(start, end, reverse=True):
         yield line
