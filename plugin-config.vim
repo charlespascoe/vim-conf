@@ -320,6 +320,7 @@ let g:tsuquyomi_disable_quickfix = 1
 " vim-chatgpt
 
 let g:vim_chatgpt_system_prompt = "You are a professional assistant to a software developer. Do not provide explanations or examples unless you are asked to. Always provide answers using correct Markdown syntax."
+let g:vim_chatgpt_args = ['--show-prompt']
 
 " copilot.vim
 
@@ -327,6 +328,21 @@ imap <C-Left> <Plug>(copilot-next)
 imap <C-Right> <Plug>(copilot-previous)
 imap <C-Down> <Plug>(copilot-dismiss)
 imap <script><silent><nowait><expr> <S-Tab> copilot#Accept()
+
+fun s:ToggleCopilot()
+    if get(g:, 'copilot_enabled', 1)
+        Copilot disable
+        echo 'Copilot disabled'
+        call copilot#Dismiss()
+    else
+        Copilot enable
+        echo 'Copilot enabled'
+    endif
+endfun
+
+nmap <leader>C <Cmd>call <SID>ToggleCopilot()<CR>
+imap <C-c> <Cmd>call <SID>ToggleCopilot()<CR>
+nmap <C-c> <Cmd>call <SID>ToggleCopilot()<CR>
 
 " Disable default tab mapping
 let g:copilot_no_tab_map = 1
