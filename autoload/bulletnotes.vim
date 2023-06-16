@@ -129,7 +129,8 @@ fun bulletnotes#InitBuffer()
     setlocal listchars+=leadmultispace:│\ \ \  " Note the trailing whitespace
 
     imap <silent> <expr> <buffer> <Tab> bulletnotes#IsAtStartOfBullet() ? '<Esc>>ibI<Right><Right>' : (ShouldAutocomplete() ? '<C-z>' : '<Tab>')
-    imap <silent> <expr> <buffer> <S-Tab> bulletnotes#IsAtStartOfBullet() ? '<Esc><ibI<Right><Right>' : '<S-Tab>'
+    " imap <silent> <expr> <buffer> <S-Tab> bulletnotes#IsAtStartOfBullet() ? '<Esc><ibI<Right><Right>' : '<S-Tab>'
+    imap <silent> <expr> <buffer> <S-Tab> bulletnotes#IsAtStartOfBullet() ? '<Esc><ibI<Right><Right>' : copilot#Accept('<S-Tab>')
 
     nnoremap <silent> <buffer> <leader>t :Find <C-r><C-a><CR>
     nnoremap <silent> <buffer> gl :call bulletnotes#OpenFile(expand('<cWORD>'))<CR>

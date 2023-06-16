@@ -348,21 +348,12 @@ nmap <C-c> <Cmd>call <SID>ToggleCopilot()<CR>
 let g:copilot_no_tab_map = 1
 
 let g:copilot_filetypes = {
-        \'*': 0,
-        \'bash': 1,
-        \'cpp': 1,
-        \'css': 1,
-        \'dockerfile': 1,
-        \'go': 1,
+        \'*': 1,
+        \'gitcommit': 0,
+        \'gitrebase': 0,
+        \'help': 0,
         \'html': 0,
-        \'javascript': 1,
         \'json': 0,
-        \'lua': 1,
-        \'python': 1,
-        \'sql': 1,
-        \'swift': 1,
-        \'typescript': 1,
-        \'vim': 1,
         \'xml': 0,
-        \'yaml': 0,
+        \'yaml': 1,
     \}

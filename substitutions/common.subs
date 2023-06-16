@@ -45,11 +45,13 @@
 /([Cc])hange log/\1hangelog/i
 /([Cc])onnexion(s?)/\1onnection\2/
 /([Ii])tempotent/\1demponent/i
+/([Ss])eshing/\1ession/i
 /(\d+) calls per second/\1cps/
 /(little|big) Indian/\1-endian/
-/[Ss]toreys/\1tories/
 /[Ss]torey/\1tory/
+/[Ss]toreys/\1tories/
 /aka/a.k.a./
+/and or/and\/or/
 /Boolean/boolean/
 /change log/changelog/
 /chat GPT/ChatGPT/i
@@ -72,7 +74,10 @@
 
 /Ri(dd|tt)iss?/Redis/
 /radish/Redis/i
+/Bredis/Redis/i
+/redes/Redis/i
 /Redis streams/Redis Streams/
+/Redis Pubs(ub| up)/Redis PubSub/
 
 /RODIUS/RADIUS/
 
