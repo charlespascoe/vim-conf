@@ -72,12 +72,12 @@
 # TODO: figure out a better way of doing this rather than replacing all of them
 /console/Consul/i
 
-/Ri(dd|tt)iss?/Redis/
-/radish/Redis/i
 /Bredis/Redis/i
-/redes/Redis/i
+/r[aeiu][dt]{1,2}[ie]s[sht]?/Redis/i
+/radises/Redis/i
+
 /Redis streams/Redis Streams/
-/Redis Pubs(ub| up)/Redis PubSub/
+/Redis Pubs(ub|[- ]up)/Redis PubSub/
 
 /RODIUS/RADIUS/
 

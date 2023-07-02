@@ -531,6 +531,28 @@ case $1:
 	$0
 endsnippet
 
+pre_expand "add_import(snip, 'context')"
+snippet '\(ct?x ' "Context Argument" rA
+(ctx context.Context
+endsnippet
+
+pre_expand "add_import(snip, 'context')"
+snippet cxc "Context with Cancel" w
+`!p snip.rv = 'ctx' if t[1] != 'ctx' else 'subCtx'`, cancel := context.WithCancel(${1:context.Background()})
+defer cancel()
+endsnippet
+
+pre_expand "add_import(snip, 'context')"
+snippet cxt "Context with Timeout" w
+`!p snip.rv = 'ctx' if t[1] != 'ctx' else 'subCtx'`, cancel := context.WithTimeout(${1:context.Background()}, ${2:5*time.Second})
+defer cancel()
+endsnippet
+
+pre_expand "add_import(snip, 'context')"
+snippet cxb "Background Context" w
+context.Background()
+endsnippet
+
 ## D ##
 
 snippet dc "Done Channel" b
