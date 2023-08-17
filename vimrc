@@ -191,7 +191,8 @@ imap <3-MiddleMouse> <Nop>
 map <4-MiddleMouse> <Nop>
 imap <4-MiddleMouse> <Nop>
 
-set re=2
+" Disable Ex mode (I barely use this)
+map Q <Nop>
 
 " Set window split and resize options
 set splitright " For vertical splits, the cursor will be on the right pane

@@ -10,16 +10,13 @@ syntax match subReplacement /\%([^\/]\|\\.\)*\// contained contains=subPatternDi
 syntax match subGroupRef /\\\d\+\|\${\d\+}/ contained
 hi link subGroupRef SpecialChar
 
-syntax match subEscape /\\[tn\\]/ contained
-hi link subEscape SpecialChar
-
 syntax match subEscape /\\./ contained
 hi link subEscape SpecialChar
 
 syntax match subPatternDiv "/" contained
 hi link subPatternDiv Special
 
-syntax match subRepeat /[*+?]/ contained
+syntax match subRepeat /[*+?]\|{\%(\d\+,\d*\|,\d\+\)}/ contained
 hi link subRepeat Operator
 
 syntax match subSpecialChar /[\^$]/ contained

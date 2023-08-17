@@ -6,6 +6,7 @@ from typing import List
 from os import path
 
 
+camel_case_re = re.compile(r"[A-Z]?[a-z]+|[A-Z]+(?=$|[A-Z][a-z])")
 ws_re = re.compile(r"\s+")
 import_re = re.compile(r"^import \($")
 end_import_re = re.compile(r"^\)$")
@@ -242,9 +243,27 @@ def go_import(imports):
             vim.command(f"GoImport{bang} {imp}")
 
 
+def each_leading_char_name(type_match: TypeMatch):
+    matches = camel_case_re.findall(type_match.name)
+
+    if not matches:
+        return type_match.name
+
+    return "".join(part.lower()[0] for part in matches)
+
+
+def last_leading_char_name(type_match: TypeMatch):
+    matches = camel_case_re.findall(type_match.name)
+
+    if not matches:
+        return type_match.name
+
+    return matches[-1].lower()[0]
+
+
 def type_to_method(type_match: TypeMatch, pointer: bool) -> MethodMatch:
     return MethodMatch(
-        rec_name=type_match.name[0].lower() + type_match.name[1:],
+        rec_name=last_leading_char_name(type_match),
         rec_type=type_match,
         rec_ptr=pointer,
         name="",

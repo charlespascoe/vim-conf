@@ -284,7 +284,10 @@ let g:ale_hover_cursor = 0
 " Disable linting in insert mode
 let g:ale_lint_on_text_changed = 0
 let g:ale_lint_on_insert_leave = 0
+" let g:ale_linters_ignore = {'go': ['golint', 'golangci-lint']}
 let g:ale_linters_ignore = {'go': ['golint']}
+let g:ale_go_golangci_lint_package = 1
+let g:ale_go_golangci_lint_options = '-D errcheck'
 
 " It seems ALE breaks the location list - use quickfix instead
 let g:ale_set_loclist = 0
@@ -344,16 +347,20 @@ nmap <leader>C <Cmd>call <SID>ToggleCopilot()<CR>
 imap <C-c> <Cmd>call <SID>ToggleCopilot()<CR>
 nmap <C-c> <Cmd>call <SID>ToggleCopilot()<CR>
 
+command -nargs=0 CopilotToggleFile let b:copilot_enabled = !get(b:, 'copilot_enabled', v:false) <bar> echom 'Copilot ' .. (b:copilot_enabled ? 'enabled' : 'disabled') .. ' for ' .. expand('%:t')
+
 " Disable default tab mapping
 let g:copilot_no_tab_map = 1
 
 let g:copilot_filetypes = {
         \'*': 1,
+        \'bulletnotes': 0,
         \'gitcommit': 0,
         \'gitrebase': 0,
         \'help': 0,
         \'html': 0,
         \'json': 0,
+        \'text': 0,
         \'xml': 0,
         \'yaml': 1,
     \}

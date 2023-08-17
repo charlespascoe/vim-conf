@@ -26,6 +26,8 @@
 
 /dis[ck]/DISC/i
 
+/ba(rk|ch)/BARC/i
+
 # SIP
 /([Pp])(?:arza|asa|atha)/\1arser/i
 /PARS-/parse /i
@@ -42,25 +44,27 @@
 
 # General
 /(?:ASCII|aske?y)[ -]?dock?(s)?/AsciiDoc\1/i
+/([Aa])ddet/\1dded/
 /([Cc])hange log/\1hangelog/i
 /([Cc])onnexion(s?)/\1onnection\2/
 /([Ii])tempotent/\1demponent/i
 /([Ss])eshing/\1ession/i
+/([Ss])torey/\1tory/
+/([Ss])toreys/\1tories/
 /(\d+) calls per second/\1cps/
 /(little|big) Indian/\1-endian/
-/[Ss]torey/\1tory/
-/[Ss]toreys/\1tories/
 /aka/a.k.a./
 /and or/and\/or/
 /Boolean/boolean/
 /change log/changelog/
 /chat GPT/ChatGPT/i
-/couch ?DB/CouchDB/
 /docker/Docker/
 /draughts/drafts/i
 /go[ -]dock/Godoc/i
-/Jason/JSON/i
+/godok/Godoc/i
+/Jason('s)?/JSON/i
 /Kefka/Kafka/i
+/open API/OpenAPI/i
 /philtre/filter/i
 /robots? framework/Robot Framework/i
 /robots? manager/Robot Manager/i
@@ -73,7 +77,8 @@
 /console/Consul/i
 
 /Bredis/Redis/i
-/r[aeiu][dt]{1,2}[ie]s[sht]?/Redis/i
+# /r[aeiu][dt]{1,2}[aeiu](s[sht]?|ce)?/Redis/i
+/r[aei](tt|dd?)(sh|is|ce)/Redis/i
 /radises/Redis/i
 
 /Redis streams/Redis Streams/
@@ -84,6 +89,7 @@
 /rap/wrap/
 /Rap/Wrap/
 
+/couch ?DB/CouchDB/
 /couch TVs/CouchDB's/
 /couch ?(DB|TV)/CouchDB/
 
