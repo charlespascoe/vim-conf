@@ -1,4 +1,4 @@
-fun s:NewDraft(ext, rtf=0) abort
+fun s:NewDraft(ext, rtf=0, return=0) abort
     if $DRAFTS == ''
         echoerr "DRAFTS must be set"
         return
@@ -27,9 +27,14 @@ fun s:NewDraft(ext, rtf=0) abort
         au BufUnload <buffer> %yank +
     endif
 
+    if a:return
+        au BufUnload <buffer> call system("tmux switch-client -l")
+    endif
+
     let b:draft_ext = a:ext
     let b:draft_rtf = a:rtf
-    nmap <Enter> <Cmd>w <bar> call <SID>NewDraft(b:draft_ext, b:draft_rtf)<CR>
+    let b:draft_return = a:return
+    nmap <Enter> <Cmd>w <bar> call <SID>NewDraft(b:draft_ext, b:draft_rtf, b:draft_return)<CR>
 
     set titlestring=draft
 endfun
@@ -46,3 +51,4 @@ endfun
 
 com! -nargs=? Draft call <SID>NewDraft(<f-args>)
 com! -nargs=0 DraftRTF call <SID>NewDraft('bn', 1)
+com! -nargs=0 DraftReturn call <SID>NewDraft('bn', 0, 1)
