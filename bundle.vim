@@ -1,13 +1,17 @@
 call plug#begin()
 
-com -nargs=1 DevPlug Plug (isdirectory(expand('~/repos/'..<args>)) ? '~/repos/'..<args> : 'charlespascoe/'..<args>)
+Plug 'fatih/vim-go'
+
+com -nargs=1 DevPlug       Plug (isdirectory(expand('~/repos/'..<args>)) ? '~/repos/'..<args> : 'charlespascoe/'..<args>)
+com -nargs=1 DevPlugBranch Plug (isdirectory(expand('~/repos/'..<args>)) ? '~/repos/'..<args> : 'charlespascoe/'..<args>), #{branch: 'dev'}
 
 DevPlug 'vim-duplicate'
-DevPlug 'vim-go-syntax'
 DevPlug 'vim-ninja-feet'
-DevPlug 'vim-serenade'
+" DevPlug 'vim-serenade'
+DevPlugBranch 'vim-go-syntax'
 
 delcom DevPlug
+delcom DevPlugBranch
 
 if isdirectory(expand('~/go/src/vim-chatgpt'))
     Plug '~/go/src/vim-chatgpt'
@@ -21,14 +25,16 @@ Plug 'junegunn/fzf.vim'
 Plug 'vim-python/python-syntax'
 Plug 'davidhalter/jedi-vim'
 
+Plug 'dracula/vim', #{as: 'dracula'}
+
+Plug 'dstein64/vim-startuptime', #{on: 'StartupTime'}
+
 Plug 'airblade/vim-gitgutter'
 Plug 'christoomey/vim-sort-motion'
 Plug 'christoomey/vim-titlecase'
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'dense-analysis/ale'
 Plug 'dkarter/bullets.vim'
-Plug 'dracula/vim', #{as: 'dracula'}
-Plug 'fatih/vim-go'
 Plug 'github/copilot.vim'
 Plug 'habamax/vim-asciidoctor'
 Plug 'junegunn/vim-easy-align'

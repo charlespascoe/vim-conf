@@ -8,13 +8,16 @@ fun s:NewDraft(ext, rtf=0) abort
 
     cd $DRAFTS
 
-    exec "edit" (strftime("%Y-%m-%d_%H:%M:%S", localtime()))..'.'..a:ext
+    enew
+
+    " Trigger the filetype autocommands manually without setting the file name
+    exec "doautocmd BufNewFile file."..a:ext
 
     setlocal bufhidden=wipe
     setlocal nobuflisted
     setlocal winfixwidth
 
-    au WinClosed <buffer> w
+    au InsertEnter <buffer> call <SID>OnInsert()
 
     if &filetype == 'bulletnotes' && a:rtf
         au BufUnload <buffer> Export rtf
@@ -29,8 +32,16 @@ fun s:NewDraft(ext, rtf=0) abort
     nmap <Enter> <Cmd>w <bar> call <SID>NewDraft(b:draft_ext, b:draft_rtf)<CR>
 
     set titlestring=draft
+endfun
 
-    startinsert
+fun s:OnInsert()
+    if line('$') == 1 && getline(1) == ''
+        if bufname() == ''
+            au WinClosed <buffer> w
+        endif
+
+        exec "file" (strftime("%Y-%m-%d_%H:%M:%S", localtime()))..'.'..b:draft_ext
+    endif
 endfun
 
 com! -nargs=? Draft call <SID>NewDraft(<f-args>)

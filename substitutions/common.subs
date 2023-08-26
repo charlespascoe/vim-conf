@@ -53,8 +53,12 @@
 /([Ss])toreys/\1tories/
 /(\d+) calls per second/\1cps/
 /(little|big) Indian/\1-endian/
+/[Gg]o[ -]routine('?s?)/\1oroutine\2/
+/[Ss]torey/\1tory/
+/[Ss]toreys/\1tories/
 /aka/a.k.a./
 /and or/and\/or/
+/API root/API route/
 /Boolean/boolean/
 /change log/changelog/
 /chat GPT/ChatGPT/i

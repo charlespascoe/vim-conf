@@ -8,79 +8,84 @@ import os
 
 
 def bullets_to_char_set(bullets):
-    return ''.join('\\' + bullet for bullet in bullets)
+    return "".join("\\" + bullet for bullet in bullets)
 
 
 def isempty(s):
-    return s == '' or s.isspace()
+    return s == "" or s.isspace()
 
 
-anchor_charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+anchor_charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 
 
 def gen_anchor_id(length):
-    return ''.join(random.choice(anchor_charset) for i in range(length))
+    return "".join(random.choice(anchor_charset) for i in range(length))
 
 
 def export(bullets, export_type, firstline, lastline):
-    if export_type == 'text' or export_type == '':
+    if export_type == "text" or export_type == "":
         export_to_clipboard(bullets, firstline, lastline, False)
-    elif export_type == 'rtf':
+    elif export_type == "rtf":
         export_to_clipboard(bullets, firstline, lastline, True)
-    elif export_type == 'html':
+    elif export_type == "html":
         export_html(bullets, firstline, lastline)
-    elif export_type == 'jira':
+    elif export_type == "jira":
         export_jira(bullets, firstline, lastline)
     else:
         raise Exception(f'Unknown export type: "{export_type}"')
 
 
 def export_jira(bullets, firstline, lastline):
-    if not vim.current.buffer.name.endswith('.bn'):
-        raise Exception('Not a Bulletnotes file')
+    check_bn_file()
 
-    doc = bulletnotes.parse_doc(bulletnotes.minimise_indent(vim.current.buffer[firstline-1:lastline]), bullets)
+    doc = bulletnotes.parse_doc(
+        bulletnotes.minimise_indent(vim.current.buffer[firstline - 1 : lastline]),
+        bullets,
+    )
 
     # A very crude conversion to the Jira format
 
-    fmt = lambda s: s.replace('`', '*').replace('{', '{{').replace('}', '}}')
+    fmt = lambda s: s.replace("`", "*").replace("{", "{{").replace("}", "}}")
 
-    text = '\n'.join(
-        ('-' * (item.indent + 1) + ' ' + fmt(item.content)) if isinstance(item, bulletnotes.Bullet) else fmt(item)
+    text = "\n".join(
+        ("-" * (item.indent + 1) + " " + fmt(item.content))
+        if isinstance(item, bulletnotes.Bullet)
+        else fmt(item)
         for item in doc.walk()
     )
 
-    with os.popen('pbcopy -Prefer txt', 'w') as copy:
+    with os.popen("pbcopy -Prefer txt", "w") as copy:
         copy.write(text)
 
 
 def export_html(bullets, firstline, lastline):
-    if not vim.current.buffer.name.endswith('.bn'):
-        raise Exception('Not a Bulletnotes file')
+    check_bn_file()
 
-    doc = bulletnotes.parse_doc(vim.current.buffer[firstline-1:lastline], bullets)
+    doc = bulletnotes.parse_doc(vim.current.buffer[firstline - 1 : lastline], bullets)
 
     doc_formatter = bulletnotes.html.DocumentFormatter.default()
 
     html = doc_formatter.to_full_html(doc)
 
-    with tempfile.NamedTemporaryFile(mode='w',delete=False,encoding='utf8',suffix='.html') as f:
+    with tempfile.NamedTemporaryFile(
+        mode="w", delete=False, encoding="utf8", suffix=".html"
+    ) as f:
         f.write(html)
         path = f.name
 
-    webbrowser.open_new('file://' + path)
+    webbrowser.open_new("file://" + path)
 
-    print('Exported to temporary file: ' + path)
+    print("Exported to temporary file: " + path)
+
 
 def export_to_clipboard(bullets, firstline, lastline, rtf):
-    if not vim.current.buffer.name.endswith('.bn'):
-        raise Exception('Not a Bulletnotes file')
+    check_bn_file()
 
-    doc = bulletnotes.parse_doc(vim.current.buffer[firstline-1:lastline], bullets)
+    doc = bulletnotes.parse_doc(vim.current.buffer[firstline - 1 : lastline], bullets)
 
     if not rtf:
         # macOS only
-        with os.popen('pbcopy -Prefer txt', 'w') as copy:
+        with os.popen("pbcopy -Prefer txt", "w") as copy:
             copy.write(str(doc))
 
         return
@@ -93,49 +98,60 @@ def export_to_clipboard(bullets, firstline, lastline, rtf):
 
     # macOS only
     p = subprocess.Popen(
-        ['textutil', '-format', 'html', '-inputencoding', 'utf-8', '-convert', 'rtf', '-stdin', '-stdout'],
+        [
+            "textutil",
+            "-format",
+            "html",
+            "-inputencoding",
+            "utf-8",
+            "-convert",
+            "rtf",
+            "-stdin",
+            "-stdout",
+        ],
         stdout=subprocess.PIPE,
         stdin=subprocess.PIPE,
     )
 
-    p.stdin.write(html.encode('utf-8'))
+    p.stdin.write(html.encode("utf-8"))
     p.stdin.close()
 
     rtf = p.stdout.read()
     p.wait()
 
-    with os.popen('pbcopy -Prefer rtf', 'w') as copy:
-        copy.write(rtf.decode('utf-8'))
+    with os.popen("pbcopy -Prefer rtf", "w") as copy:
+        copy.write(rtf.decode("utf-8"))
 
 
 def word_count(bullets, firstline, lastline):
-    if not vim.current.buffer.name.endswith('.bn'):
-        raise Exception('Not a Bulletnotes file')
+    check_bn_file()
 
-    doc = bulletnotes.parse_doc(vim.current.buffer[firstline-1:lastline], bullets)
+    doc = bulletnotes.parse_doc(vim.current.buffer[firstline - 1 : lastline], bullets)
 
-    whitespace = re.compile(r'\s+')
-    nonaphanum = re.compile('[^a-z0-9\s]', re.I)
+    whitespace = re.compile(r"\s+")
+    nonaphanum = re.compile("[^a-z0-9\s]", re.I)
 
     total = 0
 
     for item in doc.walk():
-        content = ''
+        content = ""
 
         if isinstance(item, str):
             content = item
-        elif isinstance(item, bulletnotes.Bullet) and item.bullet_type == '-':
+        elif isinstance(item, bulletnotes.Bullet) and item.bullet_type == "-":
             content = item.content
         else:
             continue
 
-        total += len(whitespace.split(nonaphanum.sub('', content)))
+        total += len(whitespace.split(nonaphanum.sub("", content)))
 
     return total
 
 
 def find_bullet(lines, start_line, bullet_types, include_whitespace):
-    bullet_regexp = re.compile('^((\\s{4})*)([' + bullets_to_char_set(bullet_types) + ']) ')
+    bullet_regexp = re.compile(
+        "^((\\s{4})*)([" + bullets_to_char_set(bullet_types) + "]) "
+    )
     indent_match = bullet_regexp.match(lines[start_line])
 
     if not indent_match:
@@ -151,9 +167,11 @@ def find_bullet(lines, start_line, bullet_types, include_whitespace):
 
         is_continuation = (
             # Line must not be empty (only contiguous text)
-            not isempty(line) and
+            not isempty(line)
+            and
             # Indent must be at least the indent of the bullet
-            line.startswith(indent) and
+            line.startswith(indent)
+            and
             # Line must not be a new subbullet
             not bullet_regexp.match(line)
         )
@@ -164,13 +182,13 @@ def find_bullet(lines, start_line, bullet_types, include_whitespace):
             break
 
     if include_whitespace:
-        while pos < len(lines) and lines[pos].strip() == '':
+        while pos < len(lines) and lines[pos].strip() == "":
             pos += 1
 
     return {
-        'startline': start_line,
-        'endline': pos - 1,
-        'indent': indent_level,
+        "startline": start_line,
+        "endline": pos - 1,
+        "indent": indent_level,
     }
 
 
@@ -180,32 +198,37 @@ def find_bullet_and_children(lines, start_line, bullet_types, include_whitespace
     if bullet is None:
         return None
 
-    end = bullet['endline']
+    end = bullet["endline"]
     lnum = end + 1
 
     while lnum < len(lines):
         line = lines[lnum]
 
-        if line.strip() == '':
+        if line.strip() == "":
             # Intermediate whitespace is fine
             lnum += 1
             continue
 
         b = find_bullet(lines, lnum, bullet_types, False)
 
-        if b is None or b['indent'] <= bullet['indent']:
+        if b is None or b["indent"] <= bullet["indent"]:
             # Found non-bullet text or a bullet of the same or less indentation;
             # therefore no more children
             break
 
         # Best end found so far
-        end = b['endline']
+        end = b["endline"]
         lnum = end + 1
 
     if include_whitespace:
-        while (end + 1) < len(lines) and lines[end + 1].strip() == '':
+        while (end + 1) < len(lines) and lines[end + 1].strip() == "":
             end += 1
 
-    bullet['endline'] = end
+    bullet["endline"] = end
 
     return bullet
+
+
+def check_bn_file():
+    if vim.current.buffer.options["filetype"].decode("utf-8") != "bulletnotes":
+        raise Exception("Not a Bulletnotes file")

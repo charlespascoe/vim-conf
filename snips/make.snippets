@@ -3,11 +3,11 @@ PROJECT_NAME=$1
 BINARY_NAME=${0:$1}
 BINARY_LINUX=$(BINARY_NAME)-linux
 SHELL=/bin/bash
-ALL_GO_FILES=find . -name '*.go' -not -path './vendor*' -not -path './.*'
+ALL_GO_FILES=find . -name '*.go' -not -path './.*'
 
 .PHONY: all
-## : Same as 'make init download build', recommended after checking out
-all: init download build
+## : Same as 'make init build', recommended after checking out
+all: init build
 
 .PHONY: help
 ## help: Prints this help
@@ -23,6 +23,11 @@ init:
 ## gencode: Runs 'go generate' on the project to produce generated code
 gencode:
 	go generate ./...
+
+.PHONY: run
+## run: Builds and executes the program
+run: build
+	MODE="$${MODE:-dev}" CONFIG_FILES="$${CONFIG_FILES:-configs/dev-config.yml}" ./$(BINARY_NAME)
 
 .PHONY: build
 ## build: Builds binary for current OS
@@ -57,17 +62,6 @@ clean:
 	rm -f $(BINARY_NAME)
 	rm -f $(BINARY_LINUX)
 
-.PHONY: run
-## run: Builds and executes the program
-run: build
-	MODE="$${MODE:-dev}" CONFIG_FILES="$${CONFIG_FILES:-configs/dev-config.yml}" ./$(BINARY_NAME)
-
-.PHONY: download
-## download: Download dependencies
-download:
-	go mod download
-	go mod vendor
-
 .PHONY: fmt
 ## fmt: Run 'go fmt' on all source files
 fmt:
@@ -87,7 +81,9 @@ fmtchk:
 		echo "Run 'make fmt' and stage the changes before attempting to commit."; \
 		exit 1; \
 	fi
+endsnippet
 
+snippet docs "Documentation"
 .PHONY: docs
 docs:
 	asciidoctor-pdf -o "docs/pdfs/$(PROJECT_NAME) \`cat version\` Software Manual (\`date +'%Y-%m-%d'\`).pdf" docs/index.adoc
@@ -112,7 +108,7 @@ snippet docker "Docker" bw
 ## docker: Builds a docker image; set TAGS variable to the space-separated list of tags
 # TODO: Add build/package/Dockerfile
 docker: linux
-	@mv $(BINARY_NAME)-linux build/package/$(BINARY_NAME); \
+	@mv $(BINARY_LINUX) build/package/$(BINARY_NAME); \
 	tags=($${TAGS:-snapshot}); \
 	opts=""; \
 	for t in $${tags[@]}; do \

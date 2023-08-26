@@ -359,7 +359,6 @@ let g:copilot_filetypes = {
         \'gitrebase': 0,
         \'help': 0,
         \'html': 0,
-        \'json': 0,
         \'text': 0,
         \'xml': 0,
         \'yaml': 1,

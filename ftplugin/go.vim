@@ -251,8 +251,7 @@ endfun
 
 if expand('%:t') == 'doc.go'
     " Make package comments automatically wrap
-    setlocal formatoptions-=c
-    setlocal formatoptions+=a
+    setlocal formatoptions+=c
 endif
 
 py3 import go_snippet_utils
