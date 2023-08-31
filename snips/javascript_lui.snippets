@@ -12,7 +12,7 @@ endglobal
 
 snippet comp "Component" b
 const $1 = component(({$2}, {$3}) => (
-	$3()($0)
+	`!p snip.rv = leading_chars_regex.match(t[3])[0]`()($0)
 ));
 endsnippet
 

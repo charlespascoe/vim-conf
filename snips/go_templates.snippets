@@ -294,19 +294,20 @@ func TestMain(m *testing.M) {
 }
 endsnippet
 
-snippet genstatic "Generate Static File Server" b
+snippet genstatic "Static Build Script (scripts/build-static.go)" b
 package main
 
 import (
-	"bytes"
 	"compress/gzip"
 	"fmt"
-	"github.com/evanw/esbuild/pkg/api"
-	"io/ioutil"
+	"io"
+	"io/fs"
 	"os"
 	"path"
 	"path/filepath"
-	"strings"
+	"regexp"
+
+	"github.com/evanw/esbuild/pkg/api"
 )
 
 /* Create the following shell script and tweak as necessary:
@@ -318,203 +319,35 @@ import (
  *
  * echo Generating web routes for static files
  *
- * rm -f internal/static/routes.go
+ * find pkg/static -mindepth 1 | grep -v 'content.go' | xargs rm -rf
  *
- * go run scripts/build-static.go web/ internal/static/routes.go \`cat version\`
+ * go run scripts/build-static.go web/ pkg/static/
+ *
+ * find pkg/static -mindepth 1 -name '*.swp' -exec rm {} \;
  */
 
+var embedRegex = regexp.MustCompile(\`^bundle\.js|\.(map|html|css|png)$\`)
+
 func main() {
-	if len(os.Args) != 4 {
-		fmt.Println("Usage: go run scripts/build-static.go <input dir> <output path> <version>")
+	if len(os.Args) != 3 {
+		fmt.Println("Usage: go run scripts/build-static.go <input dir> <output dir>")
 		os.Exit(1)
 		return
 	}
 
-	dev := os.Getenv("MODE") == "dev"
-
-	dir := os.Args[1]
-	routesPath := os.Args[2]
-	version := os.Args[3]
-
-	fmt.Printf("Building static files in %s\n", dir)
-
-	allFiles, err := readAllFiles(dir)
-
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-		return
-	}
-
-	fileTypes := map[string]string{
-		".html": "text/html",
-		".js":   "text/javascript",
-		".css":  "text/css",
-		".svg":  "image/svg+xml",
-	}
-
-	files := make([]string, 0)
-
-	for _, file := range allFiles {
-		if mimeType := fileTypes[path.Ext(file)]; mimeType != "" {
-			files = append(files, file)
-		}
-	}
-
-	lines := make([]string, 0)
-
-	lines = append(
-		lines,
-		"package static",
-		"",
-		"import (",
-		"\t\"github.com/gin-gonic/gin\"",
-		"\t\"net/http\"",
-		")",
-		"",
-		"func Routes(router *gin.RouterGroup) {",
-	)
-
-	for _, file := range files {
-		mimeType := fileTypes[path.Ext(file)]
-
-		// TODO: Ignore dotfiles
-
-		data, err := ioutil.ReadFile(path.Join(dir, file))
-
-		if err != nil {
-			fmt.Printf("Error while trying to read %s: %s\n", file, err)
-			os.Exit(1)
-			return
-		}
-
-		fmt.Printf("%s\n", file)
-
-		lines = append(
-			lines,
-			"",
-			fmt.Sprintf("\trouter.GET(\"/%s\", func(c *gin.Context) {", file),
-			"\t\tc.Header(\"Content-Encoding\", \"gzip\")",
-			fmt.Sprintf("\t\tc.Data(http.StatusOK, \"%s\", []byte{%s})", mimeType, formatData(gzipCompress(data))),
-			"\t})",
-		)
-	}
-
-	if !dev {
-		bundle := buildBundle()
-		lines = append(
-			lines,
-			"",
-			"\trouter.GET(\"/bundle.js\", func(c *gin.Context) {",
-			"\t\tc.Header(\"Content-Encoding\", \"gzip\")",
-			fmt.Sprintf("\t\tc.Data(http.StatusOK, \"text/javascript\", []byte{%s})", formatData(gzipCompress(bundle))),
-			"\t})",
-		)
-	}
-
-	indexPage := generateIndex(dev, version)
-
-	lines = append(
-		lines,
-		"}",
-	)
-
-	lines = append(
-		lines,
-		"",
-		fmt.Sprintf("var DefaultPage = []byte{%s}", formatData(gzipCompress(indexPage))),
-		"",
-	)
-
-	ioutil.WriteFile(routesPath, []byte(strings.Join(lines, "\n")), 0644)
-}
-
-func formatData(data []byte) string {
-	base10Data := make([]string, 0, len(data))
-
-	for _, b := range data {
-		base10Data = append(base10Data, fmt.Sprintf("%d", b))
-	}
-
-	return strings.Join(base10Data, ", ")
-}
-
-func readAllFiles(dir string) ([]string, error) {
-	files := make([]string, 0)
-	items, err := ioutil.ReadDir(dir)
-
-	if err != nil {
-		return nil, fmt.Errorf("failed to read directory '%s': %s", dir, err)
-	}
-
-	for _, item := range items {
-		if item.IsDir() {
-			p := path.Join(dir, item.Name())
-			dirFiles, err := readAllFiles(p)
-
-			if err != nil {
-				return nil, err
-			}
-
-			for _, dirFile := range dirFiles {
-				files = append(files, path.Join(item.Name(), dirFile))
-			}
-		} else {
-			files = append(files, item.Name())
-		}
-	}
-
-	return files, nil
-}
-
-func gzipCompress(data []byte) []byte {
-	compressed := &bytes.Buffer{}
-
-	compressor, err := gzip.NewWriterLevel(compressed, gzip.BestCompression)
-
+	absInputDir, err := filepath.Abs(os.Args[1])
 	if err != nil {
 		panic(err)
 	}
 
-	compressor.Write(data)
-	compressor.Close()
-
-	return compressed.Bytes()
-}
-
-func generateIndex(development bool, version string) []byte {
-	rootScript := \`  <script crossorigin type="module" src="/index.js"></script>\`
-
-	if development {
-		fmt.Println("\n\n===== BUILDING FOR DEVELOPMENT =====\n\n")
-	} else {
-		rootScript = \`  <script crossorigin type="module" src="/bundle.js"></script>\`
-	}
-
-	return []byte(strings.Join([]string{
-		\`<!doctype html>\`,
-		\`<html lang="en">\`,
-		\`<head>\`,
-		\`  <meta charset="utf-8">\`,
-		\`  <title>TODO</title>\`,
-		\`  <script>window.Version = '\` + version + \`';</script>\`,
-		rootScript,
-		\`  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0 user-scalable=no">\`,
-		\`  <link href="/assets/bootstrap.min.css" rel="stylesheet">\`,
-		\`  <link href="/assets/style.css" rel="stylesheet">\`,
-		\`</head>\`,
-		\`<body></body>\`,
-		\`</html>\`,
-	}, "\n"))
-}
-
-func buildBundle() []byte {
-	absPath, err := filepath.Abs("web")
+	absOutputDir, err := filepath.Abs(os.Args[2])
 	if err != nil {
 		panic(err)
 	}
 
-	var resolver = api.Plugin{
+	fmt.Printf("Building from %s to %s\n", absInputDir, absOutputDir)
+
+	resolver := api.Plugin{
 		Name: "resolver",
 		Setup: func(build api.PluginBuild) {
 			build.OnResolve(api.OnResolveOptions{Filter: \`.js$\`},
@@ -522,7 +355,7 @@ func buildBundle() []byte {
 					var p string
 
 					if filepath.IsAbs(args.Path) {
-						p = filepath.Join(absPath, args.Path)
+						p = filepath.Join(absInputDir, args.Path)
 					} else {
 						p = filepath.Join(args.ResolveDir, args.Path)
 					}
@@ -534,39 +367,80 @@ func buildBundle() []byte {
 		},
 	}
 
-	// If this package isn't availabe, then just change the module name to
-	// 'index.js' until you get this fixed
 	result := api.Build(api.BuildOptions{
 		EntryPointsAdvanced: []api.EntryPoint{
-			{InputPath: "index.js", OutputPath: "bundle.js"},
+			{InputPath: "index.js", OutputPath: "bundle"},
 		},
-		AbsWorkingDir:     absPath,
+		AbsWorkingDir:     absInputDir,
+		Outdir:            absInputDir,
+		Write:             true,
 		Bundle:            true,
 		Plugins:           []api.Plugin{resolver},
 		MinifyWhitespace:  true,
 		MinifyIdentifiers: true,
-		// MinifySyntax: true,
+		MinifySyntax:      true,
+		Sourcemap:         api.SourceMapLinked,
 	})
 
 	if len(result.Errors) > 0 {
+		fmt.Println("Errors:")
 		for _, err := range result.Errors {
-			fmt.Printf("ERROR: %v\n", err)
+			fmt.Printf("  %s:%d:%d:\n\t%s\n", err.Location.File, err.Location.Line, err.Location.Column, err.Text)
 		}
 
-		panic("ERRORS")
+		os.Exit(1)
 	}
 
 	for _, warn := range result.Warnings {
 		fmt.Printf("WARN: %v\n", warn)
 	}
 
-	if len(result.OutputFiles) != 1 {
-		panic(fmt.Sprintf("Incorrect number of output files: %d", len(result.OutputFiles)))
+	if err := gzipAll(os.DirFS(absInputDir), absOutputDir); err != nil {
+		panic(err)
 	}
 
-	file := result.OutputFiles[0]
+	fmt.Println("Done")
+}
 
-	return file.Contents
+func gzipAll(inputDir fs.FS, outputDir string) error {
+	fmt.Printf("In: %v\n", inputDir)
+	return fs.WalkDir(inputDir, ".", func(p string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+
+		if d.IsDir() || !embedRegex.MatchString(d.Name()) {
+			return nil
+		}
+
+		fmt.Printf("Compressing %s\n", p)
+
+		input, err := inputDir.Open(p)
+		if err != nil {
+			return err
+		}
+
+		outpath := path.Join(outputDir, p)
+
+		if err := os.MkdirAll(path.Dir(outpath), 0o755); err != nil {
+			return err
+		}
+
+		output, err := os.OpenFile(outpath, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0o644)
+		if err != nil {
+			return err
+		}
+		defer output.Close()
+
+		w := gzip.NewWriter(output)
+		defer w.Close()
+
+		if _, err := io.Copy(w, input); err != nil {
+			return err
+		}
+
+		return nil
+	})
 }
 endsnippet
 
@@ -596,17 +470,82 @@ func Auth() gin.Accounts {
 }
 endsnippet
 
-snippet staticroutes "Static Routes" b
-static.Routes(server.Group("/"))
+snippet staticroutes "Static Routes (pkg/static/content.go)" b
+package static
 
-server.NoRoute(func(c *gin.Context) {
-	if strings.Contains(c.Request.Header.Get("Accept"), "text/html") {
+import (
+	"bytes"
+	"embed"
+	"fmt"
+	"io/fs"
+	"net/http"
+	"os"
+	"path/filepath"
+	"strings"
+
+	"github.com/gin-gonic/gin"
+	"github.com/rs/zerolog/log"
+)
+
+//go:generate ../../scripts/build-static.sh
+//go:embed bundle.js bundle.js.map index.html
+var Content embed.FS
+
+func ServeStatic(server *gin.Engine, path string) {
+	var content fs.FS = Content
+
+	modifyHeaders := func(c *gin.Context) {
 		c.Header("Content-Encoding", "gzip")
-		c.Data(http.StatusOK, "text/html", static.DefaultPage)
-	} else {
-		c.Status(http.StatusNotFound)
 	}
-})
+
+	if path != "" {
+		modifyHeaders = func(c *gin.Context) {}
+
+		absPath, err := filepath.Abs(path)
+		if err != nil {
+			panic(err)
+		}
+
+		log.Info().
+			Str("path", absPath).
+			Msg("Serving static content from directory")
+
+		content = os.DirFS(path)
+	} else {
+		log.Info().Msg("Serving static content from embedded filesystem")
+	}
+
+	fs.WalkDir(content, ".", func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+
+		if !d.IsDir() {
+			fmt.Printf("%s\n", path)
+		}
+		return nil
+	})
+
+	index, err := fs.ReadFile(content, "index.html")
+	if err != nil {
+		panic(err)
+	}
+
+	if path != "" {
+		index = bytes.ReplaceAll(index, []byte("bundle.js"), []byte("index.js"))
+	}
+
+	server.Group("/static", modifyHeaders).StaticFS("", http.FS(content))
+
+	server.NoRoute(func(c *gin.Context) {
+		if strings.Contains(c.Request.Header.Get("Accept"), "text/html") {
+			modifyHeaders(c)
+			c.Data(http.StatusOK, "text/html", index)
+		} else {
+			c.Status(http.StatusNotFound)
+		}
+	})
+}
 endsnippet
 
 snippet ragel "Ragel" b

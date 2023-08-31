@@ -9,80 +9,39 @@ def custom_camel_case(s):
 endglobal
 
 snippet luiapp "Lui App Index" b
-import {
-	component,
-	mount,
-	observable,
-	elems,
-} from '/modules/lui.js';
-import { Navigation } from '/modules/lui-nav.js';
-import { Client } from '/modules/client.js';
+import { elems } from './modules/lui.js';
+import { App } from './modules/lui-app.js';
 
-const nav = new Navigation();
-nav.registerLinkInterceptor(document.body);
-
-const client = new Client();
-
-const titleText = observable.value('${1:App Name}');
-titleText.onChange(title => document.title = title === '$1' ? title : \`${title} - $1\`);
-
-const root = component(({children}, {}) => [
-	// Common UI elements e.g. navigation
-	children,
-]);
-
-// The "page" content that changes
-const content = elems.main()();
-
-mount(document.body, root()(content));
-
-function mountContent(elems, opts={}) {
-	content.removeChildren();
-	content.append(elems);
-
-	const {scrollToTop=true} = opts;
-
-	if (scrollToTop) {
-		window.scroll(0, 0);
-	}
-}
-
-const setPageInfo = (opts = {}) => {
-	const { title } = opts;
-
-	if (title) {
-		titleText.set(title);
-	}
-};
-const pages = [];
-
-for (const page of pages) {
-	page({
-		nav,
-		client,
-		setPageInfo,
-		mount: mountContent,
-	});
-}
-
-nav.onNotFound(() => {
-	mountContent(elems.div()('Not found'));
+const app = new App({
+  appName: '$1',
+  extras: {
+    // TODO: Add extras here, e.g. API client
+  },
 });
 
-nav.go(window.location);
+app.pages(
+  // TODO: Add pages here
+);
+
+app.nav.onNotFound(() => {
+  app.mountPage(elems.div()('Not found'));
+});
+
+app.init();
 endsnippet
 
 snippet luipage "Lui App Page" b
 import {
 	component,
-	Viewmodel,
-} from '/modules/lui.js';
+	observable,
+} from '../modules/lui.js';
 
-class ${1:Example}Viewmodel extends Viewmodel {
+class ${1:Example}Viewmodel {
 	constructor() {
-		super({
+		this.state = observable.state({
 			$0
 		});
+		this.observable = this.state.observable;
 	}
 }
 
