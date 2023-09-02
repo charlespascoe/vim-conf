@@ -1,5 +1,8 @@
 global !p
 from snippet_utils import start_dictation, jump_after, format_camel_case, format_snake_case
+import re
+
+leading_chars_regex = re.compile(r'^[a-z]*')
 
 def custom_camel_case(s):
 	if len(s) == 0:

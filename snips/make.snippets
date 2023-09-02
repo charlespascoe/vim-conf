@@ -105,14 +105,14 @@ endsnippet
 
 snippet docker "Docker" bw
 .PHONY: docker
-## docker: Builds a docker image; set TAGS variable to the space-separated list of tags
+## docker: Builds a docker image; set TAGS variable to the space-separated list of tags and set DOCKER_REGISTRY to the registry prefix (excluding image name)
 # TODO: Add build/package/Dockerfile
 docker: linux
 	@mv $(BINARY_LINUX) build/package/$(BINARY_NAME); \
 	tags=($${TAGS:-snapshot}); \
 	opts=""; \
 	for t in $${tags[@]}; do \
-		opts="$$opts -t $(BINARY_NAME):$$t"; \
+		opts="$$opts -t ${DOCKER_REGISTRY}$(BINARY_NAME):$$t"; \
 	done; \
 	echo docker build --platform linux/amd64 build/package/ $$opts; \
 	docker build --platform linux/amd64 build/package/ $$opts; \

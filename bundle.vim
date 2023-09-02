@@ -22,12 +22,20 @@ endif
 Plug 'junegunn/fzf', #{do: { -> fzf#install() }}
 Plug 'junegunn/fzf.vim'
 
-Plug 'vim-python/python-syntax'
-Plug 'davidhalter/jedi-vim'
-
 Plug 'dracula/vim', #{as: 'dracula'}
 
 Plug 'dstein64/vim-startuptime', #{on: 'StartupTime'}
+
+Plug 'junegunn/vim-plug'
+Plug 'tpope/vim-obsession'
+Plug 'vim-airline/vim-airline'
+
+" These plugins are only used for development and so are not needed when viewing
+" Manpages
+if !$MAN
+
+Plug 'vim-python/python-syntax'
+Plug 'davidhalter/jedi-vim'
 
 Plug 'airblade/vim-gitgutter'
 Plug 'christoomey/vim-sort-motion'
@@ -38,7 +46,6 @@ Plug 'dkarter/bullets.vim'
 Plug 'github/copilot.vim'
 Plug 'habamax/vim-asciidoctor'
 Plug 'junegunn/vim-easy-align'
-Plug 'junegunn/vim-plug'
 Plug 'kopischke/vim-fetch'
 Plug 'kshenoy/vim-signature'
 Plug 'leafgarland/typescript-vim'
@@ -55,13 +62,13 @@ Plug 'sirver/ultisnips'
 Plug 'tommcdo/vim-exchange'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-fugitive'
-Plug 'tpope/vim-obsession'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-sleuth'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-unimpaired'
-Plug 'vim-airline/vim-airline'
 Plug 'vim-scripts/ReplaceWithRegister'
+
+endif
 
 call plug#end()
 
