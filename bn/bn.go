@@ -13,20 +13,20 @@ import (
 	"github.com/alecthomas/kong"
 )
 
-type arguments []string
+// type arguments []string
 
-func (a *arguments) Pop() string {
-	args := *a
+// func (a *arguments) Pop() string {
+// 	args := *a
 
-	if len(args) > 0 {
-		arg := args[0]
-		args = args[1:]
-		*a = args
-		return arg
-	}
+// 	if len(args) > 0 {
+// 		arg := args[0]
+// 		args = args[1:]
+// 		*a = args
+// 		return arg
+// 	}
 
-	return ""
-}
+// 	return ""
+// }
 
 var cli struct {
 	Inbox       InboxCmd       `cmd:"" help:"Create a new Bulletnotes document in the project's inbox"`
@@ -78,6 +78,7 @@ func (cmd *NewProjCmd) Run() error {
 
 	// TODO: Rethink this
 	remote := getOutput(os.Getenv("BN_NEW_REMOTE"), name)
+	remote = strings.TrimSpace(remote)
 	run("git", "remote", "add", "origin", remote)
 	run("git", "push", "-u", "origin", name)
 
@@ -244,6 +245,7 @@ func normaliseProjName(name string) string {
 	name = strings.ToLower(name)
 	name = strings.ReplaceAll(name, " ", "-")
 	name = regexp.MustCompile(`[^a-z-]+`).ReplaceAllString(name, "")
+	name = strings.TrimSpace(name)
 	return name
 }
 
@@ -295,6 +297,8 @@ func push() {
 }
 
 func run(prog string, args ...string) {
+	log(245, fmt.Sprint(prog, " ", strings.Join(args, " ")))
+
 	cmd := exec.Command(prog, args...)
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
