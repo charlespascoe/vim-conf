@@ -1,5 +1,6 @@
 let s:socket = '/tmp/dictation.sock'
 let s:status = ""
+let s:start_on_connect = 0
 
 func dictate#Init()
     if empty(glob(s:socket))
@@ -37,15 +38,22 @@ func dictate#Init()
 
     py3 import dictate
 
+    if s:start_on_connect
+        call dictate#Start()
+        let s:start_on_connect = 0
+    endif
+
     return 1
 endfun
 
 fun s:send(msg)
     if !exists("s:ch") || (ch_status(s:ch) != "open" && !dictate#Init())
-        return
+        return 0
     endif
 
     call ch_sendraw(s:ch, json_encode(a:msg).."\n")
+
+    return 1
 endfun
 
 fun dictate#FocusGained()
@@ -57,7 +65,9 @@ fun dictate#FocusLost()
 endfun
 
 func dictate#Start()
-    call s:send(#{type: "dictation", active: v:true})
+    if !s:send(#{type: "dictation", active: v:true})
+        let s:start_on_connect = 1
+    endif
 
     au InsertLeave * ++once call dictate#Stop()
 endfun
