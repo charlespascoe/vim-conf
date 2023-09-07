@@ -5,12 +5,14 @@ let g:ctrlp_clear_cache_on_exit = 1
 let g:ctrlp_map = '<leader>o'
 let g:ctrlp_switch_buffer = ''
 let g:ctrlp_custom_ignore = '\.pdf$'
+let g:ctrlp_user_command = 'fd -t f "" %s'
 
 highlight CtrlPBufferHid ctermfg=123
 highlight CtrlPBufferPath ctermfg=15
 highlight CtrlPPrtBase ctermfg=32
 
 nmap <silent> <leader>b <Cmd>CtrlPBuffer<CR>
+au BufWritePost * CtrlPClearCache
 
 " Airline
 
