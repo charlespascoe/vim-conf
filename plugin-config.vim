@@ -192,7 +192,7 @@ let g:go_imports_autosave = 0
 " Formatting interfers with jumps and folds; just do it manually
 let g:go_fmt_autosave = 0
 let g:go_gopls_matcher = 'caseSensitive'
-let g:go_gopls_complete_unimported = 1
+let g:go_gopls_complete_unimported = 0
 let g:go_gopls_deep_completion = 0
 let g:go_rename_command = 'gopls'
 let g:go_fmt_command='gopls'

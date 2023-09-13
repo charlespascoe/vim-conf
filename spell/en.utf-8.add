@@ -15,6 +15,8 @@ ciphertexts
 cls
 config
 CouchDB
+CRC16
+CRC32
 CRDB
 criteria's
 CRLF
@@ -60,11 +62,13 @@ multiline
 MX
 OAEP
 OID
+OpenAPI
 overridable
 parsable
 Pascoe
 PEM
 PID
+pipelining
 PKI
 plaintext
 plugin

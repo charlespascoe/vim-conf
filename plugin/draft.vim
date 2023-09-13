@@ -13,11 +13,12 @@ fun s:NewDraft(ext, rtf=0, return=0) abort
     " Trigger the filetype autocommands manually without setting the file name
     exec "doautocmd BufNewFile file."..a:ext
 
+    let b:__empty = 1
     setlocal bufhidden=wipe
     setlocal nobuflisted
     setlocal winfixwidth
 
-    au InsertEnter <buffer> call <SID>OnInsert()
+    au TextChanged,TextChangedI,TextChangedP <buffer> call <SID>OnChange()
 
     if &filetype == 'bulletnotes' && a:rtf
         au BufUnload <buffer> Export rtf
@@ -39,14 +40,18 @@ fun s:NewDraft(ext, rtf=0, return=0) abort
     set titlestring=draft
 endfun
 
-fun s:OnInsert()
-    if line('$') == 1 && getline(1) == ''
+fun s:OnChange()
+    let empty = line('$') == 1 && getline(1) == ''
+
+    if b:__empty && !empty
         if bufname() == ''
             au WinClosed <buffer> w
         endif
 
         exec "file" (strftime("%Y-%m-%d_%H:%M:%S", localtime()))..'.'..b:draft_ext
     endif
+
+    let b:__empty = empty
 endfun
 
 com! -nargs=? Draft call <SID>NewDraft(<f-args>)
