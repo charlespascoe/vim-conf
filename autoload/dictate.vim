@@ -125,25 +125,21 @@ fun s:handleTrascriptionMessage(msg)
 
     let text = a:msg.text
 
+    if exists('b:_dictate_prop')
+        call prop_remove(#{id: b:_dictate_prop})
+        unlet b:_dictate_prop
+    endif
+
+    " TODO: Move this into custom handler function
+    call copilot#Clear()
+
     if !a:msg.final
-        if !exists('b:_dictate_popup')
-            " The use of 'wrap: false' and 'fixed: false' is to force the left
-            " edge of the pop-up to shift to the left when the text reaches the
-            " edge of the screen
-            let b:_dictate_popup = popup_atcursor(text, #{pos: 'topleft', line: 'cursor', col: 'cursor', wrap: v:false, fixed: v:false})
-        else
-            " TODO: manually wrap text beyond 80 characters
-            call popup_settext(b:_dictate_popup, text)
-        endif
+        " TODO: Add custom text property
+        let b:_dictate_prop = prop_add(line('.'), col('.'), #{type: 'CopilotSuggestion', text: text})
     else
         let g:_dictate_insert = text
         let s:disable_pause = 1
         silent call feedkeys("\<C-r>=g:_dictate_insert\<CR>")
-
-        if exists('b:_dictate_popup')
-            call popup_close(b:_dictate_popup)
-            unlet b:_dictate_popup
-        endif
     endif
 endfun
 
@@ -168,6 +164,12 @@ fun s:updateStatus(status, active_client)
         call s:send(context)
     elseif s:status == 'dictate' && exists('*b:get_dictation_prompt')
         call s:send(#{type: 'context', prompt: b:get_dictation_prompt()})
+    endif
+
+    " TODO: Move the rest of this function this into custom handler function
+
+    if s:status == 'dictate' && a:active_client
+        call copilot#Clear()
     endif
 
     let l:col = get(s:cols, s:status, g:dracula#palette.comment[0])
