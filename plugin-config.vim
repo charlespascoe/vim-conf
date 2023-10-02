@@ -14,6 +14,20 @@ highlight CtrlPPrtBase ctermfg=32
 nmap <silent> <leader>b <Cmd>CtrlPBuffer<CR>
 au BufWritePost * CtrlPClearCache
 
+" Remove <C-x> from 'AcceptSelection("h")' mapping
+" Remove <C-up>/<C-down> from 'ToggleType(1)'/'ToggleType(-1)' mappings
+" Add <C-up>/<C-down> to 'PrtSelectMove("j")'/'PrtSelectMove("k")' mappings (so
+" I can hold ctrl while moving up/down to select multiple buffers with <C-x>)
+let g:ctrlp_prompt_mappings = {
+\ 'AcceptSelection("h")': ['<c-cr>', '<c-s>'],
+\ 'MarkToOpen()':         ['<c-x>'],
+\ 'PrtDeleteEnt()':       ['<c-q>'],
+\ 'PrtSelectMove("j")':   ['<c-j>', '<down>', '<c-down>'],
+\ 'PrtSelectMove("k")':   ['<c-k>', '<up>', '<c-up>'],
+\ 'ToggleType(-1)':       ['<c-b>'],
+\ 'ToggleType(1)':        ['<c-f>'],
+\ }
+
 " Airline
 
 let g:airline_theme='dracula'
