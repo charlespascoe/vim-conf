@@ -14,7 +14,7 @@ quoted_string_re = re.compile(r'"(([^"]|\\.)+)"')
 func_re = re.compile(r"^func (\w+)\(")
 test_re = re.compile(r"^func Test([^(]*)\(")
 method_re = re.compile(r"^func \((?:(\w+)\s+)?([^)]+)\)\s+(\w+)[\[(]")
-generic_type_re = re.compile(f"(\w+)(?:\[(.*)\])?")
+generic_type_re = re.compile(r"(\w+)(?:\[(.*)\])?")
 type_re = re.compile(r"^type (\w+)(?:\[(.*)\])? ")
 package_re = re.compile(r"^package (\w+)")
 

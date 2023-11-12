@@ -129,7 +129,7 @@ def word_count(bullets, firstline, lastline):
     doc = bulletnotes.parse_doc(vim.current.buffer[firstline - 1 : lastline], bullets)
 
     whitespace = re.compile(r"\s+")
-    nonaphanum = re.compile("[^a-z0-9\s]", re.I)
+    nonaphanum = re.compile(r"[^a-z0-9\s]", re.I)
 
     total = 0
 

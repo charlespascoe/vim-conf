@@ -34,6 +34,7 @@ func dictate#Init()
         au FocusGained * call dictate#FocusGained()
         au FocusLost * call dictate#FocusLost()
         au CursorMovedI * call <SID>onInput()
+        au VimLeavePre * call dictate#Stop()
     augroup END
 
     py3 import dictate
