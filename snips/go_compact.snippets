@@ -472,8 +472,19 @@ $1 = append($1, $0)
 endsnippet
 
 pre_expand "add_import(snip, 'strconv')"
-snippet '\batoi\b' "Atoi" rA
+snippet '(?<=.)\batoi ' "Atoi" rA
 x, err := strconv.Atoi($1)
+endsnippet
+
+pre_expand "add_import(snip, 'strconv')"
+snippet '^atoi ' "Atoi" rA
+func parseInt(s string) int {
+	n, err := strconv.Atoi(s)
+	if err != nil {
+		panic(err)
+	}
+	return n
+}
 endsnippet
 
 snippet 'Ae ' "Assert Equal" brA

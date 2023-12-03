@@ -98,7 +98,7 @@ set undolevels=100
 set undodir=~/.undo
 set noundofile " Ensure off by default, enable for specific files
 
-au FileType asciidoctor,bash,go,help,javascript,markdown,python,robot,sh,swift,text,tmux,typescript,vim,yaml,zsh setlocal undofile
+au FileType asciidoctor,bash,go,help,javascript,json,markdown,python,robot,sh,swift,text,tmux,typescript,vim,yaml,zsh setlocal undofile
 
 " Backup
 au BufRead *.bak set filetype=bak

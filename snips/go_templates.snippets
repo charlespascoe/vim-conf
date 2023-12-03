@@ -620,14 +620,15 @@ import (
 	"strings"
 )
 
+var input = flag.String("i", "input.txt", "program input")
+
 // var verbose = flag.Bool("v", false, "verbose output")
 // var part2 = flag.Bool("part2", false, "print part 2 solution")
 
 func main() {
-	input := flag.String("i", "input.txt", "program input")
 	flag.Parse()
 
-	lines, err := readLines(*input)
+	lines, err := readInput(*input)
 	if err != nil {
 		log.Fatalf("Couldn't read input file: %s", err)
 	}
@@ -635,11 +636,12 @@ func main() {
 	$0
 }
 
-func readLines(path string) ([]string, error) {
-	if data, err := os.ReadFile(path); err != nil {
+func readInput(path string) ([]string, error) {
+	data, err := os.ReadFile(path)
+	if err != nil {
 		return nil, err
-	} else {
-		return strings.Split(strings.TrimSpace(string(data)), "\n"), nil
 	}
+
+	return strings.Split(strings.TrimSpace(string(data)), "\n"), nil
 }
 endsnippet

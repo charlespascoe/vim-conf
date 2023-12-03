@@ -27,7 +27,7 @@ gencode:
 .PHONY: run
 ## run: Builds and executes the program
 run: build
-	MODE="$${MODE:-dev}" CONFIG_FILES="$${CONFIG_FILES:-configs/dev-config.yml}" ./$(BINARY_NAME)
+	MODE="$${MODE:-dev}" ./$(BINARY_NAME)
 
 .PHONY: build
 ## build: Builds binary for current OS

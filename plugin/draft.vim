@@ -38,6 +38,7 @@ fun s:NewDraft(ext, rtf=0, return=0) abort
     nmap <Enter> <Cmd>w <bar> call <SID>NewDraft(b:draft_ext, b:draft_rtf, b:draft_return)<CR>
 
     set titlestring=draft
+    startinsert
 endfun
 
 fun s:OnChange()
