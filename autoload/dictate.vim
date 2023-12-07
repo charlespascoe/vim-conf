@@ -1,13 +1,14 @@
 let s:socket = '/tmp/dictation.sock'
 let s:status = ""
 let s:start_on_connect = 0
+let s:autoresume = 0
 
 func dictate#Init()
     if empty(glob(s:socket))
         echohl Error
         echom "Dictation server unavailable"
         echohl None
-        return
+        return 0
     endif
 
     try
@@ -35,6 +36,8 @@ func dictate#Init()
         au FocusLost * call dictate#FocusLost()
         au CursorMovedI * call <SID>onInput()
         au VimLeavePre * call dictate#Stop()
+        au InsertEnter * call <SID>enterInsertMode()
+        au InsertLeave * call <SID>leaveInsertMode()
     augroup END
 
     py3 import dictate
@@ -69,8 +72,6 @@ func dictate#Start()
     if !s:send(#{type: "dictation", active: v:true})
         let s:start_on_connect = 1
     endif
-
-    au InsertLeave * ++once call dictate#Stop()
 endfun
 
 fun dictate#Pause(dur)
@@ -111,6 +112,22 @@ fun s:onInput()
 
     call dictate#Pause(300)
 endfun
+
+func s:enterInsertMode()
+    if s:autoresume
+        let s:autoresume = 0
+        call dictate#Start()
+    endif
+endfunc
+
+func s:leaveInsertMode()
+    if s:status == 'idle' || s:status == 'error'
+        let s:autoresume = 0
+    else
+        let s:autoresume = 1
+        call dictate#Stop()
+    endif
+endfunc
 
 fun s:handleTrascriptionMessage(msg)
     let md = mode()
