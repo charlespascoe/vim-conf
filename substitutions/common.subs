@@ -47,7 +47,7 @@
 /sipped puzzel/SIP parser/
 
 # General
-/(?:ASCII|aske?y)[ -]?dock?(s)?/AsciiDoc\1/i
+/(?:ASCII|aske?y|Asiki)[ -]?do([ck]|ck)(s)?/AsciiDoc\1/i
 /([Aa])ddet/\1dded/
 /([Cc])hange log/\1hangelog/i
 /([Cc])onnexion(s?)/\1onnection\2/

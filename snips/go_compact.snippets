@@ -705,7 +705,7 @@ func New$1($2) *$1 {
 	return &${1:`!p if not snip.c: snip.rv = find_type() or 'Type'`}{
 		$0
 		log: log.With().
-			Str("component", "$1").
+			Str("component", "`!p snip.rv = get_package_name()`.$1").
 			Logger(),
 	}
 }
@@ -1198,6 +1198,19 @@ defer func() {
 	}
 }()
 endsnippet
+
+# TODO: Should this be in some common module? I don't want a "Utils" module
+pre_expand "add_import(snip, 'fmt', 'runtime/debug', 'regexp')"
+snippet '^rp' "Report Panic" br
+var stripPanicRe = regexp.MustCompile(\`(?s)^.*panic\([^\n]*\n[^\n]*\n\`)
+
+func reportPanic(errc chan error) {
+	if r := recover(); r != nil {
+		errc <- fmt.Errorf("panic: %v\n%s", r, stripPanicRe.ReplaceAll(debug.Stack(), nil))
+	}
+}
+endsnippet
+
 
 ## S ##
 

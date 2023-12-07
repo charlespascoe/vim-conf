@@ -645,3 +645,74 @@ func readInput(path string) ([]string, error) {
 	return strings.Split(strings.TrimSpace(string(data)), "\n"), nil
 }
 endsnippet
+
+pre_expand "add_import(snip, 'os', 'strings', 'regexp', 'runtime/debug', 'github.com/rs/zerolog', 'github.com/rs/zerolog/log', 'gopkg.in/natefinch/lumberjack.v2')"
+snippet logging-utils "Logging Utils" b
+var (
+	logFile           = env.String("LOG_FILE", "", "The file to write logs to. If empty, logs are written to stderr and all LOG_FILE_* options are ignored.")
+	logFileCompress   = env.Bool("LOG_FILE_COMPRESS", true, "Whether to compress rotated log files using gzip. Valid values: 1, true, True, TRUE, 0, false, False, FALSE.")
+	logFileMaxAge     = env.Int("LOG_FILE_MAX_AGE", 30, "The maximum number of days to keep a rotated log file before deleting it. If 0, rotated log files are never deleted based on age.")
+	logFileMaxBackups = env.Int("LOG_FILE_MAX_BACKUPS", 50, "The maximum number of old log files to retain. If 0, rotated log files are never deleted based on the number of rotated log files.")
+	logFileMaxSize    = env.Int("LOG_FILE_MAX_SIZE", 100, "The maximum size in megabytes of a log file before it gets rotated. Minimum: 1.")
+	logLevel          = env.String("LOG_LEVEL", "info", "The log level to use. Valid values: trace, debug, info, warn, error, fatal, panic, disabled.")
+)
+
+var stripPanicRe = regexp.MustCompile(\`(?s)^.*panic\([^\n]*\n[^\n]*\n\`)
+
+func initLogging() {
+	joinStackLinesRe := regexp.MustCompile(\`\n\t\`)
+
+	zerolog.ErrorStackMarshaler = func(err error) any {
+		s := stripPanicRe.ReplaceAll(debug.Stack(), nil)
+		s = joinStackLinesRe.ReplaceAll(s, []byte(" at "))
+		return strings.Split(strings.TrimSpace(string(s)), "\n")
+	}
+
+	if *logFile != "" {
+		if *logFileMaxSize < 1 {
+			*logFileMaxSize = 1
+		}
+
+		fmt.Printf(
+			"Logging to %s (Max size: %d MB, Max backups: %d, Max age: %d days, Compress: %t)\n",
+			*logFile,
+			*logFileMaxSize,
+			*logFileMaxBackups,
+			*logFileMaxAge,
+			*logFileCompress,
+		)
+
+		log.Logger = log.Output(&lumberjack.Logger{
+			Filename:   *logFile,
+			Compress:   *logFileCompress,
+			MaxSize:    *logFileMaxSize, // megabytes
+			MaxBackups: *logFileMaxBackups,
+			MaxAge:     *logFileMaxAge, // days
+		})
+	} else {
+		log.Logger = log.Output(zerolog.ConsoleWriter{
+			Out:        os.Stderr,
+			TimeFormat: "15:04:05",
+		})
+
+		fmt.Println(logo)
+	}
+
+	level, err := zerolog.ParseLevel(*logLevel)
+	if err != nil {
+		log.Fatal().
+			Err(err).
+			Msgf("Invalid log level %s", *logLevel)
+	}
+
+	zerolog.SetGlobalLevel(level)
+	log.Info().
+		Msgf("Logging level set to %s", level)
+}
+
+func reportPanic(errc chan error) {
+	if r := recover(); r != nil {
+		errc <- fmt.Errorf("panic: %v\n%s", r, stripPanicRe.ReplaceAll(debug.Stack(), nil))
+	}
+}
+endsnippet
