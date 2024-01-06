@@ -398,11 +398,6 @@ snippet fmt. "Format auto-import" wA
 fmt.
 endsnippet
 
-pre_expand "add_import(snip, 'net/http')"
-snippet http. "HTTP auto-import" wA
-http.
-endsnippet
-
 pre_expand "add_import(snip, 'encoding/json')"
 snippet json. "JSON auto-import" wA
 json.
@@ -426,6 +421,18 @@ endsnippet
 pre_expand "add_import(snip, 'strconv')"
 snippet sc. "strconv" w
 strconv.
+endsnippet
+
+# Within Import Block
+
+context "is_in_import_block()"
+snippet csv "csv" bw
+"encoding/csv"
+endsnippet
+
+context "is_in_import_block()"
+snippet json "json" bw
+"encoding/json"
 endsnippet
 
 context "is_in_import_block()"
@@ -758,6 +765,13 @@ snippet gen "Generate comment"
 //go:generate $1
 endsnippet
 
+## H ##
+
+pre_expand "add_import(snip, 'net/http')"
+snippet 'http\.' "HTTP Status Autofill" r
+http.Status${1:OK}
+endsnippet
+
 ## I ##
 
 # TODO: Consider unifying the "If" snippets
@@ -783,8 +797,8 @@ if `!p if not snip.c and snip.context: snip.rv = append_err_check(snip.context.r
 endsnippet
 
 context "line_startswith(snip, if_re)"
-snippet '(?<=\s)e ' "If Error" rA
-err := $1; err != nil
+snippet '(?<=\s)e' "If Error" r
+err := $0
 endsnippet
 
 snippet '} ?e' "Else" brA

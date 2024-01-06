@@ -77,10 +77,6 @@ if err != nil {
 }
 endsnippet
 
-snippet 'http\.' "HTTP Status Autofil" r
-http.Status${1:OK}
-endsnippet
-
 snippet respErr
 if respErr := checkResponse("$1", resp, err); respErr != nil {
 	return$2 respErr

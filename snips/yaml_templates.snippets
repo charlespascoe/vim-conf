@@ -1,0 +1,31 @@
+post_expand "vim.command('set ft=openapi.yaml')"
+snippet openapi "OpenAPI" b
+openapi: 3.1.0
+info:
+  title: "Hello World API"
+  description: "This is a simple Hello World API."
+  version: 0.0.0
+
+paths:
+  /hello-world:
+    get:
+      summary: "Returns a 'Hello World' message"
+      responses:
+        200:
+          description: "A successful response with the 'Hello World' message"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HelloWorldResponse"
+
+components:
+  schemas:
+    HelloWorldResponse:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          example: "Hello World"
+endsnippet
