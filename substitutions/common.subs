@@ -51,16 +51,16 @@
 /([Aa])ddet/\1dded/
 /([Cc])hange log/\1hangelog/i
 /([Cc])onnexion(s?)/\1onnection\2/
+/([Gg])o[ -]routine('?s?)/\1oroutine\2/
 /([Ii])tempotent/\1demponent/i
 /([Ss])eshing/\1ession/i
 /([Ss])torey/\1tory/
 /([Ss])toreys/\1tories/
 /(\d+) calls per second/\1cps/
 /(little|big) Indian/\1-endian/
-/([Gg])o[ -]routine('?s?)/\1oroutine\2/
 /[Ss]torey/\1tory/
 /[Ss]toreys/\1tories/
-/aka/a.k.a./
+/aka/a.k.a./i
 /and or/and\/or/
 /API root/API route/
 /Boolean/boolean/

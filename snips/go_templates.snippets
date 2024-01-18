@@ -716,3 +716,216 @@ func reportPanic(errc chan error) {
 	}
 }
 endsnippet
+
+snippet envparser "Env Parser" b
+package env
+
+import (
+	"fmt"
+	"os"
+	"reflect"
+	"sort"
+	"strconv"
+	"strings"
+	"time"
+	"unsafe"
+)
+
+var (
+	vars         map[string]variable
+	names        map[unsafe.Pointer]string
+
+	// HandleErrors is called after parsing, regardless of whether errors
+	// occurred. By default, it returns nil if there are no errors, otherwise it
+	// prints all errors to stderr and terminates the process with an exit code
+	// of 1.
+	//
+	// Parse returns whatever HandleErrors returns.
+	HandleErrors func([]error) error
+)
+
+type variable struct {
+	parse func(string) error
+	desc  string
+}
+
+func init() {
+	vars =  make(map[string]variable)
+	names = make(map[unsafe.Pointer]string)
+	HandleErrors = func(errs []error) error {
+		if len(errs) == 0 {
+			return nil
+		}
+
+		for _, err := range errs {
+			fmt.Fprintf(os.Stderr, "%s\n", err)
+		}
+
+		os.Exit(1)
+
+		return fmt.Errorf("env: %d errors", len(errs))
+	}
+}
+
+// Usage prints the usage of all registered variables to stderr.
+func Usage() {
+	for _, name := range Names() {
+		fmt.Fprintf(os.Stderr, "  %s\n\t%s\n", name, vars[name].desc)
+	}
+}
+
+// Parse parses all registered variables from the environment.
+//
+// Returns whatever HandleErrors returns when given zero or more errors.
+func Parse() error {
+	var errs []error
+
+	for _, name := range Names() {
+		e, exists := os.LookupEnv(name)
+		if !exists {
+			continue
+		}
+
+		p := vars[name].parse
+
+		if err := p(e); err != nil {
+			errs = append(errs, fmt.Errorf("%s: %s", name, err))
+		}
+	}
+
+	return HandleErrors(errs)
+}
+
+// Environ returns a filtered copy of os.Environ() that only contains the
+// registered variables.
+func Environ() []string {
+	envs := os.Environ()
+	result := envs[:0]
+
+	for _, pair := range envs {
+		name, _, ok := strings.Cut(pair, "=")
+
+		if _, exists := vars[name]; ok && exists {
+			result = append(result, pair)
+		}
+	}
+
+	sort.Strings(result)
+
+	return result
+}
+
+// Names returns a sorted list of all registered variable names.
+func Names() []string {
+	names := make([]string, 0, len(vars))
+
+	for name := range vars {
+		names = append(names, name)
+	}
+
+	sort.Strings(names)
+
+	return names
+}
+
+// Name returns the name of the variable that was registered with the given
+// pointer. Must be the original pointer and not the dereferenced value.
+func Name(v any) string {
+	ptr := getPointer(v)
+
+	if ptr == nil {
+		return "<env: non-pointer value>"
+	}
+
+	name, exists := names[ptr]
+	if !exists {
+		return "<env: unknown>"
+	}
+
+	return name
+}
+
+func String(name, value, desc string) *string {
+	s := &value
+
+	if value != "" {
+		desc = fmt.Sprintf("%s (default: %s)", desc, value)
+	}
+
+	register(name, desc, s, func(e string) error {
+		*s = e
+		return nil
+	})
+
+	return s
+}
+
+func Int(name string, value int, desc string) *int {
+	i := &value
+
+	if value != 0 {
+		desc = fmt.Sprintf("%s (default: %d)", desc, value)
+	}
+
+	register(name, desc, i, func(e string) error {
+		var err error
+		*i, err = strconv.Atoi(e)
+		return err
+	})
+
+	return i
+}
+
+func Bool(name string, value bool, desc string) *bool {
+	b := &value
+
+	desc = fmt.Sprintf("%s (default: %t)", desc, value)
+
+	register(name, desc, b, func(e string) error {
+		var err error
+		*b, err = strconv.ParseBool(e)
+		return err
+	})
+
+	return b
+}
+
+func Duration(name string, value time.Duration, desc string) *time.Duration {
+	d := &value
+
+	if value != 0 {
+		desc = fmt.Sprintf("%s (default: %s)", desc, value)
+	}
+
+	register(name, desc, d, func(e string) error {
+		var err error
+		*d, err = time.ParseDuration(e)
+		return err
+	})
+
+	return d
+}
+
+func register(name, desc string, val any, parse func(e string) error) {
+	if _, exists := vars[name]; exists {
+		panic(fmt.Sprintf("env: duplicate name %s", name))
+	}
+
+	ptr := getPointer(val)
+
+	if ptr == nil {
+		panic(fmt.Sprintf("env: invalid type %T; must be a pointer", val))
+	}
+
+	vars[name] = variable{parse, desc}
+	names[ptr] = name
+}
+
+func getPointer(v any) unsafe.Pointer {
+	val := reflect.ValueOf(v)
+	if val.Kind() == reflect.Ptr {
+		return unsafe.Pointer(val.Pointer())
+	}
+	return nil
+}
+endsnippet
