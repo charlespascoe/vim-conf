@@ -29,3 +29,33 @@ components:
           type: string
           example: "Hello World"
 endsnippet
+
+snippet eslint ".eslintrc.yml" b
+env:
+  browser: true
+  es2021: true
+extends: eslint:recommended
+overrides: []
+parserOptions:
+  ecmaVersion: latest
+  sourceType: module
+rules:
+  'no-prototype-builtins': 0
+  'semi': 1
+#globals:
+#  'dayjs': readonly
+#  'dayjs_plugin_advancedFormat': readonly
+endsnippet
+
+snippet protochat "Protochat" b
+model: gpt-4-1106-preview
+
+messages:
+- role: system
+  #file: system.md
+  text: >-
+    You are a helpful assistant
+- role: user
+  text: >-
+    Say "Hello World"
+endsnippet

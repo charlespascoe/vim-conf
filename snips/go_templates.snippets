@@ -491,7 +491,7 @@ import (
 //go:embed bundle.js bundle.js.map index.html
 var Content embed.FS
 
-func ServeStatic(server *gin.Engine, path string) {
+func Serve(server *gin.Engine, path string) {
 	var content fs.FS = Content
 
 	modifyHeaders := func(c *gin.Context) {

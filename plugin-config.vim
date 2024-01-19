@@ -375,7 +375,7 @@ let g:copilot_filetypes = {
         \'gitcommit': 0,
         \'gitrebase': 0,
         \'help': 0,
-        \'html': 0,
+        \'html': 1,
         \'text': 0,
         \'xml': 0,
         \'yaml': 1,

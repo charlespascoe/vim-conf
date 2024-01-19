@@ -37,22 +37,30 @@ import {
 } from '../modules/lui.js';
 
 class ${1:Example}Viewmodel {
-	constructor() {
+	constructor(app) {
 		this.state = observable.state({
 			$0
 		});
-		this.observable = this.state.observable;
+		this.app = app;
+	}
+
+	async init() {
+
 	}
 }
 
-const `!p snip.rv = custom_camel_case(t[1])`View = component(({viewmodel}, {div}) => (
+const `!p snip.rv = custom_camel_case(t[1])`View = component(({vm}, {div}) => (
 	div()()
 ));
 
 export default (app) => {
 	app.nav.route('/`!p snip.rv = t[1].lower()`').do(() => {
-		const viewmodel = new $1Viewmodel();
-		app.mountPage(`!p snip.rv = custom_camel_case(t[1])`View({viewmodel})());
+		const vm = new $1Viewmodel(app);
+		vm.init().catch((err) => {
+		  console.error(err);
+		  alert(err.message || err);
+		});
+		app.mountPage(`!p snip.rv = custom_camel_case(t[1])`View({vm})());
 	});
 };
 endsnippet

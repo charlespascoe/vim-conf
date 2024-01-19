@@ -193,3 +193,6 @@ nmap yoC <Cmd>call <SID>ToggleConceal()<CR>
 
 " Jumps if there's one tag match, otherwise opens 'tselect' list
 nnoremap <C-]> g<C-]>
+
+" Paste commented
+nmap <leader>p p`[v`]gc
