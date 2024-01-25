@@ -5,6 +5,18 @@ setlocal textwidth=80
 imap <expr> <buffer> <Tab> ShouldIndentBullet() ? '<Esc>>>^i<Right><Right>' : (ShouldAutocomplete() ? '<C-z>' : '<Tab>')
 imap <expr> <buffer> <S-Tab> ShouldIndentBullet() ? '<Esc><<^i<Right><Right>' : copilot#Accept('<Tab>')
 
+func s:PasteCode()
+    let l:prev = getreg(v:register)
+    let l:prev_type = getregtype(v:register)
+    " Trim trailing newlines
+    let l:prev = substitute(l:prev, '\n\+$', '', '')
+    call setreg(v:register, "```\n" .. l:prev .. "\n```", 'V')
+    normal! p
+    call setreg(v:register, l:prev, l:prev_type)
+endfunc
+
+nnoremap <silent> <buffer> <leader>p <Cmd>call <SID>PasteCode()<CR>
+
 let g:markdown_fenced_languages = ['js=javascript', 'jsx=javascript']
 let g:markdown_minlines = 200
 
