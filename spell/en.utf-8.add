@@ -5,6 +5,7 @@ ad-hoc
 Alacritty
 ansible
 AsciiDoc
+backend
 base64
 BNF
 BT
@@ -48,6 +49,7 @@ handwire
 HMAC
 iff
 inline
+inode
 IPv4
 IPv6
 Jira
@@ -109,6 +111,16 @@ uploader
 URIs
 UUID
 UUIDs
+v0
+v1
+v2
+v3
+v4
+v5
+v6
+v7
+v8
+v9
 variadic
 verifiably
 WebSocket

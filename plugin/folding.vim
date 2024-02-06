@@ -1,6 +1,7 @@
 " Disable folding by default, but enable it based on filetype
 set nofoldenable
 set foldcolumn=0
+set foldminlines=10
 
 fun! FoldText()
     return substitute(getline(v:foldstart), '\t', repeat(' ', &l:tabstop), 'g')

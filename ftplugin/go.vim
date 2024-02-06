@@ -1,6 +1,8 @@
 " Map autocomplete trigger onto Omnicomplete
 inoremap <buffer> <C-z> <C-x><C-o>
 
+setlocal foldmethod=syntax
+
 if !exists('g:spell_loaded') && filereadable('tags')
     py3file ~/.vim-conf/spell.py
     py3 load_tags()

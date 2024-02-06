@@ -15,3 +15,6 @@ syn region markdownH6 matchgroup=markdownH6Delimiter start="#######\@!\s\+" end=
 hi markdownBold cterm=bold ctermfg=51 guifg=#74fffb
 hi link markdownCode Constant
 hi link markdownCodeDelimiter Constant
+
+syntax match markdownEscapedBacktick /\\`/ contained containedin=mkdCode
+hi link markdownEscapedBacktick Special

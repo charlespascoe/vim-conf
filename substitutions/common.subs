@@ -18,22 +18,12 @@
 # trailing white space to the end of a line.
 /\s+$//B
 
-# Work
-
-/(?:route|reach) control(ler)?(s)?/rate control\1\2/i
-
-/CLC/CRC/
-/CRC note(s?)/CRC node\1/
-
-/(?:Tino|T-Naw)(s)?/TNOR\1/i
-/pseudo TNOR/pseudo-TNOR/
-
-/dis[ck]/DISC/i
-
-/ba(rk|ch)/BARC/i
+# See ~/.vim-local/substitutions/ for work-specific substitutions
 
 # SIP
 /([Pp])(?:arza|asa|atha)/\1arser/i
+/PARS[ -][SC]IP/parse SIP/i
+/sipped puzzel/SIP parser/
 /PARS-/parse /i
 /PARS/parse/i
 
@@ -43,12 +33,11 @@
 /the from/the From/
 /paid or from/PAID or From/
 
-/PARS[ -][SC]IP/parse SIP/i
-/sipped puzzel/SIP parser/
-
+# /philtre/filter/i
 # General
-/(?:ASCII|aske?y|Asiki)[ -]?do([ck]|ck)(s)?/AsciiDoc\1/i
+/(?:ASCII|aske?y|Asiki)[ -]?do(?:[ck]|ck)(s)?/AsciiDoc\1/i
 /([Aa])ddet/\1dded/
+/([Aa])dmetric'?(s?)/\1dd metric\2/
 /([Cc])hange log/\1hangelog/i
 /([Cc])onnexion(s?)/\1onnection\2/
 /([Gg])o[ -]routine('?s?)/\1oroutine\2/
@@ -68,12 +57,12 @@
 /chat GPT/ChatGPT/i
 /docker/Docker/
 /draughts/drafts/i
+/E.[Gg].?/e.g./
 /go[ -]dock/Godoc/i
 /godok/Godoc/i
 /Jason('s)?/JSON/i
 /Kefka/Kafka/i
 /open API/OpenAPI/i
-/philtre/filter/i
 /robots? framework/Robot Framework/i
 /robots? manager/Robot Manager/i
 /snip[ -]it/snippet/

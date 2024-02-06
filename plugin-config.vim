@@ -118,7 +118,11 @@ let g:bullets_set_mappings = 1
 let g:bullets_enable_in_empty_buffers = 0
 let g:bullets_outline_levels = ['std-']
 " Prevent bullets from breaking my dictation shortcut
-let g:bullets_custom_mappings = [['imap', '<C-d>', '<Cmd>call dictate#Start()<CR>']]
+let g:bullets_custom_mappings = [
+    \ ['imap', '<C-d>', '<Cmd>call dictate#Start()<CR>'],
+    \ ['inoremap <expr>', '<Enter>', 'reg_executing() == "" ? "<Plug>(bullets-newline)" : "<Enter>"']
+\]
+" The last item fixes an issue where bullets.vim breaks <Enter> when running a macro
 
 " Bulletnotes
 
@@ -339,7 +343,7 @@ let g:tsuquyomi_disable_quickfix = 1
 " vim-chatgpt
 
 let g:vim_chatgpt_model = 'gpt-4-1106-preview'
-let g:vim_chatgpt_system_prompt = "You are a professional assistant to a software developer. Do not provide explanations or examples unless you are asked to. Always provide answers using correct Markdown syntax."
+let g:vim_chatgpt_system_prompt = "You are a professional assistant to a software developer. Do not provide explanations or examples unless you are asked to. Always provide answers using correct Markdown syntax. Prefer British English spellings."
 let g:vim_chatgpt_args = ['--show-prompt']
 
 " copilot.vim

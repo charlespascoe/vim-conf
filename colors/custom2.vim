@@ -155,7 +155,6 @@ hi DiffChange guifg=#FFB86C guibg=NONE
 hi DiffDelete guifg=#FF5C5C guibg=NONE
 hi DiffText cterm=underdashed guibg=#3D0000 guisp=#8BE9FD
 
-hi! link ErrorMsg Error
 
 hi VertSplit cterm=none guifg=#6272A4
 
@@ -188,8 +187,12 @@ hi SpellCap cterm=undercurl guisp=#8BE9FD ctermbg=NONE guibg=NONE
 hi SpellRare cterm=undercurl guisp=#8BE9FD ctermbg=NONE guibg=NONE
 hi SpellLocal cterm=undercurl guisp=#FFB86C ctermbg=NONE guibg=NONE
 
-hi WarningMsg guifg=#FFB86C guibg=#5C2F00
+" hi WarningMsg cterm=bold guifg=#FFB86C guibg=#5C2F00
+hi WarningMsg cterm=bold guifg=#3D3400 guibg=#E3CB4C
+hi ErrorMsg cterm=bold guifg=#FFFFFF guibg=#DE4141
 
+" CautionMsg is non-standard
+hi CautionMsg cterm=bold guifg=#FFB86C guibg=#5C2F00
 
 hi StatusLine     cterm=bold guibg=#424450
 hi StatusLineNC   guibg=#343746
