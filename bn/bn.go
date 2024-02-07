@@ -55,9 +55,9 @@ func (cmd *NewProjCmd) Run() error {
 	logInfo("Initialising git repo...")
 	mkdir(".bnproj", ".bnproj/spell", ".bnproj/snips", "Inbox")
 	run("touch", ".bnproj/spell/.keep", ".bnproj/snips/.keep", "Inbox/.keep")
-	run("git", "init")
+	run("git", "init", "--initial-branch", name)
 	run("git", "config", "commit.gpgsign", "false")
-	run("git", "checkout", "-b", name)
+	// run("git", "checkout", "-b", name)
 	run("rm", "-rf", ".git/hooks")
 	run("git", "add", "--all")
 	run("git", "commit", "-m", "Initial Commit")
@@ -170,10 +170,8 @@ func (cmd *CloneCmd) Run() error {
 	cdBnHome()
 
 	// Check if the directory already exists
-	if _, err := os.Stat(name); errors.Is(err, fs.ErrNotExist) {
+	if dirExists(name) {
 		return fmt.Errorf("Project '%s' already exists", name)
-	} else if err != nil {
-		return err
 	}
 
 	// TODO: Rethink this
@@ -199,8 +197,8 @@ func (cmd *LsCmd) Run() error {
 			panic("BN_LS_REMOTE must be set")
 		}
 
-		// TODO: Save to $BN_HOME/remotes_cache
 		remoteProjs := getOutput(os.Getenv("BN_LS_REMOTE"))
+		writeFile(os.ExpandEnv("$BN_HOME/remotes_cache"), remoteProjs)
 		fmt.Print(remoteProjs)
 	} else {
 		// Get list of contents of BN_HOME
@@ -344,6 +342,12 @@ func dirExists(path string) bool {
 	}
 
 	return err == nil && stat.IsDir()
+}
+
+func writeFile(path string, content string) {
+	if err := os.WriteFile(path, []byte(content), 0o644); err != nil {
+		panic(err)
+	}
 }
 
 func cd(path string) {
