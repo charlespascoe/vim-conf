@@ -39,9 +39,20 @@ overrides: []
 parserOptions:
   ecmaVersion: latest
   sourceType: module
-rules:
+rules: # 0 = off, 1 = warn, 2 = error
+  'block-scoped-var': 2
+  'eqeqeq': 1
   'no-prototype-builtins': 0
-  'semi': 1
+  'no-trailing-spaces': 1
+  'no-var': 2
+  'prefer-const': 1
+  'prefer-template': 1
+  'require-await': 1
+  'semi': 2
+ignorePatterns:
+  - 'bundle.js'
+  - '*.min.js'
+  - '*.map'
 #globals:
 #  'dayjs': readonly
 #  'dayjs_plugin_advancedFormat': readonly

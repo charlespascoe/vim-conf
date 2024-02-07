@@ -25,7 +25,8 @@ imap <expr> <Down> pumvisible() ? '<C-n>' : '<Down>'
 " (TODO: Fix delimitMate problem; this imap set before delimitMate does on
 " line 330, meaning it doesn't set its own binding. Need to find way of
 " setting after delimitMate)
-autocmd BufRead,BufNew * imap <expr> <buffer> <BS> pumvisible() ? '<C-e>' : (AfterCommentLeader() ? '<C-w>' : '<Plug>delimitMateBS')
+" autocmd BufRead,BufNew * imap <expr> <buffer> <BS> pumvisible() ? '<C-e>' : (AfterCommentLeader() ? '<C-w>' : '<Plug>delimitMateBS')
+imap <expr> <BS> pumvisible() ? '<C-e>' : (AfterCommentLeader() ? '<C-w>' : '<Plug>delimitMateBS')
 
 function! AfterCommentLeader()
     let comment_leader = trim(split(&commentstring, '%s', 1)[0])

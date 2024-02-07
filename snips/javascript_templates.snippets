@@ -13,18 +13,18 @@ import { elems } from './modules/lui.js';
 import { App } from './modules/lui-app.js';
 
 const app = new App({
-  appName: '$1',
-  extras: {
-    // TODO: Add extras here, e.g. API client
-  },
+	appName: '$1',
+	extras: {
+		// TODO: Add extras here, e.g. API client
+	},
 });
 
 app.pages(
-  // TODO: Add pages here
+	// TODO: Add pages here
 );
 
 app.nav.onNotFound(() => {
-  app.mountPage(elems.div()('Not found'));
+	app.mountPage(elems.div()('Not found'));
 });
 
 app.init();
@@ -56,11 +56,11 @@ const `!p snip.rv = custom_camel_case(t[1])`View = component(({vm}, {div}) => (
 export default (app) => {
 	app.nav.route('/`!p snip.rv = t[1].lower()`').do(() => {
 		const vm = new $1Viewmodel(app);
-		vm.init().catch((err) => {
-		  console.error(err);
-		  alert(err.message || err);
+		vm.init();
+		app.mountPage({
+			title: '$1',
+			content: `!p snip.rv = custom_camel_case(t[1])`View({vm})(),
 		});
-		app.mountPage(`!p snip.rv = custom_camel_case(t[1])`View({vm})());
 	});
 };
 endsnippet
@@ -69,304 +69,304 @@ snippet simpleclient "API Client Template"
 import { validate } from '/modules/validate.js';
 
 async function withError(promise, message) {
-  try {
-    return await promise;
-  } catch (err) {
-    console.error(\`withError caught the following error which it replaced with '${message}':\`, err);
-    throw new Error(message.replace('\$1', err.message || err));
-  }
+	try {
+		return await promise;
+	} catch (err) {
+		console.error(\`withError caught the following error which it replaced with '${message}':\`, err);
+		throw new Error(message.replace('\$1', err.message || err));
+	}
 }
 
 function url(strings, ...values) {
-  if (strings.length !== values.length + 1) {
-    return '';
-  }
+	if (strings.length !== values.length + 1) {
+		return '';
+	}
 
-  const result = [];
+	const result = [];
 
-  for (let i = 0; i < values.length; i++) {
-    result.push(
-      strings[i],
-      encodeURIComponent(values[i]),
-    );
-  }
+	for (let i = 0; i < values.length; i++) {
+		result.push(
+			strings[i],
+			encodeURIComponent(values[i]),
+		);
+	}
 
-  result.push(strings[strings.length - 1]);
+	result.push(strings[strings.length - 1]);
 
-  return result.join('');
+	return result.join('');
 }
 
 export class Client {
-  getApiKey() {
-    let apiKey = localStorage.getItem('api-key');
+	getApiKey() {
+		let apiKey = localStorage.getItem('api-key');
 
-    if (!apiKey) {
-      apiKey = prompt('Enter API Key');
-    }
+		if (!apiKey) {
+			apiKey = prompt('Enter API Key');
+		}
 
-    if (!apiKey) {
-      throw new Error('API key not provided');
-    }
+		if (!apiKey) {
+			throw new Error('API key not provided');
+		}
 
-    localStorage.setItem('api-key', apiKey);
+		localStorage.setItem('api-key', apiKey);
 
-    return apiKey;
-  }
+		return apiKey;
+	}
 
-  async fetch(url, opts={}) {
-    const headers = {
-      ...opts.headers,
-      'Authorization': \`Bearer ${this.getApiKey()}\`,
-    };
+	async fetch(url, opts={}) {
+		const headers = {
+			...opts.headers,
+			'Authorization': \`Bearer ${this.getApiKey()}\`,
+		};
 
-    const resp = await fetch(url, {
-      ...opts,
-      headers,
-    });
+		const resp = await fetch(url, {
+			...opts,
+			headers,
+		});
 
-    if (resp.status === 401) {
-      localStorage.removeItem('api-key');
-      alert('Invalid API Key');
-      return await this.fetch(url, opts);
-    }
+		if (resp.status === 401) {
+			localStorage.removeItem('api-key');
+			alert('Invalid API Key');
+			return await this.fetch(url, opts);
+		}
 
-    return resp;
-  }
+		return resp;
+	}
 
-  async get(desc, url, validator) {
-    try {
-      const resp = await withError(this.fetch(url), 'the server is not responding');
+	async get(desc, url, validator) {
+		try {
+			const resp = await withError(this.fetch(url), 'the server is not responding');
 
-      if (!resp.ok) {
-        if (resp.status === 404) {
-          return undefined;
-        }
+			if (!resp.ok) {
+				if (resp.status === 404) {
+					return undefined;
+				}
 
-        throw new Error(\`of an error from the server (${resp.status} ${resp.statusText})\`);
-      }
+				throw new Error(\`of an error from the server (${resp.status} ${resp.statusText})\`);
+			}
 
-      const body = await withError(resp.json(), 'the server response could not be parsed');
+			const body = await withError(resp.json(), 'the server response could not be parsed');
 
-      return validate.withMessage('the server response was invalid')(
-        body,
-        validator,
-      );
-    } catch (err) {
-      throw new Error(\`Couldn't get ${desc} because ${err.message || err || 'of unknown reasons'}\`);
-    }
-  }
+			return validate.withMessage('the server response was invalid')(
+				body,
+				validator,
+			);
+		} catch (err) {
+			throw new Error(\`Couldn't get ${desc} because ${err.message || err || 'of unknown reasons'}\`);
+		}
+	}
 
-  async _putOrPost(kind, desc, url, reqBody, validator) {
-    try {
-      const opts = {
-        method: kind,
-      };
+	async _putOrPost(kind, desc, url, reqBody, validator) {
+		try {
+			const opts = {
+				method: kind,
+			};
 
-      if (reqBody !== undefined) {
-        opts.headers = {
-          'Content-Type': 'application/json',
-        };
-        opts.body = JSON.stringify(reqBody);
-      }
+			if (reqBody !== undefined) {
+				opts.headers = {
+					'Content-Type': 'application/json',
+				};
+				opts.body = JSON.stringify(reqBody);
+			}
 
-      const resp = await withError(this.fetch(url, opts), 'the server is not responding');
+			const resp = await withError(this.fetch(url, opts), 'the server is not responding');
 
-      if (!resp.ok) {
-        if (resp.status === 404) {
-          return undefined;
-        }
+			if (!resp.ok) {
+				if (resp.status === 404) {
+					return undefined;
+				}
 
-        throw new Error(\`of an error from the server (${resp.status} ${resp.statusText})\`);
-      }
+				throw new Error(\`of an error from the server (${resp.status} ${resp.statusText})\`);
+			}
 
-      if (!validator) {
-        return;
-      }
+			if (!validator) {
+				return;
+			}
 
-      const body = await withError(resp.json(), 'the server response could not be parsed');
+			const body = await withError(resp.json(), 'the server response could not be parsed');
 
-      return validate.withMessage('the server response was invalid')(
-        body,
-        validator,
-      );
-    } catch (err) {
-      throw new Error(\`Couldn't ${kind.toLowerCose()} ${desc} because ${err.message || err || 'of unknown reasons'}\`);
-    }
-  }
+			return validate.withMessage('the server response was invalid')(
+				body,
+				validator,
+			);
+		} catch (err) {
+			throw new Error(\`Couldn't ${kind.toLowerCose()} ${desc} because ${err.message || err || 'of unknown reasons'}\`);
+		}
+	}
 
-  post(desc, url, reqBody, validator) {
-    return this._putOrPost('POST', desc, url, reqBody, validator);
-  }
+	post(desc, url, reqBody, validator) {
+		return this._putOrPost('POST', desc, url, reqBody, validator);
+	}
 
-  put(desc, url, reqBody, validator) {
-    return this._putOrPost('PUT', desc, url, reqBody, validator);
-  }
+	put(desc, url, reqBody, validator) {
+		return this._putOrPost('PUT', desc, url, reqBody, validator);
+	}
 
-  async delete(desc, url) {
-    try {
-      const resp = await withError(this.fetch(url, {
-        method: 'DELETE',
-      }), 'the server is not responding');
+	async delete(desc, url) {
+		try {
+			const resp = await withError(this.fetch(url, {
+				method: 'DELETE',
+			}), 'the server is not responding');
 
-      if (!resp.ok) {
-        if (resp.status === 404) {
-          return false;
-        }
+			if (!resp.ok) {
+				if (resp.status === 404) {
+					return false;
+				}
 
-        throw new Error(\`of an error from the server (${resp.status} ${resp.statusText})\`);
-      }
+				throw new Error(\`of an error from the server (${resp.status} ${resp.statusText})\`);
+			}
 
-      return true;
-    } catch (err) {
-      throw new Error(\`Couldn't delete ${desc} because ${err.message || err || 'of unknown reasons'}\`);
-    }
-  }
+			return true;
+		} catch (err) {
+			throw new Error(\`Couldn't delete ${desc} because ${err.message || err || 'of unknown reasons'}\`);
+		}
+	}
 
 }
 endsnippet
 
 snippet validatelib "Mini Validation Library" b
 export function validate(value, validator) {
-  if (typeof validator === 'string') {
-    if (validator === 'null') {
-      if (value === null) {
-        return null;
-      } else {
-        throw new Error(\`Expected ${validator}, got null\`);
-      }
-    }
+	if (typeof validator === 'string') {
+		if (validator === 'null') {
+			if (value === null) {
+				return null;
+			} else {
+				throw new Error(\`Expected ${validator}, got null\`);
+			}
+		}
 
-    if (typeof value !== validator) {
-      throw new Error(\`Expected ${validator}, got ${typeof value}\`)
-    }
+		if (typeof value !== validator) {
+			throw new Error(\`Expected ${validator}, got ${typeof value}\`);
+		}
 
-    return value;
-  }
+		return value;
+	}
 
-  if (validator instanceof RegExp) {
-    if (typeof value !== 'string') {
-      throw new Error(\`Expected a string, got ${value === null ? 'null' : typeof value}\`);
-    }
+	if (validator instanceof RegExp) {
+		if (typeof value !== 'string') {
+			throw new Error(\`Expected a string, got ${value === null ? 'null' : typeof value}\`);
+		}
 
-    if (!validator.test(value)) {
-      throw new Error(\`String '${value}' doesn't match ${validator}\`);
-    }
+		if (!validator.test(value)) {
+			throw new Error(\`String '${value}' doesn't match ${validator}\`);
+		}
 
-    return value;
-  }
+		return value;
+	}
 
-  if (typeof validator === 'object' && validator !== null) {
-    if (typeof value !== 'object' || value === null) {
-      throw new Error(\`Expected object, got ${value === null ? 'null' : typeof value}\`);
-    }
+	if (typeof validator === 'object' && validator !== null) {
+		if (typeof value !== 'object' || value === null) {
+			throw new Error(\`Expected object, got ${value === null ? 'null' : typeof value}\`);
+		}
 
-    const result = {};
+		const result = {};
 
-    for (const key in validator) {
-      try {
-        result[key] = validate(value[key], validator[key]);
-      } catch (err) {
-        throw new Error(\`${key}: ${err.message}\`);
-      }
-    }
+		for (const key in validator) {
+			try {
+				result[key] = validate(value[key], validator[key]);
+			} catch (err) {
+				throw new Error(\`${key}: ${err.message}\`);
+			}
+		}
 
-    return result;
-  }
+		return result;
+	}
 
-  if (typeof validator === 'function') {
-    return validator(value);
-  }
+	if (typeof validator === 'function') {
+		return validator(value);
+	}
 
-  throw new Error(\`Unknown validator: [${typeof validator}] ${validator}\`);
+	throw new Error(\`Unknown validator: [${typeof validator}] ${validator}\`);
 }
 
 validate.withMessage = (msg='\$1') => (value, validator) => {
-  try {
-    return validate(value, validator);
-  } catch (err) {
-    console.error('validate.withMessage() caught the following error:', err);
-    throw new Error(msg.replace('\$1', err))
-  }
+	try {
+		return validate(value, validator);
+	} catch (err) {
+		console.error('validate.withMessage() caught the following error:', err);
+		throw new Error(msg.replace('\$1', err))
+	}
 };
 
 validate.isMap = (validator) => (value) => {
-  if (typeof value !== 'object' || value === null) {
-    throw new Error(\`Expected object, got ${value === null ? 'null' : typeof value}\`);
-  }
+	if (typeof value !== 'object' || value === null) {
+		throw new Error(\`Expected object, got ${value === null ? 'null' : typeof value}\`);
+	}
 
-  const result = {};
+	const result = {};
 
-  for (const key in value) {
-    try {
-      result[key] = validate(value[key], validator);
-    } catch (err) {
-      throw new Error(\`${key}: ${err.message}\`);
-    }
-  }
+	for (const key in value) {
+		try {
+			result[key] = validate(value[key], validator);
+		} catch (err) {
+			throw new Error(\`${key}: ${err.message}\`);
+		}
+	}
 
-  return result;
+	return result;
 };
 
 
 validate.isArray = (itemValidator, ...validators) => (value) => {
-  if (!Array.isArray(value)) {
-    throw new Error('Expected array');
-  }
+	if (!Array.isArray(value)) {
+		throw new Error('Expected array');
+	}
 
-  const arr = value.map(item => validate(item, itemValidator));
+	const arr = value.map(item => validate(item, itemValidator));
 
-  return validators.reduce((arr, validator) => validate(arr, validator), arr)
+	return validators.reduce((arr, validator) => validate(arr, validator), arr);
 };
 
 validate.len = ({min = 0, max = Infinity}) => (value) => {
-  const len = value.length;
+	const len = value.length;
 
-  if (typeof len !== 'number') {
-    throw new Error(\`length property must be a number, not ${typeof len}\`);
-  }
+	if (typeof len !== 'number') {
+		throw new Error(\`length property must be a number, not ${typeof len}\`);
+	}
 
-  if (len < min) {
-    throw new Error(\`length ${len} must be at least ${min}\`);
-  }
+	if (len < min) {
+		throw new Error(\`length ${len} must be at least ${min}\`);
+	}
 
-  if (len > max) {
-    throw new Error(\`length ${len} must be no more than ${max}\`);
-  }
+	if (len > max) {
+		throw new Error(\`length ${len} must be no more than ${max}\`);
+	}
 
-  return value;
+	return value;
 };
 
 validate.either = (...validators) => (value) => {
-  const errors = [];
+	const errors = [];
 
-  for (const validator of validators) {
-    try {
-      return validate(value, validator);
-    } catch (err) {
-      errors.push(err);
-    }
-  }
+	for (const validator of validators) {
+		try {
+			return validate(value, validator);
+		} catch (err) {
+			errors.push(err);
+		}
+	}
 
-  throw new Error(\`Multiple errors { ${errors.map(err => err.message).join('; ')} }\`);
+	throw new Error(\`Multiple errors { ${errors.map(err => err.message).join('; ')} }\`);
 };
 
 validate.optional = (validator, defaultValue=undefined) => (value) => {
-  if (value === undefined) {
-    return defaultValue;
-  }
+	if (value === undefined) {
+		return defaultValue;
+	}
 
-  return validate(value, validator);
+	return validate(value, validator);
 };
 
 validate.oneOf = (...values) => {
-  const valueSet = new Set(values);
+	const valueSet = new Set(values);
 
-  return (value) => {
-    if (!valueSet.has(value)) {
-      throw new Error(\`must be one of: ${values.join(', ')}\`);
-    }
+	return (value) => {
+		if (!valueSet.has(value)) {
+			throw new Error(\`must be one of: ${values.join(', ')}\`);
+		}
 
-    return value;
-  };
+		return value;
+	};
 };
 endsnippet
