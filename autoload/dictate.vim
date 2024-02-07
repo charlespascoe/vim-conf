@@ -1,30 +1,47 @@
-let s:socket = '/tmp/dictation.sock'
+if !exists('g:dictation_sockets') || empty(g:dictation_sockets)
+    let g:dictation_sockets = ['/tmp/dictation.sock']
+endif
+
 let s:status = ""
 let s:start_on_connect = 0
 let s:autoresume = 0
 
 func dictate#Init()
-    if empty(glob(s:socket))
+    let l:socket = ''
+
+    let l:exceptions = []
+
+    for l:soc in g:dictation_sockets
+        if empty(glob(l:soc))
+            continue
+        endif
+
+        try
+            let s:ch = ch_open('unix:'..l:soc, {
+            \    'mode':     'nl',
+            \    'callback': 'dictate#OnOutput',
+            \    'close_cb': 'dictate#OnExit',
+            \})
+
+            let l:socket = l:soc
+            break
+        catch
+            echom v:exception
+            let l:exceptions += ["Couldn't connect to dictation server at "..l:soc..": "..v:exception]
+        endtry
+    endfor
+
+    if empty(l:socket)
         echohl Error
+        for e in l:exceptions
+            echom e
+        endfor
         echom "Dictation server unavailable"
         echohl None
         return 0
     endif
 
-    try
-        let s:ch = ch_open('unix:'..s:socket, {
-        \    'mode': 'nl',
-        \    'callback': 'dictate#OnOutput',
-        \    'close_cb': 'dictate#OnExit',
-        \})
-    catch
-        echohl Error
-        echom "Couldn't connect to dictation server:" v:exception
-        echohl None
-        return 0
-    endtry
-
-    echo "Connected to dictation server"
+    echo "Connected to dictation server at "..l:socket
 
     inoremap <C-d> <Cmd>call dictate#Start()<CR>
 
@@ -114,17 +131,11 @@ fun s:onInput()
 endfun
 
 func s:enterInsertMode()
-    if s:autoresume
-        let s:autoresume = 0
-        call dictate#Start()
-    endif
+    " TODO: Maybe delete this
 endfunc
 
 func s:leaveInsertMode()
-    if s:status == 'idle' || s:status == 'error'
-        let s:autoresume = 0
-    else
-        let s:autoresume = 1
+    if s:status != 'idle' && s:status != 'error'
         call dictate#Stop()
     endif
 endfunc

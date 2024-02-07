@@ -128,6 +128,10 @@ let g:bullets_custom_mappings = [
 
 let g:bulletnotes_omnicomplete_trailing_brackets = 0
 
+" dictation
+
+let g:dictation_sockets = ['/tmp/dictation-remote.sock', '/tmp/dictation.sock']
+
 " delimitMate
 let delimitMate_expand_cr = 1
 
