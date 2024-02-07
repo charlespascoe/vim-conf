@@ -130,6 +130,8 @@ let g:bulletnotes_omnicomplete_trailing_brackets = 0
 
 " dictation
 
+" NOTE: It's useful to add 'StreamLocalBindUnlink yes' to /etc/ssh/sshd_config
+" because it unlinks an existing socket before creating a new one
 let g:dictation_sockets = ['/tmp/dictation-remote.sock', '/tmp/dictation.sock']
 
 " delimitMate

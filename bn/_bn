@@ -42,7 +42,7 @@ _projects() {
   local -a projects
   projects=()
 
-  if [[  -d "$BN_HOME" ]]; then
+  if [[ -d "$BN_HOME" ]]; then
     projects=($(find "$BN_HOME" -mindepth 1 -maxdepth 1 -type d | xargs basename))
   fi
 
