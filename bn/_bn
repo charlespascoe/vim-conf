@@ -1,0 +1,71 @@
+#compdef bn
+
+_bn() {
+  local -a subcmds
+  subcmds=(
+    'inbox:Create a new Bulletnotes document in the projects inbox'
+    'es:Start/resume an edit session in the project'
+    'open:Open project'
+    'newproj:Create a new Bulletnotes project'
+    'clone:Clone a Bulletnotes project'
+    'ls:List Bulletnotes projects'
+  )
+
+  _arguments "1: :{_describe 'subcommand' subcmds}" "*:: :->args"
+
+  case "$words[1]" in
+    inbox)
+      _arguments \
+        "1: :_projects"
+      ;;
+    es)
+      _arguments \
+        "1: :_projects" \
+        {-f,--fresh}"[Start a fresh edit session]"
+      ;;
+    open|op)
+      _arguments "1: :_projects"
+      ;;
+    newproj)
+      ;;
+    clone)
+      _arguments "1: :_remote_projects"
+      ;;
+    ls)
+      _arguments {-r,--remote}"[List remote projects]"
+      ;;
+  esac
+}
+
+# Function to retrieve a list of projects for autocompletion
+_projects() {
+  local -a projects
+  projects=()
+
+  if [[  -d "$BN_HOME" ]]; then
+    projects=($(find "$BN_HOME" -mindepth 1 -maxdepth 1 -type d | xargs basename))
+  fi
+
+  _values 'projects' $projects
+}
+
+_remote_projects() {
+  local -a remote_projects
+  local -a unused_remote_projects
+  remote_projects=()
+  unused_remote_projects=()
+
+  if [[ -f "$BN_HOME/remotes_cache" ]]; then
+    remote_projects=($(<"$BN_HOME/remotes_cache"))
+  fi
+
+  for remote in "${remote_projects[@]}"; do
+    if [[ ! -d "$BN_HOME/$remote" ]]; then
+      unused_remote_projects+="$remote"
+    fi
+  done
+
+  _values 'projects' $unused_remote_projects
+}
+
+_bn

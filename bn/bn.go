@@ -13,26 +13,12 @@ import (
 	"github.com/alecthomas/kong"
 )
 
-// type arguments []string
-
-// func (a *arguments) Pop() string {
-// 	args := *a
-
-// 	if len(args) > 0 {
-// 		arg := args[0]
-// 		args = args[1:]
-// 		*a = args
-// 		return arg
-// 	}
-
-// 	return ""
-// }
-
 var cli struct {
 	Inbox       InboxCmd       `cmd:"" help:"Create a new Bulletnotes document in the project's inbox"`
 	EditSession EditSessionCmd `cmd:"" name:"es" help:"Start/resume an edit session in the project"`
 	Open        OpenCmd        `cmd:"" name:"open" aliases:"op" help:"Open project"`
 	NewProj     NewProjCmd     `cmd:"" name:"newproj" help:"Create a new Bulletnotes project"`
+	Clone       CloneCmd       `cmd:"" help:"Clone a Bulletnotes project"`
 	Ls          LsCmd          `cmd:"" help:"List Bulletnotes projects"`
 }
 
