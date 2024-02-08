@@ -1,7 +1,7 @@
 vim9script
 
 def ReSub(pat: string, sub: string): func(string): string
-    return (s: string): string => substitute(s, pat, sub, '')
+    return (s: string): string => substitute(s, '^' .. pat .. '$', sub, '')
 enddef
 
 var invert_binary_subs = [
