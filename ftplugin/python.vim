@@ -55,10 +55,10 @@ fun s:GetDictationContext()
     let transforms = ['snakecase']
 
     if syn == 'Comment'
-        let prompt = dictate#GetLeadingComment()
+        let prompt = dictation#GetLeadingComment()
         let transforms = ['comment']
     elseif syn == 'String'
-        let prompt = dictate#GetLeadingString()
+        let prompt = dictation#GetLeadingString()
         " TODO: Check to see if it's actually a double-quoted versus a
         " single-quoted string
         let transforms = ['default', 'dqesc']

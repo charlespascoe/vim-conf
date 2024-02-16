@@ -10,6 +10,8 @@ DevPlug 'vim-ninja-feet'
 " DevPlug 'vim-serenade'
 DevPlugBranch 'vim-go-syntax'
 
+Plug '~/go/src/dictation'
+
 delcom DevPlug
 delcom DevPlugBranch
 

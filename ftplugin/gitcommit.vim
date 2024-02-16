@@ -14,4 +14,4 @@ nmap <buffer> <leader>gd <Cmd>ShowDiff<CR>
 
 setlocal nolist
 
-let b:get_dictation_prompt = function('dictate#GetLeadingParagraph')
+let b:get_dictation_prompt = function('dictation#GetLeadingParagraph')

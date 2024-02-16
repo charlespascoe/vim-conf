@@ -58,7 +58,7 @@ fun tasks#quickadd()
 endfun
 
 fun tasks#context()
-    let prompt = (line('.') == 1 ? 'The task is: ' : '')..dictate#GetLeadingParagraph()
+    let prompt = (line('.') == 1 ? 'The task is: ' : '')..dictation#GetLeadingParagraph()
     return #{prompt: prompt}
 endfun
 

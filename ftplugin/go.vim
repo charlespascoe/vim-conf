@@ -40,10 +40,10 @@ fun s:GetDictationContext()
     let transforms = ['lowercase', 'pascalcase']
 
     if syn == 'Comment'
-        let prompt = dictate#GetLeadingComment()
+        let prompt = dictation#GetLeadingComment()
         let transforms = ['comment']
     elseif syn == 'String'
-        let prompt = dictate#GetLeadingString()
+        let prompt = dictation#GetLeadingString()
         " TODO: Check to see if it's actually a double-quoted string and not a
         " raw string
         let transforms = ['default', 'dqesc']

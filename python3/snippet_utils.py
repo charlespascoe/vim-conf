@@ -312,7 +312,7 @@ def format_snake_case(s, cap=False):
 
 
 def start_dictation():
-    vim.command("call dictate#Start()")
+    vim.command("call dictation#Start()")
 
 
 def get_syntax_name(pos, pattern, behind_pos=False):

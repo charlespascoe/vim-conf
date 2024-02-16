@@ -2,7 +2,7 @@ priority 10
 
 global !p
 def start_dictation():
-	vim.command('call dictate#Start()')
+	vim.command('call dictation#Start()')
 	# Returning this value prevents the function for being run multiple times
 	# during a single expansion of a snippet
 	return common_changes() + ':'

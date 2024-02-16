@@ -64,3 +64,9 @@ hi link vimHiTerm Identifier
 
 " TODO: Raise this as a fix, but make the hi bang optional
 syn region vimHiLink contained oneline matchgroup=vimCommand start="\(\<hi\%[ghlight]!\s\+\)\@<=\(\(def\%[ault]\s\+\)\=link\>\|\<def\>\)" end="$" contains=@vimHiCluster
+
+syntax match vimVarHash /#/ contained containedin=vimVar
+hi link vimVarHash SpecialChar
+
+syntax match vimVarScope /\<[agls]:\ze\w/ contained containedin=vimVar
+hi link vimVarScope Special

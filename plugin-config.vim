@@ -91,7 +91,7 @@ let g:airline_right_alt_sep = ''
 let g:airline_symbols.branch = ''
 let g:airline_symbols.readonly = ''
 
-call airline#parts#define_function('dictation', 'dictate#GetStatusText')
+call airline#parts#define_function('dictation', 'dictation#GetStatus')
 
 fun! AirlineFixFfenc(ffenc)
     if a:ffenc == ''
@@ -109,7 +109,7 @@ endfun
 
 let g:airline_section_b = '%{airline#util#wrap(airline#extensions#branch#get_head(),0)}'
 " TODO: raise this as an issue, and when it gets fixed, replace this line
-let g:airline_section_y = '%{airline#util#prepend(AirlineFixFfenc(airline#parts#ffenc()),0)}%{airline#util#wrap(dictate#GetStatusText(),0)}'
+let g:airline_section_y = '%{airline#util#prepend(AirlineFixFfenc(airline#parts#ffenc()),0)}%{airline#util#wrap(dictation#GetStatus(),0)}'
 let g:airline_section_z = '%#__accent_bold#%{airline#util#wrap(airline#extensions#obsession#get_status(),0)}%2l/%L:%02v%#__restore__#'
 
 " bullets.vim
@@ -119,7 +119,7 @@ let g:bullets_enable_in_empty_buffers = 0
 let g:bullets_outline_levels = ['std-']
 " Prevent bullets from breaking my dictation shortcut
 let g:bullets_custom_mappings = [
-    \ ['imap', '<C-d>', '<Cmd>call dictate#Start()<CR>'],
+    \ ['imap', '<C-d>', '<Cmd>call dictation#Start()<CR>'],
     \ ['inoremap <expr>', '<Enter>', 'reg_executing() == "" ? "<Plug>(bullets-newline)" : "<Enter>"']
 \]
 " The last item fixes an issue where bullets.vim breaks <Enter> when running a macro
@@ -132,7 +132,42 @@ let g:bulletnotes_omnicomplete_trailing_brackets = 0
 
 " NOTE: It's useful to add 'StreamLocalBindUnlink yes' to /etc/ssh/sshd_config
 " because it unlinks an existing socket before creating a new one
-let g:dictation_sockets = ['/tmp/dictation-remote.sock', '/tmp/dictation.sock']
+let g:dictation#sockets = ['/tmp/dictation-remote.sock', '/tmp/dictation.sock']
+
+let s:dictation_colours = #{
+    \ idle:    '#6272A4',
+    \ listen:  '#DD69AB',
+    \ dictate: '#FF5555',
+    \ working: '#7F6794',
+    \ error:   '#FF5555',
+    \ paused:  '#037E98',
+\}
+
+fun s:DictationStatusUpdate(msg)
+    if a:msg.status == 'dictate' && a:msg.activeClient
+        call copilot#Clear()
+    endif
+
+    let l:col = get(s:dictation_colours, a:msg.status, g:dracula#palette.comment[0])
+    for [name, colours] in items(g:airline#themes#{g:airline_theme}#palette)
+        if name == 'inactive'
+            continue
+        endif
+
+        if has_key(colours, 'airline_y')
+            let colours.airline_y[1] = l:col
+        endif
+    endfor
+
+    let w:airline_lastmode = ''
+    " AirlineRefresh
+    " This tricks Airline into updating the colours from the theme
+    call airline#check_mode(winnr())
+    " This causes Airline to refresh the status line
+    call airline#update_statusline()
+endfun
+
+let g:dictation#status_handler = function('s:DictationStatusUpdate')
 
 " delimitMate
 let delimitMate_expand_cr = 1

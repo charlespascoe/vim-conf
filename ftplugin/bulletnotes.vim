@@ -12,4 +12,4 @@ call bulletnotes#InitBuffer()
 
 let b:invert_binary_subs = [['*', '+']]
 
-let b:get_dictation_prompt = function('dictate#GetLeadingParagraph')
+let b:get_dictation_prompt = function('dictation#GetLeadingParagraph')

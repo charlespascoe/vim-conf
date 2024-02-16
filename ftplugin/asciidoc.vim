@@ -50,4 +50,4 @@ endfun
 " This needs a proper solution.
 call timer_start(200, 'FixFormatOptions')
 
-let b:get_dictation_prompt = function('dictate#GetLeadingParagraph')
+let b:get_dictation_prompt = function('dictation#GetLeadingParagraph')

@@ -168,7 +168,7 @@ def smart_capitalisation(s, cap_first=True):
 	return s
 
 def start_dictation(ret_val):
-	vim.command('call dictate#Start()')
+	vim.command('call dictation#Start()')
 	# Returning a value prevents the function for being run multiple times
 	# during a single expansion of a snippet
 	return ret_val

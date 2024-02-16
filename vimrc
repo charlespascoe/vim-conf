@@ -219,7 +219,7 @@ au VimEnter * normal! zz
 
 " Initialise Dictation
 if !empty(glob('/tmp/dictation.sock'))
-    au VimEnter * call dictate#Init()
+    au VimEnter * call dictation#Init()
 endif
 
 if exists('$BN_PROJ') && $BN_PROJ == '1'
