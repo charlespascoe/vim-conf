@@ -121,8 +121,24 @@ fun! QuickSearchMap(key, title, pattern)
 endfun
 
 " Make n and N move through location list when open
-nnoremap <expr> n get(getloclist(0, {'winid':0}), 'winid', 0) ? '<Cmd>lnext<CR>zzzv' : '<Cmd>setlocal hlsearch<CR>'..v:count1..'nzzzv'
+nnoremap <expr> n get(getloclist(0, {'winid':0}), 'winid', 0) ? <SID>NextItem() : '<Cmd>setlocal hlsearch<CR>'..v:count1..'nzzzv'
 nnoremap <expr> N get(getloclist(0, {'winid':0}), 'winid', 0) ? '<Cmd>lprev<CR>zzzv' : '<Cmd>setlocal hlsearch<CR>'..v:count1..'Nzzzv'
+
+" TODO: Handle selecting a specific one first (check the current index)
+func s:NextItem()
+    let d = getloclist(0, {'qfbufnr':0,'id':0})
+    let l:bufid = get(d, 'qfbufnr', 0)
+    let l:id = get(d, 'id', 0)
+
+    if l:bufid && getbufvar(l:bufid, 'done_first', 0) != l:id
+        call setbufvar(l:bufid, 'done_first', l:id)
+        return "\<Cmd>lfirst\<CR>zzzv"
+    end
+
+    " Cycling through the list shouldn't change jump list (<C-o> will take you
+    " back to the original location where the search was started)
+    return "\<Cmd>keepjumps lnext\<CR>zzzv"
+endfunc
 
 " Disable search hl after editing
 au TextChanged,InsertEnter * set nohlsearch
