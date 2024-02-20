@@ -4,6 +4,10 @@ syntax iskeyword @,48-57,_,192-255,#
 syntax match LeadingWhitespace /^[ \t]*/ contained
 syntax match vimLineComment /^[ \t:]*".*$/  contains=@vimCommentGroup,vimCommentString,vimCommentTitle,LeadingWhitespace
 
+syntax match   vimCommentNote /\<NOTE\ze:/ contained
+syntax cluster vimCommentGroup add=vimCommentNote
+hi link vimCommentNote Todo
+
 hi vimFuncName  cterm=bold,italic  guifg=#FFF180
 
 hi link vimFunction   Function
@@ -26,7 +30,7 @@ syn match vimEchoHL "echohl\=" skipwhite nextgroup=vimGroup,vimHiGroup,vimHLGrou
 syntax match vimSyntaxClusterRef /@\w\+/ contained containedin=vimGroupList
 hi link vimSyntaxClusterRef Identifier
 
-syntax match vimComma /,/ containedin=vimGroupList,vimFuncArgs
+syntax match vimComma /,/ containedin=vimGroupList,vimFuncArgs contained
 hi link vimComma Operator
 
 syntax match vimAmp /&/ containedin=vimGroupList
@@ -68,5 +72,5 @@ syn region vimHiLink contained oneline matchgroup=vimCommand start="\(\<hi\%[ghl
 syntax match vimVarHash /#/ contained containedin=vimVar
 hi link vimVarHash SpecialChar
 
-syntax match vimVarScope /\<[agls]:\ze\w/ contained containedin=vimVar
+syntax match vimVarScope /\<[abglsw]:\ze\w/ containedin=vimVar,vimFBVar,vimFuncVar contained
 hi link vimVarScope Special

@@ -446,6 +446,11 @@ snippet kong "kong" bw
 endsnippet
 
 context "is_in_import_block()"
+snippet log "zerolog logger" bw
+"github.com/rs/zerolog/log"
+endsnippet
+
+context "is_in_import_block()"
 snippet resty "resty" bw
 "github.com/go-resty/resty/v2"
 endsnippet
@@ -501,6 +506,10 @@ endsnippet
 
 snippet 'Ae ' "Assert Equal" brA
 assert.Equal(${1:expected}, ${2:actual})
+endsnippet
+
+snippet 'Aerc ' "Assert Error Contains" brA
+assert.ErrorContains(${1:err}, "${2:substring}")
 endsnippet
 
 snippet 'Af ' "Assert False" brA
@@ -711,13 +720,13 @@ func New$1($2) *$1 {
 }
 endsnippet
 
-pre_expand "add_import(snip, 'github.com/rs/zerolog/log')"
+pre_expand "add_import(snip, 'github.com/rs/zerolog/log', 'fmt')"
 snippet '^fcl ' "Function - Constructor with Log" brA
 func New$1($2) *$1 {
 	return &${1:`!p if not snip.c: snip.rv = find_type() or 'Type'`}{
 		$0
 		log: log.With().
-			Str("component", "`!p snip.rv = get_package_name()`.$1").
+			Str("component", fmt.Sprintf("%T", $1{})).
 			Logger(),
 	}
 }

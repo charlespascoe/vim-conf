@@ -384,8 +384,7 @@ let g:tsuquyomi_disable_quickfix = 1
 " vim-chatgpt
 
 let g:vim_chatgpt_model = 'gpt-4-1106-preview'
-let g:vim_chatgpt_system_prompt = "You are a professional assistant to a software developer. Do not provide explanations or examples unless you are asked to. Always provide answers using correct Markdown syntax. Prefer British English spellings."
-let g:vim_chatgpt_args = ['--show-prompt']
+let g:vim_chatgpt_system_prompt = "You are a professional assistant to a software developer. Do not provide explanations or examples unless you are asked to. Always provide answers using correct Markdown syntax, using 4 spaces to indent nested bullet points. Prefer British English spellings."
 
 " copilot.vim
 
@@ -406,8 +405,9 @@ fun s:ToggleCopilot()
 endfun
 
 nmap <leader>C <Cmd>call <SID>ToggleCopilot()<CR>
-imap <C-c> <Cmd>call <SID>ToggleCopilot()<CR>
-nmap <C-c> <Cmd>call <SID>ToggleCopilot()<CR>
+" Alt mappings require special treatment, e.g. exec "set <A-c>=\ec"
+imap <A-c> <Cmd>call <SID>ToggleCopilot()<CR>
+nmap <A-c> <Cmd>call <SID>ToggleCopilot()<CR>
 
 command -nargs=0 CopilotToggleFile let b:copilot_enabled = !get(b:, 'copilot_enabled', v:false) <bar> echom 'Copilot ' .. (b:copilot_enabled ? 'enabled' : 'disabled') .. ' for ' .. expand('%:t')
 

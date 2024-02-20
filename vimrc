@@ -229,6 +229,9 @@ elseif isdirectory('.bnproj')
     call bulletnotes#InitProject()
 endif
 
+" Support for Option-key mappings
+exec "set <A-c>=\ec"
+
 " External files
 source ~/.vim-conf/utils.vim
 source ~/.vim-conf/autocomplete.vim
