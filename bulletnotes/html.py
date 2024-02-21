@@ -4,12 +4,13 @@ import re
 emphasis_regex = re.compile("`([^`]+)`")
 tag_regex = re.compile(r"#([a-zA-Z0-9_\-]+)")
 contact_regex = re.compile(r"(?<!\w)@([a-zA-Z0-9_\-.]+)")
-link_regex = re.compile(r'(?<!\w)\[(http[^"\]]+)\](?!\w)')
-ref_regex = re.compile(r"&amp;([a-zA-Z0-9_\-.:]+(/[a-zA-Z0-9_\-.:]+)*)")
-monospace_regex = re.compile(r"(?<!\\)\{((\\\}|\\\{|[^}])*)\}")
-highlighted_monospace_regex = re.compile(r"(?<!\\)\{\{((\\\}|\\\{|[^}])*)\}\}")
+link_regex = re.compile(r'(?<!\w)\[(http[^"\]]+)\](?:\(([^)]+)\))?(?!\w)')
+ref_regex = re.compile(r"&([a-zA-Z0-9_\-.:]+(/[a-zA-Z0-9_\-.:]+)*)")
+monospace_regex = re.compile(r"(?<!\\)\{((\\[\\{}]|[^}])*)\}")
+highlighted_monospace_regex = re.compile(r"(?<!\\)\{\{((\\[\\{}]|[^}])*)\}\}")
 anchor_regex = re.compile(r":([a-zA-Z0-9]+):")
 anchor_pointer_regex = re.compile(r"\[:([a-zA-Z0-9]+):\]")
+escape_regex = re.compile(r"\\([{}])")  # TODO add more escaped characters
 
 
 def escape_html(text):
@@ -37,29 +38,22 @@ class BulletFormatter:
         self.bullets_formatter = bullets_formatter
         self.text_formatter = text_formatter
 
-    def to_html(self, bullet):
-        style = self.build_style()
-
-        content = self.text_formatter.to_html(bullet.content)
-        children = self.build_children(bullet)
-
-        return f"<li{style}>{content}{children}</li>"
-
-    def build_children(self, bullet):
-        if len(bullet.subbullets) == 0:
-            return ""
-
-        subbullets_html = "".join(
-            self.bullets_formatter.to_html(b) for b in bullet.subbullets
+    def __call__(self, bullet):
+        output = Element(
+            "li",
+            self.text_formatter(bullet.content),
+            {"style": format_style(self.style or BulletFormatter.default_style)},
         )
 
-        return f"{self.bullets_formatter.build_ul()}{subbullets_html}</ul>"
+        if len(bullet.subbullets) > 0:
+            ul = self.bullets_formatter.build_ul()
 
-    def build_style(self):
-        if self.style:
-            return f' style="{format_style(self.style)}"'
+            for b in bullet.subbullets:
+                ul.append(self(b))
 
-        return f' style="{format_style(BulletFormatter.default_style)}"'
+            output.append(ul)
+
+        return output
 
 
 BulletFormatter.default_style = {
@@ -91,26 +85,26 @@ class BulletsFormatter:
         bf = BulletsFormatter(text_formatter)
 
         bf.register("-", {"color": "black"})
-        bf.register("*+", {"color": "green"}, lambda s: f"<b>AP:</b> {s}")
+        bf.register("*+", {"color": "green"}, lambda s: [Element("b", "AP:"), " ", s])
         bf.register("?<", {"color": "#FF5722"})
         bf.register(">", {"color": "initial", "font-weight": "bold"})
         # bf.register('#', {'color': '#0070ff', 'font-style': 'italic'})
 
         return bf
 
-    def to_html(self, bullet):
+    def __call__(self, bullet):
         if bullet.bullet_type not in self.formatters:
             if self.default_formatter is None:
                 return ""
 
-            return self.default_formatter.to_html(bullet)
+            return self.default_formatter(bullet)
 
         formatter = self.formatters[bullet.bullet_type]
 
-        return formatter.to_html(bullet)
+        return formatter(bullet)
 
     def build_ul(self):
-        return f'<ul style="{format_style(BulletsFormatter.list_style)}">'
+        return Element("ul", [], {"style": format_style(BulletsFormatter.list_style)})
 
 
 BulletsFormatter.list_style = {
@@ -125,15 +119,143 @@ contact_style = {
 }
 
 
-def contact_format(contact_match):
-    contact = contact_match.group(1).replace("_", " ")
-    style = format_style(contact_style)
-    return f'<span style="{style}">{contact}</span>'
+class Element:
+    def __init__(self, el, content=[], attrs={}):
+        self.el = el
+        # Use list(content) to create copy of content list
+        self.content = list(content) if isinstance(content, list) else [content]
+        self.attrs = attrs
+
+    def to_html(self):
+        if self.el == "br":
+            return "<br/>"
+
+        # TODO: Escape attrs
+        attrs = " ".join(f'{key}="{self.attrs[key]}"' for key in self.attrs)
+
+        if attrs != "":
+            attrs = " " + attrs
+
+        content = "".join(
+            str(c) if not isinstance(c, str) else escape_html(c) for c in self.content
+        )
+        return f"<{self.el}{attrs}>{content}</{self.el}>"
+
+    def append(self, *content):
+        self.content.extend(content)
+
+    def __str__(self):
+        return self.to_html()
 
 
-def tag_format(tag_match):
-    tag = tag_match.group(1).replace("_", " ")
-    return f"<b>{tag}</b>"
+def apply_parsers(s, parsers):
+    result = [s]
+
+    for parser in parsers:
+        result = sum((parser(s) for s in result), [])
+
+    return result
+
+
+def parse_pattern(pattern, fn):
+    def parse(s):
+        if not isinstance(s, str):
+            return [s]
+
+        result = []
+
+        while True:
+            match = pattern.search(s)
+            if match is None:
+                break
+
+            start, end = match.span()
+            result.append(s[:start])
+            result.append(fn(match))
+            s = s[end:]
+
+        result.append(s)
+
+        return result
+
+    return parse
+
+
+parse_link = parse_pattern(
+    link_regex,
+    lambda m: Element(
+        "a",
+        m.group(2) or m.group(1),
+        {"href": m.group(1), "target": "_blank"},
+    ),
+)
+parse_highlighted_monospace = parse_pattern(
+    highlighted_monospace_regex,
+    lambda m: Element(
+        "span",
+        m.group(1).replace("\\{", "{").replace("\\}", "}"),
+        {"style": "font-family: monospace; color: crimson;"},
+    ),
+)
+parse_monospace = parse_pattern(
+    monospace_regex,
+    lambda m: Element(
+        "span",
+        m.group(1).replace("\\{", "{").replace("\\}", "}"),
+        {"style": "font-family: monospace;"},
+    ),
+)
+parse_emphasis = parse_pattern(
+    emphasis_regex,
+    lambda m: Element(
+        "b",
+        apply_parsers(m.group(1), [p for p in parsers if p != parse_emphasis]),
+    ),
+)
+parse_tag = parse_pattern(
+    tag_regex,
+    lambda m: Element("b", m.group(1).replace("_", " ")),
+)
+parse_contact = parse_pattern(
+    contact_regex,
+    lambda m: Element(
+        "span",
+        m.group(1).replace("_", " "),
+        {"style": format_style(contact_style)},
+    ),
+)
+parse_anchor_pointer = parse_pattern(
+    anchor_pointer_regex,
+    lambda m: Element("a", m.group(1), {"href": f"#{m.group(1)}"}),
+)
+parse_anchor = parse_pattern(
+    anchor_regex,
+    lambda m: Element(
+        "span",
+        f":{m.group(1)}:",
+        {"id": m.group(1), "style": "color: teal;"},
+    ),
+)
+parse_ref = parse_pattern(
+    ref_regex,
+    lambda m: Element(
+        "span",
+        m.group(1),
+        {"style": "color: red;"},
+    ),
+)
+
+parsers = [
+    parse_link,
+    parse_highlighted_monospace,
+    parse_monospace,
+    parse_emphasis,
+    parse_tag,
+    parse_contact,
+    parse_anchor_pointer,
+    parse_anchor,
+    parse_ref,
+]
 
 
 class TextFormatter:
@@ -142,27 +264,7 @@ class TextFormatter:
 
     @staticmethod
     def default():
-        return TextFormatter(
-            [
-                lambda s: emphasis_regex.sub(r"<b>\1</b>", s),
-                lambda s: tag_regex.sub(tag_format, s),
-                lambda s: contact_regex.sub(contact_format, s),
-                lambda s: link_regex.sub(r'<a href="\1" target="_blank">\1</a>', s),
-                lambda s: anchor_pointer_regex.sub(r'<a href="#\1">\1</a>', s),
-                lambda s: anchor_regex.sub(
-                    r'<span id="\1" style="color: teal;">:\1:</span>', s
-                ),
-                lambda s: ref_regex.sub(r'<span style="color: red">\1</span>', s),
-                lambda s: highlighted_monospace_regex.sub(
-                    r'<span style="font-family: monospace; color: crimson;">\1</span>',
-                    s,
-                ),
-                lambda s: monospace_regex.sub(
-                    r'<span style="font-family: monospace;">\1</span>', s
-                ),
-                lambda s: s.replace("\\{", "{").replace("\\}", "}"),
-            ]
-        )
+        return TextFormatter(parsers)
 
     def extend(self, *transforms):
         if len(transforms) == 0:
@@ -170,13 +272,8 @@ class TextFormatter:
 
         return TextFormatter(self.transforms + list(transforms))
 
-    def to_html(self, text):
-        interim = escape_html(text)
-
-        for transform in self.transforms:
-            interim = transform(interim)
-
-        return interim
+    def __call__(self, text):
+        return apply_parsers(text, self.transforms)
 
 
 class SectionFormatter:
@@ -186,7 +283,7 @@ class SectionFormatter:
         self.text_formatter = text_formatter
         self.append_br_to_paragraphs = False
         self.append_br_to_bullet_lists = False
-        self.heading_style = {"font-size": "1.2em"}
+        self.heading_style = {"font-size": "1.2em", "text-decoration": "underline"}
 
     @staticmethod
     def default():
@@ -197,54 +294,39 @@ class SectionFormatter:
             tf,
         )
 
-    def to_html(self, section):
-        output = []
+    def __call__(self, section):
+        output = Element("section")
 
         if section.title != "":
-            formatted_title = self.text_formatter.to_html(section.title)
             output.append(
-                f'<h2 style="{format_style(self.heading_style)}">{formatted_title}</h2>'
+                Element(
+                    "h2",
+                    self.text_formatter(section.title),
+                    {"style": format_style(self.heading_style)},
+                )
             )
 
-        in_ul = False
-
-        previous_was_para = False
+        ul = None
 
         for item in section.contents:
-            if previous_was_para and self.append_br_to_paragraphs:
-                output.append("<br/>")
-
             if type(item) is str:
-                previous_was_para = True
+                output.append(Element("p", self.text_formatter(item)))
 
-                if in_ul:
-                    output.append("</ul>")
+                if self.append_br_to_paragraphs:
+                    output.append(Element("br"))
+
+                ul = None
+            else:  # Item is bullet
+                if ul is None:
+                    ul = self.bullets_formatter.build_ul()
+                    output.append(ul)
 
                     if self.append_br_to_bullet_lists:
-                        output.append("<br/>")
+                        output.append(Element("br"))
 
-                    in_ul = False
+                ul.append(self.bullets_formatter(item))
 
-                formatted_text = self.text_formatter.to_html(item)
-                output.append(f"<p>{formatted_text}</p>")
-            else:
-                previous_was_para = False
-
-                if not in_ul:
-                    output.append(self.bullets_formatter.build_ul())
-                    in_ul = True
-
-                output.append(self.bullets_formatter.to_html(item))
-
-        if in_ul:
-            output.append("</ul>")
-
-            if self.append_br_to_bullet_lists:
-                output.append("<br/>")
-
-            in_ul = False
-
-        return "".join(output)
+        return output
 
 
 class DocumentFormatter:
@@ -275,16 +357,19 @@ class DocumentFormatter:
         output = []
 
         if document.title != "":
-            formatted_title = self.text_formatter.to_html(document.title)
             output.append(
-                f'<h1 style="{format_style(self.header_style)}">{formatted_title}</h1>'
+                Element(
+                    "h1",
+                    self.text_formatter(document.title),
+                    {"style": format_style(self.header_style)},
+                )
             )
 
-        output += [
-            self.section_formatter.to_html(section) for section in document.sections
-        ]
+        output += [self.section_formatter(section) for section in document.sections]
 
-        return "".join(output)
+        return "".join(
+            str(e) if not isinstance(e, str) else escape_html(e) for e in output
+        )
 
     def format_global_styles(self):
         return " ".join(
