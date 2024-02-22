@@ -1432,7 +1432,7 @@ endsnippet
 # Wraps single return type in parens when adding another
 # Requires new syntax definition
 context "get_syntax_name(snip.cursor, r'^\s*({)$') == 'goFuncBraces'"
-snippet '([a-zA-Z0-9_.-\[\]]+),' "" rA
+snippet '([*a-zA-Z0-9_.-\[\]]+),' "" rA
 (`!p snip.rv = match[1]`, $0)
 endsnippet
 

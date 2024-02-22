@@ -146,6 +146,8 @@ let s:dictation_colours = #{
 fun s:DictationStatusUpdate(msg)
     if a:msg.status == 'dictate' && a:msg.activeClient
         call copilot#Clear()
+        " TODO: Why does copilot#Clear() sometimes need to be called twice?
+        call copilot#Clear()
     endif
 
     let l:col = get(s:dictation_colours, a:msg.status, g:dracula#palette.comment[0])
@@ -159,9 +161,8 @@ fun s:DictationStatusUpdate(msg)
         endif
     endfor
 
-    let w:airline_lastmode = ''
-    " AirlineRefresh
     " This tricks Airline into updating the colours from the theme
+    let w:airline_lastmode = ''
     call airline#check_mode(winnr())
     " This causes Airline to refresh the status line
     call airline#update_statusline()
@@ -193,6 +194,8 @@ nmap <leader>N <Cmd>call <SID>ToggleNERDTree()<CR>
 let NERDTreeShowLineNumbers = 1
 let NERDTreeWinSize = 48
 let NERDTreeChDirMode = 3 " Change tree root to match CWD of tab
+
+au BufNewFile * au BufWritePost <buffer> ++once NERDTreeRefreshRoot
 
 " python-syntax
 let g:python_highlight_all = 1
