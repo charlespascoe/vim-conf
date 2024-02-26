@@ -57,8 +57,8 @@ fun tasks#quickadd()
     call job_start(['open', '-g', url], #{stoponexit: ""})
 endfun
 
-fun tasks#context()
-    let prompt = (line('.') == 1 ? 'The task is: ' : '')..dictation#GetLeadingParagraph()
+fun tasks#context(lnum, col) abort
+    let prompt = (a:lnum == 1 ? 'The task is: ' : '')..dictation#GetLeadingParagraph(a:lnum, a:col)
     return #{prompt: prompt}
 endfun
 

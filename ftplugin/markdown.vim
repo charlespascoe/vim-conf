@@ -37,8 +37,4 @@ fun! FormatLinkSlug(type)
     endif
 endfun
 
-fun s:GetLeadingParagraph()
-    return py3eval('dictation.get_leading_block()')
-endfun
-
-let b:get_dictation_prompt = function('s:GetLeadingParagraph')
+let b:get_dictation_prompt = function('dictation#GetLeadingBlock')

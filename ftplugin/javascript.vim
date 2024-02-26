@@ -54,17 +54,17 @@ fun! s:AddImport()
     end
 endfun
 
-fun s:GetDictationContext()
-    let syn = synIDattr(synIDtrans(synID(line("."),max([col(".")-1,1]),1)),"name")
+fun s:GetDictationContext(lnum, col) abort
+    let syn = synIDattr(synIDtrans(synID(a:lnum,max([a:col-1,1]),1)),"name")
 
     let prompt = ''
     let transforms = ['camelcase']
 
     if syn == 'Comment'
-        let prompt = dictation#GetLeadingComment()
+        let prompt = dictation#GetLeadingComment(a:lnum, a:col)
         let transforms = ['comment']
     elseif syn == 'String'
-        let prompt = dictation#GetLeadingString()
+        let prompt = dictation#GetLeadingString(a:lnum, a:col)
         " TODO: Check to see if it's actually a double-quoted string and not a
         " single-quoted string or template string
         let transforms = ['default', 'dqesc']

@@ -198,7 +198,8 @@ command -bar Scratch call Scratch()
 command -bar FixQuotes %s/’/'/ge | %s/[“”]/"/ge
 
 command Scriptnames redir @" | silent scriptnames | redir END | Scratch | exec 'normal p'
-command SyntimeReport redir @" | silent syntime report | redir END | Scratch | exec 'normal p'
+command SyntimeReport syntime off | redir @" | silent syntime report | redir END | Scratch | exec 'normal p'
+command SyntimeStart syntax off | silent syntime on | syntax on
 command Syntax redir @" | exec "silent syntax" | redir END | Scratch | exec 'normal p'
 
 fun s:ToggleConceal()

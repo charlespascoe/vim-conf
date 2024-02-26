@@ -593,6 +593,14 @@ snippet '\bc\?\b' "Convert to Arbitrary Type" r
 $1(${VISUAL}$2)
 endsnippet
 
+# TODO: Guess the type name
+pre_expand "add_import(snip, 'fmt', 'github.com/rs/zerolog/log')"
+snippet cl "Component Logger" b
+log: log.With().
+	Str("component", fmt.Sprintf("%T", ${1:Component}{})).
+	Logger(),
+endsnippet
+
 snippet cont "Continue" b
 continue
 endsnippet
@@ -670,7 +678,7 @@ $1 `!p snip.rv = match[1] or ''``!p snip.rv = convert_type_map.get(match[2] or '
 endsnippet
 
 context "in_syntax_group('goStructTypeBlock')"
-pre_expand "add_import(snip, 'github.com/rs/zerolog')"
+pre_expand "add_import(snip, 'github.com/rs/zerolog', 'github.com/rs/zerolog/log')"
 snippet 'Fl ' "Field (logger)" bwreA
 log zerolog.Logger
 endsnippet

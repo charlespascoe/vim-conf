@@ -15,3 +15,7 @@ syn region markdownH6 matchgroup=markdownH6Delimiter start="#######\@!\s\+" end=
 hi markdownBold cterm=bold ctermfg=51 guifg=#74fffb
 hi link markdownCode Constant
 hi link markdownCodeDelimiter Constant
+
+" I have no idea why they decided to use two spaces for a line break, but it
+" interferes with my dictation plugin
+syn clear mkdLineBreak

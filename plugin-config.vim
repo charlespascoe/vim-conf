@@ -168,7 +168,12 @@ fun s:DictationStatusUpdate(msg)
     call airline#update_statusline()
 endfun
 
+fun! s:DictationTranscription(msg)
+    call copilot#Clear()
+endfun
+
 let g:dictation#status_handler = function('s:DictationStatusUpdate')
+let g:dictation#transcription_handler = function('s:DictationTranscription')
 
 " delimitMate
 let delimitMate_expand_cr = 1
