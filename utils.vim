@@ -117,7 +117,7 @@ nnoremap <leader>mr <Cmd>call <SID>RepeatMacroUntilDone()<CR>
 
 " Quick Search
 fun! QuickSearchMap(key, title, pattern)
-    exec "nnoremap <silent> <buffer> <leader>s".a:key." :lvimgrep /".a:pattern."/ % \\| call setloclist(0, [], 'a', {'title': '".a:title."'}) \\| lopen<CR>"
+    exec "nnoremap <silent> <buffer> <leader>s".a:key." :vert lvimgrep /".a:pattern."/ % \\| call setloclist(0, [], 'a', {'title': '".a:title."'}) \\| lopen<CR>"
 endfun
 
 " Make n and N move through location list when open

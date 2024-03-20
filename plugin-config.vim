@@ -107,10 +107,17 @@ fun! AirlineFixFfenc(ffenc)
     return l:ffenc
 endfun
 
+" The default first section, but without spelling
+let g:airline_section_a = '%#__accent_bold#%{airline#util#wrap(airline#parts#mode(),0)}%#__restore__#%{airline#util#append(airline#parts#crypt(),0)}%{airline#util#append(airline#parts#paste(),0)}%{airline#util#append(airline#extensions#keymap#status(),0)}%{airline#util#append("",0)}%{airline#util#append("",0)}%{airline#util#append(airline#parts#iminsert(),0)}'
 let g:airline_section_b = '%{airline#util#wrap(airline#extensions#branch#get_head(),0)}'
 " TODO: raise this as an issue, and when it gets fixed, replace this line
 let g:airline_section_y = '%{airline#util#prepend(AirlineFixFfenc(airline#parts#ffenc()),0)}%{airline#util#wrap(dictation#GetStatus(),0)}'
-let g:airline_section_z = '%#__accent_bold#%{airline#util#wrap(airline#extensions#obsession#get_status(),0)}%2l/%L:%02v%#__restore__#'
+
+" With vim-obsession indicator
+" let g:airline_section_z = '%#__accent_bold#%{airline#util#wrap(airline#extensions#obsession#get_status(),0)}%2l/%L:%02v%#__restore__#'
+" Without vim-obsession indicator
+let g:airline_section_z = '%#__accent_bold#%2l/%L:%02v%#__restore__#'
+command -nargs=0 ObsessionStatus echo exists('g:this_obsession') ? 'Session active at ' .. g:this_obsession : 'No session active'
 
 " bullets.vim
 let g:bullets_enabled_file_types = ['markdown', 'text', 'asciidoctor']

@@ -1,4 +1,10 @@
 global !p
+import re
+
+def id_slug(s):
+	s = re.sub(r'[^a-z0-9_]', ' ', s.lower())
+	return '-'.join(word for word in re.split(r'\s+', s) if word != '')
+
 def capitalise(s, remove=None):
 	cap = True
 
@@ -72,7 +78,7 @@ snippet 'cr(l?)' "Config (Required)" bwr
 endsnippet
 
 snippet 'h(\d)l' "Header" br
-[[`!p snip.rv = ''.join([t[1].split(' ')[0].lower()] + t[1].split(' ')[1:])`]]`!p t[1] = capitalise(t[1])`
+[#`!p snip.rv = id_slug(t[1])`]`!p t[1] = capitalise(t[1])`
 `!p snip.rv = int(match.group(1)) * '='` $1
 
 $0

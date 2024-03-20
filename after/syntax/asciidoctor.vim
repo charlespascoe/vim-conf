@@ -17,3 +17,8 @@ hi link asciidoctorNote Underlined
 
 syntax match asciidoctorTip /TIP:/ contained containedin=asciidoctorAdmonition
 hi link asciidoctorTip Identifier
+
+syntax match asciidoctorInlineAnchor /\c\[#[a-z0-9_.-]\+\]/
+
+hi link asciidoctorInlineAnchor Identifier
+hi link asciidoctorAnchor Tag
