@@ -13,7 +13,7 @@ import { elems } from './modules/lui.js';
 import { App } from './modules/lui-app.js';
 
 const app = new App({
-	appName: '$1',
+	name: '$1',
 	extras: {
 		// TODO: Add extras here, e.g. API client
 	},
@@ -24,7 +24,10 @@ app.pages(
 );
 
 app.nav.onNotFound(() => {
-	app.mountPage(elems.div()('Not found'));
+	app.mountPage({
+		title:  'Not found',
+		content: elems.div()('Not found'),
+	});
 });
 
 app.init();

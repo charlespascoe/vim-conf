@@ -298,6 +298,7 @@ snippet genstatic "Static Build Script (scripts/build-static.go)" b
 package main
 
 import (
+	"bytes"
 	"compress/gzip"
 	"fmt"
 	"io"
@@ -321,7 +322,7 @@ import (
  *
  * find pkg/static -mindepth 1 | grep -v 'content.go' | xargs rm -rf
  *
- * go run scripts/build-static.go web/ pkg/static/
+ * go run scripts/build-static.go \`cat version\` web/ pkg/static/
  *
  * find pkg/static -mindepth 1 -name '*.swp' -exec rm {} \;
  */
@@ -329,18 +330,20 @@ import (
 var embedRegex = regexp.MustCompile(\`^bundle\.js|\.(map|html|css|png)$\`)
 
 func main() {
-	if len(os.Args) != 3 {
-		fmt.Println("Usage: go run scripts/build-static.go <input dir> <output dir>")
+	if len(os.Args) != 4 {
+		fmt.Println("Usage: go run scripts/build-static.go <version> <input dir> <output dir>")
 		os.Exit(1)
 		return
 	}
 
-	absInputDir, err := filepath.Abs(os.Args[1])
+	version := os.Args[1]
+
+	absInputDir, err := filepath.Abs(os.Args[2])
 	if err != nil {
 		panic(err)
 	}
 
-	absOutputDir, err := filepath.Abs(os.Args[2])
+	absOutputDir, err := filepath.Abs(os.Args[3])
 	if err != nil {
 		panic(err)
 	}
@@ -385,7 +388,11 @@ func main() {
 	if len(result.Errors) > 0 {
 		fmt.Println("Errors:")
 		for _, err := range result.Errors {
-			fmt.Printf("  %s:%d:%d:\n\t%s\n", err.Location.File, err.Location.Line, err.Location.Column, err.Text)
+			if err.Location == nil {
+				fmt.Printf("  %s\n", err.Text)
+			} else {
+				fmt.Printf("  %s:%d:%d:\n\t%s\n", err.Location.File, err.Location.Line, err.Location.Column, err.Text)
+			}
 		}
 
 		os.Exit(1)
@@ -395,14 +402,14 @@ func main() {
 		fmt.Printf("WARN: %v\n", warn)
 	}
 
-	if err := gzipAll(os.DirFS(absInputDir), absOutputDir); err != nil {
+	if err := gzipAll(os.DirFS(absInputDir), absOutputDir, version); err != nil {
 		panic(err)
 	}
 
 	fmt.Println("Done")
 }
 
-func gzipAll(inputDir fs.FS, outputDir string) error {
+func gzipAll(inputDir fs.FS, outputDir, version string) error {
 	fmt.Printf("In: %v\n", inputDir)
 	return fs.WalkDir(inputDir, ".", func(p string, d fs.DirEntry, err error) error {
 		if err != nil {
@@ -426,16 +433,25 @@ func gzipAll(inputDir fs.FS, outputDir string) error {
 			return err
 		}
 
-		output, err := os.OpenFile(outpath, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0o644)
+		outfile, err := os.OpenFile(outpath, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0o644)
 		if err != nil {
 			return err
 		}
-		defer output.Close()
+		defer outfile.Close()
 
-		w := gzip.NewWriter(output)
+		w := gzip.NewWriter(outfile)
 		defer w.Close()
 
-		if _, err := io.Copy(w, input); err != nil {
+		data, err := io.ReadAll(input)
+		if err != nil {
+			return err
+		}
+
+		if d.Name() == "index.html" {
+			data = bytes.ReplaceAll(data, []byte("{{VERSION}}"), []byte(version))
+		}
+
+		if _, err := w.Write(data); err != nil {
 			return err
 		}
 
@@ -498,6 +514,8 @@ func Serve(server *gin.Engine, path string) {
 		c.Header("Content-Encoding", "gzip")
 	}
 
+	var getIndex func() []byte
+
 	if path != "" {
 		modifyHeaders = func(c *gin.Context) {}
 
@@ -511,8 +529,17 @@ func Serve(server *gin.Engine, path string) {
 			Msg("Serving static content from directory")
 
 		content = os.DirFS(path)
+
+		getIndex = func() []byte {
+			return loadIndex(content, false)
+		}
 	} else {
 		log.Info().Msg("Serving static content from embedded filesystem")
+
+		index := loadIndex(content, true)
+		getIndex = func() []byte {
+			return index
+		}
 	}
 
 	fs.WalkDir(content, ".", func(path string, d fs.DirEntry, err error) error {
@@ -540,11 +567,24 @@ func Serve(server *gin.Engine, path string) {
 	server.NoRoute(func(c *gin.Context) {
 		if strings.Contains(c.Request.Header.Get("Accept"), "text/html") {
 			modifyHeaders(c)
-			c.Data(http.StatusOK, "text/html", index)
+			c.Data(http.StatusOK, "text/html", getIndex())
 		} else {
 			c.Status(http.StatusNotFound)
 		}
 	})
+}
+
+func loadIndex(content fs.FS, bundle bool) []byte {
+	index, err := fs.ReadFile(content, "index.html")
+	if err != nil {
+		panic(err)
+	}
+
+	if !bundle {
+		index = bytes.ReplaceAll(index, []byte("bundle.js"), []byte("index.js"))
+	}
+
+	return index
 }
 endsnippet
 

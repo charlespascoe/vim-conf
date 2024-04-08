@@ -215,7 +215,21 @@ autocmd BufReadPost *
     \ |   exe "normal! g`\""
     \ | endif
 
-au VimEnter * normal! zz
+" automatically creates parent directories.
+
+function s:mkdirs(file, buf)
+    if empty(getbufvar(a:buf, '&buftype')) && a:file!~#'\v^\w+\:\/'
+        let dir = fnamemodify(a:file, ':h')
+        " if !isdirectory(dir) && input('Create directory '.dir.'? [y/N] ') =~? '^y'
+        if !isdirectory(dir)
+            call mkdir(dir, 'p')
+        endif
+    endif
+endfunction
+
+autocmd BufWritePre * call s:mkdirs(expand('<afile>'), +expand('<abuf>'))
+
+autocmd VimEnter * normal! zz
 
 " Initialise Dictation
 if !empty(glob('/tmp/dictation.sock'))
