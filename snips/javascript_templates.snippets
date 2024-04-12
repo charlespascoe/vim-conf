@@ -69,7 +69,8 @@ export default (app) => {
 endsnippet
 
 snippet simpleclient "API Client Template"
-import { validate } from '/modules/validate.js';
+import { validate } from './validate.js';
+import { url } from './lui-nav.js';
 
 async function withError(promise, message) {
 	try {
@@ -80,27 +81,8 @@ async function withError(promise, message) {
 	}
 }
 
-function url(strings, ...values) {
-	if (strings.length !== values.length + 1) {
-		return '';
-	}
-
-	const result = [];
-
-	for (let i = 0; i < values.length; i++) {
-		result.push(
-			strings[i],
-			encodeURIComponent(values[i]),
-		);
-	}
-
-	result.push(strings[strings.length - 1]);
-
-	return result.join('');
-}
-
 export class Client {
-	getApiKey() {
+	get apiKey() {
 		let apiKey = localStorage.getItem('api-key');
 
 		if (!apiKey) {
@@ -116,20 +98,31 @@ export class Client {
 		return apiKey;
 	}
 
+	set apiKey(value) {
+		localStorage.setItem('api-key', value);
+	}
+
 	async fetch(url, opts={}) {
+		const apiKey = this.apiKey;
+
 		const headers = {
 			...opts.headers,
-			'Authorization': \`Bearer ${this.getApiKey()}\`,
+			'Authorization': \`Bearer ${apiKey}\`,
 		};
 
-		const resp = await fetch(url, {
+		const resp = await fetch('/api' + url, {
 			...opts,
 			headers,
 		});
 
 		if (resp.status === 401) {
-			localStorage.removeItem('api-key');
-			alert('Invalid API Key');
+			// When there are multiple requests, only the first to get a 401 response
+			// should prompt the user for the new key, the rest should just retry
+			if (apiKey === this.apiKey) {
+				this.apiKey = '';
+				alert('Invalid API Key');
+			}
+
 			return await this.fetch(url, opts);
 		}
 
@@ -149,6 +142,10 @@ export class Client {
 			}
 
 			const body = await withError(resp.json(), 'the server response could not be parsed');
+
+			if (!validator) {
+				return body;
+			}
 
 			return validate.withMessage('the server response was invalid')(
 				body,
@@ -193,7 +190,7 @@ export class Client {
 				validator,
 			);
 		} catch (err) {
-			throw new Error(\`Couldn't ${kind.toLowerCose()} ${desc} because ${err.message || err || 'of unknown reasons'}\`);
+			throw new Error(\`Couldn't ${kind.toLowerCase()} ${desc} because ${err.message || err || 'of unknown reasons'}\`);
 		}
 	}
 
@@ -372,4 +369,51 @@ validate.oneOf = (...values) => {
 		return value;
 	};
 };
+endsnippet
+
+snippet eslint.config.mjs "eslint.config.mjs" b
+// npm i -D @stylistic/eslint-plugin-js
+import stylisticJs from '@stylistic/eslint-plugin-js'
+import js from '@eslint/js';
+import globals from 'globals';
+
+export default [
+  js.configs.recommended,
+  {
+    files: [
+      'web/**/*.js',
+    ],
+    languageOptions: {
+      globals: {
+        ...globals.browser,
+        // dayjs: 'readonly',
+        // dayjs_plugin_advancedFormat: 'readonly',
+      },
+    },
+    plugins: {
+      '@stylistic/js': stylisticJs,
+    },
+    rules: {
+      '@stylistic/js/comma-dangle':       ['error', 'always-multiline'],
+      '@stylistic/js/no-trailing-spaces': 'warn',
+      '@stylistic/js/semi':               'error',
+
+      'block-scoped-var':      'error',
+      'eqeqeq':                'warn',
+      'no-prototype-builtins': 'off',
+      'no-var':                'error',
+      'prefer-const':          'warn',
+      'prefer-template':       'warn',
+      'require-await':         'warn',
+    },
+  },
+  {
+    // Global ignore; must be only key in object
+    ignores: [
+      '**/bundle.js',
+      '*.min.js',
+      '*.map',
+    ],
+  }
+];
 endsnippet

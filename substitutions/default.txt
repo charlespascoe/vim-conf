@@ -1,6 +1,2 @@
-british
-strip-trailing-punc
-spoken-punc
-newlines
+base
 common
-leadspace
