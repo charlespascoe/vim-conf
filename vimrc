@@ -236,11 +236,19 @@ if !empty(glob('/tmp/dictation.sock'))
     au VimEnter * call dictation#Init()
 endif
 
+let s:bulletnotes_backup = v:true
+
 if exists('$BN_PROJ') && $BN_PROJ == '1'
+    let s:bulletnotes_backup = v:false
     call bulletnotes#InitProject()
 elseif isdirectory('.bnproj')
     let b:bulletnotes_autosync = v:false
     call bulletnotes#InitProject()
+endif
+
+" TODO: Is there a better way to do this?
+if s:bulletnotes_backup
+    au FileType bulletnotes call RegisterBackup()
 endif
 
 " Support for Option-key mappings

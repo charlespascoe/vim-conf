@@ -2,6 +2,9 @@ setlocal textwidth=80
 setlocal spell
 setlocal comments=://
 
+" Add '-' to iskeyword so that we can use 'w' to navigate URL slugs e.g. 'foo-bar'
+setlocal iskeyword+=-
+
 fun! FoldLevel(lnum)
     let l:line = getline(a:lnum)
 

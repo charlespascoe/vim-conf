@@ -43,12 +43,12 @@ if !exists('g:bulletnote_bullets')
             \hl: 'DiffChange',
         \},
         \AnsweredQuestion: #{
-            \char: '>',
+            \char: '<',
             \bhl: 'DiffDelete',
             \hl: 'cterm=bold,italic',
         \},
         \Answer: #{
-            \char: '<',
+            \char: '>',
             \bhl: 'ctermfg=70 cterm=bold',
             \hl: 'cterm=bold',
         \},
@@ -114,6 +114,9 @@ syntax region bnEscaped matchgroup=SpecialChar start='\\' end='.\zs' keepend con
 
 let main_syntax = 'bulletnotes'
 let b:current_syntax = 'bulletnotes'
+
+syntax region bnCode matchgroup=bnMonospaceEnd start='^{{{$' end='^}}}$' keepend
+hi link bnCode bnMonospace
 
 syntax include @go syntax/go.vim
 syntax cluster go add=@NoSpell

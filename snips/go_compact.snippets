@@ -1153,19 +1153,14 @@ endsnippet
 
 ## P ##
 
-# pre_expand "add_import(snip, 'fmt')"
-# snippet pf "Printf" b
-# fmt.Printf("$1\n", $0)
-# endsnippet
-
-# pre_expand "add_import(snip, 'fmt')"
-# snippet pl "Println" b
-# fmt.Println("$0")
-# endsnippet
-
 pre_expand "add_import(snip, 'fmt')"
 snippet pf "Printf" b
-fmt.Print`!p snip.rv = 'f' if '%' in t[1] else 'ln'`("$1`!p snip.rv = '\\n", ' if '%' in t[1] else '"'`$0)
+fmt.Printf("$1\n", $0)
+endsnippet
+
+pre_expand "add_import(snip, 'fmt')"
+snippet pl "Println" b
+fmt.Println("$0")
 endsnippet
 
 snippet p "panic" bw

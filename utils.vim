@@ -211,5 +211,6 @@ nmap yoC <Cmd>call <SID>ToggleConceal()<CR>
 " Jumps if there's one tag match, otherwise opens 'tselect' list
 nnoremap <C-]> g<C-]>
 
-" Paste commented
-nmap <leader>p p`[v`]gc
+" Paste commented; had to use nnoremap to prevent ` mapping from breaking this,
+" which in turn means we have to use '<Plug>Commentary' instead of 'gc'
+nnoremap <leader>p p`[v`]<Plug>Commentary

@@ -2,6 +2,7 @@
 set nofoldenable
 set foldcolumn=0
 set foldminlines=10
+set foldnestmax=5
 
 fun! FoldText()
     return substitute(getline(v:foldstart), '\t', repeat(' ', &l:tabstop), 'g')
@@ -25,7 +26,9 @@ fun! s:CheckAnyClosedFolds()
 
     if g:deepest_fold > 0
         call winrestview(l:winview)
-        let &l:foldcolumn = min([g:deepest_fold+1, 5])
+        " With foldnestmax set to 5, all fold are visible in the foldcolumn
+        " with a width of 6
+        let &l:foldcolumn = min([g:deepest_fold+1, 6])
     else
         setlocal foldcolumn=0
     endif

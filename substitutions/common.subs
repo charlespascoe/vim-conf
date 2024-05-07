@@ -63,6 +63,8 @@
 /Jason('s)?/JSON/i
 /Kefka/Kafka/i
 /open API/OpenAPI/i
+/over rid(den|e)/overrid\1/i
+/pier(s?)/peer\1/i
 /robots? framework/Robot Framework/i
 /robots? manager/Robot Manager/i
 /snip[ -]it/snippet/
