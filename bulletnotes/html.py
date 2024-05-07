@@ -1,4 +1,5 @@
 import re
+from .types import Bullet, CodeBlock
 
 
 emphasis_regex = re.compile("`([^`]+)`")
@@ -316,7 +317,7 @@ class SectionFormatter:
                     output.append(Element("br"))
 
                 ul = None
-            else:  # Item is bullet
+            elif type(item) is Bullet:
                 if ul is None:
                     ul = self.bullets_formatter.build_ul()
                     output.append(ul)
@@ -325,6 +326,11 @@ class SectionFormatter:
                         output.append(Element("br"))
 
                 ul.append(self.bullets_formatter(item))
+            elif type(item) is CodeBlock:
+                # TODO: Language?
+                output.append(Element("pre", Element("code", item.code)))
+            else:
+                print(f"Unknown item type: {type(item)}")
 
         return output
 

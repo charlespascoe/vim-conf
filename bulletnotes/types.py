@@ -24,10 +24,10 @@ class Bullet:
     @staticmethod
     def from_dict(d):
         return Bullet(
-            d['type'],
-            d['indent'],
-            d['content'],
-            [Bullet.from_dict(item) for item in d['subbullets']],
+            d["type"],
+            d["indent"],
+            d["content"],
+            [Bullet.from_dict(item) for item in d["subbullets"]],
         )
 
     def append_bullet(self, bullet):
@@ -35,10 +35,10 @@ class Bullet:
 
     def to_dict(self):
         return {
-            'type': self.bullet_type,
-            'content': self.content,
-            'indent': self.indent,
-            'subbullets': [bullet.to_dict() for bullet in self.subbullets],
+            "type": self.bullet_type,
+            "content": self.content,
+            "indent": self.indent,
+            "subbullets": [bullet.to_dict() for bullet in self.subbullets],
         }
 
     def walk(self):
@@ -48,45 +48,75 @@ class Bullet:
             yield from bullet.walk()
 
     def __str__(self):
-        result = [f'{self.bullet_type} {self.content}']
+        result = [f"{self.bullet_type} {self.content}"]
 
         for bullet in self.subbullets:
-            lines = str(bullet).split('\n')
+            lines = str(bullet).split("\n")
 
-            indented_lines = ['    ' + line for line in lines]
+            indented_lines = ["    " + line for line in lines]
 
             result += indented_lines
 
-        return '\n'.join(result)
+        return "\n".join(result)
+
+
+class CodeBlock:
+    def __init__(self, code, lang=""):
+        self.code = code.rstrip()
+        self.lang = lang
+
+    @staticmethod
+    def from_dict(d):
+        return CodeBlock(d["code"], d.get("lang", ""))
+
+    def to_dict(self):
+        d = {"code": self.code}
+
+        if len(self.lang) > 0:
+            d["lang"] = self.lang
+
+        return d
+
+    def walk(self):
+        yield self
+
+    def __str__(self):
+        return "{{{" + self.lang + "\n" + self.code + "\n}}}"
 
 
 class Section:
-    def __init__(self, title = '', contents = None):
+    def __init__(self, title="", contents=None):
         self.title = title
         self.contents = contents or []
 
     @staticmethod
     def from_dict(d):
-        return Section(
-            d['title'],
-            [
-                item if type(item) is str else Bullet.from_dict(item)
-                for item in d['contents']
-            ]
-        )
+        contents = []
+
+        for item in d["contents"]:
+            if type(item) is str:
+                contents.append(item)
+            elif "code" in item:
+                contents.append(CodeBlock.from_dict(item))
+            else:
+                contents.append(Bullet.from_dict(item))
+
+        return Section(d["title"], contents)
 
     def is_empty(self):
-        return self.title == '' and len(self.contents) == 0
+        return self.title == "" and len(self.contents) == 0
 
     def append_bullet(self, bullet):
         self.contents = append_bullet(self.contents, bullet)
 
+    def append(self, item):
+        self.contents.append(item)
+
     def to_dict(self):
         return {
-            'title': self.title,
-            'contents': [
-                item if type(item) is str else item.to_dict()
-                for item in self.contents
+            "title": self.title,
+            "contents": [
+                item if type(item) is str else item.to_dict() for item in self.contents
             ],
         }
 
@@ -98,26 +128,26 @@ class Section:
                 yield item
 
     def __str__(self):
-        result = ''
+        result = ""
 
         if len(self.title) > 0:
-            result += f':: {self.title} ::\n\n'
+            result += f":: {self.title} ::\n\n"
 
         prev_was_bullet = False
 
         for item in self.contents:
             if isinstance(item, Bullet):
-                result += str(item) + '\n'
+                result += str(item) + "\n"
                 prev_was_bullet = True
             else:
                 if prev_was_bullet:
-                    result += '\n'
+                    result += "\n"
 
-                result += str(item) + '\n\n'
+                result += str(item) + "\n\n"
                 prev_was_bullet = False
 
         if prev_was_bullet:
-            result += '\n'
+            result += "\n"
 
         return result
 
@@ -130,14 +160,14 @@ class Document:
     @staticmethod
     def from_dict(d):
         return Document(
-            d['title'],
-            [Section.from_dict(item) for item in d['sections']],
+            d["title"],
+            [Section.from_dict(item) for item in d["sections"]],
         )
 
     def to_dict(self):
         return {
-            'title': self.title,
-            'sections': [section.to_dict() for section in self.sections],
+            "title": self.title,
+            "sections": [section.to_dict() for section in self.sections],
         }
 
     def walk(self):
@@ -145,12 +175,12 @@ class Document:
             yield from section.walk()
 
     def __str__(self):
-        result = ''
+        result = ""
 
         if len(self.title) > 0:
-            result += f'## {self.title} ##\n\n'
+            result += f"## {self.title} ##\n\n"
 
         for section in self.sections:
-            result += str(section) + '\n'
+            result += str(section) + "\n"
 
         return result.strip()
