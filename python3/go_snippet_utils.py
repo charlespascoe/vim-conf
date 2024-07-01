@@ -128,6 +128,10 @@ def match_method(line):
         type_str = type_str[1:]
         rec_ptr = True
 
+    if match[1] is None:
+        # Receiver is not named, i.e. type ony
+        return type_to_method(TypeMatch.from_string(type_str), rec_ptr)
+
     return MethodMatch(
         match[1].strip(),
         TypeMatch.from_string(type_str),
