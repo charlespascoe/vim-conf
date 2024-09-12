@@ -93,22 +93,22 @@ set formatlistpat=^\\s*\\d\\+[\\]:.)}\\t\ ]\\s*\\\|^\\s*-\\s*
 " Allow the cursor to go past the last character
 set ve+=onemore
 
-" Persistent undo
+" Persistent undo and Backups
 set undolevels=100
 set undodir=~/.undo
 set noundofile " Ensure off by default, enable for specific files
 
-au FileType asciidoctor,bash,go,help,html,javascript,json,markdown,python,robot,sh,swift,text,tmux,typescript,vim,yaml,zsh setlocal undofile
 
-" Backup
 au BufRead *.bak set filetype=bak
 let g:backup_dir = expand('~/.backup/')..strftime('%Y-%m')..'/'
 call system('mkdir -p '..shellescape(g:backup_dir))
-au FileType asciidoctor,bash,go,help,html,javascript,markdown,python,robot,sh,swift,text,tmux,typescript,vim,yaml,zsh call RegisterBackup()
+
+au FileType asciidoctor,bash,go,help,html,javascript,json,make,markdown,python,robot,sh,swift,text,tmux,typescript,vim,yaml,zsh call RegisterBackup()
 
 fun! RegisterBackup()
-    if !s:startswith(expand('%:p'), '/private/var/folders')
-       au BufWritePost <buffer> call system('cp '..shellescape(expand('%:p'))..' '..shellescape(g:backup_dir..substitute(expand('%:p'), '/', '%', 'g')..'.'..strftime('%Y-%m-%d_%H%M')..'.bak'))
+    if !s:startswith(expand('%:p'), '/private/var/folders') && getfsize(expand('%:p')) < 500000 " 500KB
+        setlocal undofile
+        au BufWritePost <buffer> call system('cp '..shellescape(expand('%:p'))..' '..shellescape(g:backup_dir..substitute(expand('%:p'), '/', '%', 'g')..'.'..strftime('%Y-%m-%d_%H%M')..'.bak'))
     endif
 endfun
 

@@ -398,7 +398,7 @@ let g:tsuquyomi_disable_quickfix = 1
 
 " vim-chatgpt
 
-let g:vim_chatgpt_model = 'gpt-4-1106-preview'
+let g:vim_chatgpt_model = 'gpt-4o'
 let g:vim_chatgpt_system_prompt = "You are a professional assistant to a software developer. Do not provide explanations or examples unless you are asked to. Always provide answers using correct Markdown syntax, using 4 spaces to indent nested bullet points. Prefer British English spellings."
 
 " copilot.vim
@@ -435,8 +435,6 @@ let g:copilot_filetypes = {
         \'gitcommit': 0,
         \'gitrebase': 0,
         \'help': 0,
-        \'html': 1,
         \'text': 0,
         \'xml': 0,
-        \'yaml': 1,
     \}
