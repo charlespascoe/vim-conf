@@ -37,4 +37,4 @@ fun! FormatLinkSlug(type)
     endif
 endfun
 
-let b:get_dictation_prompt = function('dictation#GetLeadingBlock')
+let b:get_dictation_prompt = function('dictation#GetLeadingLines')

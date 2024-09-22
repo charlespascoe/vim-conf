@@ -5,19 +5,7 @@ fun! UpdateLine()
 
     let l:match = matchlist(getline('.'), '^\s\+\([^:]\+\.go\):\(\d\+\)')
 
-    " echom fnamemodify(bufname(winbufnr(t:dump_go_winid)), ':t')
-    " echom l:match
-
-    " if len(l:match) > 0
-    "     echom l:match[1] == fnamemodify(bufname(t:dump_go_winid), ':t')
-    "     echom l:match[1]
-    "     echom fnamemodify(bufname(winbufnr(t:dump_go_winid)), ':t')
-    " end
-
     if len(l:match) > 0 && l:match[1] == fnamemodify(bufname(winbufnr(t:dump_go_winid)), ':t')
-        " call win_execute(t:dump_go_winid, 'match Highlight /\%'..l:match[2]..'l/')
-
-        echom "CURSOR" l:match[2]
         let l:line = l:match[2]
         let l:height = winheight(t:dump_go_winid)
         let l:topline = min([l:line - (l:height/2), 1])
@@ -25,7 +13,10 @@ fun! UpdateLine()
     end
 endfun
 
+setlocal bufhidden=wipe nobuflisted noswapfile nowrap nospell nonumber norelativenumber
+
 au CursorMoved <buffer> call UpdateLine()
 
 au BufEnter <buffer> set cursorline | match none
 au BufLeave <buffer> set nocursorline
+au BufWipeout <buffer> call win_execute(t:dump_go_winid, 'au! DumpObject | match none | set nocursorline | unlet t:dump_go_dir t:dump_go_winid t:dump_term_winid') | echom "DumpObject Terminating"

@@ -174,8 +174,8 @@ snippet '} ?i' "Else If" brA
 }
 endsnippet
 
-context "cursor_at_eol(snip) and is_in_imports()"
-snippet '^im ' "Import" brA
+context "cursor_at_eol(snip)"
+snippet '^im' "Import" br
 import`!p snip.rv = ' {' if t[2] != '*' else ''` $2 `!p snip.rv = '} ' if t[2] != '*' else ''`from '$1';
 endsnippet
 

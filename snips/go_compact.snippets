@@ -470,6 +470,16 @@ snippet 'zl|zerolog' "zerolog" brw
 "github.com/rs/zerolog"
 endsnippet
 
+context "is_in_import_block()"
+snippet pkg "Module package path" bw
+"`!p snip.rv = get_module_name()`/pkg/$0"
+endsnippet
+
+context "is_in_import_block()"
+snippet mod "Module package path" bw
+"`!p snip.rv = get_module_name()`/$0"
+endsnippet
+
 ## A ##
 
 snippet ae "Assign Error" b

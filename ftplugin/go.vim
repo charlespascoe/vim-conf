@@ -170,7 +170,7 @@ endfun
 imap <buffer> <C-g>t <C-o>:call <SID>InsertDateFormat()<CR>
 
 
-fun! DumpObject(filename='')
+fun! DumpObject(binfile='', modname='')
     fun! GetModuleName()
         for l:line in readfile('go.mod')
             if l:line =~# '^module'
@@ -181,22 +181,44 @@ fun! DumpObject(filename='')
         return ''
     endfun
 
-    let l:mod = a:filename == '' ? GetModuleName() : a:filename
-    let l:filename = l:mod
+    let l:mod = a:modname ? a:modname : GetModuleName()
+    " TODO: Figure out where the binary is properly
+    let l:filename = a:binfile ? a:binfile : l:mod
 
-    let l:item_name = expand('<cword>')
+    fun! GetPackageName(modname)
+        " Check for 'package ' on first line of buffer
+        let l:package = ''
+        let l:line = getline(1)
+        if l:line =~# '^package '
+            let l:package = trim(l:line[len('package'):])
+        endif
 
-    let l:match = matchlist(getline('.'), 'func ([^[:space:]]\+\([^)]\+\))')
+        if l:package == 'main'
+            return l:package
+        endif
 
-    if len(l:match) > 0
-        let l:recv_type = trim(l:match[1])
+        if l:package == ''
+            " Default to name of the file's parent directory
+            let l:package = expand('%:h:t')
+        endif
 
-        if l:recv_type =~ '^\*'
-            let l:recv_type = '\'..l:recv_type
-        end
+        if a:modname == ''
+            return l:package
+        endif
 
-        let l:item_name = '\('..l:recv_type..'\)\.'..l:item_name
-    end
+        if expand('%:h') == '.'
+            return a:modname
+        endif
+
+        let l:dir = expand('%:h:h')
+        if l:dir == '.'
+            let l:package = a:modname.'/'.l:package
+        return
+            let l:pacakge = a:modname.'/'.l:dir.'/'.l:package
+        endif
+
+        return l:package
+    endfun
 
     if l:mod == ''
         echoerr "Couldn't figure out module name"
@@ -210,27 +232,32 @@ fun! DumpObject(filename='')
         let l:dir = '/'.l:dir
     endif
 
-    let l:path = l:mod.l:dir.'\.'.l:item_name
-    let l:path = '^'.l:mod.l:dir.'\.'
+    let l:symbol_regex = substitute(GetPackageName(l:mod), '\.', '\\.', 'g').'\.'
 
     " TODO: Make this a background job
     " make! build
 
     let t:dump_go_winid = win_getid()
+    let t:dump_go_dir = expand('%:h')
     set cursorline
     hi CursorLine ctermbg=235 cterm=bold
     hi CursorLineNr ctermbg=235 cterm=bold
 
-    au CursorMoved <buffer> call win_execute(t:dump_term_winid, 'match CursorLine /^\s\+'..expand('%:t')..':'..line('.')..'\s.*$/ | call search("'..expand('%:t')..':'..line('.')..'", "wc") | normal zz')
+    augroup DumpObject
+        autocmd!
+        au CursorMoved *.go if expand('%:h') == t:dump_go_dir | call win_execute(t:dump_term_winid, 'match CursorLine /^\s\+'..expand('%:t')..':'..line('.')..'\s.*$/ | call search("'..expand('%:t')..':'..line('.')..'", "wc") | normal! zz') | endif
+    augroup END
 
-    " TODO: Figure out where the binary is properly
-    let l:term_buf = term_start(['go', 'tool', 'objdump', '-s', l:path, l:filename], {'vertical': 1, 'norestore': 1})
+    echom ['go', 'tool', 'objdump', '-s', l:symbol_regex, l:filename]
+    let l:term_buf = term_start(['go', 'tool', 'objdump', '-s', l:symbol_regex, l:filename], {'vertical': 1, 'norestore': 1})
 
     call setbufvar(l:term_buf, '&ft', 'godump')
     let t:dump_term_winid = win_getid()
+    " Return to the original window
+    call win_gotoid(t:dump_go_winid)
 endfun
 
-command! -nargs=? DumpObject call DumpObject(<f-args>)
+command! -nargs=* DumpObject call DumpObject(<f-args>)
 
 if expand('%:~') =~ glob2regpat('~/gotemp/*.go')
     au BufWritePost <buffer> call RunCode()

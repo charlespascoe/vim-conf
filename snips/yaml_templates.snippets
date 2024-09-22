@@ -11,7 +11,7 @@ paths:
     get:
       summary: "Returns a 'Hello World' message"
       responses:
-        200:
+        "200":
           description: "A successful response with the 'Hello World' message"
           content:
             application/json:
@@ -69,4 +69,12 @@ messages:
 - role: user
   text: >-
     Say "Hello World"
+endsnippet
+
+snippet bloop "Bloop" b
+shellCmd: ["zsh", "-c"]
+
+# vars:
+#   - name: "msg"
+#     desc: "Message"
 endsnippet

@@ -106,7 +106,8 @@ call system('mkdir -p '..shellescape(g:backup_dir))
 au FileType asciidoctor,bash,go,help,html,javascript,json,make,markdown,python,robot,sh,swift,text,tmux,typescript,vim,yaml,zsh call RegisterBackup()
 
 fun! RegisterBackup()
-    if !s:startswith(expand('%:p'), '/private/var/folders') && getfsize(expand('%:p')) < 500000 " 500KB
+    let l:path = expand('%:p')
+    if !s:startswith(l:path, '/private/var/folders') && !s:startswith(l:path, '/Volumes/') && getfsize(l:path) < 500000 " 500KB
         setlocal undofile
         au BufWritePost <buffer> call system('cp '..shellescape(expand('%:p'))..' '..shellescape(g:backup_dir..substitute(expand('%:p'), '/', '%', 'g')..'.'..strftime('%Y-%m-%d_%H%M')..'.bak'))
     endif

@@ -46,4 +46,4 @@ setlocal foldexpr=FoldLevel(v:lnum)
 " set after the 'ftplugin' and 'after/ftplugin' scripts
 au InsertEnter <buffer> ++once setlocal formatoptions+=t
 
-let b:get_dictation_prompt = function('dictation#GetLeadingParagraph')
+let b:get_dictation_prompt = function('dictation#GetLeadingLines')

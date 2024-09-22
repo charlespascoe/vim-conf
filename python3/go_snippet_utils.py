@@ -346,3 +346,26 @@ def guess_godoc_string():
             return f"Package {match.name} "
 
     return f"{match.name} "
+
+
+def get_module_name(cwd=None):
+    if cwd is None:
+        # Use current file rather than Vim's cwd (e.g. when opening a file from
+        # a different project)
+        cwd = path.dirname(vim.current.buffer.name)
+
+    mod_path = path.join(cwd, "go.mod")
+
+    while cwd != "/" and not path.exists(mod_path):
+        cwd = path.dirname(cwd)
+        mod_path = path.join(cwd, "go.mod")
+
+    if cwd == "/":
+        return ""
+
+    with open(mod_path) as f:
+        for line in f:
+            if line.startswith("module "):
+                return line.split(" ")[1].strip()
+
+    return ""
