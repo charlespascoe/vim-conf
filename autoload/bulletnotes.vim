@@ -1265,8 +1265,8 @@ fun bulletnotes#MoveFile(from, to)
     let from_path = s:LinkToPath(from)
     let to_path = s:LinkToPath(to)
 
-    " TODO: Maybe make this independent of ag?
-    let cmd = "find . -type f -name '*.bn' | xargs sed -i '' -e "
+    " TODO: Maybe make this independent of fd?
+    let cmd = "fd -t f -e bn -x sed -i '' -e "
     let cmd .= "'s|".s:SedRegexpEscape(from_path)."|".s:SedRegexpEscape(to_path)."|g'"
 
     let output = system(cmd)
