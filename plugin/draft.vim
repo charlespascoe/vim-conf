@@ -58,3 +58,4 @@ endfun
 com! -nargs=? Draft call <SID>NewDraft(<f-args>)
 com! -nargs=0 DraftRTF call <SID>NewDraft('bn', 1)
 com! -nargs=0 DraftReturn call <SID>NewDraft('bn', 0, 1)
+com! -nargs=0 DraftReturnMarkdown call <SID>NewDraft('md', 0, 1)
