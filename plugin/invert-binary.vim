@@ -4,40 +4,47 @@ def ReSub(pat: string, sub: string): func(string): string
     return (s: string): string => substitute(s, '^' .. pat .. '$', sub, '')
 enddef
 
-var invert_binary_subs = [
-    ['true', 'false'],
-    ['True', 'False'],
-    ['TRUE', 'FALSE'],
-    ['y', 'n'],
-    ['Y', 'N'],
-    ['yes', 'no'],
-    ['Yes', 'No'],
-    ['YES', 'NO'],
-    ['Required', 'Optional'],
-    ['required', 'optional'],
-    ['positive', 'negative'],
-    ['Positive', 'Negative'],
+def AddCaseVariants(subs: list<any>, a: string, b: string)
+    add(subs, [a, b])
+    if len(a) > 1 && len(b) > 1
+        add(subs, [toupper(a[0]) .. a[1 : ], toupper(b[0]) .. b[1 : ]])
+    endif
+    add(subs, [toupper(a), toupper(b)])
+enddef
+
+var invert_binary_subs: list<any> = [
     ['==', '!='],
     ['-=', '+='],
     ['===', '!=='],
     ['>', '<='],
     ['<', '>='],
     ['||', '&&'],
-    ['and', 'or'],
-    ['AND', 'OR'],
-    ['min', 'max'],
-    ['Min', 'Max'],
-    ['MIN', 'MAX'],
     ['+', '-'],
     ['1', '0'],
-    ['start', 'end'],
-    ['Start', 'End'],
-    ['START', 'END'],
-    ReSub('enabl\(ing\|e[sd]\?\)', 'disabl\1'),
-    ReSub('disabl\(ing\|e[sd]\?\)', 'enabl\1'),
-    ReSub('Enabl\(ing\|e[sd]\?\)', 'Disabl\1'),
-    ReSub('Disabl\(ing\|e[sd]\?\)', 'Enabl\1'),
 ]
+
+AddCaseVariants(invert_binary_subs, 'true', 'false')
+AddCaseVariants(invert_binary_subs, 'yes', 'no')
+AddCaseVariants(invert_binary_subs, 'y', 'n')
+AddCaseVariants(invert_binary_subs, 'on', 'off')
+AddCaseVariants(invert_binary_subs, 'required', 'optional')
+AddCaseVariants(invert_binary_subs, 'positive', 'negative')
+AddCaseVariants(invert_binary_subs, 'and', 'or')
+AddCaseVariants(invert_binary_subs, 'min', 'max')
+AddCaseVariants(invert_binary_subs, 'include', 'exclude')
+AddCaseVariants(invert_binary_subs, 'start', 'end')
+AddCaseVariants(invert_binary_subs, 'major', 'minor')
+AddCaseVariants(invert_binary_subs, 'top', 'bottom')
+AddCaseVariants(invert_binary_subs, 'up', 'down')
+AddCaseVariants(invert_binary_subs, 'left', 'right')
+AddCaseVariants(invert_binary_subs, 'first', 'last')
+AddCaseVariants(invert_binary_subs, 'upper', 'lower')
+
+# Put regex substitutions at the end
+add(invert_binary_subs, ReSub('enabl\(ing\|e[sd]\?\)', 'disabl\1'))
+add(invert_binary_subs, ReSub('disabl\(ing\|e[sd]\?\)', 'enabl\1'))
+add(invert_binary_subs, ReSub('Enabl\(ing\|e[sd]\?\)', 'Disabl\1'))
+add(invert_binary_subs, ReSub('Disabl\(ing\|e[sd]\?\)', 'Enabl\1'))
 
 def Invert(s: string): string
     for item in get(b:, 'invert_binary_subs', []) + invert_binary_subs

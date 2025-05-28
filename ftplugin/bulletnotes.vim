@@ -5,6 +5,9 @@ let b:delimitMate_expand_cr = 0
 iabbr rsa RSA
 iabbr crc CRC
 
+" En dash shortcut
+iabbr -- –
+
 setlocal spell
 setlocal conceallevel=2
 

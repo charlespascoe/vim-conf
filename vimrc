@@ -69,7 +69,10 @@ endfun
 
 set title
 call s:SetTitle()
-au DirChanged,BufEnter,FileType * call <SID>SetTitle()
+augroup Title
+    autocmd!
+    autocmd BufEnter,DirChanged,FileType * call <SID>SetTitle()
+augroup END
 
 " Terminal support for more underline support (4:1m is normal underline)
 
@@ -240,6 +243,11 @@ endif
 let s:bulletnotes_backup = v:true
 
 if exists('$BN_PROJ') && $BN_PROJ == '1'
+    augroup Title
+        autocmd!
+    augroup END
+    " Set title to current working directory
+    let &titlestring = fnamemodify(getcwd(), ':~')
     let s:bulletnotes_backup = v:false
     call bulletnotes#InitProject()
 elseif isdirectory('.bnproj')

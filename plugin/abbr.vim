@@ -1,4 +1,4 @@
-" Varioys abbreviations
+" Various abbreviations
 
 " TODO: Make these only enabled where text is expected, likely based on filetype
 " iabbr api API
