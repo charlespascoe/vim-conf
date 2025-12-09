@@ -15,7 +15,7 @@ def ARTEFACTS_PATH = '$1'
 def LOCAL_ARTEFACT_PATH = '$1-linux'
 
 def DOCKER_REGISTRY="`echo $DOCKER_REGISTRY`"
-def HTTP_PROXY="`echo $CI_PROXY`"
+def HTTP_PROXY="`echo $BT_CI_PROXY`"
 
 // TODO: Make sure user sa069692 is a developer in the GitLab repository
 gitlabBuilds(builds: ['build', 'test', 'documentation', 'docker']) {

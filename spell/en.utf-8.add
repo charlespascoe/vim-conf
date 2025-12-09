@@ -82,6 +82,7 @@ plugin
 pos
 protobuffers
 Ragel
+rebase
 rebased
 rebasing
 Redis
@@ -89,6 +90,7 @@ replaceability
 restrictor
 restrictors
 SBC
+SBC's
 scrypt
 SHA
 SHA3

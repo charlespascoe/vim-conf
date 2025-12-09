@@ -1,7 +1,7 @@
 import vim
 import re
 
-bullet_re = re.compile(r"^(\s{4})*[-*] ")
+bullet_re = re.compile(r"^(\s{4})*([-*]|\d+\.)")
 repeated_ws_re = re.compile(r"(?<=[^ \t])\s{2,}(?=[^ \t])")
 
 
