@@ -36,6 +36,12 @@ Plug 'vim-airline/vim-airline'
 " Manpages
 if !$MAN
 
+if $DRAFT
+Plug 'github/copilot.vim', #{on: 'Copilot'}
+else
+Plug 'github/copilot.vim'
+endif
+
 Plug 'vim-python/python-syntax'
 Plug 'davidhalter/jedi-vim'
 
@@ -45,7 +51,6 @@ Plug 'christoomey/vim-titlecase'
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'dense-analysis/ale'
 Plug 'dkarter/bullets.vim'
-Plug 'github/copilot.vim'
 Plug 'habamax/vim-asciidoctor'
 Plug 'junegunn/vim-easy-align'
 Plug 'kopischke/vim-fetch'
