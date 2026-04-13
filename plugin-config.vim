@@ -379,13 +379,28 @@ nmap <leader>ar <Plug>(ale_reset)
 
 " fzf-vim
 
-nmap <leader>f <Cmd>Tags<CR>
-nmap <leader>F <Cmd>BTags<CR>
+fun s:FzfBTags()
+    " This is mostly copied from fzf#vim#buffer_tags(), but with some custom
+    " logic to filter out anonymous functions/objects in JavaScript, which are
+    " often not useful to jump to and just add noise to the tag list.
+    let escaped = fzf#shellescape(expand('%'))
+    let sort = '| sort -s -k 5 | gsed -E "/^anonymous(Object|Function)[0-9a-f]/d"'
+    let tag_cmds = [
+        \ printf('ctags -f - --sort=yes --excmd=number --language-force=%s %s 2> /dev/null %s', get({ 'cpp': 'c++' }, &filetype, &filetype), escaped, sort),
+        \ printf('ctags -f - --sort=yes --excmd=number %s 2> /dev/null %s', escaped, sort)]
+    call fzf#vim#buffer_tags('', tag_cmds, fzf#vim#with_preview({ 'placeholder': '{2}:{3..}' }), 0)
+endfun
+
+nmap <leader>f <Cmd>call <SID>FzfBTags()<CR>
+nmap <leader>F <Cmd>Tags<CR>
+nmap <leader>l <Cmd>BLines<CR>
+let g:fzf_history_dir = '~/.local/share/fzf-history'
 
 " gutentags
 
 let g:gutentags_ctags_exclude = ['.*/*', '*/.*', '*.patch', '*.css', '*.json', 'vendor', 'static']
 let g:gutentags_define_advanced_commands = 1
+let g:gutentags_ctags_post_process_cmd = $HOME..'/.vim-conf/tags-cleanup.sh'
 
 " vim-markdown
 
