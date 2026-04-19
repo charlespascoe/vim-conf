@@ -12,9 +12,17 @@ syn region markdownH4 matchgroup=markdownH4Delimiter start="#####\@!\s\+"   end=
 syn region markdownH5 matchgroup=markdownH5Delimiter start="######\@!\s\+"  end="#*\s*$" keepend oneline contains=@markdownInline,markdownAutomaticLink contained
 syn region markdownH6 matchgroup=markdownH6Delimiter start="#######\@!\s\+" end="#*\s*$" keepend oneline contains=@markdownInline,markdownAutomaticLink contained
 
+
+syntax match markdownPreambleColon /:/ contained
+syn match markdownPreambleKey "^\s*\zs\w\+:" contained contains=markdownPreambleColon
+syn region markdownPreamble matchgroup=markdownPreambleDelimiter start="\%1l^---\s*$" end="^---\s*$" keepend contains=markdownPreambleKey
+
 hi markdownBold cterm=bold ctermfg=51 guifg=#74fffb
 hi link markdownCode Constant
 hi link markdownCodeDelimiter Constant
+hi link markdownPreambleDelimiter Special
+hi link markdownPreambleKey Identifier
+hi link markdownPreambleColon Delimiter
 
 " I have no idea why they decided to use two spaces for a line break, but it
 " interferes with my dictation plugin

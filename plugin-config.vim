@@ -151,7 +151,7 @@ let s:dictation_colours = #{
 \}
 
 fun s:DictationStatusUpdate(msg)
-    if a:msg.status == 'dictate' && a:msg.activeClient
+    if a:msg.status == 'dictate' && a:msg.activeClient && exists('copilot#Clear')
         call copilot#Clear()
         " TODO: Why does copilot#Clear() sometimes need to be called twice?
         call copilot#Clear()
@@ -176,7 +176,9 @@ fun s:DictationStatusUpdate(msg)
 endfun
 
 fun! s:DictationTranscription(msg)
-    call copilot#Clear()
+    if exists('copilot#Clear')
+        call copilot#Clear()
+    endif
 endfun
 
 let g:dictation#status_handler = function('s:DictationStatusUpdate')
@@ -447,6 +449,7 @@ let g:copilot_no_tab_map = 1
 let g:copilot_filetypes = {
         \'*': 1,
         \'bulletnotes': 0,
+        \'markdown': 0,
         \'gitcommit': 0,
         \'gitrebase': 0,
         \'help': 0,
