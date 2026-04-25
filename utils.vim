@@ -214,3 +214,26 @@ nnoremap <C-]> g<C-]>
 " Paste commented; had to use nnoremap to prevent ` mapping from breaking this,
 " which in turn means we have to use '<Plug>Commentary' instead of 'gc'
 nnoremap <leader>p p`[v`]<Plug>Commentary
+
+" Copy reference
+
+func s:CopyReference(type, ...)
+    let l:l1 = a:0 >= 1 ? a:1 : line("'[")
+    let l:l2 = a:0 >= 2 ? a:2 : line("']")
+
+    if l:l1 == 1 && l:l2 == line('$')
+        let l:reference = ''
+    elseif l:l1 == l:l2
+        let l:reference = ':'..l:l1
+    else
+        let l:reference = ':'..l:l1..'-'..l:l2
+    endif
+
+    call setreg('+', fnamemodify(expand('%:p'), ':~')..l:reference)
+
+    echo "Copied reference: "..@+
+endfunc
+
+nnoremap <leader>rr <Cmd>let @+ = fnamemodify(expand('%:p'), ':~')..':'..line('.')<CR>
+nnoremap <leader>r  <Cmd>set opfunc=<SID>CopyReference<CR>g@
+command! -range=% Ref call <SID>CopyReference('line', <line1>, <line2>)

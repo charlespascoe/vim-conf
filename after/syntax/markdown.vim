@@ -14,7 +14,7 @@ syn region markdownH6 matchgroup=markdownH6Delimiter start="#######\@!\s\+" end=
 
 
 syntax match markdownPreambleColon /:/ contained
-syn match markdownPreambleKey "^\s*\zs\w\+:" contained contains=markdownPreambleColon
+syn match markdownPreambleKey "^\s*\zs[0-9A-Za-z_-]\+:" contained contains=markdownPreambleColon
 syn region markdownPreamble matchgroup=markdownPreambleDelimiter start="\%1l^---\s*$" end="^---\s*$" keepend contains=markdownPreambleKey
 
 hi markdownBold cterm=bold ctermfg=51 guifg=#74fffb
