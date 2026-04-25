@@ -217,16 +217,15 @@ nnoremap <leader>p p`[v`]<Plug>Commentary
 
 " Copy reference
 
-func s:CopyReference(type, ...)
-    let l:l1 = a:0 >= 1 ? a:1 : line("'[")
-    let l:l2 = a:0 >= 2 ? a:2 : line("']")
+func s:CopyReference(type, l1 = line("'["), l2 = line("']"))
+    " type is required by operatorfunc contract but is unused
 
-    if l:l1 == 1 && l:l2 == line('$')
+    if a:l1 == 1 && a:l2 == line('$')
         let l:reference = ''
-    elseif l:l1 == l:l2
-        let l:reference = ':'..l:l1
+    elseif a:l1 == a:l2
+        let l:reference = ':'..a:l1
     else
-        let l:reference = ':'..l:l1..'-'..l:l2
+        let l:reference = ':'..a:l1..'-'..a:l2
     endif
 
     call setreg('+', fnamemodify(expand('%:p'), ':~')..l:reference)
@@ -234,6 +233,6 @@ func s:CopyReference(type, ...)
     echo "Copied reference: "..@+
 endfunc
 
-nnoremap <leader>rr <Cmd>let @+ = fnamemodify(expand('%:p'), ':~')..':'..line('.')<CR>
+nnoremap <leader>rr <Cmd>call <SID>CopyReference('line', line('.'), line('.'))<CR>
 nnoremap <leader>r  <Cmd>set opfunc=<SID>CopyReference<CR>g@
 command! -range=% Ref call <SID>CopyReference('line', <line1>, <line2>)

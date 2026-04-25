@@ -812,10 +812,6 @@ snippet '^ii ' "Implement Interface Template" brA
 type impl $1
 endsnippet
 
-snippet 'ic ' "Improvement Comment" brA
-// IMPROVEMENT: $0
-endsnippet
-
 snippet '^type impl ([^\s]+) ' "Implement Interface" brA
 `!p if not snip.c: snip.rv = implement_interface()`
 endsnippet
