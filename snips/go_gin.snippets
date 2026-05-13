@@ -56,5 +56,5 @@ endsnippet
 snippet /(?i)^router?(group)?/ "Server Group" br
 func ${1:example}Group(router *gin.RouterGroup) {
 	$0
-}`!p vim.command(f'let @" = "\t{t[1]}Group(server.Group(\\\"/{t[1].lower()}\\\"))\n"')`
+}`!p vim.command(f'let @" = "\t{t[1]}Group(router.Group(\\\"/{t[1].lower()}\\\"))\n"')`
 endsnippet

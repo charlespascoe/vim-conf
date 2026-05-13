@@ -129,7 +129,7 @@ let g:bullets_custom_mappings = [
     \ ['imap', '<C-d>', '<Cmd>call dictation#Start()<CR>'],
     \ ['inoremap <expr>', '<Enter>', 'reg_executing() == "" ? "<Plug>(bullets-newline)" : "<Enter>"']
 \]
-" The last item fixes an issue where bullets.vim breaks <Enter> when running a macro
+" Fix issue where bullets.vim breaks <Enter> when running a macro
 
 " Bulletnotes
 

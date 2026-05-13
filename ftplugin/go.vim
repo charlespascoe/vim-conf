@@ -61,6 +61,7 @@ let b:get_dictation_context = function('s:GetDictationContext')
 nmap <buffer> <leader>tt <Plug>(go-info)
 nmap <buffer> <leader>td <Plug>(go-def)
 nmap <buffer> <leader>tD <Plug>(go-def-type)
+nmap <buffer> <leader>tg <Plug>(go-doc)
 nmap <buffer> <leader>tr <Plug>(go-referrers)
 nmap <buffer> <leader>tC <Plug>(go-coverage-toggle)
 nmap <buffer> <leader>ta <Cmd>GoAlternate!<CR>

@@ -98,7 +98,7 @@ syntax match bnLinkEnds /\[[\[:]\?\|[:\]]\?\]/ contained conceal
 " link pattern then '(', then make ends concealed?
 syntax region bnLinkText start='(' end=')' contained concealends
 hi link bnLinkText bnLink
-syntax match bnContact /@[a-zA-Z\-._]\+/ contains=@NoSpell,bnContactMarker
+syntax match bnContact /\w\@<!@[a-zA-Z\-._]\+/ contains=@NoSpell,bnContactMarker
 syntax match bnAnchor /:[a-zA-Z0-9]\+:/ contains=@NoSpell
 syntax match bnContactMarker /@/ contained conceal
 
