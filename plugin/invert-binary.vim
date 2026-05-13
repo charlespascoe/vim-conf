@@ -23,28 +23,36 @@ var invert_binary_subs: list<any> = [
     ['1', '0'],
 ]
 
-AddCaseVariants(invert_binary_subs, 'true', 'false')
-AddCaseVariants(invert_binary_subs, 'yes', 'no')
-AddCaseVariants(invert_binary_subs, 'y', 'n')
-AddCaseVariants(invert_binary_subs, 'on', 'off')
-AddCaseVariants(invert_binary_subs, 'required', 'optional')
-AddCaseVariants(invert_binary_subs, 'positive', 'negative')
-AddCaseVariants(invert_binary_subs, 'and', 'or')
-AddCaseVariants(invert_binary_subs, 'min', 'max')
-AddCaseVariants(invert_binary_subs, 'include', 'exclude')
-AddCaseVariants(invert_binary_subs, 'start', 'end')
-AddCaseVariants(invert_binary_subs, 'major', 'minor')
-AddCaseVariants(invert_binary_subs, 'top', 'bottom')
-AddCaseVariants(invert_binary_subs, 'up', 'down')
-AddCaseVariants(invert_binary_subs, 'left', 'right')
-AddCaseVariants(invert_binary_subs, 'first', 'last')
-AddCaseVariants(invert_binary_subs, 'upper', 'lower')
+var words: list<any> = [
+    ['true', 'false'],
+    ['yes', 'no'],
+    ['y', 'n'],
+    ['on', 'off'],
+    ['required', 'optional'],
+    ['positive', 'negative'],
+    ['and', 'or'],
+    ['min', 'max'],
+    ['include', 'exclude'],
+    ['includes', 'excludes'],
+    ['included', 'excluded'],
+    ['including', 'excluding'],
+    ['enable', 'disable'],
+    ['enables', 'disables'],
+    ['enabled', 'disabled'],
+    ['enabling', 'disabling'],
+    ['start', 'end'],
+    ['major', 'minor'],
+    ['top', 'bottom'],
+    ['up', 'down'],
+    ['left', 'right'],
+    ['first', 'last'],
+    ['upper', 'lower'],
+    ['after', 'before']
+]
 
-# Put regex substitutions at the end
-add(invert_binary_subs, ReSub('enabl\(ing\|e[sd]\?\)', 'disabl\1'))
-add(invert_binary_subs, ReSub('disabl\(ing\|e[sd]\?\)', 'enabl\1'))
-add(invert_binary_subs, ReSub('Enabl\(ing\|e[sd]\?\)', 'Disabl\1'))
-add(invert_binary_subs, ReSub('Disabl\(ing\|e[sd]\?\)', 'Enabl\1'))
+for item in words
+    AddCaseVariants(invert_binary_subs, item[0], item[1])
+endfor
 
 def Invert(s: string): string
     for item in get(b:, 'invert_binary_subs', []) + invert_binary_subs
