@@ -54,6 +54,8 @@ fun s:SetTitle()
         let &titlestring = substitute(l:path, '^\~/repos', 'repos', '')
     elseif s:startswith(l:path, '~/.vim-conf')
         let &titlestring = substitute(l:path, '^\~/\.vim-conf', 'vim-conf', '')
+    elseif s:startswith(l:path, '~/.pi')
+        let &titlestring = substitute(l:path, '^\~/\.pi', 'pi', '')
     else
         let &titlestring = pathshorten(l:path)
     endif
