@@ -29,7 +29,7 @@ autocmd InsertLeave * call <SID>InsertModeChanged('')
 call s:InsertModeChanged('')
 
 " Trailing Whitespace
-highlight TrailingWhitespace ctermfg=1 guifg=#870000 ctermbg=none cterm=undercurl
+highlight TrailingWhitespace ctermfg=1 guifg=#AA3333 ctermbg=none cterm=undercurl
 match TrailingWhitespace /\s\+$/
 au InsertEnter * match none
 au InsertLeave * match TrailingWhitespace /\s\+$/
