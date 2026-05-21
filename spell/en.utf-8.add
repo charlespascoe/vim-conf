@@ -2,8 +2,10 @@
 abc
 ABNF
 ad-hoc
+airplane
 Alacritty
 ansible
+AppKit
 AsciiDoc
 backend
 base64
@@ -11,6 +13,8 @@ BNF
 BT
 BT's
 Bulletnotes
+bulletpoint
+Charles's
 ciphertext
 ciphertexts
 cls
@@ -22,6 +26,7 @@ CRDB
 criteria's
 CRLF
 CSV
+DD
 deduplicate
 deduplicated
 deduplication
@@ -46,6 +51,12 @@ goroutines
 GPG
 graphene
 gRPC
+H1
+H2
+H3
+H4
+H5
+H6
 handwire
 HMAC
 iff
@@ -104,6 +115,7 @@ submodules
 subpackage
 subsubsection
 subtree
+SwiftUI
 TBD
 th
 timestamp
@@ -140,4 +152,5 @@ whether or not/!
 whitespace
 X.509v3
 xyz
+YYYY
 µs
