@@ -69,8 +69,8 @@ nmap <buffer> <leader>tR <Esc>:wa<CR><Plug>(go-rename)
 nmap <buffer> <leader>tT <Esc>:wa<CR><Plug>(go-test)
 nmap <buffer> <leader>tc <Esc>:wa<CR><Plug>(go-build)
 nmap <buffer> <leader>tv <Plug>(go-vet)
-nmap <buffer> <leader>tF <Cmd>GoFmt<CR>
-nmap <buffer> <leader>tfs <Cmd>GoFillStruct<CR>
+nmap <buffer> <leader>tf <Cmd>GoFmt<CR>
+" nmap <buffer> <leader>tfs <Cmd>GoFillStruct<CR>
 nmap <buffer> <leader>tP <Cmd>call <SID>TogglePrivate()<Cr>
 
 let b:serenade_go_to_definition_command = 'GoDef'

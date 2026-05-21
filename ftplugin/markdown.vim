@@ -25,7 +25,7 @@ command! -buffer FormatMarkdown call <SID>FormatMarkdown()
 
 augroup format_markdown_on_save
   autocmd! * <buffer>
-  if get(b:, 'format_on_save ', v:true)
+  if get(b:, 'format_on_save', v:true)
     autocmd BufWritePre <buffer> FormatMarkdown
   endif
 augroup END
