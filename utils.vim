@@ -80,9 +80,6 @@ noremap <leader>i `iO
 nmap - g-<Cmd>echo "Change "..changenr()<CR>
 nmap + g+<Cmd>echo "Change "..changenr()<CR>
 
-" Format JSON
-command! FormatJson %!python3 -m json.tool
-
 " This needs to be '<Esc>:' because it expects user input
 noremap <leader>R <Esc>:%s/\<<C-r><C-w>\>//gc<Left><Left><Left>
 
@@ -235,4 +232,5 @@ endfunc
 
 nnoremap <leader>rr <Cmd>call <SID>CopyReference('line', line('.'), line('.'))<CR>
 nnoremap <leader>r  <Cmd>set opfunc=<SID>CopyReference<CR>g@
+vnoremap <leader>r  <Cmd>set opfunc=<SID>CopyReference<CR>g@
 command! -range=% Ref call <SID>CopyReference('line', <line1>, <line2>)

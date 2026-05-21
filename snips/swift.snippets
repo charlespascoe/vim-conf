@@ -1,0 +1,16 @@
+# global !p
+# from snippet_utils import *
+# endglobal
+
+# TODO: Limit this to only within a class/struct/enum/extension body
+snippet '\bf ' "Function" brA
+func $1($2)`!p snip.rv = ' ->' if t[3] else ''`$3 {
+	$0
+}
+endsnippet
+
+snippet '\bif ' "If statement" brA
+if $1 {
+	$0
+}
+endsnippet

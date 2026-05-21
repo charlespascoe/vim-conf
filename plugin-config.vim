@@ -420,6 +420,10 @@ let g:vim_chatgpt_system_prompt = "You are a professional assistant to a softwar
 
 " copilot.vim
 
+" There are issues with node@26.0.0; use specific version instead
+let g:copilot_node_command = "/opt/homebrew/opt/node@24/bin/node"
+let g:copilot_npx_command = 0
+
 imap <C-Left> <Plug>(copilot-next)
 imap <C-Right> <Plug>(copilot-previous)
 imap <C-Down> <Plug>(copilot-dismiss)
