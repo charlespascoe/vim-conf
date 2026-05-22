@@ -8,24 +8,23 @@ if stridx(expand('%:p'), $HOME..'/.pi/') == 0
   let b:format_on_save = v:false
 endif
 
-function! s:FormatMarkdown() range abort
+py3 import format as vimformat
+
+function! s:FormatMarkdown(line1, line2) abort
   if !executable('prettier')
     echoerr "Prettier is not installed, cannot format Markdown files. Please install it with 'brew install prettier'."
     return
   endif
 
-
   " TODO: See if it's possible to use --cursor-offset to preserve cursor position
-  let l:view = winsaveview()
-  execute a:firstline . ',' . a:lastline . '!prettier --parser markdown --tab-width 4 --print-width 80 --prose-wrap always'
-  call winrestview(l:view)
+  py3 vimformat.format('prettier', ['--parser', 'markdown', '--tab-width', '4', '--print-width', '80', '--prose-wrap', 'always'], int(vim.eval('a:line1')) - 1, int(vim.eval('a:line2')) - 1)
 endfunction
 
-command! -buffer -range=% FormatMarkdown <line1>,<line2>call <SID>FormatMarkdown()
+command! -buffer -range=% FormatMarkdown call <SID>FormatMarkdown(<line1>, <line2>)
 
 augroup format_markdown_on_save
   autocmd! * <buffer>
-  autocmd BufWritePre <buffer> if get(b:, 'format_on_save', v:true) | 1,$call <SID>FormatMarkdown() | endif
+  autocmd BufWritePre <buffer> if get(b:, 'format_on_save', v:true) | call <SID>FormatMarkdown(1, line('$')) | endif
 augroup END
 
 nnoremap <silent> <buffer> <leader>tf <Cmd>FormatMarkdown<CR>
