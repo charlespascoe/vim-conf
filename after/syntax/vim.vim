@@ -10,14 +10,15 @@ hi link vimCommentNote Todo
 
 hi vimFuncName  cterm=bold,italic  guifg=#FFF180
 
-hi link vimFunction   Function
-hi link vimUserFunc   Function
-hi link vimSynType    Statement
-hi link vimFgBgAttrib Special
-hi link vimHiAttrib   Special
-hi link vimOption     Special
-hi link vimEscape     SpecialChar
-hi link vimEnvvar     Identifier
+hi link vimFunction     Statement
+hi link vimFunctionName Function
+hi link vimUserFunc     Function
+hi link vimSynType      Statement
+hi link vimFgBgAttrib   Special
+hi link vimHiAttrib     Special
+hi link vimOption       Special
+hi link vimEscape       SpecialChar
+hi link vimEnvvar       Identifier
 
 syntax keyword vimSource source skipwhite nextgroup=vimPath
 hi link vimSource Statement
