@@ -8,7 +8,7 @@ if stridx(expand('%:p'), $HOME..'/.pi/') == 0
   let b:format_on_save = v:false
 endif
 
-function! s:FormatMarkdown() abort
+function! s:FormatMarkdown() range abort
   if !executable('prettier')
     echoerr "Prettier is not installed, cannot format Markdown files. Please install it with 'brew install prettier'."
     return
@@ -17,17 +17,15 @@ function! s:FormatMarkdown() abort
 
   " TODO: See if it's possible to use --cursor-offset to preserve cursor position
   let l:view = winsaveview()
-  %!prettier --parser markdown --tab-width 4 --print-width 80 --prose-wrap always
+  execute a:firstline . ',' . a:lastline . '!prettier --parser markdown --tab-width 4 --print-width 80 --prose-wrap always'
   call winrestview(l:view)
 endfunction
 
-command! -buffer FormatMarkdown call <SID>FormatMarkdown()
+command! -buffer -range=% FormatMarkdown <line1>,<line2>call <SID>FormatMarkdown()
 
 augroup format_markdown_on_save
   autocmd! * <buffer>
-  if get(b:, 'format_on_save', v:true)
-    autocmd BufWritePre <buffer> FormatMarkdown
-  endif
+  autocmd BufWritePre <buffer> if get(b:, 'format_on_save', v:true) | 1,$call <SID>FormatMarkdown() | endif
 augroup END
 
 nnoremap <silent> <buffer> <leader>tf <Cmd>FormatMarkdown<CR>
