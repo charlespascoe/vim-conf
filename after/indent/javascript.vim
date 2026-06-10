@@ -10,13 +10,13 @@ function! JsIndent() abort
 
   " If the previous line ends with ( or {, increase indent by one shiftwidth
   let l:prev_line = getline(l:prev_lnum)
-  if l:prev_line =~# '[({]\s*$'
+  if l:prev_line =~# '[[({]\s*$'
     let l:ind += shiftwidth()
   endif
 
   " If the current line starts with ) or }, decrease indent by one shiftwidth
   let l:cur_line = getline(v:lnum)
-  if l:cur_line =~# '^\s*[)}]'
+  if l:cur_line =~# '^\s*[)}\]]'
     let l:ind -= shiftwidth()
   endif
 
