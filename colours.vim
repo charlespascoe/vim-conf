@@ -68,7 +68,7 @@ hi SignatureMarkText   guifg=#00AFFF cterm=bold
 hi SignatureMarkerText guifg=#50FA7B
 
 let g:terminal_ansi_colors = [
-    \  '#21222c',
+    \  '#23242e',
     \  '#ff5555',
     \  '#50fa7b',
     \  '#f1fa8c',

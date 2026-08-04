@@ -93,15 +93,14 @@ let alternate = 1
 hi clear Normal
 
 if get(g:, 'colorscheme_transparent_background', 0)
-    hi Normal guifg=#F8F8F2
+    hi Normal guifg=#FFFFFF
 else
-    hi Normal guifg=#F8F8F2    guibg=#282A36
+    hi Normal guifg=#FFFFFF    guibg=#282A36
 endif
 
 hi Visual cterm=none guibg=#44475A
 hi CursorLine guibg=#44475A
-" hi ColorColumn ctermbg=235 guibg=#21222C
-hi ColorColumn ctermbg=235 guibg=#252733
+hi ColorColumn guibg=#282a36
 hi LineNr guifg=#6272A4
 " hi Operator guifg=#FFAF6F
 " hi Type guifg=#FFEC58
@@ -158,9 +157,8 @@ hi DiffText cterm=underdashed guibg=#3D0000 guisp=#8BE9FD
 
 hi VertSplit cterm=none guifg=#6272A4
 
-" hi Folded guifg=#6272A4 guibg=#21222C
-hi Folded guifg=#8B97BC guibg=#21222C
-hi FoldColumn guifg=#8B97BC guibg=#21222C
+hi Folded guifg=#8B97BC
+hi FoldColumn guifg=#8B97BC
 
 " hi MatchParen cterm=bold,underline guibg=#585858
 hi MatchParen cterm=bold,underline guibg=#424D71
@@ -198,19 +196,16 @@ hi StatusLine     cterm=bold guibg=#424450
 hi StatusLineNC   guibg=#343746
 hi StatusLineTerm cterm=bold guibg=#424450
 hi StatusLineTermNC guibg=#343746
-hi TabLine        guifg=#6272A4 guibg=#21222C
 
-
-hi TabLineFill     guifg=#ffffff guibg=#21222C
-
+hi TabLine        guifg=#6272A4
+hi TabLineFill     guifg=#ffffff
 hi TabLineSel guifg=#F8F8F2    guibg=#282A36
 
 hi Title         cterm=bold,underdouble guifg=#FF79C6
 
-
-hi SignColumn     guifg=#6272A4 guibg=#282A36
+hi SignColumn     guifg=#6272A4 guibg=NONE
 
 hi! link Question Type
 hi! link MoreMsg Type
 
-hi EndOfBuffer  guifg=#424450
+hi EndOfBuffer  guifg=#4C4F5D
