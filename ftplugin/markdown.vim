@@ -2,32 +2,13 @@ setlocal spell
 setlocal wrap
 setlocal textwidth=80
 
+let b:ale_javascript_prettier_options = '--tab-width 4 --print-width 80 --prose-wrap always'
+
 " Don't format any Markdown files in the ~/.pi/ directory, which are often
 " prompts that are manually formatted
 if stridx(expand('%:p'), $HOME..'/.pi/') == 0
-  let b:format_on_save = v:false
+  let b:ale_fix_on_save = 0
 endif
-
-py3 import format as vimformat
-
-function! s:FormatMarkdown(line1, line2) abort
-  if !executable('prettier')
-    echoerr "Prettier is not installed, cannot format Markdown files. Please install it with 'brew install prettier'."
-    return
-  endif
-
-  " TODO: See if it's possible to use --cursor-offset to preserve cursor position
-  py3 vimformat.format('prettier', ['--parser', 'markdown', '--tab-width', '4', '--print-width', '80', '--prose-wrap', 'always'], int(vim.eval('a:line1')) - 1, int(vim.eval('a:line2')) - 1)
-endfunction
-
-command! -buffer -range=% FormatMarkdown call <SID>FormatMarkdown(<line1>, <line2>)
-
-augroup format_markdown_on_save
-  autocmd! * <buffer>
-  autocmd BufWritePre <buffer> if get(b:, 'format_on_save', v:true) | call <SID>FormatMarkdown(1, line('$')) | endif
-augroup END
-
-nnoremap <silent> <buffer> <leader>tf <Cmd>FormatMarkdown<CR>
 
 imap <expr> <buffer> <Tab> ShouldIndentBullet() ? '<Esc>>>^i<Right><Right>' : (ShouldAutocomplete() ? '<C-z>' : '<Tab>')
 imap <expr> <buffer> <S-Tab> ShouldIndentBullet() ? '<Esc><<^i<Right><Right>' : copilot#Accept('<Tab>')

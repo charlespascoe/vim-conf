@@ -348,11 +348,17 @@ let g:indent_marker_ignore_filetypes = ['rfc', 'help']
 let g:ale_virtualtext_cursor = 0
 let g:ale_python_black_use_global = 1
 
+let g:ale_fix_on_save = 1
 let g:ale_fixers = {
     \    'python': ['black'],
-    \    'go': ['gofmt', 'gofumpt', 'goimports', 'golines'],
+    \    'go': ['golangci-lint'],
     \    'javascript': ['eslint'],
+    \    'markdown': ['prettier'],
     \}
+
+" NOTE: ftplugin/markdown.vim sets custom flags for prettier, but it has to use
+" the same config option that the javascript prettier would use, so it can't be
+" set globally here.
 
 " Prevent ALE from breaking when a Copilot panel is closed
 let g:ale_pattern_options = {'^copilot://': {'ale_enabled': 0}}
@@ -378,6 +384,9 @@ nmap <leader>af <Plug>(ale_fix)
 nmap <leader>ae <Plug>(ale_next_wrap)zz
 nmap <leader>aE <Plug>(ale_previous_wrap)zz
 nmap <leader>ar <Plug>(ale_reset)
+
+" Default "Type-aware Formatting" mapping is <leader>tf; perhaps remove <leader>af
+nmap <leader>tf <Plug>(ale_fix)
 
 " fzf-vim
 

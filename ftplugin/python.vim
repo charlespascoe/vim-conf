@@ -46,8 +46,6 @@ call QuickSearchMap('f', 'Functions', '\<def [a-zA-Z0-9_]\+(\(self\)\@!')
 call QuickSearchMap('c', 'Classes', '\<class [a-zA-Z0-9_]\+')
 call QuickSearchMap('m', 'Methods', '^\s\+\Kdef [a-zA-Z0-9_]\+(self\>')
 
-let b:ale_fix_on_save = 1
-
 fun s:GetDictationContext(lnum, col)
     let syn = synIDattr(synIDtrans(synID(a:lnum,max([a:col-1,1]),1)),"name")
 
