@@ -4,7 +4,12 @@ setlocal spell
 hi Comment guibg=#282A36
 
 fun! ShowDiff()
-    vertical rightbelow terminal git --no-pager diff --cached
+    " Side-by-side diff only when there is room for it; otherwise stack below
+    if winwidth(0) < 160
+        belowright terminal git --no-pager diff --cached
+    else
+        vertical rightbelow terminal git --no-pager diff --cached
+    endif
     exec 'normal' "\<C-w>\<C-w>"
 endfun
 

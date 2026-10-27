@@ -158,7 +158,7 @@ fun s:DictationStatusUpdate(msg)
     endif
 
     let l:col = get(s:dictation_colours, a:msg.status, g:dracula#palette.comment[0])
-    for [name, colours] in items(g:airline#themes#{g:airline_theme}#palette)
+    for [name, colours] in items(get(g:, 'airline#themes#' .. g:airline_theme .. '#palette'))
         if name == 'inactive'
             continue
         endif
@@ -351,7 +351,7 @@ let g:ale_python_black_use_global = 1
 let g:ale_fix_on_save = 1
 let g:ale_fixers = {
     \    'python': ['black'],
-    \    'go': ['golangci-lint'],
+    \    'go': ['golangci_lint'],
     \    'javascript': ['eslint'],
     \    'markdown': ['prettier'],
     \}
@@ -412,6 +412,11 @@ let g:fzf_history_dir = '~/.local/share/fzf-history'
 let g:gutentags_ctags_exclude = ['.*/*', '*/.*', '*.patch', '*.css', '*.json', 'vendor', 'static']
 let g:gutentags_define_advanced_commands = 1
 let g:gutentags_ctags_post_process_cmd = $HOME..'/.vim-conf/tags-cleanup.sh'
+let g:gutentags_file_list_command = {
+    \ 'markers': {
+        \ '.git': 'rg --files',
+    \ },
+\ }
 
 " vim-markdown
 
